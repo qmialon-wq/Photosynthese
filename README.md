@@ -85,6 +85,12 @@ Le worker effectue ce même contrôle une seule fois au démarrage GPU ; ses son
 suivantes vérifient son signal de vie Redis, sans calcul périodique sur le GPU.
 `nvidia-smi` seul ne prouve pas que PyTorch peut exécuter un calcul CUDA.
 
+Pour vérifier uniquement la transmission du GPU à Docker avec une image plus légère :
+
+```sh
+docker run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
+```
+
 Retour CPU : `docker compose up -d --build --wait vision`. Ne pas augmenter
 le nombre de répliques vision : la configuration prévoit un seul processus.
 Il ne consomme encore aucune tâche ; le verrou d'exécution des futures tâches
@@ -181,12 +187,10 @@ persistance Redis configurée, signaux de vie des deux workers et proxy HTTP :
 
 ```sh
 docker compose --profile test run --build --rm tests pytest -m integration
-docker compose exec postgres sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT extversion FROM pg_extension WHERE extname = '\''vector'\'';"'
 docker compose exec redis redis-cli ping
 ```
 
-La commande `psql` ci-dessus est destinée au shell Linux/WSL. Alternative simple,
-avec les identifiants par défaut, compatible PowerShell :
+Vérification PostgreSQL avec les identifiants par défaut (adapter en cas de changement) :
 
 ```sh
 docker compose exec postgres psql -U biosentinelle -d biosentinelle -c "SELECT extname, extversion FROM pg_extension;"
@@ -230,3 +234,18 @@ Le notebook reste une référence fonctionnelle, avec des dépendances Colab/Dri
 qui ne sont pas exécutées par cette infrastructure. Aucun résultat ML n'est
 annoncé comme fonctionnel. Les 10 espèces de la consigne utilisateur font foi ;
 les noms de vidéos ne constituent pas des labels fiables pour chaque animal.
+
+## Validation réalisée le 21 octobre 2026
+
+- Démarrage CPU réel sous Docker Desktop : six services persistants sains,
+  initialisation du stockage et migrations terminées avec le code 0.
+- 12 tests unitaires et 3 tests d'intégration réussis ; Ruff et formatage validés.
+- Build Vue/TypeScript/Vite réussi ; audit npm sans vulnérabilité signalée.
+- Après redémarrage PostgreSQL/Redis : migration conservée, clé témoin Redis
+  conservée puis supprimée, retour de tous les services à l'état sain.
+- `nvidia-smi` dans le conteneur CUDA léger : RTX 3050 de 4 Go visible,
+  pilote hôte 592.00.
+- Image PyTorch GPU non construite et calcul PyTorch CUDA non exécuté ici :
+  environ 11 Go libres sur le disque hôte, sous le budget de 15 Go retenu pour
+  ce build. La configuration GPU fusionnée est validée par `docker compose config` ;
+  la commande `workers.vision.cuda_check` reste à exécuter après libération d'espace.
