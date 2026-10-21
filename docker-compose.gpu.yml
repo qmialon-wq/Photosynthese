@@ -1,0 +1,17 @@
+# Fusionner avec docker-compose.yml ; seul le worker vision reçoit CUDA et le GPU.
+services:
+  vision:
+    build:
+      dockerfile: workers/vision/Dockerfile.gpu
+      target: gpu
+    environment:
+      REQUIRE_CUDA: "1"
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

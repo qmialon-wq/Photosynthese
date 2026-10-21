@@ -1,0 +1,17 @@
+**
+!backend/
+!backend/**
+!frontend/
+!frontend/**
+!workers/
+!workers/**
+!shared/
+!shared/**
+!infra/
+!infra/**
+!tests/
+!tests/**
+!pyproject.toml
+**/__pycache__
+**/node_modules
+frontend/dist

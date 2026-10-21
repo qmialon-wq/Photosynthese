@@ -1,0 +1,10 @@
+FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime@sha256:77f17f843507062875ce8be2a6f76aa6aa3df7f9ef1e31d9d7432f4b0f563dee AS gpu
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app
+WORKDIR /app
+COPY workers/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+    && useradd --uid 10001 --create-home biosentinelle
+COPY shared /app/shared
+COPY workers /app/workers
+USER biosentinelle
+CMD ["python", "-m", "workers.vision.main"]

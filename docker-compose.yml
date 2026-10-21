@@ -1,0 +1,184 @@
+name: ${COMPOSE_PROJECT_NAME:-biosentinelle}
+
+x-python-environment: &python-environment
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: ${POSTGRES_DB:-biosentinelle}
+  POSTGRES_USER: ${POSTGRES_USER:-biosentinelle}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biosentinelle_local}
+  REDIS_URL: redis://redis:6379/0
+  STORAGE_ROOT: /storage
+  TORCH_HOME: /storage/models/cache/torch
+  HF_HOME: /storage/models/cache/huggingface
+  XDG_CACHE_HOME: /storage/models/cache
+  WORKER_HEARTBEAT_SECONDS: ${WORKER_HEARTBEAT_SECONDS:-5}
+  WORKER_HEARTBEAT_MAX_AGE_SECONDS: ${WORKER_HEARTBEAT_MAX_AGE_SECONDS:-30}
+
+x-healthcheck: &healthcheck
+  interval: 10s
+  timeout: 8s
+  retries: 6
+  start_period: 20s
+
+services:
+  storage-init:
+    image: python:3.12.12-slim-bookworm
+    network_mode: none
+    volumes:
+      - ${DATA_ROOT:-./data}:/storage
+      - ./infra/init_storage.py:/init_storage.py:ro
+    command: ["python", "/init_storage.py"]
+    restart: "no"
+
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg16@sha256:33198da2828a14c30348d2ccb4750833d5ed9a44c88d840a0e523d7417120337
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-biosentinelle}
+      POSTGRES_USER: ${POSTGRES_USER:-biosentinelle}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biosentinelle_local}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks: [services]
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.5-alpine3.21
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis-data:/data
+    networks: [services]
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "redis-cli", "ping"]
+    restart: unless-stopped
+
+  migrate:
+    image: biosentinelle/backend:local
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    environment: *python-environment
+    command: ["alembic", "-c", "backend/alembic.ini", "upgrade", "head"]
+    networks: [services]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    image: biosentinelle/backend:local
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    environment: *python-environment
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ${DATA_ROOT:-./data}/datasets:/storage/datasets:ro
+      - ${DATA_ROOT:-./data}/models:/storage/models:ro
+      - ${DATA_ROOT:-./data}/checkpoints:/storage/checkpoints:ro
+      - ${DATA_ROOT:-./data}/documents:/storage/documents
+      - ${DATA_ROOT:-./data}/results:/storage/results
+    networks: [web, services]
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=6)"]
+    restart: unless-stopped
+    init: true
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:80"
+    networks: [web]
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/api/health"]
+    restart: unless-stopped
+
+  vision:
+    build:
+      context: .
+      dockerfile: workers/vision/Dockerfile
+      target: cpu
+    environment:
+      <<: *python-environment
+      REQUIRE_CUDA: "0"
+    volumes:
+      - ${DATA_ROOT:-./data}/datasets:/storage/datasets:ro
+      - ${DATA_ROOT:-./data}/models:/storage/models
+      - ${DATA_ROOT:-./data}/checkpoints:/storage/checkpoints
+      - ${DATA_ROOT:-./data}/results:/storage/results
+    networks: [services]
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "python", "-m", "shared.worker_health", "vision"]
+    # Un seul processus et une seule réplique ; aucun consommateur GPU à cette étape.
+    deploy:
+      replicas: 1
+    restart: unless-stopped
+    init: true
+
+  documents:
+    build:
+      context: .
+      dockerfile: workers/documents/Dockerfile
+    environment: *python-environment
+    volumes:
+      - ${DATA_ROOT:-./data}/documents:/storage/documents
+      - ${DATA_ROOT:-./data}/results:/storage/results
+    networks: [services]
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "python", "-m", "shared.worker_health", "documents"]
+    restart: unless-stopped
+    init: true
+
+  tests:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: test
+    environment:
+      <<: *python-environment
+      BASE_URL: http://backend:8000
+      FRONTEND_URL: http://frontend
+    networks: [web, services]
+    restart: "no"
+
+networks:
+  web:
+  services:
+    internal: true
+
+volumes:
+  postgres-data:
+  redis-data:
