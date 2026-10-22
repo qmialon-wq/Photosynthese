@@ -119,6 +119,22 @@ L'export contient coordonnées, cluster, espèce annotée, provenance, score d'a
 et exemples à revoir. Aucun label n'est modifié et aucun classificateur de production
 n'est enregistré à partir des clusters.
 
+## Étape 6 : comparaison contrôlée
+
+`evaluation.comparison.compare_classifiers` utilise le même manifeste, les mêmes
+hashes de crops, les mêmes classes, seuils et règles d'agrégation pour tous les
+modèles. Validation par défaut ; le test n'est jamais utilisé pour sélectionner
+un candidat. Les labels faibles exigent une option explicite et rendent le rapport
+inapte à une promotion automatique.
+
+Le rapport sépare classification intrinsèque par argmax, fonctionnement au seuil
+(abstentions incluses), couverture, erreurs, métriques par espèce, matrices,
+latence moyenne batchée, chargement, pic mémoire CUDA et taille des artefacts.
+Les échecs restent dans les dénominateurs ; ils ne gonflent pas artificiellement
+les scores. Les mesures vidéo utilisent uniquement une vérité vidéo humaine
+explicite, sinon elles restent absentes. Le rapport précise que ce benchmark de
+crops ne constitue pas une mesure end-to-end de MegaDetector.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \
