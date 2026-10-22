@@ -25,6 +25,7 @@ class Track:
     first_seconds: float
     last_seconds: float
     hits: int = 0
+    classified_hits: int = 0
     misses: int = 0
 
 
@@ -33,10 +34,17 @@ class IoUTracker:
         self,
         classes: ClassManifest,
         config: TrackingConfig,
-        classification_threshold: float = 0.48,
+        classification_threshold: float | None = None,
     ) -> None:
         self.classes, self.config = classes, config
-        self.threshold = classification_threshold
+        # Ancien argument conservé pour les appelants Python ; les commandes utilisent config.
+        self.threshold = (
+            config.confidence_threshold
+            if classification_threshold is None
+            else classification_threshold
+        )
+        self.updates = 0
+        self.matches = 0
         self.tracks: dict[int, Track] = {}
         self.next_id = 1
         self.last_timestamp = -1.0
@@ -51,11 +59,14 @@ class IoUTracker:
                 "Les instants de suivi doivent être strictement croissants et positifs"
             )
         for observation in observations:
+            if observation.prediction is None:
+                continue
             if len(observation.prediction.probabilities) != len(self.classes.names):
                 raise ValueError("Nombre de classes incompatible avec le tracker")
             if observation.prediction.label not in (*self.classes.names, None):
                 raise ValueError("Label incompatible avec le tracker")
         self.last_timestamp = timestamp
+        self.updates += 1
         pairs = sorted(
             (
                 (iou(observation.detection.box, track.box), index, track_id)
@@ -75,6 +86,7 @@ class IoUTracker:
             ):
                 assigned[index] = track_id
                 used.add(track_id)
+                self.matches += 1
         for track_id, track in self.tracks.items():
             if track_id not in used:
                 track.misses += 1
@@ -94,7 +106,8 @@ class IoUTracker:
             track = self.tracks[track_id]
             track.box, track.last_seconds, track.misses = observation.detection.box, timestamp, 0
             track.hits += 1
-            if observation.prediction.label is not None:
+            if observation.prediction is not None:
+                track.classified_hits += 1
                 track.votes = [
                     a + b
                     for a, b in zip(track.votes, observation.prediction.probabilities, strict=True)
@@ -118,11 +131,28 @@ class IoUTracker:
                     "track_id": track.track_id,
                     "hits": track.hits,
                     "label": prediction.label
-                    if prediction and track.hits >= self.config.min_hits
+                    if prediction and track.classified_hits >= self.config.min_hits
                     else None,
                     "first_seconds": track.first_seconds,
                     "last_seconds": track.last_seconds,
                     "confidence": max(prediction.probabilities) if prediction else None,
+                    "classified_hits": track.classified_hits,
+                    "misses": track.misses,
+                    "active": track.misses <= self.config.max_misses,
+                    "probabilities": prediction.probabilities if prediction else None,
                 }
             )
         return result
+
+    def metrics(self) -> dict[str, Any]:
+        summaries = self.summaries()
+        return {
+            "algorithm": "greedy_iou",
+            "updates": self.updates,
+            "associations": self.matches,
+            "tracks_created": len(summaries),
+            "tracks_confirmed": sum(t["label"] is not None for t in summaries),
+            "tracks_expired": sum(not t["active"] for t in summaries),
+            "quality_metrics_available": False,
+            "note": "IDF1/MOTA exigent des trajectoires de référence annotées",
+        }

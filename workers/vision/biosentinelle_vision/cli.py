@@ -23,6 +23,16 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(prog="biosentinelle-vision")
     root.add_argument("--classes-manifest", type=Path)
     commands = root.add_subparsers(dest="command", required=True)
+    from .training.cli import register
+
+    register(commands)
+    commands.add_parser("detector-info", help="Vérifier la version et les signatures MegaDetector")
+    commands.add_parser(
+        "detector-fetch", help="Télécharger explicitement MDv5a dans le volume modèles"
+    )
+    image_test = commands.add_parser("detect-image", help="Tester une image et dessiner les boîtes")
+    image_test.add_argument("--image", type=Path)
+    image_test.add_argument("--output-dir", type=Path)
     inv = commands.add_parser("inventory", help="Inventorier et séparer les vidéos locales")
     inv.add_argument("directory", type=Path)
     inv.add_argument("--output", type=Path, required=True)
@@ -62,6 +72,7 @@ def parser() -> argparse.ArgumentParser:
         analysis.add_argument("--inbox", type=Path)
         analysis.add_argument("--video", help="Chemin relatif d'une vidéo dans inbox")
         analysis.add_argument("--force", action="store_true", default=None)
+        analysis.add_argument("--detection-only", action="store_true", default=None)
     return root
 
 
@@ -71,6 +82,54 @@ def main(argv: list[str] | None = None) -> int:
     try:
         settings = VisionSettings()
         classes = load_classes(args.classes_manifest or settings.classes_manifest)
+        from .training.cli import COMMANDS, dispatch
+
+        if args.command in COMMANDS:
+            return dispatch(args, settings, classes)
+        if args.command == "detector-fetch":
+            from .detection.weights import fetch_weights
+
+            print(
+                json.dumps(
+                    fetch_weights(settings.detector_weights or Path("data/models/md_v5a.0.0.pt"))
+                )
+            )
+            return 0
+        if args.command == "detector-info":
+            from .detection.megadetector import api_diagnostics
+
+            print(json.dumps(api_diagnostics()))
+            return 0
+        if args.command == "detect-image":
+            from io import BytesIO
+
+            from PIL import Image
+
+            from .detection.megadetector import MegaDetector
+            from .inference.render import draw_detections
+
+            image_path = args.image or settings.diagnostic_image
+            if image_path is None or settings.detector_weights is None:
+                raise VisionError("Fournir --image (ou IMAGE avec Make) et des poids locaux")
+            storage = LocalStorage(args.output_dir or settings.output_root / "detector-test")
+            with exclusive_gpu(settings.device, settings.gpu_lock_path):
+                detector = MegaDetector(settings.detector_weights, settings)
+                with Image.open(image_path) as image:
+                    image = image.convert("RGB")
+                    detections = detector.detect(image)
+                    annotated = draw_detections(image, detections)
+                buffer = BytesIO()
+                annotated.save(buffer, format="JPEG", quality=95)
+                storage.write_bytes("annotated.jpg", buffer.getvalue())
+                report = {
+                    "detector_identity": detector.identity,
+                    "api": detector.diagnostics,
+                    "detections": [d.model_dump() for d in detections],
+                    "visualization": str(storage.path("annotated.jpg")),
+                }
+                storage.write_json("detections.json", report)
+            print(json.dumps(report))
+            return 0
         if args.command == "prepare-training":
             from .datasets.prepare import prepare_training
             from .detection.megadetector import MegaDetector
@@ -139,6 +198,12 @@ def main(argv: list[str] | None = None) -> int:
                     )
                 )
             else:
+                if settings.device == "cuda":
+                    from .training.commands import enqueue_training
+
+                    settings.training.database_metrics = True
+                    print(json.dumps(enqueue_training(settings)))
+                    return 0
                 result = train_from_manifest(settings, classes)
                 print(
                     json.dumps(
@@ -159,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
                     "inbox_root": args.inbox,
                     "analysis_video": args.video,
                     "analysis_force": args.force,
+                    "detection_only": args.detection_only,
                 }.items()
                 if value is not None
             }

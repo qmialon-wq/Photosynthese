@@ -29,6 +29,8 @@ def select_samples(
         if record.frame.split is None:
             raise ManifestError("Séparer les vidéos avant de préparer les crops")
         groups[record.frame.group_id].add(record.frame.split)
+        groups[f"video:{record.frame.video_id}"].add(record.frame.split)
+        groups[f"image:{record.image_key}"].add(record.frame.split)
     if any(len(splits) > 1 for splits in groups.values()):
         raise ManifestError("Fuite de groupe vidéo entre ensembles")
     for record in sorted(

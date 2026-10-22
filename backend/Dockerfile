@@ -22,7 +22,7 @@ COPY workers /app/workers
 COPY infra/init_storage.py /app/infra/init_storage.py
 RUN pip install --no-cache-dir --no-deps /app/workers/vision
 USER biosentinelle
-CMD ["pytest", "-m", "not integration and not gpu"]
+CMD ["pytest", "-m", "not integration and not gpu and not real_model"]
 
 FROM test AS vision-test-ml
 USER root

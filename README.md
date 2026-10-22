@@ -5,8 +5,32 @@ pgvector 0.8.1, Redis et deux workers Python indépendants. Les modules vision
 extraits du notebook V3 sont utilisables explicitement depuis Python ou la CLI :
 voir le [guide vision](workers/vision/README.md) et la
 [correspondance des cellules](workers/vision/NOTEBOOK_MIGRATION.md).
-Aucun poids ni modèle entraîné n'est fourni ; aucun pipeline n'est lancé par
-le worker au démarrage. L'ingestion documentaire et le RAG restent à développer.
+Aucun poids ni modèle entraîné n'est distribué dans Git. Le mode ML active
+l'analyse vidéo asynchrone, sans chargement de modèle avant une tâche.
+L'ingestion documentaire et le RAG restent à développer.
+
+L'[inférence vidéo et son API](workers/vision/INFERENCE.md) incluent le
+téléchargement explicite vérifié de MegaDetector, le diagnostic de son API,
+un test image avec boîtes et une intégration facultative avec modèles réels.
+
+```sh
+make detector-fetch
+make inference-up DEVICE=cuda
+```
+
+Déposer les vidéos dans `data/datasets/inbox/`, puis soumettre
+`POST /vision/analyses` (exemples PowerShell dans le guide). Les tâches passent
+par Redis ; les MP4, rapports et statistiques sont récupérables depuis l'API.
+Le démarrage CPU du socle reste `docker compose up -d`, sans modèles requis.
+
+Le [guide d'entraînement local](workers/vision/TRAINING.md) décrit les phases
+ConvNeXt/EfficientNetV2, AMP, reprise, métriques PostgreSQL et garde-fous du
+fine-tuning du détecteur. Le manifeste conserve les **10 classes confirmées**.
+
+```sh
+make training-up DEVICE=cuda
+make train-classifier BATCH_SIZE=2 ACCUMULATION_STEPS=4
+```
 
 ## Classer les vidéos du dépôt
 
@@ -80,9 +104,11 @@ Pour entraîner uniquement sur une revue humaine :
 make train DEVICE=cuda ALLOW_FILENAME_LABELS=0 MANIFEST=/storage/results/vision/review.json
 ```
 
-Le meilleur checkpoint est écrit dans `data/checkpoints/classifier_v3_best.pt`,
-l'historique dans `data/results/vision/training_history.json`. Une nouvelle session
-d'entraînement peut remplacer ce checkpoint : sauvegarder un modèle à conserver.
+Chaque run écrit `data/checkpoints/<run_id>/best.pt` et `last.pt` (reprise complète),
+avec son historique sous `data/results/vision/training/<run_id>/`. Le fichier
+historique `classifier_v3_best.pt` n'est pas remplacé automatiquement : sélectionner
+le nouveau `best.pt` avec `CHECKPOINT=...` pour l'inférence. Le parcours `train`
+sur CUDA soumet maintenant sa tâche à Redis et nécessite le worker ML démarré.
 Sans checkpoint initial, les poids sont initialisés aléatoirement ; aucun transfert
 ImageNet n'est téléchargé automatiquement. Exemple avec un checkpoint compatible :
 

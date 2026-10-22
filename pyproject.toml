@@ -12,5 +12,6 @@ markers = [
   "ml: dépendances PyTorch/timm facultatives, testable sur CPU",
   "integration: nécessite les services Compose démarrés",
   "gpu: nécessite PyTorch CUDA et un GPU NVIDIA",
+  "real_model: intégration facultative avec vidéo locale et modèles réels",
 ]
-addopts = "-ra -m 'not integration and not gpu'"
+addopts = "-ra -m 'not integration and not gpu and not real_model'"

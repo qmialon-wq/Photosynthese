@@ -16,3 +16,7 @@ class GpuBusyError(ModelError):
 
 class ManifestError(VisionError):
     pass
+
+
+class TrainingInterrupted(VisionError):
+    """Arrêt demandé ; le dernier checkpoint d'époque reste reprenable."""

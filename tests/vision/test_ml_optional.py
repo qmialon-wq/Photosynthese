@@ -52,6 +52,9 @@ def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
                 )
             )
     settings = VisionSettings(
+        device="cpu",
+        train_manifest=storage.path("review.json"),
+        initial_checkpoint=None,
         output_root=storage.root,
         checkpoint_root=tmp_path / "checkpoints",
         training=TrainingConfig(

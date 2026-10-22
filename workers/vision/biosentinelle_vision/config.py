@@ -30,16 +30,28 @@ class SplitConfig(BaseModel):
 
 
 class TrackingConfig(BaseModel):
+    confidence_threshold: float = Field(default=0.60, ge=0, le=1)
     iou_threshold: float = Field(default=0.18, gt=0, le=1)
     max_misses: int = Field(default=5, ge=0)
     min_hits: int = Field(default=2, ge=1)
 
 
 class TrainingConfig(BaseModel):
+    model_config = {"extra": "forbid"}
     allow_filename_labels: bool = False
     model_name: str = "convnext_tiny"
-    image_size: int = Field(default=256, ge=32)
-    batch_size: int = Field(default=4, ge=1)
+    image_size: int = Field(default=224, ge=32)
+    batch_size: int = Field(default=2, ge=1)
+    accumulation_steps: int = Field(default=4, ge=1)
+    amp: Literal["auto", "off", "float16", "bfloat16"] = "auto"
+    deterministic: bool = True
+    balance_exponent: float = Field(default=0.5, ge=0, le=1)
+    balance_max_ratio: float = Field(default=3, ge=1)
+    oom_retries: int = Field(default=3, ge=0)
+    run_id: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,80}$")
+    resume_checkpoint: Path | None = None
+    video_truth_manifest: Path | None = None
+    database_metrics: bool = False
     num_workers: int = Field(default=0, ge=0)
     epochs_head: int = Field(default=6, ge=1)
     epochs_finetune: int = Field(default=18, ge=1)
@@ -66,6 +78,8 @@ class VisionSettings(BaseSettings):
     inbox_root: Path = Path("data/datasets/inbox")
     analysis_video: str = ""
     analysis_force: bool = False
+    detection_only: bool = False
+    diagnostic_image: Path | None = None
     watch_poll_seconds: float = Field(default=2, gt=0, allow_inf_nan=False)
     watch_stable_seconds: float = Field(default=10, ge=0, allow_inf_nan=False)
     device: Literal["cpu", "cuda"] = "cpu"

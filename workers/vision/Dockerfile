@@ -18,6 +18,8 @@ FROM dependencies AS ml
 USER root
 COPY workers/vision/requirements-ml-cpu.txt /tmp/requirements-ml-cpu.txt
 RUN pip install --no-cache-dir -r /tmp/requirements-ml-cpu.txt
+COPY workers/vision/requirements-training.txt /tmp/requirements-training.txt
+RUN pip install --no-cache-dir -r /tmp/requirements-training.txt
 COPY shared /app/shared
 COPY workers /app/workers
 RUN pip install --no-cache-dir --no-deps /app/workers/vision

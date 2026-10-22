@@ -140,11 +140,25 @@ services:
     healthcheck:
       <<: *healthcheck
       test: ["CMD", "python", "-m", "shared.worker_health", "vision"]
-    # Un seul processus et une seule réplique ; aucun consommateur GPU à cette étape.
+    # Consommateur unique activé explicitement par le fichier Compose ML.
     deploy:
       replicas: 1
     restart: unless-stopped
     init: true
+
+  detector-download:
+    profiles: [tools]
+    build:
+      context: .
+      dockerfile: workers/vision/Dockerfile
+      target: cpu
+    environment:
+      BIOSENTINELLE_VISION_DETECTOR_WEIGHTS: /storage/models/md_v5a.0.0.pt
+    volumes:
+      - ${DATA_ROOT:-./data}/models:/storage/models
+    networks: [web]
+    command: ["biosentinelle-vision", "detector-fetch"]
+    restart: "no"
 
   documents:
     build:

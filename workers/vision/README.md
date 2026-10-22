@@ -1,5 +1,12 @@
 # Package `biosentinelle_vision`
 
+Le [guide d'inférence](INFERENCE.md) décrit le couple MegaDetector testé,
+le provisionnement des poids, les diagnostics image, l'API asynchrone,
+les seuils indépendants et le schéma des rapports vidéo v2.
+
+Le [guide d'entraînement](TRAINING.md) décrit les runs reprenables, AMP,
+l'accumulation, les métriques SQL/JSON et l'interface distincte pour le détecteur.
+
 Extraction modulaire du notebook historique V3. La correspondance des **27 cellules**
 et les divergences fonctionnelles sont dans [NOTEBOOK_MIGRATION.md](NOTEBOOK_MIGRATION.md).
 Le notebook original reste à la racine et n'est pas exécuté par ce package.
@@ -248,4 +255,5 @@ poids officiels contrôlés par empreinte MD5, a traité deux images de
 `Chevreuil-Scene-010.mp4` et produit deux recadrages sans erreur, hors réseau.
 Ce test limité est conservé sous `data/results/vision/real-preparation-smoke/` ;
 la préparation complète des 343 vidéos et l'entraînement du dataset ne sont
-pas exécutés par les tests. Le nouveau pipeline complet sur GPU reste à vérifier.
+pas exécutés par les tests. L'inférence GPU a depuis été vérifiée avec la vidéo
+réelle et le checkpoint local : voir [les résultats de validation](INFERENCE.md#validation-locale).

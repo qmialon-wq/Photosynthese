@@ -8,18 +8,24 @@ from redis import Redis
 from sqlalchemy import create_engine, text
 
 from app.config import database_url, redis_url
+from app.training import router as training_router
+from app.vision import router as vision_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.database = create_engine(database_url(), pool_pre_ping=True)
-    app.state.redis = Redis.from_url(redis_url(), socket_connect_timeout=2, socket_timeout=2)
+    app.state.redis = Redis.from_url(
+        redis_url(), socket_connect_timeout=2, socket_timeout=2, decode_responses=True
+    )
     yield
     app.state.redis.close()
     app.state.database.dispose()
 
 
 app = FastAPI(title="BioSentinelle Normandie", version="0.1.0", lifespan=lifespan)
+app.include_router(vision_router)
+app.include_router(training_router)
 
 
 @app.get("/health")

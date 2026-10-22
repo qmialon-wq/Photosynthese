@@ -33,12 +33,13 @@ def draw_tracks(frame: "NDArray", observations: Sequence[TrackedObservation]) ->
         box, prediction = item.observation.detection.box, item.observation.prediction
         left, top = int(box.x * width), int(box.y * height)
         right, bottom = int((box.x + box.w) * width), int((box.y + box.h) * height)
-        color = (0, 210, 0) if prediction.label is not None else (0, 180, 255)
+        color = (0, 210, 0) if prediction is not None and prediction.label else (0, 180, 255)
         cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
-        label = prediction.label or "incertain"
+        label = (prediction.label or "incertain") if prediction else "non classe"
+        score = f" cls={max(prediction.probabilities):.2f}" if prediction else ""
         cv2.putText(
             frame,
-            f"#{item.track_id} {label} {max(prediction.probabilities):.2f}",
+            f"#{item.track_id} {label} det={item.observation.detection.confidence:.2f}{score}",
             (left, max(18, top - 7)),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.55,

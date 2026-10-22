@@ -6,7 +6,7 @@ from ..schemas import Detection, Prediction, Record
 
 class Observation(Record):
     detection: Detection
-    prediction: Prediction
+    prediction: Prediction | None = None
 
 
 class TrackedObservation(Record):
@@ -22,3 +22,5 @@ class Tracker(Protocol):
     ) -> tuple[TrackedObservation, ...]: ...
 
     def summaries(self) -> list[dict[str, Any]]: ...
+
+    def metrics(self) -> dict[str, Any]: ...

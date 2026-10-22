@@ -5,6 +5,7 @@ from typing import Any
 from PIL.Image import Image
 
 from ..classes import ClassManifest
+from ..datasets.inventory import file_hash
 from ..errors import ModelError
 from ..schemas import Prediction
 from .preprocessing import build_transform
@@ -50,6 +51,12 @@ class TorchClassifier:
             if device == "cuda" and not torch.cuda.is_available():
                 raise ModelError("CUDA demandé mais indisponible")
             data = torch.load(checkpoint, map_location="cpu", weights_only=True)
+            self.metadata = {
+                "sha256": file_hash(checkpoint),
+                "model_name": data["model_name"],
+                "image_size": data["img_size"],
+                "label_provenance": data.get("label_provenance", {"status": "unknown"}),
+            }
             classes.check_checkpoint(data)
             self.model = create_model(data["model_name"], classes)
             self.model.load_state_dict(data["state_dict"], strict=True)

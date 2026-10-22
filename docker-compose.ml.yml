@@ -5,6 +5,7 @@ services:
     build:
       target: ml
     environment:
+      VISION_CONSUME_JOBS: "1"
       BIOSENTINELLE_VISION_INBOX_ROOT: /storage/datasets/inbox
       BIOSENTINELLE_VISION_TRAIN_MANIFEST: /storage/results/vision/training.json
       BIOSENTINELLE_VISION_DETECTOR_WEIGHTS: /storage/models/md_v5a.0.0.pt

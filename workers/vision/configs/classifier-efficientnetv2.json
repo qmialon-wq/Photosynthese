@@ -1,0 +1,18 @@
+{
+  "train_manifest": "/storage/results/vision/review.json",
+  "output_root": "/storage/results/vision",
+  "checkpoint_root": "/storage/checkpoints",
+  "seed": 42,
+  "training": {
+    "model_name": "tf_efficientnetv2_b0",
+    "image_size": 224,
+    "batch_size": 2,
+    "accumulation_steps": 4,
+    "amp": "auto",
+    "num_workers": 0,
+    "epochs_head": 6,
+    "epochs_finetune": 18,
+    "patience": 6,
+    "allow_filename_labels": false
+  }
+}

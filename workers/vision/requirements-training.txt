@@ -1,0 +1,3 @@
+# Dépendances SQL optionnelles de l'image ML ; versions identiques au backend.
+psycopg==3.2.9
+psycopg-binary==3.2.9

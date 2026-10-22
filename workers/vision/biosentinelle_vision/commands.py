@@ -60,7 +60,11 @@ def training_samples(settings: VisionSettings, classes: ClassManifest) -> tuple[
     return samples
 
 
-def train_from_manifest(settings: VisionSettings, classes: ClassManifest) -> dict[str, Any]:
+def train_from_manifest(
+    settings: VisionSettings,
+    classes: ClassManifest,
+    stop: threading.Event | None = None,
+) -> dict[str, Any]:
     from .training.engine import train
 
     samples = training_samples(settings, classes)
@@ -71,6 +75,7 @@ def train_from_manifest(settings: VisionSettings, classes: ClassManifest) -> dic
             classes,
             settings,
             initial_checkpoint=settings.initial_checkpoint,
+            stop=stop,
         )
     except ImportError as exc:
         raise ModelError("Dépendances ML absentes : construire l'image avec make ml-build") from exc
@@ -97,23 +102,27 @@ def input_videos(settings: VisionSettings) -> tuple[Path, ...]:
     )
 
 
-def _weights(settings: VisionSettings) -> tuple[Path, Path]:
+def _weights(settings: VisionSettings) -> tuple[Path, Path | None]:
     detector, classifier = settings.detector_weights, settings.classifier_checkpoint
     if detector is None or not detector.is_file():
         raise ModelError(f"Poids MegaDetector locaux absents : {detector}")
-    if classifier is None or not classifier.is_file():
+    if not settings.detection_only and (classifier is None or not classifier.is_file()):
         raise ModelError(f"Checkpoint classificateur absent : {classifier}. Exécuter make train.")
-    return detector, classifier
+    return detector, None if settings.detection_only else classifier
 
 
-def _load_models(settings: VisionSettings, classes: ClassManifest) -> tuple[Detector, Classifier]:
+def _load_models(
+    settings: VisionSettings, classes: ClassManifest
+) -> tuple[Detector, Classifier | None]:
     from .classification.model import TorchClassifier
     from .detection.megadetector import MegaDetector
 
     detector_path, classifier_path = _weights(settings)
     return (
         MegaDetector(detector_path, settings),
-        TorchClassifier(
+        None
+        if classifier_path is None
+        else TorchClassifier(
             classifier_path,
             classes,
             device=settings.device,
@@ -134,8 +143,9 @@ def run_analyses(
     with exclusive_gpu(settings.device, settings.gpu_lock_path):
         detector_path, classifier_path = _weights(settings)
         identity = {
+            "pipeline_version": "2",
             "detector": file_hash(detector_path),
-            "classifier": file_hash(classifier_path),
+            "classifier": file_hash(classifier_path) if classifier_path is not None else None,
             "classes": classes.model_dump(mode="json"),
             "threshold": settings.classification_threshold,
             "detection_threshold": settings.detection_threshold,
@@ -161,11 +171,12 @@ def run_analyses(
                     artifacts_exist = (
                         storage.path(f"{prefix}/annotated.mp4").is_file()
                         and storage.path(f"{prefix}/report.json").is_file()
+                        and storage.path(f"{prefix}/statistics.json").is_file()
                     )
                     if previous["status"] == "error" or artifacts_exist:
                         results.append({**previous, "skipped": True})
                         continue
-                if detector is None or classifier is None:
+                if detector is None:
                     detector, classifier = _load_models(settings, classes)
                 logger.info("Analyse de %s", relative)
                 state: dict[str, Any] = {
@@ -181,7 +192,7 @@ def run_analyses(
                         video,
                         detector,
                         classifier,
-                        IoUTracker(classes, settings.tracking, settings.classification_threshold),
+                        IoUTracker(classes, settings.tracking),
                         classes,
                         storage,
                         settings,

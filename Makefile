@@ -33,18 +33,28 @@ config:
 
 # Les valeurs sont transmises par l'environnement, jamais interpolées dans le shell.
 DEVICE ?= cpu
+IMAGE ?=
+REAL_VIDEO ?= /storage/datasets/inbox/test.mp4
+INFER_STRIDE ?= 2
 VIDEO ?=
 MANIFEST ?= /storage/results/vision/training.json
 ALLOW_FILENAME_LABELS ?= 1
 DETECTOR ?= /storage/models/md_v5a.0.0.pt
 CHECKPOINT ?= /storage/checkpoints/classifier_v3_best.pt
-BATCH_SIZE ?= 4
+BATCH_SIZE ?= 2
+ACCUMULATION_STEPS ?= 4
+IMAGE_SIZE ?= 224
+TRAIN_CONFIG ?= /app/workers/vision/configs/classifier-rtx3050.json
 EPOCHS_HEAD ?= 6
 EPOCHS_FINETUNE ?= 18
 FORCE ?= 0
 POLL_SECONDS ?= 2
 STABLE_SECONDS ?= 10
 export BIOSENTINELLE_VISION_DEVICE = $(DEVICE)
+export BIOSENTINELLE_VISION_DIAGNOSTIC_IMAGE = $(IMAGE)
+export BIOSENTINELLE_VISION_INFER_EVERY_N_FRAMES = $(INFER_STRIDE)
+export BIOSENTINELLE_REAL_VIDEO = $(REAL_VIDEO)
+export BIOSENTINELLE_REAL_OUTPUT = /storage/results/vision/integration
 export BIOSENTINELLE_VISION_TRAIN_MANIFEST = $(MANIFEST)
 export BIOSENTINELLE_VISION_DETECTOR_WEIGHTS = $(DETECTOR)
 export BIOSENTINELLE_VISION_CLASSIFIER_CHECKPOINT = $(CHECKPOINT)
@@ -53,15 +63,20 @@ export BIOSENTINELLE_VISION_ANALYSIS_FORCE = $(FORCE)
 export BIOSENTINELLE_VISION_WATCH_POLL_SECONDS = $(POLL_SECONDS)
 export BIOSENTINELLE_VISION_WATCH_STABLE_SECONDS = $(STABLE_SECONDS)
 export BIOSENTINELLE_VISION_TRAINING__BATCH_SIZE = $(BATCH_SIZE)
+export BIOSENTINELLE_VISION_TRAINING__ACCUMULATION_STEPS = $(ACCUMULATION_STEPS)
+export BIOSENTINELLE_VISION_TRAINING__IMAGE_SIZE = $(IMAGE_SIZE)
 export BIOSENTINELLE_VISION_TRAINING__ALLOW_FILENAME_LABELS = $(ALLOW_FILENAME_LABELS)
 export BIOSENTINELLE_VISION_TRAINING__EPOCHS_HEAD = $(EPOCHS_HEAD)
 export BIOSENTINELLE_VISION_TRAINING__EPOCHS_FINETUNE = $(EPOCHS_FINETUNE)
 
 ML_ENV = --env BIOSENTINELLE_VISION_DEVICE --env BIOSENTINELLE_VISION_TRAIN_MANIFEST \
+	--env BIOSENTINELLE_VISION_INFER_EVERY_N_FRAMES \
 	--env BIOSENTINELLE_VISION_DETECTOR_WEIGHTS \
 	--env BIOSENTINELLE_VISION_CLASSIFIER_CHECKPOINT \
 	--env BIOSENTINELLE_VISION_ANALYSIS_VIDEO --env BIOSENTINELLE_VISION_ANALYSIS_FORCE \
 	--env BIOSENTINELLE_VISION_TRAINING__BATCH_SIZE \
+	--env BIOSENTINELLE_VISION_TRAINING__ACCUMULATION_STEPS \
+	--env BIOSENTINELLE_VISION_TRAINING__IMAGE_SIZE \
 	--env BIOSENTINELLE_VISION_TRAINING__ALLOW_FILENAME_LABELS \
 	--env BIOSENTINELLE_VISION_TRAINING__EPOCHS_HEAD \
 	--env BIOSENTINELLE_VISION_TRAINING__EPOCHS_FINETUNE \
@@ -105,3 +120,44 @@ analyze: ml-init
 
 watch: ml-init
 	$(ML_COMPOSE) run --build --rm --no-deps $(ML_ENV) vision biosentinelle-vision watch
+
+.PHONY: detector-fetch detector-info detector-test inference-up
+detector-fetch: ml-init
+	docker compose --profile tools run --build --rm --no-deps detector-download
+
+detector-info: ml-init
+	$(ML_COMPOSE) run --build --rm --no-deps vision biosentinelle-vision detector-info
+
+detector-test: ml-init
+	$(ML_COMPOSE) run --build --rm --no-deps $(ML_ENV) --env BIOSENTINELLE_VISION_DIAGNOSTIC_IMAGE vision biosentinelle-vision detect-image
+
+inference-up:
+	$(ML_COMPOSE) up -d --build --wait
+
+.PHONY: inference-test
+inference-test: ml-init
+	$(ML_COMPOSE) run --build --rm --no-deps $(ML_ENV) --env BIOSENTINELLE_REAL_VIDEO --env BIOSENTINELLE_REAL_OUTPUT --volume ./tests:/app/tests:ro --volume ./pyproject.toml:/app/pyproject.toml:ro vision python -m pytest /app/tests/vision/test_real_inference.py -m real_model -p no:cacheprovider
+
+export BIOSENTINELLE_TRAIN_CONFIG = $(TRAIN_CONFIG)
+ifneq ($(strip $(RESUME)),)
+export BIOSENTINELLE_TRAIN_RESUME = $(RESUME)
+TRAIN_ENV = --env BIOSENTINELLE_TRAIN_RESUME
+endif
+
+.PHONY: training-up train-classifier evaluate-classifier training-tests
+training-up: inference-up
+
+train-classifier: MANIFEST = /storage/results/vision/review.json
+train-classifier: ml-init
+	docker compose run --build --rm --no-deps $(ML_ENV) $(TRAIN_ENV) --env BIOSENTINELLE_TRAIN_CONFIG vision biosentinelle-vision train-classifier
+
+evaluate-classifier: MANIFEST = /storage/results/vision/review.json
+evaluate-classifier: ml-init
+	$(ML_COMPOSE) run --build --rm --no-deps $(ML_ENV) vision biosentinelle-vision evaluate-classifier
+
+training-tests: ml-init
+	$(ML_COMPOSE) run --build --rm --no-deps --volume ./tests:/app/tests:ro --volume ./pyproject.toml:/app/pyproject.toml:ro vision python -m pytest /app/tests/vision/test_training_resume.py /app/tests/vision/test_ml_optional.py -m ml -p no:cacheprovider
+
+.PHONY: training-gpu-test
+training-gpu-test: training-up
+	$(ML_COMPOSE) run --rm --no-deps --env BIOSENTINELLE_TRAINING_QUEUE_TEST=1 --volume ./tests:/app/tests:ro --volume ./pyproject.toml:/app/pyproject.toml:ro vision python -m pytest /app/tests/vision/test_training_gpu_queue.py -m gpu -p no:cacheprovider

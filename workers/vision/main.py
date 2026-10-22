@@ -8,7 +8,12 @@ def main() -> None:
         from workers.vision.cuda_check import check_cuda
 
         check_cuda()
-    run("vision")
+    if os.getenv("VISION_CONSUME_JOBS", "0") == "1":
+        from biosentinelle_vision.job_worker import run as consume
+
+        consume()
+    else:
+        run("vision")
 
 
 if __name__ == "__main__":
