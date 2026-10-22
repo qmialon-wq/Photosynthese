@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 from biosentinelle_vision.classification.embeddings import extract_cached
+from biosentinelle_vision.errors import ManifestError
 from biosentinelle_vision.storage import LocalStorage
 from biosentinelle_vision.training.embedding import train_embedding_classifier
 
@@ -90,3 +91,28 @@ def test_classical_selection_never_trains_on_validation_or_test(tmp_path, classe
     assert metadata["skipped"][0]["algorithm"] == "linear_svm"
     assert metadata["weak_validation"] is False
     assert result["checkpoint"].endswith("model.json")
+    assert Path(metadata["pretrained_manifest"]) != asset
+    with pytest.raises(ManifestError, match="existe déjà"):
+        train_embedding_classifier(Path(index["index"]), tmp_path / "model", asset)
+
+
+def test_cancelled_extraction_stops_before_inference(tmp_path, classes):
+    from biosentinelle_vision.errors import TrainingInterrupted
+    from biosentinelle_vision.schemas import CropsManifest
+
+    settings, records = synthetic_training(tmp_path, classes)
+    extractor = TestOnlyExtractor()
+
+    def cancelled():
+        raise TrainingInterrupted("test cancellation")
+
+    with pytest.raises(TrainingInterrupted):
+        extract_cached(
+            CropsManifest(class_manifest_version=classes.version, crops=records),
+            LocalStorage(settings.output_root),
+            LocalStorage(tmp_path / "cache"),
+            extractor,
+            classes,
+            check_cancelled=cancelled,
+        )
+    assert extractor.calls == 0

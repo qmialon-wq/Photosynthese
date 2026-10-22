@@ -44,6 +44,14 @@ def prepare_dataset(
     if min_side < 1 or not 0 <= margin <= 1:
         raise ManifestError("Paramètres de qualité invalides")
     by_id = {v.video_id: v for v in inventory.videos}
+    group_splits: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for video in inventory.videos:
+        if video.split is not None:
+            for kind, key in (("sequence", video.group_id), ("content", video.content_hash)):
+                if key:
+                    group_splits[kind, key].add(video.split)
+    if any(len(splits) > 1 for splits in group_splits.values()):
+        raise ManifestError("Groupe de séquences ou contenu identique entre splits")
     rejected, accepted, details = [], [], []
     for record in manifest.crops:
         video = by_id.get(record.frame.video_id)
@@ -80,7 +88,10 @@ def prepare_dataset(
             rejected.append({"crop_id": record.crop_id, "reason": "blurry_or_too_small"})
             continue
         frame = record.frame.model_copy(
-            update={"group_id": video.content_hash, "species_candidate": video.species_candidate}
+            update={
+                "group_id": video.group_id or video.content_hash,
+                "species_candidate": video.species_candidate,
+            }
         )
         record = record.model_copy(update={"frame": frame})
         accepted.append(record)
@@ -91,6 +102,7 @@ def prepare_dataset(
                 "image_sha256": hashlib.sha256(image_bytes).hexdigest(),
                 "source_video": video.relative_path,
                 "source_video_sha256": video.content_hash,
+                "group_id": frame.group_id,
                 "frame_index": frame.frame_index,
                 "time_seconds": frame.time_seconds,
                 "box": record.box.model_dump(),
@@ -98,7 +110,8 @@ def prepare_dataset(
                 "label_source": "human" if human else "filename_weak",
                 "split": frame.split,
                 "quality": descriptor,
-                "margin": margin,
+                "margin_assumption": margin,
+                "foreground_fraction_method": "geometric_prior_not_measured",
                 "foreground_fraction_estimate": 1 / (1 + 2 * margin) ** 2,
             }
         )

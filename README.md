@@ -1,5 +1,11 @@
 # BioSentinelle Normandie
 
+Le moteur de classification alternatif (CNN préentraîné local, embeddings et
+classifieurs classiques, comparaisons, promotion et rollback) est documenté dans
+[CLASSIFICATION_ALTERNATIVE.md](workers/vision/CLASSIFICATION_ALTERNATIVE.md).
+Les dix classes et le champion existant sont conservés ; aucun entraînement ni
+remplacement de modèle n'est déclenché au démarrage.
+
 Socle local Docker : FastAPI, Vue 3 + TypeScript + Vite, PostgreSQL 16 avec
 pgvector 0.8.1, Redis et deux workers Python indépendants. Les modules vision
 extraits du notebook V3 sont utilisables explicitement depuis Python ou la CLI :

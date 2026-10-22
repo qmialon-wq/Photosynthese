@@ -1,6 +1,6 @@
 """Contrats de soumission sans dépendances ML ; calculs réservés au worker."""
 
-from typing import Literal
+from typing import Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -80,3 +80,37 @@ class Promotion(OperationBody):
 
 class Rollback(OperationBody):
     reason: str = Field(min_length=3, max_length=2000)
+
+
+def freeze_comparison(body: Comparison) -> dict[str, Any]:
+    from shared.review.database import ReviewError, transaction
+
+    if len(set(body.model_ids)) != len(body.model_ids):
+        raise ReviewError("Sélectionner des modèles distincts", 422)
+    if body.split == "test" and (not body.confirm_final_test or body.allow_weak_labels):
+        raise ReviewError(
+            "Test final : confirmation explicite et annotations humaines requises", 422
+        )
+    with transaction() as connection:
+        rows = connection.execute(
+            "SELECT * FROM console_models WHERE id=ANY(%s)", (body.model_ids,)
+        ).fetchall()
+    if len(rows) != len(body.model_ids) or any(r["status"] == "archived" for r in rows):
+        raise ReviewError("Modèle absent ou archivé", 422)
+    if body.split == "test" and any(r["status"] not in ("active", "validated") for r in rows):
+        raise ReviewError(
+            "Réserver le test final aux modèles déjà sélectionnés sur validation", 422
+        )
+    payload = body.model_dump(mode="json", exclude={"model_ids", "confirm_final_test"})
+    payload["models"] = [
+        {
+            "model_id": str(r["id"]),
+            "version": r["version"] or str(r["id"]),
+            "classifier_family": r["family"],
+            "checkpoint": r["checkpoint_key"],
+            "sha256": r["sha256"],
+            "preprocessing_version": r["preprocessing_version"],
+        }
+        for r in rows
+    ]
+    return payload

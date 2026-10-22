@@ -52,6 +52,35 @@ def evaluate_classifier(
 ) -> dict[str, Any]:
     if settings.train_manifest is None or settings.classifier_checkpoint is None:
         raise ManifestError("Fournir un manifeste de recadrages et un checkpoint")
+    if settings.classifier_version is not None:
+        from ..evaluation.comparison import compare_classifiers
+
+        report = compare_classifiers(
+            settings.train_manifest,
+            settings.output_root,
+            [settings.classifier_version],
+            settings.output_root / "classifier_evaluation_comparison.json",
+            classes,
+            split=split,
+            threshold=settings.classification_threshold,
+            batch_size=settings.training.batch_size,
+            device=settings.device,
+            lock=settings.gpu_lock_path,
+            video_truth=load_video_truth(settings.training.video_truth_manifest, classes),
+        )
+        row = report["models"][0]
+        result = {
+            **row["metrics"],
+            "images": row["metrics"],
+            "videos": row["videos"],
+            "human_validated": report["human_validated"],
+            "split": split,
+            "checkpoint": row["model"],
+            "operating_metrics": row["operating_metrics"],
+            "error": row["error"],
+        }
+        LocalStorage(settings.output_root).write_json("classifier_evaluation.json", result)
+        return result
     source = CropsManifest.model_validate_json(settings.train_manifest.read_text(encoding="utf-8"))
     if source.class_manifest_version != classes.version:
         raise ManifestError("Manifeste incompatible avec les classes")

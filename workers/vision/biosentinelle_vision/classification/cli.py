@@ -2,9 +2,18 @@
 
 import argparse
 import json
-from uuid import uuid4
+from uuid import UUID, uuid4
 
-from shared.classification_jobs import Clustering, DatasetPreparation, EmbeddingTraining, Extract
+from shared.classification_jobs import (
+    Clustering,
+    Comparison,
+    DatasetPreparation,
+    EmbeddingTraining,
+    Extract,
+    Promotion,
+    Rollback,
+    freeze_comparison,
+)
 
 
 def main() -> None:
@@ -29,6 +38,23 @@ def main() -> None:
     prepare = commands.add_parser("prepare-dataset")
     prepare.add_argument("--allow-weak-labels", action="store_true")
     prepare.add_argument("--keep-blurry", action="store_true")
+    compare = commands.add_parser("compare-classifiers")
+    compare.add_argument("--manifest-key", required=True)
+    compare.add_argument("--storage-key", default="")
+    compare.add_argument("--model-ids", nargs="+", required=True)
+    compare.add_argument("--split", choices=("val", "test"), default="val")
+    compare.add_argument("--confirm-final-test", action="store_true")
+    compare.add_argument("--allow-weak-labels", action="store_true")
+    compare.add_argument("--video-truth-key")
+    compare.add_argument("--threshold", type=float, default=0.48)
+    compare.add_argument("--batch-size", type=int, default=2)
+    promote = commands.add_parser("promote-model")
+    promote.add_argument("--candidate-id", type=UUID, required=True)
+    promote.add_argument("--comparison-id", type=UUID, required=True)
+    promote.add_argument("--manual-reason", default="")
+    rollback = commands.add_parser("rollback-model")
+    rollback.add_argument("--model-id", type=UUID, required=True)
+    rollback.add_argument("--reason", required=True)
     for command in (extract, train):
         command.add_argument("--architecture", default="tf_efficientnetv2_b0")
     args = vars(parser.parse_args())
@@ -37,10 +63,21 @@ def main() -> None:
         "train-embeddings": "embeddings_train",
         "cluster-embeddings": "embeddings_cluster",
         "prepare-dataset": "classification_dataset",
+        "compare-classifiers": "classifiers_compare",
+        "promote-model": "model_promote",
+        "rollback-model": "model_rollback",
     }[args.pop("kind")]
     if kind == "classification_dataset":
         args["exclude_blurry"] = not args.pop("keep_blurry")
         args = DatasetPreparation.model_validate(args).model_dump()
+    elif kind == "classifiers_compare":
+        args = freeze_comparison(Comparison.model_validate(args))
+    elif kind == "model_promote":
+        candidate = str(args.pop("candidate_id"))
+        args = {"candidate_id": candidate, **Promotion.model_validate(args).model_dump(mode="json")}
+    elif kind == "model_rollback":
+        model = str(args.pop("model_id"))
+        args = {"model_id": model, **Rollback.model_validate(args).model_dump(mode="json")}
     elif kind == "embeddings_extract":
         args = Extract.model_validate(args).model_dump()
     elif kind == "embeddings_train":

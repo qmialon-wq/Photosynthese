@@ -42,8 +42,10 @@ def freeze_asset(manifest: Path) -> Path:
     frozen = {**data, "weights_key": weights.name}
     destination = LocalStorage(weights.parent)
     target = destination.path("manifest.json")
-    if target.exists() and json.loads(target.read_text(encoding="utf-8")) != frozen:
-        raise ModelError("Conflit de version des poids généralistes")
+    if target.exists():
+        if json.loads(target.read_text(encoding="utf-8")) != frozen:
+            raise ModelError("Conflit de version des poids généralistes")
+        return target
     destination.write_json("manifest.json", frozen)
     return target
 

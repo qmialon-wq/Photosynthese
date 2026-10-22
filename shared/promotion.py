@@ -92,8 +92,14 @@ def assess(
             "gain": gain,
             "policy": policy.model_dump(),
         }
+    names = [row["name"] for row in report["classes"]["classes"]]
+    actual_support = {
+        name: len({row["video_id"] for row in base_rows if row["truth"] == name}) for name in names
+    }
     insufficient = len(base_rows) < policy.min_samples or any(
-        n < policy.min_videos_per_class for n in report["video_support"].values()
+        min(actual_support[name], report["video_support"].get(name, 0))
+        < policy.min_videos_per_class
+        for name in names
     )
     if insufficient:
         return {
@@ -106,7 +112,6 @@ def assess(
     for i, row in enumerate(base_rows):
         by_video[row["video_id"]].append(i)
     video_ids = sorted(by_video)
-    names = [row["name"] for row in report["classes"]["classes"]]
     rng, differences = random.Random(policy.seed), []
     for _ in range(policy.bootstrap_samples):
         indices = [i for video in rng.choices(video_ids, k=len(video_ids)) for i in by_video[video]]

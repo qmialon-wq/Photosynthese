@@ -25,6 +25,7 @@ def test_benchmark_is_reproducible_uses_human_labels_and_warns_sparse(tmp_path, 
                 video_id=c.frame.video_id,
                 relative_path=c.crop_id + ".mp4",
                 content_hash=c.crop_id,
+                group_id="sequence-" + c.frame.video_id,
                 split=c.frame.split,
             )
             for c in source.crops
@@ -37,6 +38,18 @@ def test_benchmark_is_reproducible_uses_human_labels_and_warns_sparse(tmp_path, 
     rows = json.loads(destination.read_bytes(a["dataset_version"] + "/manifest.json"))["samples"]
     assert all(r["label_source"] == "human" and len(r["image_sha256"]) == 64 for r in rows)
     assert rows[0]["source_video"].endswith(".mp4")
+    assert rows[0]["group_id"].startswith("sequence-")
+    assert rows[0]["foreground_fraction_method"] == "geometric_prior_not_measured"
+    crossed = list(inventory.videos)
+    crossed[10] = crossed[10].model_copy(update={"group_id": crossed[0].group_id})
+    with pytest.raises(ManifestError, match="entre splits"):
+        prepare_dataset(
+            source,
+            inventory.model_copy(update={"videos": tuple(crossed)}),
+            LocalStorage(tmp_path),
+            destination,
+            classes,
+        )
     # Une copie inter-split ne peut entrer dans un benchmark.
     (tmp_path / source.crops[10].image_key).write_bytes(
         (tmp_path / source.crops[0].image_key).read_bytes()

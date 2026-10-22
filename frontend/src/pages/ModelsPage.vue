@@ -122,6 +122,16 @@ async function activate() {
             )
           }}</strong>
         </div>
+        <p
+          v-if="
+            model.metrics.validation?.human_validated === false ||
+            model.metadata.label_provenance?.validation_human_validated ===
+              false
+          "
+          class="notice"
+        >
+          Métriques sur labels provisoires ; validation humaine encore requise.
+        </p>
         <dl class="facts">
           <div>
             <dt>Enregistré le</dt>

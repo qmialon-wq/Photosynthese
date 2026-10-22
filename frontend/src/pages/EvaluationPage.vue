@@ -8,7 +8,8 @@ const models = useResource<Model[]>(() => "/console/models", 8000),
   datasets = useResource<Dataset[]>(() => "/review/datasets", 10000);
 const selected = ref(String(route.query.model || "")),
   datasetId = ref(""),
-  split = ref("test"),
+  split = ref("val"),
+  confirmFinalTest = ref(false),
   taskId = ref(""),
   evaluation = ref<Metrics | null>(null),
   busy = ref(false),
@@ -33,6 +34,7 @@ async function evaluate() {
       await post<Operation>(`/console/models/${selected.value}/evaluate`, {
         dataset_id: datasetId.value,
         split: split.value,
+        confirm_final_test: confirmFinalTest.value,
       })
     ).id;
   } catch (reason) {
@@ -89,6 +91,9 @@ const evaluations = useResource<Task[]>(
           <option value="test">Test</option>
           <option value="val">Validation</option>
         </select></label
+      ><label v-if="split === 'test'">
+        <input type="checkbox" v-model="confirmFinalTest" required />
+        Je confirme l’évaluation finale du modèle sélectionné </label
       ><PButton
         type="submit"
         label="Lancer l’évaluation"

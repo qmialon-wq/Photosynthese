@@ -47,7 +47,10 @@ def test_jobs_are_async_scoped_and_do_not_import_ml():
 
 
 @pytest.mark.usefixtures("console_db")
-def test_comparison_freezes_registry_versions_and_protects_test():
+def test_comparison_freezes_registry_versions_and_protects_test(monkeypatch):
+    from app import console as routes
+
+    monkeypatch.setattr(routes, "dataset_ready", lambda _: {})
     identifier = str(uuid4())
     with transaction() as connection:
         connection.execute(
@@ -80,3 +83,32 @@ def test_comparison_freezes_registry_versions_and_protects_test():
         )
         assert response.status_code == 202
         assert console.task(response.json()["id"])["kind"] == "model_promote"
+        response = client.post(
+            f"/console/models/{identifier}/evaluate",
+            json={"dataset_id": "a" * 64, "split": "val"},
+        )
+        assert response.status_code == 202, response.text
+        assert console.task(response.json()["id"])["request"]["model"]["family"] == "embedding"
+        assert (
+            client.post(
+                f"/console/models/{identifier}/evaluate",
+                json={"dataset_id": "a" * 64, "split": "test"},
+            ).status_code
+            == 422
+        )
+
+
+def test_export_is_confined_to_results(console_db, monkeypatch, tmp_path):  # noqa: F811
+    row = {"status": "completed", "kind": "embeddings_cluster", "result": {}}
+    monkeypatch.setattr(console, "task", lambda _: row)
+    console_db.output_root.mkdir(parents=True)
+    export = console_db.output_root / "cluster.json"
+    export.write_text('{"schema_version":"test-only"}')
+    row["result"]["report"] = str(export)
+    with TestClient(app) as client:
+        endpoint = f"/classification/tasks/{uuid4()}/artifact"
+        assert client.get(endpoint).json() == {"schema_version": "test-only"}
+        outside = tmp_path / "outside.json"
+        outside.write_text('{"private":true}')
+        row["result"]["report"] = str(outside)
+        assert client.get(endpoint).status_code == 404

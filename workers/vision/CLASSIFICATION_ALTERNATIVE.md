@@ -185,6 +185,9 @@ make classification-dataset
 make embeddings-extract ARGS="--manifest-key benchmark/versions/<version>/training.json"
 make embeddings-train ARGS="--index-key embeddings/datasets/<index>.json --output-key embeddings/experience-01"
 make embeddings-cluster ARGS="--index-key embeddings/datasets/<index>.json --output-key exploration/experience-01.json"
+make classifiers-compare ARGS="--manifest-key benchmark/versions/<version>/training.json --model-ids <champion> <candidat>"
+make classifier-promote ARGS="--candidate-id <candidat> --comparison-id <comparaison>"
+make classifier-rollback ARGS="--model-id <ancien-champion> --reason 'Retour après examen humain'"
 ```
 
 `manifest-key`, `index-key` et `storage-key` sont relatifs à
@@ -207,6 +210,8 @@ L'API `/docs`, accessible sur http://localhost:8000/docs, expose :
 - `POST /classification/models/{id}/promote` : `comparison_id`, `manual_reason` si échantillon insuffisant.
 - `POST /classification/models/{id}/rollback` : `reason` obligatoire, ancien champion vérifié.
 - `GET /classification/models/{id}/history` : décisions et acteurs.
+- `GET /classification/tasks/{id}/artifact` : téléchargement JSON d'un export terminé.
+- `GET /classification/models/{id}` et `POST .../archive` : détail et archivage hors champion.
 
 Exemple de comparaison (PowerShell ; remplacer les identifiants) :
 
@@ -227,6 +232,62 @@ L'administration propose ImageNet ou initialisation aléatoire explicite, les qu
 backbones et le shadow facultatif. Les nouvelles opérations de comparaison et
 d'exploration sont accessibles par API/CLI ; aucune galerie de clusters complète
 n'est ajoutée à ce stade.
+
+## Étape 10 : vérifications et limites des résultats
+
+Vérifié localement le 22 octobre 2026 : 150 tests CPU/intégration réussis,
+9 tests unitaires Vue, 10 parcours Playwright avec API contrôlée et un parcours
+navigateur sur vraie vidéo avec l'API et le worker Docker. Les deux tests GPU
+facultatifs réussissent sur RTX 3050 Ti 4 Go : entraînement ImageNet local puis
+rechargement, et extraction réelle d'embeddings puis modèle logistique rechargeable.
+Ruff, TypeScript/Vite, configuration Compose et healthchecks passent. La vidéo
+diagnostique contient 60 frames : six analysées, six crops et six prédictions,
+avec MP4 lisible et téléchargement JSON. Ces résultats vérifient l'exécution,
+pas l'exactitude des espèces prédites.
+
+La préparation réelle via la file Redis a également réussi : version
+`6f817a0ba1ad059d1cc9db850a18b2dee79916b494a9d32d269c22358715ea51`,
+54 crops humains après qualité et quotas (27 train, 27 test, aucun val). Le
+respect des splits historiques explique cette répartition. Il faut compléter la
+validation humaine sur les vidéos de validation avant une comparaison qualifiante.
+Le champion `b99161f9-d87b-4a4e-8abb-25fd806be768` est conservé.
+
+Les groupes de séquences explicitement présents dans l'inventaire sont conservés
+et contrôlés, en plus des SHA de vidéos. La similarité visuelle ne retrouve pas
+toutes les séquences d'une même caméra. Pour les crops historiques sans marge
+enregistrée, `margin_assumption` et l'estimation géométrique de premier plan sont
+des hypothèses déclarées, jamais des mesures de segmentation.
+
+La suite CPU vérifie imports, classes, qualité/splits, cache, sélection classique,
+checkpoint/reprise, OOM, comparaison, shadow, migrations, API et persistance. Les
+fixtures synthétiques servent uniquement à vérifier la mécanique. Pour exécuter
+également les tests ML sans GPU :
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.web-tests.yml --profile test run --build --rm tests pytest -m 'not gpu and not real_model'
+```
+
+Test GPU facultatif, après préparation explicite des poids B0 et avec le worker au
+repos (aucun téléchargement dans le test) :
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml -f docker-compose.ml.yml run --rm --no-deps -v ./tests:/app/tests:ro -v ./pyproject.toml:/app/pyproject.toml:ro vision python -m pytest /app/tests/vision/test_real_pretrained_gpu.py -m 'gpu and real_model' -p no:cacheprovider
+```
+
+Le corpus audité contient 343 vidéos inventoriées, dont 325 représentées dans les
+recadrages historiques. L'écart avec les 342 vidéos annoncées est conservé dans
+l'audit : aucune vidéo n'est retirée pour faire correspondre un chiffre attendu.
+Les noms restent des labels provisoires. Les validations humaines disponibles
+ne constituent pas encore un benchmark équilibré des dix espèces. Aucun gain de
+qualité du nouveau moteur n'est donc affirmé, et le champion n'est pas remplacé.
+La validation vidéo requiert une vérité vidéo humaine explicite ; le vote des crops
+n'en crée pas une. Le rapport sur crops ne mesure pas les animaux manqués par le
+détecteur. Une comparaison end-to-end exige des annotations vidéo indépendantes.
+
+L'acteur `X-Reviewer` reste une identité déclarative locale ; ce changement
+n'introduit pas de système d'authentification. Les artefacts joblib sont exclusivement
+des fichiers locaux de confiance produits par ce worker, jamais des poids distants
+chargés arbitrairement. La révision et les empreintes des poids sont conservées.
 
 ```sh
 docker compose --profile test run --rm --no-deps \

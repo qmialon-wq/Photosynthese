@@ -15,7 +15,7 @@ from ..classification.contracts import ModelVersion
 from ..classification.factory import load_classifier
 from ..datasets.benchmark import canonical
 from ..datasets.inventory import file_hash
-from ..errors import ManifestError
+from ..errors import ManifestError, ModelError, TrainingInterrupted
 from ..schemas import CropsManifest
 from ..storage import LocalStorage
 from ..storage.gpu import exclusive_gpu
@@ -114,11 +114,19 @@ def compare_classifiers(
             classifier = None
             began = time.perf_counter()
             predictions, times, peak, failure = [], [], None, None
+            warmup_ms = None
             try:
                 classifier = load_classifier(
                     version, classes, device=device, threshold=threshold, batch_size=batch_size
                 )
                 loaded = time.perf_counter() - began
+                warmup_images = []
+                for record in records[:batch_size]:
+                    with Image.open(storage.path(record.image_key)) as image:
+                        warmup_images.append(image.convert("RGB"))
+                warmup_start = time.perf_counter()
+                classifier.predict_batch(warmup_images)
+                warmup_ms = (time.perf_counter() - warmup_start) * 1000
                 if device == "cuda":
                     import torch
 
@@ -139,6 +147,8 @@ def compare_classifiers(
                     predictions.extend(batch)
                 if device == "cuda":
                     peak = torch.cuda.max_memory_allocated()
+            except TrainingInterrupted:
+                raise
             except Exception as exc:
                 failure = f"{type(exc).__name__}: {exc}"
                 loaded = time.perf_counter() - began
@@ -190,17 +200,20 @@ def compare_classifiers(
                 )
             size = version.checkpoint.stat().st_size if version.checkpoint.is_file() else None
             if version.classifier_family == "embedding" and version.checkpoint.is_file():
-                descriptor = json.loads(version.checkpoint.read_text(encoding="utf-8"))
-                size += (
-                    LocalStorage(version.checkpoint.parent)
-                    .path(descriptor["model_key"])
-                    .stat()
-                    .st_size
-                )
-                from ..classification.pretrained import load_asset
+                try:
+                    descriptor = json.loads(version.checkpoint.read_text(encoding="utf-8"))
+                    size += (
+                        LocalStorage(version.checkpoint.parent)
+                        .path(descriptor["model_key"])
+                        .stat()
+                        .st_size
+                    )
+                    from ..classification.pretrained import load_asset
 
-                _, extractor_weights = load_asset(Path(descriptor["pretrained_manifest"]))
-                size += extractor_weights.stat().st_size
+                    _, extractor_weights = load_asset(Path(descriptor["pretrained_manifest"]))
+                    size += extractor_weights.stat().st_size
+                except (OSError, ValueError, KeyError, ModelError):
+                    size = None
             model_results.append(
                 {
                     "model": version.model_dump(mode="json"),
@@ -214,6 +227,7 @@ def compare_classifiers(
                     "failure_rate": sum(r["status"] == "error" for r in rows) / len(records),
                     "mean_inference_ms": sum(times) / len(times) if times else None,
                     "load_seconds": loaded,
+                    "warmup_ms": warmup_ms,
                     "gpu_peak_allocated_bytes": peak,
                     "model_bytes": size,
                     "predictions": rows,

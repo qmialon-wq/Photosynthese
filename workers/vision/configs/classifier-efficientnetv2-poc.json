@@ -6,6 +6,7 @@
   "gpu_lock_path": "/storage/results/.vision-gpu.lock",
   "seed": 42,
   "training": {
+    "initialization": "scratch",
     "run_id": "efficientnetv2-poc-v1",
     "model_name": "tf_efficientnetv2_b0",
     "image_size": 224,

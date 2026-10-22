@@ -20,6 +20,16 @@ embeddings-train:
 embeddings-cluster:
 	docker compose exec vision python -m biosentinelle_vision.classification.cli cluster-embeddings $(ARGS)
 
+.PHONY: classifiers-compare classifier-promote classifier-rollback
+classifiers-compare:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli compare-classifiers $(ARGS)
+
+classifier-promote:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli promote-model $(ARGS)
+
+classifier-rollback:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli rollback-model $(ARGS)
+
 up:
 	docker compose up -d --build --wait
 

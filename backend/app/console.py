@@ -91,7 +91,8 @@ class ModelRegistration(Body):
 
 class Evaluation(Body):
     dataset_id: str = Field(pattern=r"^[a-f0-9]{64}$")
-    split: Literal["val", "test"] = "test"
+    split: Literal["val", "test"] = "val"
+    confirm_final_test: bool = False
 
 
 def dataset_ready(identifier: str) -> dict[str, Any]:
@@ -395,7 +396,7 @@ def train(body: Training, actor: Actor) -> dict[str, Any]:
         or not any(row["split"] == "val" for row in samples)
     ):
         raise ReviewError(
-            "Le dataset doit avoir les 10 classes validées dans train et un split val non vide", 422
+            "Le dataset doit avoir des labels train connus et un split val non vide", 422
         )
     return console.submit("training", body.model_dump(), actor)
 
@@ -423,10 +424,16 @@ def evaluate(identifier: UUID, body: Evaluation, actor: Actor) -> dict[str, Any]
     dataset_ready(body.dataset_id)
     with transaction() as connection:
         row = connection.execute(
-            "SELECT id,checkpoint_key,sha256 FROM console_models WHERE id=%s", (identifier,)
+            """SELECT id,checkpoint_key,sha256,family,version,preprocessing_version,status
+            FROM console_models WHERE id=%s""",
+            (identifier,),
         ).fetchone()
     if row is None:
         raise ReviewError("Modèle inconnu", 404)
+    if body.split == "test" and (
+        not body.confirm_final_test or row["status"] not in ("active", "validated")
+    ):
+        raise ReviewError("Confirmer le test final d'un modèle sélectionné sur validation", 422)
     return console.submit(
         "evaluation", {**body.model_dump(), "model": {**row, "id": str(row["id"])}}, actor
     )

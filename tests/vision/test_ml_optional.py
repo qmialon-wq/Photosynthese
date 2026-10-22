@@ -58,6 +58,7 @@ def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
         output_root=storage.root,
         checkpoint_root=tmp_path / "checkpoints",
         training=TrainingConfig(
+            initialization="scratch",
             allow_filename_labels=provisional,
             model_name="mobilenetv3_small_050",
             image_size=32,
