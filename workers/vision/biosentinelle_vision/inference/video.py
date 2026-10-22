@@ -74,6 +74,7 @@ def _analyze_video(
     settings: VisionSettings,
     output_key: str,
     report_key: str,
+    progress: Callable[[int, int], None] | None = None,
 ) -> dict[str, Any]:
     import cv2
 
@@ -102,6 +103,8 @@ def _analyze_video(
         if not writer.isOpened():
             raise VideoError("Impossible d'ouvrir l'encodeur vidéo MP4")
         while True:
+            if progress:
+                progress(frame_count, expected_count)
             ok, frame = cap.read()
             if not ok:
                 break

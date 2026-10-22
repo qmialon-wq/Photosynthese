@@ -7,6 +7,7 @@ import logging
 import sys
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -17,7 +18,7 @@ from .classification.base import Classifier
 from .config import VisionSettings
 from .datasets.inventory import VIDEO_EXTENSIONS, file_hash
 from .detection.base import Detector
-from .errors import GpuBusyError, ManifestError, ModelError, VideoError
+from .errors import GpuBusyError, ManifestError, ModelError, TrainingInterrupted, VideoError
 from .inference.video import _analyze_video
 from .schemas import CropRecord, CropsManifest
 from .storage import LocalStorage
@@ -136,6 +137,7 @@ def run_analyses(
     videos: tuple[Path, ...],
     settings: VisionSettings,
     classes: ClassManifest,
+    progress: Callable[[int, int], None] | None = None,
 ) -> list[dict[str, Any]]:
     if not videos:
         return []
@@ -198,6 +200,7 @@ def run_analyses(
                         settings,
                         f"{prefix}/annotated.mp4",
                         f"{prefix}/report.json",
+                        progress,
                     )
                     after = video.stat()
                     if (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
@@ -205,6 +208,8 @@ def run_analyses(
                             "Vidéo modifiée pendant l'analyse ; recopier puis réessayer"
                         )
                     state["status"] = "completed"
+                except TrainingInterrupted:
+                    raise
                 except Exception as exc:
                     state.update(status="error", error=f"{type(exc).__name__}: {exc}")
                     logger.error("Échec de %s : %s", relative, exc)

@@ -9,6 +9,12 @@ Aucun poids ni modèle entraîné n'est distribué dans Git. Le mode ML active
 l'analyse vidéo asynchrone, sans chargement de modèle avant une tâche.
 L'ingestion documentaire et le RAG restent à développer.
 
+Pour la validation humaine des recadrages, l'historique des corrections et les
+exports reproductibles, consulter [HUMAN_REVIEW.md](HUMAN_REVIEW.md).
+
+L'interface web à huit pages et ses parcours sont décrits dans
+[WEB_CONSOLE.md](WEB_CONSOLE.md).
+
 L'[inférence vidéo et son API](workers/vision/INFERENCE.md) incluent le
 téléchargement explicite vérifié de MegaDetector, le diagnostic de son API,
 un test image avec boîtes et une intégration facultative avec modèles réels.

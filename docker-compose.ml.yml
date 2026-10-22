@@ -4,6 +4,9 @@ services:
     image: biosentinelle/vision-ml:local
     build:
       target: ml
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     environment:
       VISION_CONSUME_JOBS: "1"
       BIOSENTINELLE_VISION_INBOX_ROOT: /storage/datasets/inbox

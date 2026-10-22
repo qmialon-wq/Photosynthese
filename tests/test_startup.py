@@ -3,6 +3,8 @@ import time
 
 import httpx
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from app.config import database_url, redis_url
 from redis import Redis
 from sqlalchemy import create_engine, text
@@ -34,7 +36,7 @@ def test_postgres_extension_and_migration() -> None:
             ).scalar_one()
             assert (
                 connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-                == "0001_enable_vector"
+                == ScriptDirectory.from_config(Config("backend/alembic.ini")).get_current_head()
             )
     finally:
         engine.dispose()

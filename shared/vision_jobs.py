@@ -46,6 +46,18 @@ class TrainingRequest(BaseModel):
     configuration: dict[str, Any]
 
 
+class ReviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["review"] = "review"
+    operation_id: str
+
+
+class ConsoleRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal["console"] = "console"
+    task_id: str
+
+
 class JobStore:
     def __init__(self, client: Redis) -> None:
         self.client = client
@@ -54,11 +66,15 @@ class JobStore:
     def key(job_id: str) -> str:
         return f"biosentinelle:vision:job:{job_id}"
 
-    def enqueue(self, request: AnalysisRequest | TrainingRequest) -> dict[str, Any]:
+    def enqueue(
+        self, request: AnalysisRequest | TrainingRequest | ReviewRequest | ConsoleRequest
+    ) -> dict[str, Any]:
         job = {
             "id": str(uuid4()),
             "status": "queued",
-            "kind": request.kind if isinstance(request, TrainingRequest) else "analysis",
+            "kind": request.kind
+            if isinstance(request, TrainingRequest | ReviewRequest | ConsoleRequest)
+            else "analysis",
             "request": request.model_dump(),
             "created_at": datetime.now(UTC).isoformat(),
         }

@@ -1,0 +1,5 @@
+services:
+  tests:
+    build:
+      target: vision-test-ml
+    command: ["pytest", "tests/test_console.py", "-m", "integration"]

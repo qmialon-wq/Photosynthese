@@ -161,3 +161,20 @@ training-tests: ml-init
 .PHONY: training-gpu-test
 training-gpu-test: training-up
 	$(ML_COMPOSE) run --rm --no-deps --env BIOSENTINELLE_TRAINING_QUEUE_TEST=1 --volume ./tests:/app/tests:ro --volume ./pyproject.toml:/app/pyproject.toml:ro vision python -m pytest /app/tests/vision/test_training_gpu_queue.py -m gpu -p no:cacheprovider
+
+.PHONY: review-up review-tests
+review-up: inference-up
+
+review-tests:
+	docker compose --profile test run --build --rm tests pytest tests/test_review.py tests/test_review_integration.py -m "not gpu"
+
+.PHONY: web-test web-e2e web-training-test
+NPM ?= npm
+web-test:
+	cd frontend && $(NPM) run test
+
+web-e2e:
+	cd frontend && $(NPM) run test:e2e
+
+web-training-test:
+	docker compose -f docker-compose.yml -f docker-compose.web-tests.yml --profile test run --build --rm tests

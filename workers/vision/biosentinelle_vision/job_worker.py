@@ -28,6 +28,21 @@ def execute_job(
     classes: ClassManifest,
     stop: threading.Event | None = None,
 ) -> dict[str, Any]:
+    if job.get("kind") == "console":
+        from shared.vision_jobs import ConsoleRequest
+
+        from .console_tasks import execute
+
+        return execute(
+            ConsoleRequest.model_validate(job["request"]).task_id, settings, classes, stop
+        )
+    if job.get("kind") == "review":
+        from shared.vision_jobs import ReviewRequest
+
+        from .review.operations import execute_operation
+
+        review = ReviewRequest.model_validate(job["request"])
+        return execute_operation(review.operation_id, settings, classes)
     if job.get("kind") in ("train_classifier", "evaluate_classifier"):
         from .commands import train_from_manifest
 
@@ -149,6 +164,16 @@ def run() -> None:
         heartbeat.start()
         logger.info("Consommateur vision prêt ; aucun modèle chargé avant une tâche")
         while not stop.is_set():
+            from shared.console import publish_pending as publish_console
+            from shared.review.outbox import publish_pending
+
+            try:
+                publish_pending(client)
+                publish_console(client)
+            except Exception:
+                logger.exception(
+                    "Publication de l'outbox de revue impossible ; nouvel essai au prochain tour"
+                )
             if not consume_one(client, settings, classes, stop):
                 stop.wait(1)
         if lost_lease.is_set():
