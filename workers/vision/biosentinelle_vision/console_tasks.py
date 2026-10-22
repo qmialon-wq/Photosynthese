@@ -278,6 +278,14 @@ def perform(
     from .datasets.inventory import file_hash
 
     payload, kind = row["request"], row["kind"]
+    from .classification.operations import KINDS
+    from .classification.operations import perform as perform_classification
+
+    if kind in KINDS:
+        check(stop)
+        result = perform_classification(kind, payload, settings)
+        check(stop)
+        return result
     check(stop)
     if kind in ("import_upload", "import_local"):
         return import_video(row, settings, classes, stop)

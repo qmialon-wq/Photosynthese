@@ -79,6 +79,34 @@ nouveau run avec `--initial-checkpoint`, pas une reprise prétendue identique.
 Une classe absente du train est signalée dans les métadonnées ; les dix sorties
 restent présentes. Train et validation doivent rester non vides.
 
+## Étape 4 : embeddings et modèles classiques
+
+L'extracteur alternatif est EfficientNetV2 B0 ImageNet gelé, plus léger que DINOv2
+pour ce poste et déjà compatible avec le runtime vérifié. Aucun fine-tuning de
+l'extracteur lors de l'extraction. Les vecteurs float32 sont mis en cache par hash
+d'image + hash des poids + profil de prétraitement. Les caches sont indépendants
+des labels et réutilisables après correction d'une annotation.
+
+La CLI asynchrone est `python -m biosentinelle_vision.classification.cli` :
+`extract-embeddings --manifest-key <clé/training.json>` et
+`train-embeddings --index-key embeddings/datasets/<version>.json --output-key <run>`.
+Les clés d'entrée sont relatives à results/vision ; les modèles à checkpoints.
+Ces commandes passent par l'outbox et le consommateur unique existants.
+
+La recherche bornée utilise train pour les transformations, validation pour la
+sélection macro-F1, jamais test. k-NN emploie une normalisation L2 ; logistique et
+SVM ont un StandardScaler dans leur pipeline. Les SVM sont calibrés par sigmoid
+avec des plis StratifiedGroupKFold calculés uniquement sur train ; une classe
+insuffisante dans ces plis fait ignorer ce candidat, sans calibration fictive.
+RBF est optionnel et limité à 5000 exemples. Les probabilités k-NN sont des votes
+pondérés, pas des distances converties arbitrairement ni une calibration garantie.
+
+`EmbeddingClassifier` implémente le même contrat et remet les scores dans les dix
+indices canoniques, y compris les classes absentes du train. Les fichiers joblib
+sont exclusivement des artefacts locaux produits par l'application ; leur intégrité
+et celle de l'extracteur sont contrôlées avant chargement. Ne pas charger de fichiers
+joblib externes non fiables. Le registre pourra les identifier par famille.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \
