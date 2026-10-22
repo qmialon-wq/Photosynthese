@@ -32,6 +32,26 @@ Les tests utilisent des fixtures réservées aux tests et un vrai petit checkpoi
 CPU créé explicitement depuis zéro, sans téléchargement. Cet entraînement de test
 ne constitue pas un modèle utilisable en production.
 
+## Étape 2 : manifestes de comparaison
+
+`python -m biosentinelle_vision.datasets.benchmark --manifest <training.json>
+--inventory <videos.json> --storage-root <results/vision> --output <versions>`
+enrichit un manifeste existant (utiliser le snapshot fusionné avec la revue humaine).
+Le mode par défaut exige une annotation humaine et exclut les images floues ou trop
+petites. `--allow-weak-labels` est une expérience explicite ; les vidéos signalées
+multi-espèces restent exclues de ce mode. Les slugs et noms latins viennent du
+référentiel. Aucun label ni split n'est écrit dans les sources.
+
+La version est le SHA-256 d'un manifeste canonique contenant hashes d'images,
+chemins des vidéos, instants, boîtes, provenance des labels, paramètres, qualité,
+doublons et avertissements. `training.json` conserve le format du moteur existant.
+Les quasi-doublons inter-splits font échouer la préparation, pour imposer un
+regroupement en amont ; aucun déplacement silencieux d'un exemple test.
+Les classes rares sont signalées, sans empêcher la production du manifeste.
+La fraction de premier plan est une estimation géométrique de la marge déclarée,
+pas une segmentation de l'animal. Les boîtes initiales et historiques corrigés
+restent dans la revue SQL ; la boîte de ce manifeste est celle effectivement utilisée.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \

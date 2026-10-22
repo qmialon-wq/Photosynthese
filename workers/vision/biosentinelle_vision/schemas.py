@@ -48,6 +48,7 @@ class VideoRecord(Record):
     error: str | None = None
     group_id: str | None = None
     split: Split | None = None
+    multispecies: bool | None = None
 
 
 class Inventory(Record):
