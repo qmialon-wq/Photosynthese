@@ -208,13 +208,14 @@ test("soumettre un entraînement, voir sa progression et demander son arrêt", a
             ]
           : [],
       });
-    if (path.endsWith("/review/datasets"))
+    if (path.endsWith("/console/training/datasets"))
       return route.fulfill({
         json: [
           {
             id: "a".repeat(64),
             name: "dataset-validé",
-            archive_sha256: "hash",
+            source: "review",
+            ready: true,
           },
         ],
       });
@@ -235,7 +236,7 @@ test("soumettre un entraînement, voir sa progression et demander son arrêt", a
     return route.fulfill({ json: [] });
   });
   await page.goto("/training");
-  await page.getByLabel("Dataset versionné").selectOption("a".repeat(64));
+  await page.getByLabel("Dataset d’entraînement").selectOption("a".repeat(64));
   await page.getByRole("button", { name: "Démarrer l’entraînement" }).click();
   await expect(page.getByText("1 / 6", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Demander l’arrêt" }).click();

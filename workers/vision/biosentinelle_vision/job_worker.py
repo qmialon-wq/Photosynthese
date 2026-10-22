@@ -18,6 +18,7 @@ from .classes import ClassManifest, load_classes
 from .commands import input_videos, run_analyses
 from .config import VisionSettings
 from .errors import GpuBusyError, TrainingInterrupted, VisionError
+from .storage import LocalStorage
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +64,32 @@ def execute_job(
         if config.training.resume_checkpoint is None and last.is_file():
             config.training.resume_checkpoint = last
         result = train_from_manifest(config, classes, stop)
+        if result.get("status") == "completed" and config.training.register_model_name:
+            from shared.console import activate_model
+
+            from .console_tasks import register_model
+
+            registered = register_model(
+                {
+                    "checkpoint_key": str(
+                        config.checkpoint_root.joinpath(
+                            config.training.run_id, "best.pt"
+                        ).relative_to(settings.checkpoint_root)
+                    ),
+                    "name": config.training.register_model_name,
+                },
+                "training-worker",
+                settings,
+                classes,
+                stop,
+            )
+            result.update(registered)
+            if config.training.activate_on_success:
+                result["activation"] = activate_model(registered["model_id"])
+            LocalStorage(config.output_root).write_json(
+                f"training/{config.training.run_id}/registration.json",
+                registered | {"activation": result.get("activation")},
+            )
         return result
     request = AnalysisRequest.model_validate(job["request"])
     updates = request.model_dump(exclude={"video", "track_threshold", "track_min_hits", "force"})

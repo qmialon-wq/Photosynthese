@@ -1,0 +1,26 @@
+{
+  "device": "cuda",
+  "train_manifest": "/storage/results/vision/poc/efficientnetv2-v1/training.json",
+  "output_root": "/storage/results/vision",
+  "checkpoint_root": "/storage/checkpoints",
+  "gpu_lock_path": "/storage/results/.vision-gpu.lock",
+  "seed": 42,
+  "training": {
+    "run_id": "efficientnetv2-poc-v1",
+    "model_name": "tf_efficientnetv2_b0",
+    "image_size": 224,
+    "batch_size": 2,
+    "accumulation_steps": 4,
+    "amp": "auto",
+    "num_workers": 0,
+    "epochs_head": 2,
+    "epochs_finetune": 30,
+    "patience": 8,
+    "head_lr": 0.001,
+    "finetune_lr": 0.0003,
+    "allow_filename_labels": true,
+    "database_metrics": true,
+    "register_model_name": "EfficientNetV2 B0 · POC v1 (labels provisoires)",
+    "activate_on_success": true
+  }
+}

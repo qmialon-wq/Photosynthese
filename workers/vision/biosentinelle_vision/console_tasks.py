@@ -13,6 +13,7 @@ from typing import Any
 from uuid import uuid4
 
 from shared import console
+from shared.base_dataset import BASE_DATASET_ID
 from shared.review.database import jsonb, transaction
 
 from .classes import ClassManifest
@@ -336,9 +337,21 @@ def perform(
         return result
     if kind not in ("training", "evaluation"):
         raise ValueError("Type de tâche inconnu")
-    root = materialize(payload["dataset_id"], settings, stop)
-    config.train_manifest = root / "training.json"
-    config.output_root = root
+    base_corpus = kind == "training" and payload["dataset_id"] == BASE_DATASET_ID
+    if base_corpus:
+        from .training.poc import prepare_snapshot
+
+        config.train_manifest = LocalStorage(settings.output_root).path(
+            f"console/datasets/base/{row['id']}/training.json"
+        )
+        progress(0, 0, "Préparation du corpus de base et des corrections humaines")
+        check(stop)
+        prepare_snapshot(config)
+        check(stop)
+    else:
+        root = materialize(payload["dataset_id"], settings, stop)
+        config.train_manifest = root / "training.json"
+        config.output_root = root
     if kind == "evaluation":
         from .training.commands import evaluate_classifier
 
@@ -351,7 +364,7 @@ def perform(
     config.training = TrainingConfig(
         **{k: v for k, v in payload.items() if k != "dataset_id"},
         run_id=str(row["id"]),
-        allow_filename_labels=False,
+        allow_filename_labels=base_corpus,
         database_metrics=True,
     )
     last = settings.checkpoint_root / str(row["id"]) / "last.pt"

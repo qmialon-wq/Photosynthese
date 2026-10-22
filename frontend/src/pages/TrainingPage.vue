@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { date, message, percent, post, useResource } from "../api";
-import type { Dataset, Epoch, Operation, Run, Task } from "../types";
+import type { TrainingDataset, Epoch, Operation, Run, Task } from "../types";
 const route = useRoute(),
   router = useRouter();
-const datasets = useResource<Dataset[]>(() => "/review/datasets", 10000);
+const datasets = useResource<TrainingDataset[]>(
+  () => "/console/training/datasets",
+  10000,
+);
 const tasks = useResource<Task[]>(() => "/console/tasks?kind=training", 3000);
 const runs = useResource<Run[]>(() => "/training/runs", 4000);
 const selected = ref(String(route.query.task || "")),
@@ -26,6 +29,11 @@ const config = ref({
   patience: 6,
   amp: "auto",
 });
+const selectedDataset = computed(() =>
+  datasets.data.value?.find(
+    (dataset) => dataset.id === config.value.dataset_id,
+  ),
+);
 async function launch() {
   busy.value = true;
   error.value = "";
@@ -61,17 +69,44 @@ function select(id: string) {
     <h2>Nouvel entraînement</h2>
     <form class="form-grid training-form" @submit.prevent="launch">
       <label class="wide"
-        >Dataset versionné<select v-model="config.dataset_id" required>
-          <option value="" disabled>Choisir un dataset validé</option>
+        >Dataset d’entraînement<select v-model="config.dataset_id" required>
+          <option value="" disabled>Choisir un dataset</option>
           <option
-            v-for="item in datasets.data.value?.filter((d) => d.archive_sha256)"
+            v-for="item in datasets.data.value"
             :key="item.id"
             :value="item.id"
+            :disabled="!item.ready"
           >
-            {{ item.name }} · {{ item.id.slice(0, 8) }}
+            {{ item.name
+            }}{{
+              item.source === "base" && item.video_count != null
+                ? ` · ${item.video_count} vidéos · labels provisoires`
+                : ` · ${item.id.slice(0, 8)}`
+            }}{{ !item.ready ? " · indisponible" : "" }}
           </option>
         </select></label
-      ><label
+      >
+      <div
+        v-if="selectedDataset?.source === 'base'"
+        class="notice wide"
+        role="status"
+      >
+        <strong
+          >Corpus de base · {{ selectedDataset.video_count }} vidéos
+          inventoriées</strong
+        >
+        <p>
+          {{ selectedDataset.crop_count }} recadrages préparés avant quotas et
+          corrections. {{ selectedDataset.warning }}
+        </p>
+        <p>
+          L’entraînement utilise les recadrages d’animaux, avec une séparation
+          par vidéo. Les vidéos de validation et de test restent réservées à
+          leurs ensembles. Les métriques sur labels provisoires doivent être
+          confirmées humainement.
+        </p>
+      </div>
+      <label
         >Backbone<select v-model="config.model_name">
           <option value="tf_efficientnetv2_b0">EfficientNetV2 B0</option>
           <option value="efficientnetv2_s">EfficientNetV2 S</option>
@@ -142,7 +177,16 @@ function select(id: string) {
     <p v-if="datasets.error.value" class="notice error" role="alert">
       {{ datasets.error.value }}
     </p>
-    <RouterLink v-if="datasets.data.value?.length === 0" to="/datasets"
+    <p
+      v-for="item in datasets.data.value?.filter((dataset) => !dataset.ready)"
+      :key="item.id"
+      class="muted"
+    >
+      {{ item.name }} : {{ item.unavailable_reason }}
+    </p>
+    <RouterLink
+      v-if="datasets.data.value?.every((dataset) => !dataset.ready)"
+      to="/admin/datasets"
       >Construire un premier dataset</RouterLink
     >
   </section>

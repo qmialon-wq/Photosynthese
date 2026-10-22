@@ -76,9 +76,20 @@ Le lien **Administration** ouvre `/admin` et ses pages de gestion ; le lien
    par espèce/split et les indicateurs de qualité, télécharger ou reconstruire
    son archive. Les exclusions choisies sont enregistrées. Les protections
    décrites dans [HUMAN_REVIEW.md](HUMAN_REVIEW.md) restent applicables.
-6. **Entraînements** : choisir un dataset exporté, un backbone, les paramètres
+6. **Entraînements** : choisir le **Corpus de base** ou un dataset exporté, un backbone, les paramètres
    de batch/accumulation, AMP, early stopping et les deux phases. Le backend
-   exige les dix classes validées dans train et une validation non vide.
+   exige les dix classes validées dans train et une validation non vide pour un
+   dataset de revue. Le corpus de base correspond aux vidéos de l'inventaire local
+   et aux recadrages MegaDetector déjà préparés ; son effectif est lu dans les fichiers,
+   sans valeur fixe. Ses labels de noms restent explicitement provisoires. Les
+   corrections humaines priment, les rejets sont exclus et les splits de l'inventaire
+   initial sont conservés. Un snapshot est créé dans le worker pour chaque tâche,
+   sous `data/results/vision/console/datasets/base/<tâche>/`, et réutilisé en reprise.
+   L'option reste visible mais désactivée si le corpus n'est pas préparé ; lancer
+   `make prepare-training DEVICE=cuda` pour préparer les recadrages. La liste est
+   fournie par `GET /console/training/datasets` ; `POST /console/training` accepte
+   `dataset_id="base"` ou l'identifiant d'une version de revue. Le choix du corpus
+   ne marque aucune annotation comme validée humainement et ne lance rien à lui seul.
    Le worker extrait et vérifie l'archive versionnée, entraîne le vrai modèle
    puis enregistre le meilleur checkpoint. Les métriques réelles sont publiées
    à chaque époque ; les journaux montrent les événements du worker. L'arrêt

@@ -12,6 +12,7 @@ from starlette.concurrency import run_in_threadpool
 
 from app.review import Actor, stored_file
 from shared import console
+from shared.base_dataset import BASE_DATASET_ID, describe_base_dataset
 from shared.review.database import ReviewError, transaction
 from shared.review.schemas import Operation
 from shared.vision_jobs import AnalysisRequest
@@ -60,7 +61,7 @@ class Analysis(Body):
 
 
 class Training(Body):
-    dataset_id: str = Field(pattern=r"^[a-f0-9]{64}$")
+    dataset_id: str = Field(pattern=r"^(base|[a-f0-9]{64})$")
     model_name: Literal["convnext_tiny", "tf_efficientnetv2_b0", "efficientnetv2_s"] = (
         "tf_efficientnetv2_b0"
     )
@@ -335,8 +336,34 @@ def artifact(identifier: UUID, artifact: Literal["video", "report", "statistics"
     return stored_file(f"{row['result']['output']}/{names[artifact]}")
 
 
+@router.get("/training/datasets")
+def training_datasets() -> list[dict[str, Any]]:
+    with transaction() as connection:
+        versions = connection.execute(
+            "SELECT id,name,archive_sha256 FROM review_datasets ORDER BY created_at DESC"
+        ).fetchall()
+    return [
+        describe_base_dataset(storage() / "results/vision"),
+        *[
+            {
+                "id": row["id"],
+                "name": row["name"],
+                "source": "review",
+                "ready": row["archive_sha256"] is not None,
+                "unavailable_reason": None if row["archive_sha256"] else "Export en cours",
+            }
+            for row in versions
+        ],
+    ]
+
+
 @router.post("/training", status_code=202, response_model=Operation)
 def train(body: Training, actor: Actor) -> dict[str, Any]:
+    if body.dataset_id == BASE_DATASET_ID:
+        base = describe_base_dataset(storage() / "results/vision")
+        if not base["ready"]:
+            raise ReviewError(base["unavailable_reason"], 422)
+        return console.submit("training", body.model_dump(), actor)
     dataset = dataset_ready(body.dataset_id)
     samples = dataset["manifest"]["samples"]
     train_labels = {row["label"] for row in samples if row["split"] == "train"}
@@ -363,15 +390,7 @@ def register_model(body: ModelRegistration, actor: Actor) -> dict[str, Any]:
 
 @router.post("/models/{identifier}/activate")
 def activate(identifier: UUID, actor: Actor) -> dict[str, Any]:
-    with transaction(write=True) as connection:
-        row = connection.execute(
-            "SELECT * FROM console_models WHERE id=%s", (identifier,)
-        ).fetchone()
-        if row is None:
-            raise ReviewError("Modèle inconnu", 404)
-        connection.execute("UPDATE console_models SET active=false WHERE active")
-        connection.execute("UPDATE console_models SET active=true WHERE id=%s", (identifier,))
-    return {"id": str(identifier), "active": True}
+    return console.activate_model(str(identifier))
 
 
 @router.post("/models/{identifier}/evaluate", status_code=202, response_model=Operation)

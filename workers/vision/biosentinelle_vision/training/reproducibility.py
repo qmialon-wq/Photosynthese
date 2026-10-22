@@ -20,7 +20,14 @@ def identity(
     settings: VisionSettings,
 ) -> str:
     config = settings.training.model_dump(
-        mode="json", exclude={"run_id", "resume_checkpoint", "database_metrics"}
+        mode="json",
+        exclude={
+            "run_id",
+            "resume_checkpoint",
+            "database_metrics",
+            "register_model_name",
+            "activate_on_success",
+        },
     )
     source = {
         "classes": classes.model_dump(mode="json"),

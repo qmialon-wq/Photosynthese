@@ -147,6 +147,13 @@ endif
 .PHONY: training-up train-classifier evaluate-classifier training-tests
 training-up: inference-up
 
+.PHONY: efficientnet-poc-check train-efficientnet-poc
+efficientnet-poc-check:
+	$(ML_COMPOSE) exec -T vision python -m biosentinelle_vision.training.poc --config /app/workers/vision/configs/classifier-efficientnetv2-poc.json
+
+train-efficientnet-poc:
+	$(ML_COMPOSE) exec -T vision python -m biosentinelle_vision.training.poc --config /app/workers/vision/configs/classifier-efficientnetv2-poc.json --submit
+
 train-classifier: MANIFEST = /storage/results/vision/review.json
 train-classifier: ml-init
 	docker compose run --build --rm --no-deps $(ML_ENV) $(TRAIN_ENV) --env BIOSENTINELLE_TRAIN_CONFIG vision biosentinelle-vision train-classifier

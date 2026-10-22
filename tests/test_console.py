@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 from threading import Event
 from unittest.mock import MagicMock
@@ -14,6 +15,68 @@ from shared.review.database import transaction
 
 pytestmark = pytest.mark.integration
 pytest_plugins = ["test_review_integration"]
+
+
+def test_base_corpus_choices_submit_and_worker_keep_provisional_labels(console_db, monkeypatch):
+    from biosentinelle_vision import commands, console_tasks
+    from biosentinelle_vision.training import poc
+
+    root = console_db.output_root
+    (root / "classification").mkdir(parents=True)
+    (root / "classification/videos.json").write_text(
+        json.dumps(
+            {
+                "class_manifest_version": "v3-10.1",
+                "videos": [{"video_id": "one"}, {"video_id": "two"}],
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "training.json").write_text(
+        json.dumps(
+            {
+                "class_manifest_version": "v3-10.1",
+                "crops": [{"crop_id": "fixture"}],
+            }
+        ),
+        encoding="utf-8",
+    )
+    prepare = MagicMock()
+    monkeypatch.setattr(poc, "prepare_snapshot", prepare)
+    train = MagicMock(return_value={"status": "completed", "checkpoint": "fixture-only"})
+    monkeypatch.setattr(commands, "train_from_manifest", train)
+    monkeypatch.setattr(
+        console_tasks, "register_model", MagicMock(return_value={"model_id": "fixture"})
+    )
+    with TestClient(app) as client:
+        choices = client.get("/console/training/datasets").json()
+        assert choices[0]["id"] == "base" and choices[0]["ready"]
+        assert choices[0]["video_count"] == 2 and choices[0]["crop_count"] == 1
+        response = client.post("/console/training", json={"dataset_id": "base"})
+        assert response.status_code == 202, response.text
+        identifier = response.json()["id"]
+        execute(identifier, console_db, load_classes())
+        task = client.get(f"/console/tasks/{identifier}").json()
+        assert task["status"] == "completed", task["error"]
+    config = train.call_args.args[0]
+    assert config.training.allow_filename_labels is True
+    assert config.output_root == root
+    assert config.train_manifest == root / f"console/datasets/base/{identifier}/training.json"
+    assert prepare.call_count == 1
+
+
+def test_base_corpus_missing_is_disabled_and_cannot_be_queued(console_db):
+    with TestClient(app) as client:
+        choices = client.get("/console/training/datasets").json()
+        assert choices[0]["id"] == "base" and choices[0]["ready"] is False
+        assert client.post("/console/training", json={"dataset_id": "base"}).status_code == 422
+        assert client.post("/console/training", json={"dataset_id": "unknown"}).status_code == 422
+        assert (
+            client.post(
+                "/console/training", json={"dataset_id": "base", "allow_filename_labels": True}
+            ).status_code
+            == 422
+        )
 
 
 @pytest.mark.ml

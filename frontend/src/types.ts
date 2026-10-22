@@ -99,6 +99,16 @@ export interface Task extends Operation {
     metrics?: Metrics;
   } | null;
 }
+export interface TrainingDataset {
+  id: string;
+  name: string;
+  source: "base" | "review";
+  ready: boolean;
+  video_count?: number | null;
+  crop_count?: number | null;
+  warning?: string;
+  unavailable_reason?: string | null;
+}
 export interface Dataset {
   id: string;
   name: string;

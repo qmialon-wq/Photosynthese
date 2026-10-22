@@ -12,6 +12,23 @@ VIDEO_QUERY = """SELECT id,filename,video_key,sha256,species_candidate,metadata,
  WHERE NOT EXISTS(SELECT 1 FROM console_videos c WHERE c.sha256=v.id)"""
 
 
+def activate_model(identifier: str) -> dict[str, Any]:
+    with transaction(write=True) as connection:
+        row = connection.execute(
+            "SELECT id FROM console_models WHERE id=%s", (identifier,)
+        ).fetchone()
+        if row is None:
+            raise ReviewError("Modèle inconnu", 404)
+        previous = connection.execute("SELECT id FROM console_models WHERE active").fetchall()
+        connection.execute("UPDATE console_models SET active=false WHERE active")
+        connection.execute("UPDATE console_models SET active=true WHERE id=%s", (identifier,))
+    return {
+        "id": identifier,
+        "active": True,
+        "previous_model_ids": [str(item["id"]) for item in previous],
+    }
+
+
 def video(identifier: str) -> dict[str, Any]:
     with transaction() as connection:
         row = connection.execute(

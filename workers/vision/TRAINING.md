@@ -59,6 +59,60 @@ Arrêter le client après soumission n'annule pas le job. `SIGTERM` du worker de
 un arrêt ; le job non acquitté est repris au prochain démarrage. Il n'y a pas encore
 de commande d'annulation individuelle pendant qu'un worker reste actif.
 
+## Second modèle EfficientNetV2 pour le POC
+
+Ce parcours crée un modèle indépendant de SpeciesNet et du ConvNeXt,
+initialisé aléatoirement, sans téléchargement. Depuis la racine :
+
+```sh
+make training-up DEVICE=cuda
+make efficientnet-poc-check DEVICE=cuda
+make train-efficientnet-poc DEVICE=cuda
+```
+
+Configuration : `configs/classifier-efficientnetv2-poc.json`, B0, 224 px,
+batch 2, accumulation 4, AMP, deux époques de tête puis jusqu'à 30 époques sur
+l'ensemble du CNN, early stopping après huit époques sans progrès. Les taux
+d'apprentissage sont adaptés à cette initialisation depuis zéro.
+
+Le contrôle construit un snapshot sous `data/results/vision/poc/efficientnetv2-v1/`.
+Les recadrages provisoires viennent de `training.json`, avec l'autorisation explicite
+des labels de noms. Pour les vidéos reconnues par SHA-256 dans la revue SQL, tous
+les anciens recadrages sont remplacés par les validations/corrections actuelles ;
+les rejets et exemples à revoir sont exclus. Les boîtes corrigées utilisent leur
+dernier rendu. Les splits de l'inventaire initial sont conservés, même si une vidéo
+de test a été importée séparément en train dans la revue. Un groupe test gelé reste
+test ; les copies de contenu présentes dans plusieurs splits sont refusées.
+Les vidéos de revue sans correspondance SHA ne sont pas ajoutées automatiquement,
+afin de ne pas introduire un extrait lié à une autre vidéo dans un autre ensemble.
+Le snapshot existant n'est pas remplacé : pour intégrer de nouvelles corrections,
+créer une configuration avec un nouvel identifiant et une nouvelle destination.
+
+La soumission passe par Redis et le consommateur GPU unique. Le run
+`efficientnetv2-poc-v1` et ses métriques sont visibles dans **Administration →
+Entraînements → Runs et checkpoints existants**. Checkpoints persistants :
+`data/checkpoints/efficientnetv2-poc-v1/{best,last}.pt`. En cas d'interruption, le
+worker reprend `last.pt` à la dernière frontière d'époque enregistrée.
+
+Après réussite, le worker vérifie et enregistre `best.pt`, puis active cette version
+pour les prochaines analyses web. Le ConvNeXt reste enregistré et son fichier est
+conservé : revenir dessus dans **Modèles → Activer**. Les analyses CLI historiques
+utilisent toujours leur `CLASSIFIER_CHECKPOINT` explicite. Le registre conserve la
+provenance provisoire ; les métriques ne constituent pas une évaluation humaine
+fiable. L'activation signifie que le modèle est utilisable, pas qu'il a démontré
+une meilleure qualité que le précédent. Aucun entraînement au démarrage.
+
+Les options génériques `training.register_model_name` et
+`training.activate_on_success` sont désactivées par défaut. L'activation requiert un
+nom d'enregistrement, un entraînement terminé et un chargement strict du checkpoint
+réussi. Ces options ne modifient pas l'empreinte de reprise des anciens runs.
+
+Reprise explicite via la file, uniquement si le run n'est plus en cours :
+
+```sh
+make train-classifier DEVICE=cuda RESUME=/storage/checkpoints/efficientnetv2-poc-v1/last.pt
+```
+
 ## Phases, mémoire et reproductibilité
 
 La première phase entraîne la tête avec le backbone figé ; la seconde recharge

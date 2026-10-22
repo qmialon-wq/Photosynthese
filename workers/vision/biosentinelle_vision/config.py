@@ -52,6 +52,8 @@ class TrainingConfig(BaseModel):
     resume_checkpoint: Path | None = None
     video_truth_manifest: Path | None = None
     database_metrics: bool = False
+    register_model_name: str | None = Field(default=None, min_length=1, max_length=100)
+    activate_on_success: bool = False
     num_workers: int = Field(default=0, ge=0)
     epochs_head: int = Field(default=6, ge=1)
     epochs_finetune: int = Field(default=18, ge=1)
@@ -60,6 +62,12 @@ class TrainingConfig(BaseModel):
     finetune_lr: float = Field(default=2e-5, gt=0)
     weight_decay: float = Field(default=0.03, ge=0)
     label_smoothing: float = Field(default=0.07, ge=0, lt=1)
+
+    @model_validator(mode="after")
+    def activation_requires_registration(self) -> "TrainingConfig":
+        if self.activate_on_success and self.register_model_name is None:
+            raise ValueError("L'activation exige register_model_name")
+        return self
 
 
 class VisionSettings(BaseSettings):
