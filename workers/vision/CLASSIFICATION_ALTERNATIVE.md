@@ -157,6 +157,21 @@ L'ancienne route d'activation refuse désormais un candidat non comparé. Le cha
 observé à la migration est conservé, sans prétendre que ses labels historiques sont
 validés humainement. Les anciens checkpoints ne sont pas supprimés.
 
+## Étape 8 : vidéo et shadow
+
+La console fige désormais famille, version, empreinte et prétraitement du champion
+dans chaque tâche. `classification.factory` branche les adaptateurs dans le pipeline
+existant via le pont historique. MegaDetector, les crops, l'agrégation IoU, les seuils
+et le maintien visuel entre frames analysées sont conservés. Les rapports gardent
+les scores et la version exacte du classificateur.
+
+`shadow_model_id` est facultatif dans la demande d'analyse. Il doit désigner un
+autre modèle enregistré ; il est chargé sur CPU pour préserver la VRAM du champion.
+La prédiction shadow utilise les mêmes crops, sans détection supplémentaire, et
+n'alimente ni labels affichés ni tracking. Ses scores et sa durée sont séparés.
+Une erreur du shadow est diagnostiquée sans faire échouer la réponse principale.
+Le fonctionnement normal reste une seule classification par crop.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \

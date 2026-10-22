@@ -107,6 +107,8 @@ def input_videos(settings: VisionSettings) -> tuple[Path, ...]:
 
 def _weights(settings: VisionSettings) -> tuple[Path, Path | None]:
     detector, classifier = settings.detector_weights, settings.classifier_checkpoint
+    if settings.classifier_version is not None:
+        classifier = settings.classifier_version.checkpoint
     if detector is None or not detector.is_file():
         raise ModelError(f"Poids MegaDetector locaux absents : {detector}")
     if not settings.detection_only and (classifier is None or not classifier.is_file()):
@@ -121,6 +123,19 @@ def _load_models(
     from .detection.megadetector import MegaDetector
 
     detector_path, classifier_path = _weights(settings)
+    if classifier_path is not None and settings.classifier_version is not None:
+        from .classification.adapters import LegacyClassifierBridge
+        from .classification.factory import load_classifier
+
+        return MegaDetector(detector_path, settings), LegacyClassifierBridge(
+            load_classifier(
+                settings.classifier_version,
+                classes,
+                device=settings.device,
+                threshold=settings.classification_threshold,
+                batch_size=settings.training.batch_size,
+            )
+        )
     return (
         MegaDetector(detector_path, settings),
         None
@@ -147,7 +162,13 @@ def run_analyses(
     with exclusive_gpu(settings.device, settings.gpu_lock_path):
         detector_path, classifier_path = _weights(settings)
         identity = {
-            "pipeline_version": "3",
+            "pipeline_version": "4",
+            "classifier_version": settings.classifier_version.model_dump(mode="json")
+            if settings.classifier_version
+            else None,
+            "shadow": settings.shadow_classifier_version.model_dump(mode="json")
+            if settings.shadow_classifier_version
+            else None,
             "detector": file_hash(detector_path),
             "classifier": file_hash(classifier_path) if classifier_path is not None else None,
             "classes": classes.model_dump(mode="json"),
@@ -158,7 +179,8 @@ def run_analyses(
             "tracking": settings.tracking.model_dump(),
         }
         storage = LocalStorage(settings.output_root)
-        detector, classifier = None, None
+        detector, classifier, shadow = None, None, None
+        shadow_error = None
         results = []
         try:
             for video in videos:
@@ -182,6 +204,22 @@ def run_analyses(
                         continue
                 if detector is None:
                     detector, classifier = _load_models(settings, classes)
+                    if settings.shadow_classifier_version is not None:
+                        from .classification.adapters import LegacyClassifierBridge
+                        from .classification.factory import load_classifier
+
+                        try:
+                            shadow = LegacyClassifierBridge(
+                                load_classifier(
+                                    settings.shadow_classifier_version,
+                                    classes,
+                                    device="cpu",
+                                    threshold=settings.classification_threshold,
+                                    batch_size=settings.training.batch_size,
+                                )
+                            )
+                        except Exception as exc:
+                            shadow_error = f"{type(exc).__name__}: {exc}"
                 logger.info("Analyse de %s", relative)
                 state: dict[str, Any] = {
                     "source": relative,
@@ -203,6 +241,8 @@ def run_analyses(
                         f"{prefix}/annotated.mp4",
                         f"{prefix}/report.json",
                         progress,
+                        shadow_classifier=shadow,
+                        shadow_error=shadow_error,
                     )
                     after = video.stat()
                     if (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns):
@@ -219,7 +259,7 @@ def run_analyses(
                 results.append(state)
                 print(json.dumps(state, ensure_ascii=False), flush=True)
         finally:
-            del detector, classifier
+            del detector, classifier, shadow
             gc.collect()
             if settings.device == "cuda" and "torch" in sys.modules:
                 sys.modules["torch"].cuda.empty_cache()

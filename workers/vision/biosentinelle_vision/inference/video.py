@@ -57,10 +57,20 @@ def analyze_video(
     *,
     output_key: str = "annotated/video.mp4",
     report_key: str = "video_report.json",
+    shadow_classifier: Classifier | None = None,
 ) -> dict[str, Any]:
     with exclusive_gpu(settings.device, settings.gpu_lock_path):
         return _analyze_video(
-            video, detector, classifier, tracker, classes, storage, settings, output_key, report_key
+            video,
+            detector,
+            classifier,
+            tracker,
+            classes,
+            storage,
+            settings,
+            output_key,
+            report_key,
+            shadow_classifier=shadow_classifier,
         )
 
 
@@ -75,6 +85,9 @@ def _analyze_video(
     output_key: str,
     report_key: str,
     progress: Callable[[int, int], None] | None = None,
+    *,
+    shadow_classifier: Classifier | None = None,
+    shadow_error: str | None = None,
 ) -> dict[str, Any]:
     import cv2
 
@@ -96,6 +109,8 @@ def _analyze_video(
     tracked: tuple[TrackedObservation, ...] = ()
     counts: Counter[str] = Counter()
     timer, began = InferenceTimer(settings.device), time.perf_counter()
+    shadow_timer = InferenceTimer("cpu")
+    shadow_metadata = getattr(shadow_classifier, "metadata", None)
     try:
         fps, expected_count, width, height = video_metadata(cap, video)
         writer = cv2.VideoWriter(
@@ -149,6 +164,28 @@ def _analyze_video(
                     )
                 }
                 counts["predictions"] += len(predictions)
+                shadow_predictions = []
+                if crops and shadow_classifier is not None:
+                    try:
+                        if shadow_classifier.classes != classes.names:
+                            raise ModelError("Référentiel du modèle shadow incompatible")
+                        shadow_batch = shadow_timer.call(
+                            "shadow_classifier",
+                            lambda model=shadow_classifier, batch=crops: model.predict(batch),
+                        )
+                        if len(shadow_batch) != len(crops):
+                            raise ModelError("Nombre de prédictions shadow incompatible")
+                        shadow_predictions = [
+                            {
+                                "detection_index": i,
+                                "label": p.label,
+                                "probabilities": p.probabilities,
+                            }
+                            for i, p in zip(crop_indices, shadow_batch, strict=True)
+                        ]
+                    except Exception as exc:
+                        shadow_error = f"{type(exc).__name__}: {exc}"
+                        shadow_classifier = None
                 observations = [
                     Observation(detection=d, prediction=classified.get(i))
                     for i, d in enumerate(detections)
@@ -194,6 +231,9 @@ def _analyze_video(
                         "time_seconds": frame_count / fps,
                         "state": "no_detection" if not detections else "animals_detected",
                         "detections": localized,
+                        **(
+                            {"shadow_predictions": shadow_predictions} if shadow_predictions else {}
+                        ),
                     }
                 )
             # Maintien visuel uniquement : aucune inférence ni mise à jour du tracker
@@ -248,6 +288,7 @@ def _analyze_video(
         "models": {
             "detector_api": getattr(detector, "diagnostics", None),
             "classifier": getattr(classifier, "metadata", None),
+            "shadow": shadow_metadata,
         },
         "thresholds": {
             "detection": settings.detection_threshold,
@@ -275,6 +316,8 @@ def _analyze_video(
             "total_seconds": time.perf_counter() - began,
             "detector_seconds": timer.seconds["detector"],
             "classifier_seconds": timer.seconds["classifier"],
+            "shadow_classifier_seconds": shadow_timer.seconds["shadow_classifier"],
+            "shadow_error": shadow_error,
             "gpu_elapsed_seconds": timer.gpu_seconds,
             "gpu_timing_method": "cuda_events_elapsed"
             if settings.device == "cuda"

@@ -384,6 +384,30 @@ def perform(
         )
         if file_hash(config.classifier_checkpoint) != selected["sha256"]:
             raise ValueError("Le checkpoint enregistré a été modifié")
+        from .classification.contracts import ModelVersion
+
+        config.classifier_version = ModelVersion(
+            model_id=selected["id"],
+            version=selected.get("version") or selected["sha256"],
+            classifier_family=selected.get("family", "existing"),
+            checkpoint=config.classifier_checkpoint,
+            sha256=selected["sha256"],
+            preprocessing_version=selected.get(
+                "preprocessing_version", "legacy-imagenet-resize-v1"
+            ),
+        )
+    if payload.get("shadow_model"):
+        from .classification.contracts import ModelVersion
+
+        shadow = payload["shadow_model"]
+        config.shadow_classifier_version = ModelVersion(
+            model_id=shadow["id"],
+            version=shadow.get("version") or shadow["sha256"],
+            classifier_family=shadow["family"],
+            checkpoint=LocalStorage(settings.checkpoint_root).path(shadow["checkpoint_key"]),
+            sha256=shadow["sha256"],
+            preprocessing_version=shadow["preprocessing_version"],
+        )
     if kind == "analysis":
         from .commands import input_videos, run_analyses
 

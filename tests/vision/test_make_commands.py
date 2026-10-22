@@ -129,7 +129,7 @@ def test_failure_is_recorded_and_force_retries(
         commands, "_load_models", lambda *a: (DetectorFixture(), ClassifierFixture(classes))
     )
 
-    def fail(*args: object) -> None:
+    def fail(*args: object, **kwargs: object) -> None:
         raise VideoError("fixture read failure")
 
     monkeypatch.setattr(commands, "_analyze_video", fail)

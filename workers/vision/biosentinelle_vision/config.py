@@ -4,6 +4,8 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .classification.contracts import ModelVersion
+
 
 class FramesConfig(BaseModel):
     max_per_video: int = Field(default=24, ge=1)
@@ -86,6 +88,8 @@ class VisionSettings(BaseSettings):
     classes_manifest: Path | None = None
     detector_weights: Path | None = None
     classifier_checkpoint: Path | None = None
+    classifier_version: ModelVersion | None = None
+    shadow_classifier_version: ModelVersion | None = None
     train_manifest: Path | None = None
     initial_checkpoint: Path | None = None
     inbox_root: Path = Path("data/datasets/inbox")

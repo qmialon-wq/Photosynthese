@@ -58,6 +58,7 @@ class Analysis(Body):
     track_threshold: float = Field(default=0.6, ge=0, le=1)
     track_min_hits: int = Field(default=2, ge=1, le=100)
     infer_every_n_frames: int = Field(default=2, ge=1, le=1000)
+    shadow_model_id: UUID | None = None
 
 
 class Training(Body):
@@ -255,15 +256,34 @@ def video_file(identifier: str) -> FileResponse:
 @router.post("/videos/{identifier}/analyze", status_code=202, response_model=Operation)
 def analyze(identifier: str, body: Analysis, actor: Actor) -> dict[str, Any]:
     video = console.video(identifier)
-    payload = {"video_key": video["video_key"], "video_id": identifier, **body.model_dump()}
+    payload = {
+        "video_key": video["video_key"],
+        "video_id": identifier,
+        **body.model_dump(mode="json"),
+    }
     if not body.detection_only:
         with transaction() as connection:
             model = connection.execute(
-                "SELECT id,checkpoint_key,sha256 FROM console_models WHERE active"
+                "SELECT id,checkpoint_key,sha256,family,version,preprocessing_version "
+                "FROM console_models WHERE active"
             ).fetchone()
         if model is None:
             raise ReviewError("Enregistrer et activer un modèle, ou choisir Détection seule", 422)
         payload["model"] = {**model, "id": str(model["id"])}
+    if body.shadow_model_id is not None:
+        if body.detection_only:
+            raise ReviewError("Le mode shadow requiert un classificateur principal", 422)
+        with transaction() as connection:
+            shadow = connection.execute(
+                """SELECT id,checkpoint_key,sha256,family,version,preprocessing_version
+              FROM console_models WHERE id=%s AND status<>'archived'""",
+                (str(body.shadow_model_id),),
+            ).fetchone()
+        if shadow is None:
+            raise ReviewError("Modèle shadow inconnu", 404)
+        if shadow["id"] == model["id"]:
+            raise ReviewError("Choisir un modèle shadow distinct du champion", 422)
+        payload["shadow_model"] = {**shadow, "id": str(shadow["id"])}
     return console.submit("analysis", payload, actor)
 
 
