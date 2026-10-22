@@ -52,6 +52,33 @@ La fraction de premier plan est une estimation géométrique de la marge déclar
 pas une segmentation de l'animal. Les boîtes initiales et historiques corrigés
 restent dans la revue SQL ; la boîte de ce manifeste est celle effectivement utilisée.
 
+## Étape 3 : entraînement supervisé préentraîné
+
+Les nouveaux entraînements exigent désormais des poids généralistes locaux.
+Le téléchargement se fait explicitement avec le module `classification.pretrained` :
+`python -m biosentinelle_vision.classification.pretrained tf_efficientnetv2_b0
+--root /storage/models/pretrained`. Cette commande nécessite l'accès réseau, pas
+les entraînements. Seuls les dépôts officiels référencés par timm sont utilisés ;
+révision Git et empreinte SHA-256 LFS sont figées et vérifiées. Un cache existant
+est vérifié sans réseau. Formats safetensors uniquement pour ces poids téléchargés.
+Voir l'API [timm](https://huggingface.co/docs/timm/main/reference/models) et les
+[métadonnées du Hub](https://huggingface.co/docs/huggingface_hub/main/package_reference/hf_api).
+
+Les profils de normalisation/interpolation sont enregistrés dans les checkpoints
+et relus à l'inférence. La phase tête gèle le backbone, puis le dégel progresse
+par blocs, avec learning rates distincts tête/backbone. Les statistiques des blocs
+gelés restent figées. AdamW, scheduler cosine/constant, AMP, accumulation, early
+stopping, sauvegarde et reprise sont conservés. Les métriques incluent désormais
+macro-précision et macro-rappel. ResNet50 est ajouté et l'alias EfficientNetV2-S
+est relié à l'architecture timm réellement disponible `tf_efficientnetv2_s`.
+
+`--initialization scratch` autorise explicitement une expérience depuis zéro.
+Les anciens checkpoints sont repris en mode `legacy`, avec le même groupement
+d'optimiseur et la même empreinte historique. Changer les données impose un
+nouveau run avec `--initial-checkpoint`, pas une reprise prétendue identique.
+Une classe absente du train est signalée dans les métadonnées ; les dix sorties
+restent présentes. Train et validation doivent rester non vides.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \

@@ -37,6 +37,10 @@ def train_epoch(
 
     model.train(phase == "finetune")
     model.get_classifier().train()
+    for module in model.modules():
+        parameters = list(module.parameters())
+        if module is not model and parameters and not any(p.requires_grad for p in parameters):
+            module.eval()
     if loader.batch_size == 1:
         # Une micro-batch de 1 ne permet pas d'estimer des statistiques BatchNorm stables.
         for module in model.modules():

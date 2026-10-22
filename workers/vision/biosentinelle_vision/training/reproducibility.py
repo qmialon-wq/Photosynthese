@@ -42,6 +42,15 @@ def identity(
             for r in sorted(records, key=lambda r: r.crop_id)
         ],
     }
+    if settings.training.initialization == "legacy":
+        for field in (
+            "initialization",
+            "pretrained_manifest",
+            "finetune_head_lr",
+            "unfreeze_every",
+            "scheduler",
+        ):
+            config.pop(field, None)
     return hashlib.sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()
 
 

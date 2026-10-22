@@ -46,7 +46,9 @@ def training_samples(settings: VisionSettings, classes: ClassManifest) -> tuple[
         allow_filename_labels=settings.training.allow_filename_labels,
     )
     missing = set(classes.names) - {r.label for r in samples if r.frame.split == "train"}
-    if missing or not any(r.frame.split == "val" for r in samples):
+    if not any(r.frame.split == "train" for r in samples) or not any(
+        r.frame.split == "val" for r in samples
+    ):
         raise ManifestError(f"Validation vide ou classes sans train validé : {sorted(missing)}")
     storage = LocalStorage(settings.output_root)
     for record in samples:

@@ -62,7 +62,7 @@ class Analysis(Body):
 
 class Training(Body):
     dataset_id: str = Field(pattern=r"^(base|[a-f0-9]{64})$")
-    model_name: Literal["convnext_tiny", "tf_efficientnetv2_b0", "efficientnetv2_s"] = (
+    model_name: Literal["convnext_tiny", "tf_efficientnetv2_b0", "efficientnetv2_s", "resnet50"] = (
         "tf_efficientnetv2_b0"
     )
     batch_size: int = Field(default=2, ge=1, le=64)
@@ -72,6 +72,7 @@ class Training(Body):
     epochs_finetune: int = Field(default=18, ge=1, le=500)
     patience: int = Field(default=6, ge=1, le=100)
     amp: Literal["auto", "off"] = "auto"
+    initialization: Literal["pretrained", "scratch"] = "pretrained"
 
 
 class ModelRegistration(Body):
@@ -368,7 +369,11 @@ def train(body: Training, actor: Actor) -> dict[str, Any]:
     samples = dataset["manifest"]["samples"]
     train_labels = {row["label"] for row in samples if row["split"] == "train"}
     labels = {row["name"] for row in dataset["manifest"]["classes"]["classes"]}
-    if train_labels != labels or not any(row["split"] == "val" for row in samples):
+    if (
+        not train_labels
+        or not train_labels.issubset(labels)
+        or not any(row["split"] == "val" for row in samples)
+    ):
         raise ReviewError(
             "Le dataset doit avoir les 10 classes validées dans train et un split val non vide", 422
         )

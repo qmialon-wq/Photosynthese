@@ -60,6 +60,7 @@ def synthetic_training(
         checkpoint_root=root / "checkpoints",
         train_manifest=storage.path("review.json"),
         training=TrainingConfig(
+            initialization="scratch",
             model_name="mobilenetv3_small_050",
             image_size=32,
             batch_size=2,

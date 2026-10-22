@@ -122,6 +122,7 @@ def test_real_cpu_training_from_web_dataset_and_registered_metrics(
                 "epochs_head": 1,
                 "epochs_finetune": 1,
                 "amp": "off",
+                "initialization": "scratch",
                 "patience": 2,
             },
         )

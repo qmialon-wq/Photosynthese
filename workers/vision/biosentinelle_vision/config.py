@@ -40,6 +40,11 @@ class TrainingConfig(BaseModel):
     model_config = {"extra": "forbid"}
     allow_filename_labels: bool = False
     model_name: str = "convnext_tiny"
+    initialization: Literal["pretrained", "scratch", "legacy"] = "pretrained"
+    pretrained_manifest: Path | None = None
+    finetune_head_lr: float = Field(default=1e-4, gt=0)
+    unfreeze_every: int = Field(default=4, ge=1)
+    scheduler: Literal["cosine", "constant"] = "cosine"
     image_size: int = Field(default=224, ge=32)
     batch_size: int = Field(default=2, ge=1)
     accumulation_steps: int = Field(default=4, ge=1)

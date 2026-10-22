@@ -14,7 +14,8 @@ from .preprocessing import build_transform
 def create_model(model_name: str, classes: ClassManifest) -> Any:
     import timm
 
-    return timm.create_model(model_name, pretrained=False, num_classes=len(classes.names))
+    architecture = "tf_efficientnetv2_s" if model_name == "efficientnetv2_s" else model_name
+    return timm.create_model(architecture, pretrained=False, num_classes=len(classes.names))
 
 
 def prediction_from_probabilities(
@@ -61,7 +62,10 @@ class TorchClassifier:
             self.model = create_model(data["model_name"], classes)
             self.model.load_state_dict(data["state_dict"], strict=True)
             self.model.to(device).eval()
-            self.transform = build_transform(int(data["img_size"]))
+            self.transform = build_transform(
+                int(data["img_size"]), profile=data.get("preprocessing")
+            )
+            self.metadata["preprocessing"] = data.get("preprocessing")
         except Exception as exc:
             raise ModelError(f"Chargement classificateur impossible : {exc}") from exc
         self.manifest, self.device = classes, device

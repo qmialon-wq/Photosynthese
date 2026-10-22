@@ -41,7 +41,10 @@ class ExistingClassifierAdapter:
 
         if model_version.classifier_family != self.family:
             raise ModelError("Famille de modèle incompatible avec l'adaptateur")
-        if model_version.preprocessing_version != "legacy-imagenet-resize-v1":
+        if model_version.preprocessing_version not in (
+            "legacy-imagenet-resize-v1",
+            "timm-local-imagenet-v1",
+        ):
             raise ModelError("Prétraitement du checkpoint non pris en charge par cet adaptateur")
         if not model_version.checkpoint.is_file():
             raise ModelError(f"Checkpoint local absent : {model_version.checkpoint}")
@@ -56,6 +59,11 @@ class ExistingClassifierAdapter:
             threshold=self.threshold,
             batch_size=self.batch_size,
         )
+        profile_version = (classifier.metadata.get("preprocessing") or {}).get(
+            "version", "legacy-imagenet-resize-v1"
+        )
+        if profile_version != model_version.preprocessing_version:
+            raise ModelError("Version du prétraitement incompatible avec le checkpoint")
         metadata = ClassifierMetadata(
             model=model_version.model_copy(update={"sha256": digest}),
             architecture=classifier.metadata["model_name"],

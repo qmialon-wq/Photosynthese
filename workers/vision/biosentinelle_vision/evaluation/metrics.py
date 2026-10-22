@@ -38,6 +38,12 @@ def classification_metrics(
         "count": len(truth),
         "accuracy": sum(matrix[i][i] for i in index.values()) / len(truth) if truth else None,
         "macro_f1": sum(m["f1"] for m in per_class.values()) / len(index) if truth else None,
+        "macro_precision": sum(m["precision"] for m in per_class.values()) / len(index)
+        if truth
+        else None,
+        "macro_recall": sum(m["recall"] for m in per_class.values()) / len(index)
+        if truth
+        else None,
         "classes": list(classes.names),
         "confusion_matrix": matrix,
         "per_class": per_class,

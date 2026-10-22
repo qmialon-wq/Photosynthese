@@ -34,7 +34,35 @@ SUPPORTED_MODELS = {
     "tf_efficientnetv2_b0",
     "efficientnetv2_rw_t",
     "mobilenetv3_small_050",
+    "resnet50",
 }
+
+
+def configure_trainable(model: Any, phase: str, epoch: int, every: int) -> None:
+    for parameter in model.parameters():
+        parameter.requires_grad = False
+    for parameter in model.get_classifier().parameters():
+        parameter.requires_grad = True
+    if phase != "finetune":
+        return
+    stages = (
+        list(model.stages)
+        if hasattr(model, "stages")
+        else (
+            list(model.blocks)
+            if hasattr(model, "blocks")
+            else [
+                getattr(model, name)
+                for name in ("layer1", "layer2", "layer3", "layer4")
+                if hasattr(model, name)
+            ]
+        )
+    )
+    count = 1 + epoch // every
+    modules = [model] if not stages or count >= len(stages) else stages[-count:]
+    for module in modules:
+        for parameter in module.parameters():
+            parameter.requires_grad = True
 
 
 def seed_worker(worker_id: int) -> None:
@@ -115,7 +143,7 @@ def _train(
     train_records = [r for r in selected if r.frame.split == "train"]
     val_records = [r for r in selected if r.frame.split == "val"]
     missing = set(classes.names) - {r.label for r in train_records}
-    if missing or not val_records:
+    if not train_records or not val_records:
         raise ManifestError(f"Validation vide ou classes sans train validé : {sorted(missing)}")
     if settings.device == "cuda" and not torch.cuda.is_available():
         raise ModelError("CUDA demandé mais indisponible")
@@ -129,12 +157,17 @@ def _train(
     torch.backends.cudnn.benchmark = not config.deterministic
     torch.backends.cudnn.deterministic = config.deterministic
     dtype = amp_dtype(settings.device, config.amp)
-    signature = identity(selected, storage, classes, settings)
     truth = load_video_truth(config.video_truth_manifest, classes)
     resume = None
     if config.resume_checkpoint:
         resume = torch.load(config.resume_checkpoint, map_location="cpu", weights_only=True)
         classes.check_checkpoint(resume)
+        if "initialization" not in resume.get("configuration", {}).get("training", {}):
+            config.initialization = "legacy"
+    signature = identity(selected, storage, classes, settings)
+    if not resume and config.initialization == "legacy":
+        raise ModelError("L'initialisation legacy est réservée à une reprise historique")
+    if resume:
         if resume.get("training_schema") != "2" or resume.get("fingerprint") != signature:
             raise ManifestError(
                 "Reprise incompatible : configuration, images, labels ou manifestes modifiés"
@@ -183,7 +216,21 @@ def _train(
         },
     )
     checkpoints.write_json("config.json", settings.model_dump(mode="json"))
-    model = create_model(config.model_name, classes)
+    profile = resume.get("preprocessing") if resume else None
+    if not resume and initial_checkpoint is None and config.initialization == "pretrained":
+        from ..classification.pretrained import create_pretrained_model
+
+        pretrained = config.pretrained_manifest or (
+            settings.checkpoint_root.parent
+            / "models/pretrained"
+            / config.model_name
+            / "manifest.json"
+        )
+        model, profile = create_pretrained_model(
+            config.model_name, len(classes.names), pretrained, config.image_size
+        )
+    else:
+        model = create_model(config.model_name, classes)
     if resume:
         model.load_state_dict(resume["state_dict"], strict=True)
     elif initial_checkpoint is not None:
@@ -192,6 +239,7 @@ def _train(
         if data["model_name"] != config.model_name or data["img_size"] != config.image_size:
             raise ModelError("Architecture ou taille du checkpoint initial incompatible")
         model.load_state_dict(data["state_dict"], strict=True)
+        profile = data.get("preprocessing")
     model.to(settings.device)
     counts = Counter(r.label for r in train_records)
     raw_weights = [1 / counts[r.label] ** config.balance_exponent for r in train_records]
@@ -204,14 +252,14 @@ def _train(
         train_records,
         storage,
         classes,
-        build_transform(config.image_size, training=True),
+        build_transform(config.image_size, training=True, profile=profile),
         allow_filename_labels=config.allow_filename_labels,
     )
     val_data = CropsDataset(
         val_records,
         storage,
         classes,
-        build_transform(config.image_size),
+        build_transform(config.image_size, profile=profile),
         allow_filename_labels=config.allow_filename_labels,
     )
     loss_fn = nn.CrossEntropyLoss(label_smoothing=config.label_smoothing)
@@ -226,10 +274,14 @@ def _train(
         ("finetune", config.epochs_finetune, config.finetune_lr),
     ]
     publish(journal, metadata, history, config.database_metrics)
+    metadata["initialization"] = config.initialization
+    metadata["preprocessing"] = profile
+    metadata["missing_train_classes"] = sorted(missing)
 
     def snapshot() -> dict[str, Any]:
         return {
             "training_schema": "2",
+            "preprocessing": profile,
             "run_id": run_id,
             "fingerprint": signature,
             "configuration": settings.model_dump(mode="json"),
@@ -262,16 +314,30 @@ def _train(
             continuing = resume is not None and phase_index == first_phase
             if phase_index == 1 and not continuing and best_state is not None:
                 model.load_state_dict(best_state)
-            for parameter in model.parameters():
-                parameter.requires_grad = phase == "finetune"
-            for parameter in model.get_classifier().parameters():
-                parameter.requires_grad = True
+            configure_trainable(model, phase, 0, config.unfreeze_every)
+            head = list(model.get_classifier().parameters())
+            head_ids = {id(parameter) for parameter in head}
+            groups = [{"params": head, "lr": lr if phase == "head" else config.finetune_head_lr}]
+            if phase == "finetune":
+                groups.append(
+                    {"params": [p for p in model.parameters() if id(p) not in head_ids], "lr": lr}
+                )
+            if config.initialization == "legacy":
+                for parameter in model.parameters():
+                    parameter.requires_grad = phase == "finetune"
+                for parameter in head:
+                    parameter.requires_grad = True
+                groups = [{"params": [p for p in model.parameters() if p.requires_grad], "lr": lr}]
             optimizer = torch.optim.AdamW(
-                (p for p in model.parameters() if p.requires_grad),
+                groups,
                 lr=lr,
                 weight_decay=config.weight_decay,
             )
-            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+            scheduler = (
+                torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+                if config.scheduler == "cosine"
+                else torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.0)
+            )
             scaler = torch.amp.GradScaler("cuda", enabled=dtype == torch.float16)
             epoch, stale = (resume["epoch"], resume["stale"]) if continuing else (0, 0)
             if continuing:
@@ -283,6 +349,10 @@ def _train(
             save_checkpoint(checkpoints, "last.pt", snapshot())
             retries = 0
             while epoch < epochs and stale < config.patience:
+                configure_trainable(model, phase, epoch, config.unfreeze_every)
+                if config.initialization == "legacy" and phase == "finetune":
+                    for parameter in model.parameters():
+                        parameter.requires_grad = True
                 if stop.is_set():
                     raise TrainingInterrupted("Entraînement interrompu ; last.pt conservé")
                 loader_args = {
@@ -375,6 +445,7 @@ def _train(
                         "best.pt",
                         {
                             "state_dict": best_state,
+                            "preprocessing": profile,
                             "classes": list(classes.names),
                             "class_manifest_version": classes.version,
                             "model_name": config.model_name,

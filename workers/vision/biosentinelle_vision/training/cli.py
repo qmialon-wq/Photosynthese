@@ -33,6 +33,8 @@ def register(commands: Any) -> None:
             parser.add_argument("--epochs-finetune", type=int)
             parser.add_argument("--image-size", type=int)
             parser.add_argument("--amp", choices=("auto", "off", "float16", "bfloat16"))
+            parser.add_argument("--initialization", choices=("pretrained", "scratch"))
+            parser.add_argument("--pretrained-manifest", type=Path)
             parser.add_argument(
                 "--local", action="store_true", help="Exécution CPU hors file, pour tests"
             )
@@ -115,6 +117,10 @@ def dispatch(args: argparse.Namespace, settings: VisionSettings, classes: ClassM
             data["training"][field] = value
     if args.initial_checkpoint:
         data["initial_checkpoint"] = str(args.initial_checkpoint)
+    if args.initialization:
+        data["training"]["initialization"] = args.initialization
+    if args.pretrained_manifest:
+        data["training"]["pretrained_manifest"] = str(args.pretrained_manifest)
     if args.allow_filename_labels:
         data["training"]["allow_filename_labels"] = True
     data["training"]["database_metrics"] = not args.local and not args.no_database
