@@ -48,7 +48,10 @@ Empreinte SHA-256 : `f28f99b30acb555212dca4e47b310b41860bfb6c33a2406ff2d9a1c5f3a
    contrôlé. Aucun remplissage ni permutation silencieuse des sorties.
 4. **Labels** : le nom de fichier ne donne qu'un candidat. Les cas inconnus ou
    ambigus sont conservés dans l'inventaire. Les parents hors dataset ne sont
-   pas consultés. L'entraînement et l'évaluation exigent des labels validés.
+   pas consultés. L'entraînement accepte explicitement les labels provisoires
+   (`training.allow_filename_labels=true`), sans les transformer en labels humains.
+   Les scores de validation portent cette provenance dans l'historique et le
+   checkpoint ; la commande d'évaluation exige toujours des labels humains.
 5. **Split** : séparation déterministe par groupe vidéo avant extraction ; copies
    identiques regroupées par empreinte du contenu. Une séquence étendue peut être
    fournie explicitement comme groupe ; sa déduction depuis un nom est insuffisante.

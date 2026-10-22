@@ -36,6 +36,7 @@ class TrackingConfig(BaseModel):
 
 
 class TrainingConfig(BaseModel):
+    allow_filename_labels: bool = False
     model_name: str = "convnext_tiny"
     image_size: int = Field(default=256, ge=32)
     batch_size: int = Field(default=4, ge=1)

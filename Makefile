@@ -34,7 +34,8 @@ config:
 # Les valeurs sont transmises par l'environnement, jamais interpolées dans le shell.
 DEVICE ?= cpu
 VIDEO ?=
-MANIFEST ?= /storage/results/vision/review.json
+MANIFEST ?= /storage/results/vision/training.json
+ALLOW_FILENAME_LABELS ?= 1
 DETECTOR ?= /storage/models/md_v5a.0.0.pt
 CHECKPOINT ?= /storage/checkpoints/classifier_v3_best.pt
 BATCH_SIZE ?= 4
@@ -52,6 +53,7 @@ export BIOSENTINELLE_VISION_ANALYSIS_FORCE = $(FORCE)
 export BIOSENTINELLE_VISION_WATCH_POLL_SECONDS = $(POLL_SECONDS)
 export BIOSENTINELLE_VISION_WATCH_STABLE_SECONDS = $(STABLE_SECONDS)
 export BIOSENTINELLE_VISION_TRAINING__BATCH_SIZE = $(BATCH_SIZE)
+export BIOSENTINELLE_VISION_TRAINING__ALLOW_FILENAME_LABELS = $(ALLOW_FILENAME_LABELS)
 export BIOSENTINELLE_VISION_TRAINING__EPOCHS_HEAD = $(EPOCHS_HEAD)
 export BIOSENTINELLE_VISION_TRAINING__EPOCHS_FINETUNE = $(EPOCHS_FINETUNE)
 
@@ -60,6 +62,7 @@ ML_ENV = --env BIOSENTINELLE_VISION_DEVICE --env BIOSENTINELLE_VISION_TRAIN_MANI
 	--env BIOSENTINELLE_VISION_CLASSIFIER_CHECKPOINT \
 	--env BIOSENTINELLE_VISION_ANALYSIS_VIDEO --env BIOSENTINELLE_VISION_ANALYSIS_FORCE \
 	--env BIOSENTINELLE_VISION_TRAINING__BATCH_SIZE \
+	--env BIOSENTINELLE_VISION_TRAINING__ALLOW_FILENAME_LABELS \
 	--env BIOSENTINELLE_VISION_TRAINING__EPOCHS_HEAD \
 	--env BIOSENTINELLE_VISION_TRAINING__EPOCHS_FINETUNE \
 	--env BIOSENTINELLE_VISION_WATCH_POLL_SECONDS \
@@ -78,7 +81,13 @@ else
 $(error DEVICE doit valoir cpu ou cuda)
 endif
 
-.PHONY: ml-init ml-build train-check train analyze watch
+.PHONY: ml-init ml-build train-check train analyze watch classify-videos prepare-training
+prepare-training: classify-videos
+	$(ML_COMPOSE) run --build --rm --no-deps $(ML_ENV) vision biosentinelle-vision prepare-training --inventory /storage/results/vision/classification/videos.json
+
+classify-videos: ml-init
+	docker compose -f docker-compose.yml -f docker-compose.data.yml run --build --rm --no-deps vision biosentinelle-vision organize /source --destination /storage/datasets/classified --reports /storage/results/vision/classification
+
 ml-init:
 	docker compose run --rm --no-deps storage-init
 

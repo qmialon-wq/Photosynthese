@@ -32,13 +32,18 @@ def training_samples(settings: VisionSettings, classes: ClassManifest) -> tuple[
     path = settings.train_manifest or settings.output_root / "review.json"
     if not path.is_file():
         raise ManifestError(
-            f"Manifeste de revue absent : {path}. Préparer et valider les recadrages avant "
-            "l'entraînement ; les noms de vidéos ne suffisent pas."
+            f"Manifeste de revue absent : {path}. Exécuter make prepare-training, puis make train "
+            "pour utiliser les labels provisoires des noms, ou fournir une revue humaine."
         )
     manifest = CropsManifest.model_validate_json(path.read_text(encoding="utf-8"))
     if manifest.class_manifest_version != classes.version:
         raise ManifestError("Manifeste de revue incompatible avec les classes")
-    samples = select_samples(manifest.crops, classes, settings.crops.max_per_video)
+    samples = select_samples(
+        manifest.crops,
+        classes,
+        settings.crops.max_per_video,
+        allow_filename_labels=settings.training.allow_filename_labels,
+    )
     missing = set(classes.names) - {r.label for r in samples if r.frame.split == "train"}
     if missing or not any(r.frame.split == "val" for r in samples):
         raise ManifestError(f"Validation vide ou classes sans train validé : {sorted(missing)}")

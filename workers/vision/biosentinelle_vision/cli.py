@@ -27,9 +27,18 @@ def parser() -> argparse.ArgumentParser:
     inv.add_argument("directory", type=Path)
     inv.add_argument("--output", type=Path, required=True)
     inv.add_argument("--no-probe", action="store_true", help="Ne pas vérifier le décodage")
+    organize = commands.add_parser("organize", help="Copier les vidéos par espèce depuis les noms")
+    organize.add_argument("source", type=Path)
+    organize.add_argument("--destination", type=Path, required=True)
+    organize.add_argument("--reports", type=Path, required=True)
     extraction = commands.add_parser("extract-frames", help="Extraire des JPEG et leur manifeste")
     extraction.add_argument("--inventory", type=Path, required=True)
     extraction.add_argument("--output-dir", type=Path)
+    prepare = commands.add_parser(
+        "prepare-training", help="Extraire, détecter et recadrer les animaux"
+    )
+    prepare.add_argument("--inventory", type=Path, required=True)
+    prepare.add_argument("--storage-root", type=Path)
     detect = commands.add_parser("detect", help="Détecter avec des poids MegaDetector locaux")
     detect.add_argument("--frames", type=Path, required=True)
     detect.add_argument("--storage-root", type=Path)
@@ -37,7 +46,8 @@ def parser() -> argparse.ArgumentParser:
     evaluate = commands.add_parser("evaluate", help="Évaluer des probabilités et labels validés")
     evaluate.add_argument("--predictions", type=Path, required=True)
     evaluate.add_argument("--output", type=Path, required=True)
-    training = commands.add_parser("train", help="Entraîner sur les recadrages validés")
+    training = commands.add_parser("train", help="Entraîner le classificateur sur les recadrages")
+    training.add_argument("--allow-filename-labels", action="store_true", default=None)
     training.add_argument("--manifest", type=Path)
     training.add_argument("--storage-root", type=Path)
     training.add_argument("--initial-checkpoint", type=Path)
@@ -61,6 +71,46 @@ def main(argv: list[str] | None = None) -> int:
     try:
         settings = VisionSettings()
         classes = load_classes(args.classes_manifest or settings.classes_manifest)
+        if args.command == "prepare-training":
+            from .datasets.prepare import prepare_training
+            from .detection.megadetector import MegaDetector
+
+            source = Inventory.model_validate_json(args.inventory.read_text(encoding="utf-8"))
+            if settings.detector_weights is None or not settings.detector_weights.is_file():
+                raise VisionError(
+                    f"Poids MegaDetector absents : {settings.detector_weights}. "
+                    "Placer les poids locaux dans data/models/ (voir README)."
+                )
+            with exclusive_gpu(settings.device, settings.gpu_lock_path):
+                result = prepare_training(
+                    source,
+                    MegaDetector(settings.detector_weights, settings),
+                    LocalStorage(args.storage_root or settings.output_root),
+                    classes,
+                    settings,
+                )
+            print(json.dumps(result, ensure_ascii=False))
+            return 2 if result["errors"] or not result["crops"] else 0
+        if args.command == "organize":
+            from .datasets.organize import organize_videos
+
+            result = organize_videos(
+                args.source,
+                args.destination,
+                LocalStorage(args.reports),
+                classes,
+                settings.split,
+                settings.seed,
+            )
+            print(json.dumps(result, ensure_ascii=False))
+            return (
+                2
+                if result["issues"]
+                or result["split_error"]
+                or result["counts"].get("_a_verifier")
+                or not result["total"]
+                else 0
+            )
         if args.command == "train":
             from .commands import train_from_manifest, training_samples
 
@@ -74,9 +124,20 @@ def main(argv: list[str] | None = None) -> int:
                 if value is not None
             }
             settings = VisionSettings.model_validate({**settings.model_dump(), **updates})
+            if args.allow_filename_labels is not None:
+                settings.training.allow_filename_labels = args.allow_filename_labels
             if args.check_only:
                 samples = training_samples(settings, classes)
-                print(json.dumps({"validated_crops": len(samples), "status": "ready"}))
+                print(
+                    json.dumps(
+                        {
+                            "selected_crops": len(samples),
+                            "human_validated_crops": sum(r.review == "accept" for r in samples),
+                            "filename_labeled_crops": sum(r.review == "pending" for r in samples),
+                            "status": "ready",
+                        }
+                    )
+                )
             else:
                 result = train_from_manifest(settings, classes)
                 print(
@@ -84,6 +145,7 @@ def main(argv: list[str] | None = None) -> int:
                         {
                             "checkpoint": result["checkpoint"],
                             "best_macro_f1": result["best_macro_f1"],
+                            "label_provenance": result["label_provenance"],
                         }
                     )
                 )

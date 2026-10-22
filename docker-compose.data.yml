@@ -1,0 +1,6 @@
+# Originaux en lecture seule ; dataset de travail inscriptible pour le classement.
+services:
+  vision:
+    volumes:
+      - ${SOURCE_VIDEOS:-./video datathon}:/source:ro
+      - ${DATA_ROOT:-./data}/datasets:/storage/datasets

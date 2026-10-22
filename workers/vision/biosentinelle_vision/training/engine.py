@@ -62,9 +62,22 @@ def _train(
     from torch import nn
     from torch.utils.data import DataLoader, WeightedRandomSampler
 
-    selected = select_samples(records, classes, settings.crops.max_per_video)
+    selected = select_samples(
+        records,
+        classes,
+        settings.crops.max_per_video,
+        allow_filename_labels=settings.training.allow_filename_labels,
+    )
     train_records = [r for r in selected if r.frame.split == "train"]
     val_records = [r for r in selected if r.frame.split == "val"]
+    provenance = {
+        "label_policy": "filename_provisional"
+        if settings.training.allow_filename_labels
+        else "human_only",
+        "train_human_validated": all(r.review == "accept" for r in train_records),
+        "validation_human_validated": all(r.review == "accept" for r in val_records),
+        "filename_labeled_crops": sum(r.review == "pending" for r in selected),
+    }
     missing = set(classes.names) - {r.label for r in train_records}
     if missing or not val_records:
         raise ManifestError(f"Validation vide ou classes sans train validé : {sorted(missing)}")
@@ -88,14 +101,24 @@ def _train(
     )
     train_loader = DataLoader(
         CropsDataset(
-            train_records, storage, classes, build_transform(config.image_size, training=True)
+            train_records,
+            storage,
+            classes,
+            build_transform(config.image_size, training=True),
+            allow_filename_labels=config.allow_filename_labels,
         ),
         batch_size=config.batch_size,
         sampler=sampler,
         num_workers=config.num_workers,
     )
     val_loader = DataLoader(
-        CropsDataset(val_records, storage, classes, build_transform(config.image_size)),
+        CropsDataset(
+            val_records,
+            storage,
+            classes,
+            build_transform(config.image_size),
+            allow_filename_labels=config.allow_filename_labels,
+        ),
         batch_size=config.batch_size,
         shuffle=False,
         num_workers=config.num_workers,
@@ -141,6 +164,7 @@ def _train(
                 count += len(labels)
             scheduler.step()
             metrics = evaluate_loader(model, val_loader, settings.device, loss_fn, classes)
+            metrics["human_validated"] = provenance["validation_human_validated"]
             score = metrics["macro_f1"]
             history.append(
                 {
@@ -169,6 +193,7 @@ def _train(
                         "model_name": config.model_name,
                         "img_size": config.image_size,
                         "val_macro_f1": best_score,
+                        "label_provenance": provenance,
                     },
                     buffer,
                 )
@@ -181,6 +206,7 @@ def _train(
     return {
         "checkpoint": str(checkpoints.path(checkpoint_key)),
         "best_macro_f1": best_score,
+        "label_provenance": provenance,
         "history": history,
         "initialized_from_local_checkpoint": initial_checkpoint is not None,
     }

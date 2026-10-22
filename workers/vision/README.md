@@ -4,10 +4,10 @@ Extraction modulaire du notebook historique V3. La correspondance des **27 cellu
 et les divergences fonctionnelles sont dans [NOTEBOOK_MIGRATION.md](NOTEBOOK_MIGRATION.md).
 Le notebook original reste à la racine et n'est pas exécuté par ce package.
 
-Les commandes Make `train`, `analyze` et `watch`, leurs prérequis et leurs dossiers
+Les commandes Make `prepare-training`, `train`, `analyze` et `watch`, leurs prérequis et dossiers
 sont décrits dans le [guide principal](../../README.md#entraînement-et-vidéos-annotées-avec-make).
-Elles ajoutent trois commandes CLI : `train` (`--check-only` pour le diagnostic),
-`analyze` et `watch`. Les modèles sont chargés uniquement sur demande. Le fichier
+Elles correspondent aux commandes CLI du même nom (`train --check-only` pour le
+diagnostic). Les modèles sont chargés uniquement sur demande. Le fichier
 Compose ML construit une image supplémentaire complète ; l'image CPU de base
 conserve ses dépendances légères.
 
@@ -39,8 +39,8 @@ docker compose run --rm vision biosentinelle-vision extract-frames --inventory /
 ```
 
 Placer explicitement les vidéos dans `data/datasets/`, ou fournir un montage
-Docker additionnel en lecture seule. Aucune copie des vidéos historiques n'est
-automatisée. `inventory` calcule les empreintes SHA-256, vérifie le décodage de
+Docker additionnel en lecture seule. `make classify-videos` copie les vidéos
+historiques par espèce. `inventory` calcule les empreintes SHA-256, vérifie le décodage de
 la première image et sépare les groupes avant extraction. `--no-probe` désactive
 uniquement le contrôle vidéo, pas les empreintes. Les espèces inconnues ou
 ambiguës restent dans le manifeste avec `species_candidate=null`.
@@ -127,10 +127,10 @@ Autres points d'entrée réutilisables :
 - `datasets.crops.build_crops` construit seulement de vrais crops de détection.
 - `datasets.review.apply_review` confirme/corrige/rejette, régénère le crop dans
   `reviewed/` et écrit `review.json` sans modifier le split.
-- `training.dataset.select_samples` exclut les crops non validés et vérifie
+- `training.dataset.select_samples` exclut par défaut les crops non validés et vérifie
   l'absence de groupes partagés entre ensembles.
 - `training.engine.train` entraîne explicitement en deux phases, avec sauvegarde
-  du meilleur macro-F1 et historique ; tous les labels doivent être validés,
+  du meilleur macro-F1 et historique ; les labels sont humains ou explicitement provisoires,
   chaque classe doit être présente en train et une validation doit exister.
 - `evaluation.predict.predict_test_crops` produit `predictions.json` sur les
   crops test validés avec un vrai `Classifier`.
@@ -189,6 +189,21 @@ reçoivent pas de boîtes périmées maintenues artificiellement.
 
 ## Configuration
 
+Pour le dataset nommé par espèce, lancer depuis la racine :
+`make prepare-training DEVICE=cuda`, puis `make train DEVICE=cuda BATCH_SIZE=2`.
+Les poids MegaDetector locaux sont requis avant la préparation (README principal).
+`DEVICE=cpu` fonctionne aussi. La CLI de préparation est
+`biosentinelle-vision prepare-training --inventory <videos.json>`.
+
+Les recadrages sans revue restent `review=pending` même si `label` reprend
+`frame.species_candidate`. La sélection autorise ces labels seulement avec
+`training.allow_filename_labels=true` ou `train --allow-filename-labels`.
+Make passe explicitement cette option (désactivation : `ALLOW_FILENAME_LABELS=0`).
+Les corrections humaines sont prioritaires ; les refus et les candidats inconnus
+sont exclus. Les scores de validation et checkpoints indiquent si les labels
+sont humains. `evaluate` et `predict_test_crops` gardent leur exigence de vérité
+humaine. Aucun score sur noms de fichiers n'est présenté comme vérifié.
+
 `VisionSettings` utilise Pydantic Settings, sans instance globale. Préfixe
 `BIOSENTINELLE_VISION_` et séparateur imbriqué `__`, par exemple :
 
@@ -226,3 +241,11 @@ Validation du 22 octobre 2026 : inventaire réel des 343 vidéos (aucune erreur 
 lecture), extraction de 24 JPEG et d'un manifeste sur une vidéo locale. Le test
 ML CPU effectue réellement les deux phases sur un petit modèle et recharge son
 checkpoint, sans réseau. Il ne mesure aucune performance biodiversité.
+
+Vérification de la préparation automatique : 52 tests sans GPU réussis et deux
+tests ML CPU réussis (labels humains et provisoires). MegaDetector MDv5a réel,
+poids officiels contrôlés par empreinte MD5, a traité deux images de
+`Chevreuil-Scene-010.mp4` et produit deux recadrages sans erreur, hors réseau.
+Ce test limité est conservé sous `data/results/vision/real-preparation-smoke/` ;
+la préparation complète des 343 vidéos et l'entraînement du dataset ne sont
+pas exécutés par les tests. Le nouveau pipeline complet sur GPU reste à vérifier.

@@ -5,6 +5,7 @@ from biosentinelle_vision.classes import ClassManifest
 from biosentinelle_vision.classification.model import TorchClassifier
 from biosentinelle_vision.commands import train_from_manifest
 from biosentinelle_vision.config import TrainingConfig, VisionSettings
+from biosentinelle_vision.errors import ManifestError
 from biosentinelle_vision.evaluation.metrics import evaluate_predictions
 from biosentinelle_vision.evaluation.predict import predict_test_crops
 from biosentinelle_vision.schemas import Box, CropRecord, CropsManifest, FrameRecord
@@ -14,9 +15,11 @@ from PIL import Image
 pytestmark = pytest.mark.ml
 
 
+@pytest.mark.parametrize("provisional", [False, True])
 def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
     tmp_path: Path,
     classes: ClassManifest,
+    provisional: bool,
 ) -> None:
     torch = pytest.importorskip("torch")
     pytest.importorskip("timm")
@@ -35,6 +38,7 @@ def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
                 time_seconds=0,
                 image_key=key,
                 split=split,
+                species_candidate=name,
             )
             records.append(
                 CropRecord(
@@ -43,7 +47,7 @@ def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
                     frame=frame,
                     box=Box(x=0, y=0, w=1, h=1),
                     detection_confidence=0.9,
-                    review="accept",
+                    review="pending" if provisional else "accept",
                     label=name,
                 )
             )
@@ -51,6 +55,7 @@ def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
         output_root=storage.root,
         checkpoint_root=tmp_path / "checkpoints",
         training=TrainingConfig(
+            allow_filename_labels=provisional,
             model_name="mobilenetv3_small_050",
             image_size=32,
             batch_size=2,
@@ -71,7 +76,15 @@ def test_real_torch_training_checkpoint_and_evaluation_on_cpu(
     checkpoint = torch.load(result["checkpoint"], weights_only=True, map_location="cpu")
     assert checkpoint["classes"] == list(classes.names)
     assert checkpoint["class_manifest_version"] == classes.version
+    assert checkpoint["label_provenance"]["validation_human_validated"] is (not provisional)
+    assert all(
+        row["validation"]["human_validated"] is (not provisional) for row in result["history"]
+    )
     classifier = TorchClassifier(Path(result["checkpoint"]), classes, batch_size=2)
+    if provisional:
+        with pytest.raises(ManifestError, match="humainement"):
+            predict_test_crops(records, classifier, classes, storage)
+        return
     predictions = predict_test_crops(records, classifier, classes, storage)
     assert len(predictions.predictions) == 10
     report = evaluate_predictions(predictions, classes)

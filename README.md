@@ -8,14 +8,32 @@ voir le [guide vision](workers/vision/README.md) et la
 Aucun poids ni modèle entraîné n'est fourni ; aucun pipeline n'est lancé par
 le worker au démarrage. L'ingestion documentaire et le RAG restent à développer.
 
+## Classer les vidéos du dépôt
+
+```sh
+make classify-videos
+```
+
+Cette commande copie les vidéos de `video datathon/` dans
+`data/datasets/classified/<espèce>/`, sans déplacer les originaux. Les fichiers
+déjà identiques sont conservés et les destinations différentes ne sont pas écrasées.
+Les noms inconnus, ambigus ou les vidéos illisibles sont rangés dans `_a_verifier/`.
+Pour changer le dossier source, définir `SOURCE_VIDEOS` dans `.env`.
+
+L'inventaire et le tableau CSV se trouvent dans
+`data/results/vision/classification/` (`videos.json`, `classement.csv`,
+`classification.json`). Les espèces sont des **candidats déduits des noms de fichiers**.
+Le classement ne crée pas de `review.json` et ne valide pas les labels de chaque
+animal visible. Les séparations proposées regroupent les copies identiques ;
+les scènes issues d'une même prise restent à identifier avant une évaluation fiable.
+
 ## Entraînement et vidéos annotées avec Make
 
 Depuis la racine du projet, utiliser GNU Make (sous Windows, WSL est recommandé).
 Docker doit être démarré ; le venv Python de l'hôte n'a pas d'effet sur ces commandes.
 
 ```sh
-make ml-init
-make ml-build DEVICE=cuda
+make prepare-training DEVICE=cuda
 make train-check
 make train DEVICE=cuda BATCH_SIZE=2
 ```
@@ -26,13 +44,41 @@ bibliothèques ML dans une image facultative ; aucun poids n'est téléchargé.
 `train` vérifie d'abord les données, puis construit si nécessaire et lance
 l'entraînement explicitement. Les autres services n'ont pas besoin d'être démarrés.
 
-L'entraînement nécessite `data/results/vision/review.json`, produit par la revue
-des recadrages, avec des exemples **acceptés humainement pour chacune des dix
-classes en train** et un ensemble val indépendant. Les images référencées doivent
-exister sous `data/results/vision/`. `make train-check` indique les éléments
-manquants sans charger PyTorch. Aucune conversion des noms de vidéos en labels
-validés n'est effectuée. La revue est actuellement disponible via la fonction
-Python `datasets.review.apply_review`, sans interface graphique.
+`prepare-training` classe les vidéos si nécessaire, extrait jusqu'à 24 images par
+vidéo, lance **MegaDetector** et recadre les animaux. Le résultat est
+`data/results/vision/training.json`, accompagné de `frames.json`, `detections.json`,
+`crops.json` et `preparation.json`. Les erreurs de lecture/détection sont rapportées ;
+une préparation partielle retourne un code non nul. Relancer recalcule les images
+et détections, sans cache implicite.
+
+Les poids réels du détecteur doivent être présents dans `data/models/md_v5a.0.0.pt`.
+[Télécharger MDv5a depuis sa publication officielle](https://github.com/agentmorris/MegaDetector/releases/download/v5.0/md_v5a.0.0.pt)
+et y enregistrer le fichier. Aucun téléchargement n'est lancé par les imports
+ou par la préparation.
+
+**Par défaut, Make autorise les labels provisoires issus des noms** pour démarrer
+sur ce dataset majoritairement mono-espèce. MegaDetector localise les animaux ;
+il ne détermine pas ces dix espèces. Les labels inconnus sont exclus. Les refus
+humains sont toujours exclus et les corrections humaines priment sur le nom et
+sur le quota de 18 recadrages par vidéo. `review.json`, lorsqu'il existe, est lu
+lors de la préparation et n'est jamais remplacé par une fausse validation humaine.
+Après une correction, relancer la préparation pour actualiser `training.json`.
+
+Les ensembles sont séparés **par vidéo avant extraction** et les copies identiques
+restent ensemble. Chaque classe doit avoir des exemples en train et val doit être
+non vide. Le score de validation sert au choix du checkpoint ; il est **provisoire
+si ses labels proviennent des noms**, avec `human_validated=false` dans l'historique
+et `label_provenance` dans le checkpoint. Il ne constitue pas une évaluation
+scientifique vérifiée. Les prises issues d'une même scène doivent être regroupées
+pour une évaluation indépendante. La commande `evaluate` reste réservée aux labels
+humains. Les imports Python restent stricts par défaut ; Make active explicitement
+`training.allow_filename_labels`.
+
+Pour entraîner uniquement sur une revue humaine :
+
+```sh
+make train DEVICE=cuda ALLOW_FILENAME_LABELS=0 MANIFEST=/storage/results/vision/review.json
+```
 
 Le meilleur checkpoint est écrit dans `data/checkpoints/classifier_v3_best.pt`,
 l'historique dans `data/results/vision/training_history.json`. Une nouvelle session
@@ -84,7 +130,8 @@ l'entraînement pendant que la surveillance reste en attente. Redémarrer `watch
 après modification des paramètres ; les fichiers de poids sont relus pour chaque lot.
 
 Variables Make : `DEVICE`, `VIDEO` (chemin relatif à inbox), `MANIFEST`, `DETECTOR`,
-`CHECKPOINT`, `INITIAL_CHECKPOINT`, `BATCH_SIZE`, `EPOCHS_HEAD`, `EPOCHS_FINETUNE`,
+`CHECKPOINT`, `INITIAL_CHECKPOINT`, `ALLOW_FILENAME_LABELS` (1 par défaut),
+`BATCH_SIZE`, `EPOCHS_HEAD`, `EPOCHS_FINETUNE`,
 `FORCE`, `POLL_SECONDS` et `STABLE_SECONDS`. Les chemins de modèles/manifeste sont
 ceux **dans le conteneur**, donc préfixés par `/storage/`. `DATA_ROOT` dans `.env`
 permet de changer leur racine hôte. Le dossier inbox autorise le dépôt depuis un
