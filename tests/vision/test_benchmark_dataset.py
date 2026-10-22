@@ -56,3 +56,39 @@ def test_benchmark_is_reproducible_uses_human_labels_and_warns_sparse(tmp_path, 
     )
     with pytest.raises(ManifestError, match="entre splits"):
         prepare_dataset(source, inventory, LocalStorage(tmp_path), destination, classes)
+    safe = prepare_dataset(
+        source,
+        inventory,
+        LocalStorage(tmp_path),
+        destination,
+        classes,
+        cross_split_policy="quarantine",
+    )
+    assert safe["samples"] == 19
+    frozen = json.loads(destination.read_bytes(safe["dataset_version"] + "/training.json"))
+    assert sum(r["frame"]["split"] == "val" for r in frozen["crops"]) == 10
+    assert source.crops[0].crop_id not in {r["crop_id"] for r in frozen["crops"]}
+    # Un test quasi-identique reste test ; train et val sont retirés transitivement.
+    (tmp_path / source.crops[11].image_key).write_bytes(
+        (tmp_path / source.crops[0].image_key).read_bytes()
+    )
+    records = list(source.crops)
+    records[11] = records[11].model_copy(
+        update={
+            "frame": records[11].frame.model_copy(update={"split": "test"}),
+        }
+    )
+    videos = list(inventory.videos)
+    videos[11] = videos[11].model_copy(update={"split": "test"})
+    safe = prepare_dataset(
+        source.model_copy(update={"crops": tuple(records)}),
+        inventory.model_copy(update={"videos": tuple(videos)}),
+        LocalStorage(tmp_path),
+        destination,
+        classes,
+        cross_split_policy="quarantine",
+    )
+    frozen = json.loads(destination.read_bytes(safe["dataset_version"] + "/training.json"))
+    kept = {r["crop_id"] for r in frozen["crops"]}
+    assert records[11].crop_id in kept and records[0].crop_id not in kept
+    assert records[10].crop_id not in kept

@@ -4,6 +4,71 @@ Le détecteur reste MegaDetector 10.0.28 / MDv5a.0.0. Le référentiel reste
 `manifests/classes-v3-10.json`, avec les dix indices historiques et leurs alias.
 SpeciesNet ne figure pas dans le code actif. Les étapes sont livrées séparément.
 
+## Entraîner les quatre CNN puis lancer le benchmark
+
+Depuis la racine du dépôt, dans PowerShell ou un terminal Linux/WSL :
+
+```sh
+# Corpus de base, avec labels de noms explicitement autorisés pour le POC :
+make train-benchmark DEVICE=cuda BENCHMARK_WEAK_LABELS=1
+# Même campagne sur CPU (nettement plus lente) :
+make train-benchmark DEVICE=cpu BENCHMARK_WEAK_LABELS=1
+# Lorsque train ET validation sont suffisamment annotés humainement :
+make train-benchmark DEVICE=cuda
+```
+
+La commande construit/démarre le worker approprié, télécharge explicitement les
+poids ImageNet nécessaires dans le cache local, puis prépare un snapshot commun du
+corpus et des corrections humaines. Elle entraîne successivement EfficientNetV2 B0,
+EfficientNetV2 S, ConvNeXt Tiny puis ResNet50 : 6 époques de tête, jusqu'à 18 époques
+de fine-tuning, early stopping, batch 2, accumulation 4, 224 px. Chaque meilleur
+checkpoint est enregistré comme candidat. Aucun entraînement n'est lancé par les
+imports ou le démarrage Docker ; lancer cette cible constitue la demande explicite.
+
+La comparaison finale utilise exactement le même snapshot et le split **val** pour
+les quatre modèles. Elle n'ouvre pas le test gelé et ne promeut aucun candidat.
+Les runs apparaissent dans **Administration → Entraînements**, les modèles dans
+**Modèles**, et le tableau comparatif dans **Évaluation → Benchmarks**, avec le
+rapport JSON complet. Une erreur ou annulation arrête l'enchaînement ; les modèles
+déjà enregistrés et les checkpoints restent disponibles. Si train/val est vide,
+aucun entraînement n'est soumis.
+
+Un label provisoire est une proposition issue du nom de la vidéo, pas une
+validation de chaque animal détecté. Les corrections humaines remplacent les
+propositions correspondantes et les rejets sont exclus. `BENCHMARK_WEAK_LABELS=1`
+autorise ces propositions explicitement ; les métriques sont alors exploratoires
+et ne peuvent justifier une promotion. Sans cette option, seuls les crops humains
+acceptés/corrigés sont retenus. Le corpus humain actuel n'a aucun crop en val.
+
+L'identifiant de campagne est affiché au lancement et son état est conservé dans
+`data/results/vision/campaigns/<id>.json`. Si le terminal est fermé, la tâche déjà
+soumise continue, mais les étapes suivantes attendent la reprise du client :
+
+```sh
+make train-benchmark DEVICE=cuda BENCHMARK_WEAK_LABELS=1 CAMPAIGN_ID=<id>
+```
+
+Conserver les mêmes paramètres pour reprendre. Les tâches terminées ne sont pas
+resoumises. La reprise d'un worker interrompu utilise les checkpoints existants.
+Un run annulé/échoué bloque volontairement la campagne ; consulter son erreur dans
+l'interface. Pour une nouvelle campagne ou d'autres réglages, omettre `CAMPAIGN_ID`.
+Options : `EPOCHS_HEAD`, `EPOCHS_FINETUNE`, `BATCH_SIZE`, `ACCUMULATION_STEPS`.
+La campagne exclut les groupes quasi identiques inter-splits de son snapshot, avec
+priorité test > validation > train, y compris pour les liens transitifs. Aucun
+exemple test n'est déplacé ou réintroduit dans train ; les groupes exclus sont
+tracés dans le manifeste. Les images et annotations originales restent intactes.
+Les autres préparations conservent le refus strict par défaut
+(`cross_split_policy="error"`). La campagne emploie explicitement `quarantine`.
+
+Vérifications du parcours : 157 tests Python/CPU/intégration, 9 tests unitaires Vue,
+11 parcours web (dont le tableau de benchmark), builds TypeScript/Vite et Ruff.
+La préparation réelle du corpus en mode provisoire a produit 3 849 crops :
+2 624 train, 563 validation, 662 test ; 9 groupes exclus pour quasi-doublons
+inter-splits et 41 crops exclus pour qualité/taille. Version :
+`0df8db885096b2b26fff13127fcacdb18de19ae99beff0557ebf0cf07dc8693f`.
+Ces contrôles ne constituent pas un entraînement complet des quatre CNN : celui-ci
+démarre uniquement lors de l'exécution explicite de `make train-benchmark`.
+
 ## Étape 1 : contrats et adaptateurs
 
 `classification.base.SpeciesClassifier` définit le chargement explicite d'une

@@ -444,12 +444,17 @@ def perform(
     if base_corpus:
         from .training.poc import prepare_snapshot
 
-        config.train_manifest = LocalStorage(settings.output_root).path(
-            f"console/datasets/base/{row['id']}/training.json"
-        )
-        progress(0, 0, "Préparation du corpus de base et des corrections humaines")
-        check(stop)
-        prepare_snapshot(config)
+        if payload.get("snapshot_key"):
+            config.train_manifest = LocalStorage(settings.output_root).path(payload["snapshot_key"])
+            if file_hash(config.train_manifest) != payload["snapshot_sha256"]:
+                raise ValueError("Le snapshot commun de la campagne a été modifié")
+        else:
+            config.train_manifest = LocalStorage(settings.output_root).path(
+                f"console/datasets/base/{row['id']}/training.json"
+            )
+            progress(0, 0, "Préparation du corpus de base et des corrections humaines")
+            check(stop)
+            prepare_snapshot(config)
         check(stop)
     else:
         root = materialize(payload["dataset_id"], settings, stop)
@@ -465,7 +470,11 @@ def perform(
     from .commands import train_from_manifest
 
     config.training = TrainingConfig(
-        **{k: v for k, v in payload.items() if k != "dataset_id"},
+        **{
+            k: v
+            for k, v in payload.items()
+            if k not in ("dataset_id", "snapshot_key", "snapshot_sha256")
+        },
         run_id=str(row["id"]),
         allow_filename_labels=base_corpus,
         database_metrics=True,

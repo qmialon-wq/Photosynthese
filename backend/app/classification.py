@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi.responses import FileResponse
 
 from app.review import Actor
@@ -71,6 +71,19 @@ def cluster(body: Clustering, actor: Actor) -> dict[str, Any]:
 @router.post("/comparisons", status_code=202)
 def compare(body: Comparison, actor: Actor) -> dict[str, Any]:
     return console.submit("classifiers_compare", freeze_comparison(body), actor)
+
+
+@router.get("/comparisons")
+def comparisons(limit: int = Query(default=20, ge=1, le=100)) -> list[dict[str, Any]]:
+    with transaction() as connection:
+        return connection.execute(
+            """SELECT id,created_at,report->>'dataset_version' AS dataset_version,
+            report->'protocol' AS protocol,report->'human_validated' AS human_validated,
+            (SELECT jsonb_agg(m - 'predictions')
+             FROM jsonb_array_elements(report->'models') AS m) AS models
+            FROM classifier_comparisons ORDER BY created_at DESC LIMIT %s""",
+            (limit,),
+        ).fetchall()
 
 
 @router.get("/comparisons/{identifier}")

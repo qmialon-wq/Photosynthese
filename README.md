@@ -6,6 +6,11 @@ classifieurs classiques, comparaisons, promotion et rollback) est documenté dan
 Les dix classes et le champion existant sont conservés ; aucun entraînement ni
 remplacement de modèle n'est déclenché au démarrage.
 
+Campagne complète des quatre CNN puis benchmark commun, sur le corpus de base
+avec labels de noms explicitement autorisés pour le POC :
+`make train-benchmark DEVICE=cuda BENCHMARK_WEAK_LABELS=1` (ou `DEVICE=cpu`).
+Suivi dans Administration → Entraînements ; comparaison dans Évaluation → Benchmarks.
+
 Socle local Docker : FastAPI, Vue 3 + TypeScript + Vite, PostgreSQL 16 avec
 pgvector 0.8.1, Redis et deux workers Python indépendants. Les modules vision
 extraits du notebook V3 sont utilisables explicitement depuis Python ou la CLI :

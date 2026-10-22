@@ -49,6 +49,8 @@ def perform(
             load_classes(settings.classes_manifest),
             allow_weak_labels=payload.get("allow_weak_labels", False),
             exclude_blurry=payload.get("exclude_blurry", True),
+            cross_split_policy=payload.get("cross_split_policy", "error"),
+            check_cancelled=check_cancelled,
         )
     if kind == "model_rollback":
         from shared.promotion import rollback

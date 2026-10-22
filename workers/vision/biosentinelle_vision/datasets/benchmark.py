@@ -4,8 +4,10 @@ import argparse
 import hashlib
 import json
 from collections import Counter, defaultdict
+from collections.abc import Callable
+from io import BytesIO
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from PIL import Image
 
@@ -35,13 +37,15 @@ def prepare_dataset(
     min_side: int = 28,
     max_per_video: int = 18,
     margin: float = 0.12,
+    cross_split_policy: Literal["error", "quarantine"] = "error",
+    check_cancelled: Callable[[], None] = lambda: None,
 ) -> dict[str, Any]:
     if (
         manifest.class_manifest_version != classes.version
         or inventory.class_manifest_version != classes.version
     ):
         raise ManifestError("Référentiel incompatible")
-    if min_side < 1 or not 0 <= margin <= 1:
+    if min_side < 1 or not 0 <= margin <= 1 or cross_split_policy not in ("error", "quarantine"):
         raise ManifestError("Paramètres de qualité invalides")
     by_id = {v.video_id: v for v in inventory.videos}
     group_splits: dict[tuple[str, str], set[str]] = defaultdict(set)
@@ -54,6 +58,7 @@ def prepare_dataset(
         raise ManifestError("Groupe de séquences ou contenu identique entre splits")
     rejected, accepted, details = [], [], []
     for record in manifest.crops:
+        check_cancelled()
         video = by_id.get(record.frame.video_id)
         if video is None or not video.content_hash or video.split != record.frame.split:
             raise ManifestError("Inventaire source ou split incompatible")
@@ -75,7 +80,7 @@ def prepare_dataset(
             raise ManifestError("Espèce absente du référentiel actif")
         try:
             image_bytes = storage.read_bytes(record.image_key)
-            with Image.open(storage.path(record.image_key)) as image:
+            with Image.open(BytesIO(image_bytes)) as image:
                 descriptor = quality(image.convert("RGB"))
         except (OSError, ValueError) as exc:
             rejected.append({"crop_id": record.crop_id, "reason": "unreadable", "error": str(exc)})
@@ -119,7 +124,16 @@ def prepare_dataset(
     # Cinq bandes suffisent à conserver tous les candidats à distance de Hamming <=4.
     buckets: dict[tuple[int, int], list[int]] = defaultdict(list)
     duplicate_pairs = []
+    parents = {row["group_id"]: row["group_id"] for row in details}
+
+    def find(group: str) -> str:
+        while parents[group] != group:
+            parents[group] = parents[parents[group]]
+            group = parents[group]
+        return group
+
     for index, row in enumerate(details):
+        check_cancelled()
         digest = int(row["quality"]["dhash"], 16)
         keys = [(band, digest >> (band * 13) & 8191) for band in range(5)]
         candidates = set(i for key in keys for i in buckets[key])
@@ -128,14 +142,37 @@ def prepare_dataset(
             if row["image_sha256"] == other["image_sha256"] or similar(
                 row["quality"], other["quality"]
             ):
-                if row["split"] != other["split"]:
+                if row["split"] != other["split"] and cross_split_policy == "error":
                     raise ManifestError(
                         f"Quasi-doublons entre splits : {other['crop_id']}/{row['crop_id']}. "
                         "Regrouper les séquences avant de figer le test."
                     )
                 duplicate_pairs.append([other["crop_id"], row["crop_id"]])
+                parents[find(row["group_id"])] = find(other["group_id"])
         for key in keys:
             buckets[key].append(index)
+    if cross_split_policy == "quarantine":
+        priority = {"train": 0, "val": 1, "test": 2}
+        highest: dict[str, int] = {}
+        for row in details:
+            component = find(row["group_id"])
+            highest[component] = max(highest.get(component, -1), priority[row["split"]])
+        quarantined = {
+            row["group_id"]
+            for row in details
+            if priority[row["split"]] < highest[find(row["group_id"])]
+        }
+        rejected.extend(
+            {
+                "crop_id": row["crop_id"],
+                "reason": "cross_split_duplicate_group",
+                "group_id": row["group_id"],
+            }
+            for row in details
+            if row["group_id"] in quarantined
+        )
+        accepted = [r for r in accepted if r.frame.group_id not in quarantined]
+        details = [row for row in details if row["group_id"] not in quarantined]
     selected = select_samples(
         accepted, classes, max_per_video, allow_filename_labels=allow_weak_labels
     )
@@ -157,6 +194,7 @@ def prepare_dataset(
                 )
     snapshot = {
         "schema_version": "classification-dataset-1",
+        "cross_split_policy": cross_split_policy,
         "classes": classes.model_dump(mode="json"),
         "samples": details,
         "counts": counts,

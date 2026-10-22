@@ -7,10 +7,40 @@ from fastapi.testclient import TestClient
 from test_console import console_db  # noqa: F401
 
 from shared import console
-from shared.review.database import transaction
+from shared.review.database import jsonb, transaction
 
 pytestmark = pytest.mark.integration
 pytest_plugins = ["test_review_integration"]
+
+
+@pytest.mark.usefixtures("console_db")
+def test_benchmark_list_omits_predictions_and_keeps_real_metrics():
+    identifier = str(uuid4())
+    report = {
+        "dataset_version": "test-only",
+        "human_validated": False,
+        "protocol": {"split": "val"},
+        "models": [
+            {
+                "model": {"model_id": "test-only"},
+                "metrics": {"macro_f1": 0.25},
+                "predictions": [{"crop_id": "not-in-summary"}],
+            }
+        ],
+    }
+    with transaction() as connection:
+        connection.execute(
+            """INSERT INTO classifier_comparisons(id,report,report_sha256,actor)
+            VALUES(%s,%s,'test-only','test')""",
+            (identifier, jsonb(report)),
+        )
+    with TestClient(app) as client:
+        response = client.get("/classification/comparisons?limit=1")
+        assert response.status_code == 200
+        row = response.json()[0]
+        assert row["human_validated"] is False and row["models"][0]["metrics"]["macro_f1"] == 0.25
+        assert "predictions" not in row["models"][0]
+        assert client.get(f"/classification/comparisons/{identifier}").json()["report"] == report
 
 
 @pytest.mark.usefixtures("console_db")

@@ -5,6 +5,8 @@ const taskLabels: Record<string, string> = {
   analysis: "Analyse vidéo",
   training: "Entraînement du classificateur",
   evaluation: "Évaluation",
+  classification_dataset: "Préparation du dataset commun",
+  classifiers_compare: "Benchmark des classificateurs",
   import_upload: "Import vidéo",
   import_local: "Indexation vidéo",
   register_model: "Vérification du modèle",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { message, post, useResource } from "../api";
+import { apiUrl, date, message, percent, post, useResource } from "../api";
 import type { Dataset, Metrics, Model, Operation, Task } from "../types";
 const route = useRoute();
 const models = useResource<Model[]>(() => "/console/models", 8000),
@@ -25,6 +25,12 @@ watch(selected, () => {
   evaluation.value = null;
   taskId.value = "";
 });
+watch(
+  () => route.query.model,
+  (value) => {
+    selected.value = String(value || "");
+  },
+);
 async function evaluate() {
   busy.value = true;
   error.value = "";
@@ -50,6 +56,28 @@ const evaluations = useResource<Task[]>(
   () => "/console/tasks?kind=evaluation",
   6000,
 );
+interface Benchmark {
+  id: string;
+  created_at: string;
+  dataset_version: string;
+  human_validated: boolean;
+  protocol: { split: string };
+  models: {
+    model: { model_id: string; classifier_family: string };
+    metrics: Metrics;
+    coverage: number;
+    failure_rate: number;
+    mean_inference_ms: number | null;
+    error: string | null;
+  }[];
+}
+const benchmarks = useResource<Benchmark[]>(
+  () => "/classification/comparisons",
+  10000,
+);
+function modelName(id: string) {
+  return models.data.value?.find((m) => m.id === id)?.name ?? id;
+}
 </script>
 <template>
   <div class="page-heading">
@@ -62,6 +90,96 @@ const evaluations = useResource<Task[]>(
     </div>
   </div>
   <p v-if="error" class="notice error" role="alert">{{ error }}</p>
+  <section class="panel">
+    <h2>Benchmarks</h2>
+    <p class="muted">
+      Comparaison des modèles sur les mêmes recadrages de validation. Les scores
+      sur labels provisoires sont exploratoires et ne permettent pas une
+      promotion.
+    </p>
+    <LoadState
+      :loading="benchmarks.loading.value && !benchmarks.data.value"
+      :error="benchmarks.error.value"
+      :empty="benchmarks.data.value?.length === 0"
+      empty-text="Aucun benchmark terminé"
+      @retry="benchmarks.refresh"
+    >
+      <article
+        v-for="benchmark in benchmarks.data.value"
+        :key="benchmark.id"
+        class="panel"
+      >
+        <div class="section-head">
+          <h3>Benchmark du {{ date(benchmark.created_at) }}</h3>
+          <PTag
+            :severity="benchmark.human_validated ? 'success' : 'warn'"
+            :value="
+              benchmark.human_validated
+                ? 'Labels humains'
+                : 'Labels provisoires'
+            "
+          />
+        </div>
+        <p class="muted">
+          Dataset {{ benchmark.dataset_version.slice(0, 12) }} ·
+          {{ benchmark.protocol.split }}
+        </p>
+        <div class="table-scroll">
+          <table>
+            <caption>
+              Résultats du benchmark
+              {{
+                benchmark.id.slice(0, 8)
+              }}
+            </caption>
+            <thead>
+              <tr>
+                <th>Modèle</th>
+                <th>Macro-F1</th>
+                <th>Accuracy</th>
+                <th>Couverture</th>
+                <th>Latence / crop</th>
+                <th>Échecs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in benchmark.models" :key="row.model.model_id">
+                <td>
+                  <RouterLink
+                    :to="{
+                      path: '/admin/evaluation',
+                      query: { model: row.model.model_id },
+                    }"
+                  >
+                    {{ modelName(row.model.model_id) }}</RouterLink
+                  >
+                  <p v-if="row.error" role="alert" class="notice error">
+                    {{ row.error }}
+                  </p>
+                </td>
+                <td>{{ percent(row.metrics.macro_f1) }}</td>
+                <td>{{ percent(row.metrics.accuracy) }}</td>
+                <td>{{ percent(row.coverage) }}</td>
+                <td>
+                  {{
+                    row.mean_inference_ms == null
+                      ? "Indisponible"
+                      : `${row.mean_inference_ms.toFixed(1)} ms`
+                  }}
+                </td>
+                <td>{{ percent(row.failure_rate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <a
+          :href="apiUrl(`/classification/comparisons/${benchmark.id}`)"
+          download="benchmark.json"
+          >Rapport JSON complet</a
+        >
+      </article>
+    </LoadState>
+  </section>
   <section class="panel">
     <form class="inline-form" @submit.prevent="evaluate">
       <label

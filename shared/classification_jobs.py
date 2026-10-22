@@ -52,6 +52,7 @@ class Clustering(OperationBody):
 class DatasetPreparation(OperationBody):
     allow_weak_labels: bool = False
     exclude_blurry: bool = True
+    cross_split_policy: Literal["error", "quarantine"] = "error"
 
 
 class Comparison(OperationBody):

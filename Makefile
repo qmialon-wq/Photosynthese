@@ -177,6 +177,22 @@ endif
 .PHONY: training-up train-classifier evaluate-classifier training-tests
 training-up: inference-up
 
+# Entraînements complets et séquentiels ; les labels faibles restent une option explicite.
+BENCHMARK_WEAK_LABELS ?= 0
+CAMPAIGN_ID ?=
+export BENCHMARK_WEAK_LABELS CAMPAIGN_ID
+export CAMPAIGN_EPOCHS_HEAD = $(EPOCHS_HEAD)
+export CAMPAIGN_EPOCHS_FINETUNE = $(EPOCHS_FINETUNE)
+export CAMPAIGN_BATCH_SIZE = $(BATCH_SIZE)
+export CAMPAIGN_ACCUMULATION_STEPS = $(ACCUMULATION_STEPS)
+.PHONY: train-benchmark
+train-benchmark: training-up
+	$(MAKE) pretrained-fetch ARCHITECTURE=tf_efficientnetv2_b0
+	$(MAKE) pretrained-fetch ARCHITECTURE=efficientnetv2_s
+	$(MAKE) pretrained-fetch ARCHITECTURE=convnext_tiny
+	$(MAKE) pretrained-fetch ARCHITECTURE=resnet50
+	$(ML_COMPOSE) exec -T --env BENCHMARK_WEAK_LABELS --env CAMPAIGN_ID --env CAMPAIGN_EPOCHS_HEAD --env CAMPAIGN_EPOCHS_FINETUNE --env CAMPAIGN_BATCH_SIZE --env CAMPAIGN_ACCUMULATION_STEPS vision python -m biosentinelle_vision.training.campaign --device $(DEVICE)
+
 .PHONY: efficientnet-poc-check train-efficientnet-poc
 efficientnet-poc-check:
 	$(ML_COMPOSE) exec -T vision python -m biosentinelle_vision.training.poc --config /app/workers/vision/configs/classifier-efficientnetv2-poc.json
