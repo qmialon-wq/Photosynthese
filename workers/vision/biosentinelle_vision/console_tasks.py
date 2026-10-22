@@ -214,6 +214,8 @@ def register_model(
     from .training.engine import SUPPORTED_MODELS
 
     checkpoint = LocalStorage(settings.checkpoint_root).path(payload["checkpoint_key"])
+    if checkpoint.suffix == ".json":
+        return register_embedding_model(payload, actor, settings, classes)
     data = torch.load(checkpoint, map_location="cpu", weights_only=True)
     classes.check_checkpoint(data)
     if data["model_name"] not in SUPPORTED_MODELS:
@@ -234,6 +236,8 @@ def register_model(
         "run_id": data.get("run_id"),
         "label_provenance": data.get("label_provenance"),
         "validation": "strict_state_dict",
+        "preprocessing": data.get("preprocessing"),
+        "training_config": data.get("training_config"),
     }
     identifier = str(uuid4())
     with transaction(write=True) as connection:
@@ -252,8 +256,9 @@ def register_model(
             if match:
                 metrics["validation"] = match
         row = connection.execute(
-            """INSERT INTO console_models(id,name,checkpoint_key,sha256,metadata,metrics,actor)
-          VALUES(%s,%s,%s,%s,%s,%s,%s) ON CONFLICT(sha256)
+            """INSERT INTO console_models(id,name,checkpoint_key,sha256,metadata,metrics,actor,
+              family,version,dataset_version,preprocessing_version)
+          VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT(sha256)
           DO UPDATE SET sha256=excluded.sha256 RETURNING id""",
             (
                 identifier,
@@ -263,6 +268,65 @@ def register_model(
                 jsonb(metadata),
                 jsonb(metrics),
                 actor,
+                "supervised" if data.get("run_id") else "existing",
+                digest,
+                data.get("dataset_version"),
+                (data.get("preprocessing") or {}).get("version", "legacy-imagenet-resize-v1"),
+            ),
+        ).fetchone()
+    return {"model_id": str(row["id"])}
+
+
+def register_embedding_model(
+    payload: dict[str, Any], actor: str, settings: VisionSettings, classes: ClassManifest
+) -> dict[str, Any]:
+    import json
+
+    from .classification.contracts import ModelVersion
+    from .classification.embedding_classifier import EmbeddingClassifier
+    from .datasets.inventory import file_hash
+
+    checkpoint = LocalStorage(settings.checkpoint_root).path(payload["checkpoint_key"])
+    data = json.loads(checkpoint.read_text(encoding="utf-8"))
+    digest = file_hash(checkpoint)
+    classifier = EmbeddingClassifier(classes)
+    classifier.load(
+        ModelVersion(
+            model_id="registration",
+            version=digest,
+            classifier_family="embedding",
+            checkpoint=checkpoint,
+            sha256=digest,
+            preprocessing_version="timm-local-imagenet-v1",
+        )
+    )
+    classifier.unload()
+    metadata = {
+        "model_name": data["extractor"]["architecture"],
+        "image_size": data["extractor"]["profile"]["image_size"],
+        "classes": classes.model_dump(mode="json"),
+        "extractor": data["extractor"],
+        "label_provenance": {
+            "label_policy": "filename_provisional" if data["weak_validation"] else "human_only"
+        },
+        "validation": "embedding_integrity_and_extractor",
+    }
+    with transaction(write=True) as connection:
+        row = connection.execute(
+            """INSERT INTO console_models
+          (id,name,checkpoint_key,sha256,metadata,metrics,actor,family,version,dataset_version,preprocessing_version)
+          VALUES(%s,%s,%s,%s,%s,%s,%s,'embedding',%s,%s,'timm-local-imagenet-v1')
+          ON CONFLICT(sha256) DO UPDATE SET sha256=excluded.sha256 RETURNING id""",
+            (
+                str(uuid4()),
+                payload["name"],
+                payload["checkpoint_key"],
+                digest,
+                jsonb(metadata),
+                jsonb({"validation": data["selection"]["metrics"]}),
+                actor,
+                digest,
+                data["dataset_version"],
             ),
         ).fetchone()
     return {"model_id": str(row["id"])}
@@ -283,7 +347,9 @@ def perform(
 
     if kind in KINDS:
         check(stop)
-        result = perform_classification(kind, payload, settings)
+        result = perform_classification(
+            kind, payload, settings, task_id=str(row["id"]), actor=row["actor"]
+        )
         check(stop)
         return result
     check(stop)

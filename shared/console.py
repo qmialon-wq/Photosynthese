@@ -12,16 +12,32 @@ VIDEO_QUERY = """SELECT id,filename,video_key,sha256,species_candidate,metadata,
  WHERE NOT EXISTS(SELECT 1 FROM console_videos c WHERE c.sha256=v.id)"""
 
 
-def activate_model(identifier: str) -> dict[str, Any]:
+def activate_model(identifier: str, actor: str = "local-api") -> dict[str, Any]:
     with transaction(write=True) as connection:
         row = connection.execute(
-            "SELECT id FROM console_models WHERE id=%s", (identifier,)
+            "SELECT id,status FROM console_models WHERE id=%s", (identifier,)
         ).fetchone()
         if row is None:
             raise ReviewError("Modèle inconnu", 404)
+        if row["status"] not in ("validated", "active"):
+            raise ReviewError("Comparer et promouvoir ce candidat avant activation")
         previous = connection.execute("SELECT id FROM console_models WHERE active").fetchall()
-        connection.execute("UPDATE console_models SET active=false WHERE active")
-        connection.execute("UPDATE console_models SET active=true WHERE id=%s", (identifier,))
+        connection.execute("UPDATE console_models SET active=false,status='validated' WHERE active")
+        connection.execute(
+            "UPDATE console_models SET active=true,status='active' WHERE id=%s", (identifier,)
+        )
+        connection.execute(
+            """INSERT INTO model_promotions
+          (id,model_id,previous_model_id,action,actor,justification)
+          VALUES(%s,%s,%s,'rollback',%s,%s)""",
+            (
+                str(uuid4()),
+                identifier,
+                previous[0]["id"] if previous else None,
+                actor,
+                jsonb({"reason": "Activation d'un modèle validé"}),
+            ),
+        )
     return {
         "id": identifier,
         "active": True,

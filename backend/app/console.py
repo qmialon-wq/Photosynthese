@@ -83,8 +83,8 @@ class ModelRegistration(Body):
     @classmethod
     def relative(cls, value: str) -> str:
         AnalysisRequest(video=value)
-        if Path(value).suffix != ".pt":
-            raise ValueError("Checkpoint .pt local requis")
+        if Path(value).suffix not in (".pt", ".json"):
+            raise ValueError("Checkpoint .pt ou manifeste embeddings .json local requis")
         return value
 
 
@@ -395,7 +395,7 @@ def register_model(body: ModelRegistration, actor: Actor) -> dict[str, Any]:
 
 @router.post("/models/{identifier}/activate")
 def activate(identifier: UUID, actor: Actor) -> dict[str, Any]:
-    return console.activate_model(str(identifier))
+    return console.activate_model(str(identifier), actor=actor)
 
 
 @router.post("/models/{identifier}/evaluate", status_code=202, response_model=Operation)

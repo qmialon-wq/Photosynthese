@@ -119,10 +119,10 @@ def test_worker_registers_and_activates_only_after_success(
         classes,
     )
     assert register.call_count == int(completed)
-    assert activate.call_count == int(completed)
+    assert activate.call_count == 0
     if completed:
         assert register.call_args.args[0]["checkpoint_key"] == "poc/best.pt"
-        assert result["activation"]["previous_model_ids"] == ["old"]
+        assert result["activation"]["active"] is False
         assert (tmp_path / "training/poc/registration.json").is_file()
 
 

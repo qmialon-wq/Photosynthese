@@ -446,6 +446,10 @@ def _train(
                         {
                             "state_dict": best_state,
                             "preprocessing": profile,
+                            "training_config": config.model_dump(mode="json"),
+                            "dataset_version": file_hash(settings.train_manifest)
+                            if settings.train_manifest
+                            else signature,
                             "classes": list(classes.names),
                             "class_manifest_version": classes.version,
                             "model_name": config.model_name,

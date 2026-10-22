@@ -135,6 +135,28 @@ les scores. Les mesures vidéo utilisent uniquement une vérité vidéo humaine
 explicite, sinon elles restent absentes. Le rapport précise que ce benchmark de
 crops ne constitue pas une mesure end-to-end de MegaDetector.
 
+## Étape 7 : registre et promotion
+
+La migration `0005_classifier_registry` conserve le champion actif et ajoute famille,
+version, dataset, prétraitement, états candidat/validé/actif/archivé, comparaisons
+signées par SHA-256 et historique des décisions. Un nouvel entraînement produit
+un candidat. L'ancien `activate_on_success` n'active plus directement un modèle.
+
+La politique `BIOSENTINELLE_PROMOTION_*` exige par défaut un gain macro-F1 >0,01,
+une baisse de rappel par espèce <=0,05, une baisse de couverture <=0,02 et une
+latence <=1,5 fois celle du champion, sans hausse des échecs. Au moins 200 crops
+et trois vidéos par classe sont nécessaires, avec un bootstrap groupé par vidéo
+(500 tirages, seed fixe, borne basse 95 % du gain positive). Labels faibles et test
+ne peuvent jamais servir à promouvoir un modèle. Si les garde-fous passent mais
+l'échantillon ne permet pas de conclure, une justification humaine explicite est
+requise ; elle ne contourne pas un gain insuffisant ou une régression.
+
+La promotion vérifie aussi champion courant, mapping et empreintes évaluées. Le
+rollback restaure un ancien champion, avec acteur et justification enregistrés.
+L'ancienne route d'activation refuse désormais un candidat non comparé. Le champion
+observé à la migration est conservé, sans prétendre que ses labels historiques sont
+validés humainement. Les anciens checkpoints ne sont pas supprimés.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \

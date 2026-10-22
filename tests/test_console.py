@@ -154,6 +154,13 @@ def console_db(review_db, monkeypatch):
     with transaction() as connection:
         monkeypatch.setattr(migration.op, "execute", connection.execute)
         migration.upgrade()
+        spec_registry = importlib.util.spec_from_file_location(
+            "registry_migration", Path("backend/migrations/versions/0005_classifier_registry.py")
+        )
+        registry = importlib.util.module_from_spec(spec_registry)
+        spec_registry.loader.exec_module(registry)
+        monkeypatch.setattr(registry.op, "execute", connection.execute)
+        registry.upgrade()
         connection.execute("CREATE TABLE training_runs (LIKE public.training_runs INCLUDING ALL)")
         connection.execute(
             "CREATE TABLE training_metrics (LIKE public.training_metrics INCLUDING ALL)"
@@ -270,8 +277,8 @@ def test_registry_selection_freezes_checkpoint_for_queued_analysis(console_db):
     model_id = "11111111-1111-4111-8111-111111111111"
     with transaction() as connection:
         connection.execute(
-            """INSERT INTO console_models(id,name,checkpoint_key,sha256,metadata,metrics,actor)
-          VALUES(%s,'test-only','test.pt','known-hash','{}','{}','alice')""",
+            """INSERT INTO console_models(id,name,checkpoint_key,sha256,metadata,metrics,actor,status)
+          VALUES(%s,'test-only','test.pt','known-hash','{}','{}','alice','validated')""",
             (model_id,),
         )
     with TestClient(app) as client:

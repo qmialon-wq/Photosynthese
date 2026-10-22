@@ -65,8 +65,6 @@ def execute_job(
             config.training.resume_checkpoint = last
         result = train_from_manifest(config, classes, stop)
         if result.get("status") == "completed" and config.training.register_model_name:
-            from shared.console import activate_model
-
             from .console_tasks import register_model
 
             registered = register_model(
@@ -85,7 +83,10 @@ def execute_job(
             )
             result.update(registered)
             if config.training.activate_on_success:
-                result["activation"] = activate_model(registered["model_id"])
+                result["activation"] = {
+                    "active": False,
+                    "reason": "Comparaison et promotion requises",
+                }
             LocalStorage(config.output_root).write_json(
                 f"training/{config.training.run_id}/registration.json",
                 registered | {"activation": result.get("activation")},
