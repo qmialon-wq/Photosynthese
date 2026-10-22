@@ -98,7 +98,17 @@ async function activate() {
             v-if="model.active"
             severity="success"
             value="Modèle actif"
-          /><PTag v-else severity="secondary" value="Disponible" />
+          /><PTag
+            v-else
+            severity="secondary"
+            :value="
+              model.status === 'validated'
+                ? 'Validé'
+                : model.status === 'archived'
+                  ? 'Archivé'
+                  : 'Candidat à comparer'
+            "
+          />
         </div>
         <h2>{{ model.name }}</h2>
         <p class="muted">
@@ -129,7 +139,7 @@ async function activate() {
         <div class="actions">
           <PButton
             label="Définir comme actif"
-            :disabled="model.active || busy"
+            :disabled="model.active || busy || model.status !== 'validated'"
             severity="secondary"
             @click="pending = model"
           /><RouterLink
@@ -139,6 +149,11 @@ async function activate() {
         </div>
       </article></div
   ></LoadState>
+  <p class="notice">
+    Les candidats nécessitent une comparaison sur validation humaine avant
+    promotion. Les opérations de comparaison, promotion justifiée et historique
+    sont disponibles dans l’API /classification (documentation /api/docs).
+  </p>
   <PDialog
     :visible="!!pending"
     header="Changer le modèle actif"

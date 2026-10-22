@@ -62,7 +62,9 @@ de commande d'annulation individuelle pendant qu'un worker reste actif.
 ## Second modèle EfficientNetV2 pour le POC
 
 Ce parcours crée un modèle indépendant de SpeciesNet et du ConvNeXt,
-initialisé aléatoirement, sans téléchargement. Depuis la racine :
+initialisé aléatoirement dans cette configuration historique explicite. Les nouveaux
+entraînements utilisent par défaut des poids ImageNet locaux, préparés avec
+`make pretrained-fetch` (voir `CLASSIFICATION_ALTERNATIVE.md`). Depuis la racine :
 
 ```sh
 make training-up DEVICE=cuda
@@ -94,9 +96,10 @@ Entraînements → Runs et checkpoints existants**. Checkpoints persistants :
 `data/checkpoints/efficientnetv2-poc-v1/{best,last}.pt`. En cas d'interruption, le
 worker reprend `last.pt` à la dernière frontière d'époque enregistrée.
 
-Après réussite, le worker vérifie et enregistre `best.pt`, puis active cette version
-pour les prochaines analyses web. Le ConvNeXt reste enregistré et son fichier est
-conservé : revenir dessus dans **Modèles → Activer**. Les analyses CLI historiques
+Après réussite, le worker vérifie et enregistre `best.pt` comme candidat. Une
+comparaison sur validation humaine est désormais requise avant promotion explicite.
+L'activation automatique historique est supprimée. Le ConvNeXt reste enregistré et
+son fichier est conservé. Les analyses CLI historiques
 utilisent toujours leur `CLASSIFIER_CHECKPOINT` explicite. Le registre conserve la
 provenance provisoire ; les métriques ne constituent pas une évaluation humaine
 fiable. L'activation signifie que le modèle est utilisable, pas qu'il a démontré

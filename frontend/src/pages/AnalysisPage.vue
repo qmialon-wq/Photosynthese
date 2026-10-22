@@ -24,6 +24,7 @@ const activeModel = computed(() =>
   models.data.value?.find((model) => model.active),
 );
 const preset = ref("balanced");
+const shadowModel = ref("");
 const modeChosen = ref(false);
 watch(activeModel, (model) => {
   if (!modeChosen.value) config.value.detection_only = !model;
@@ -57,7 +58,7 @@ async function launch() {
     const operation = await post<Operation>(
       `/console/videos/${videoId.value}/analyze`,
       isAdmin.value
-        ? config.value
+        ? { ...config.value, ...(shadowModel.value ? { shadow_model_id: shadowModel.value } : {}) }
         : {
             ...config.value,
             infer_every_n_frames: { detailed: 1, balanced: 2, fast: 10 }[
@@ -181,6 +182,13 @@ function prepared(task: Task) {
           réglages techniques sont accessibles dans l'administration.
         </p>
         <div v-if="isAdmin" class="form-grid">
+          <label>Comparaison shadow (CPU, facultative)
+            <select v-model="shadowModel" :disabled="config.detection_only">
+              <option value="">Désactivée</option>
+              <option v-for="model in models.data.value?.filter(m => !m.active && m.status !== 'archived')"
+                :key="model.id" :value="model.id">{{ model.name }}</option>
+            </select>
+          </label>
           <label
             >Seuil de détection<input
               type="number"

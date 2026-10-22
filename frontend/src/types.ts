@@ -121,6 +121,8 @@ export interface Dataset {
   };
 }
 export interface Model {
+  status?: "candidate" | "validated" | "active" | "archived";
+  family?: "existing" | "supervised" | "embedding";
   id: string;
   name: string;
   checkpoint_key: string;

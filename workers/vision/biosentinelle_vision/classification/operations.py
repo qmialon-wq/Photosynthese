@@ -1,5 +1,6 @@
 """Opérations exécutées dans le consommateur vision existant."""
 
+from collections.abc import Callable
 from typing import Any
 
 from ..config import VisionSettings
@@ -11,6 +12,8 @@ KINDS = {
     "embeddings_cluster",
     "classifiers_compare",
     "model_promote",
+    "model_rollback",
+    "classification_dataset",
 }
 
 
@@ -21,8 +24,50 @@ def perform(
     *,
     task_id: str | None = None,
     actor: str = "local-cli",
+    check_cancelled: Callable[[], None] = lambda: None,
 ) -> dict[str, Any]:
+    check_cancelled()
     results = LocalStorage(settings.output_root)
+    if kind == "classification_dataset":
+        from ..classes import load_classes
+        from ..datasets.benchmark import prepare_dataset
+        from ..schemas import CropsManifest, Inventory
+        from ..training.poc import prepare_snapshot
+
+        if task_id is None:
+            raise ValueError("Identifiant de tâche requis pour figer les corrections")
+        target = results.path(f"benchmark/sources/{task_id}/training.json")
+        prepare_snapshot(settings.model_copy(update={"train_manifest": target}))
+        check_cancelled()
+        return prepare_dataset(
+            CropsManifest.model_validate_json(target.read_text(encoding="utf-8")),
+            Inventory.model_validate_json(
+                results.path("classification/videos.json").read_text(encoding="utf-8")
+            ),
+            results,
+            LocalStorage(results.path("benchmark/versions")),
+            load_classes(settings.classes_manifest),
+            allow_weak_labels=payload.get("allow_weak_labels", False),
+            exclude_blurry=payload.get("exclude_blurry", True),
+        )
+    if kind == "model_rollback":
+        from shared.promotion import rollback
+        from shared.review.database import transaction
+
+        from ..datasets.inventory import file_hash
+
+        with transaction() as connection:
+            model = connection.execute(
+                "SELECT checkpoint_key,sha256 FROM console_models WHERE id=%s",
+                (payload["model_id"],),
+            ).fetchone()
+        if (
+            model is None
+            or file_hash(LocalStorage(settings.checkpoint_root).path(model["checkpoint_key"]))
+            != model["sha256"]
+        ):
+            raise ValueError("Modèle de rollback absent ou corrompu")
+        return rollback(payload["model_id"], actor, payload["reason"])
     if kind == "model_promote":
         from shared.promotion import promote
         from shared.review.database import transaction
@@ -87,7 +132,9 @@ def perform(
             lock=settings.gpu_lock_path,
             video_truth=truth,
             allow_weak_labels=payload.get("allow_weak_labels", False),
+            check_cancelled=check_cancelled,
         )
+        check_cancelled()
         with transaction(write=True) as connection:
             connection.execute(
                 """INSERT INTO classifier_comparisons(id,report,report_sha256,actor)
@@ -126,6 +173,7 @@ def perform(
             batch_size=payload.get("batch_size", 2),
             allow_weak_labels=payload.get("allow_weak_labels", False),
             lock=settings.gpu_lock_path,
+            check_cancelled=check_cancelled,
         )
     if kind == "embeddings_train":
         from ..training.embedding import train_embedding_classifier
@@ -137,5 +185,6 @@ def perform(
             candidates=tuple(payload.get("candidates", ["logistic", "knn", "linear_svm"])),
             seed=payload.get("seed", 42),
             allow_weak_validation=payload.get("allow_weak_validation", False),
+            check_cancelled=check_cancelled,
         )
     raise ValueError(f"Opération de classification inconnue : {kind}")

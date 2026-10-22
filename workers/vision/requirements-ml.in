@@ -3,3 +3,6 @@ torch==2.6.0
 torchvision==0.21.0
 timm==1.0.15
 megadetector==10.0.28
+scikit-learn==1.9.1
+joblib==1.6.0
+safetensors==0.8.0

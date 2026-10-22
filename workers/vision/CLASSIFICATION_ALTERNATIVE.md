@@ -172,6 +172,62 @@ n'alimente ni labels affichés ni tracking. Ses scores et sa durée sont sépar�
 Une erreur du shadow est diagnostiquée sans faire échouer la réponse principale.
 Le fonctionnement normal reste une seule classification par crop.
 
+## Étape 9 : commandes et API
+
+Depuis la racine du dépôt (le venv du terminal n'affecte pas Docker) :
+
+```sh
+make ml-build DEVICE=cuda
+make pretrained-fetch ARCHITECTURE=tf_efficientnetv2_b0
+make training-up DEVICE=cuda
+make classification-dataset
+# Pour une expérience explicitement faible : ARGS="--allow-weak-labels"
+make embeddings-extract ARGS="--manifest-key benchmark/versions/<version>/training.json"
+make embeddings-train ARGS="--index-key embeddings/datasets/<index>.json --output-key embeddings/experience-01"
+make embeddings-cluster ARGS="--index-key embeddings/datasets/<index>.json --output-key exploration/experience-01.json"
+```
+
+`manifest-key`, `index-key` et `storage-key` sont relatifs à
+`data/results/vision`. Ne pas ajouter `/storage/results/vision` dans ces clés.
+Le téléchargement ImageNet est une commande distincte, avec accès réseau temporaire
+via `docker-compose.pretrained.yml` (Compose >=2.24.4). L'inférence ordinaire utilise
+uniquement les fichiers persistants vérifiés. Le manifeste de l'extracteur est figé
+par révision ; une nouvelle version ne casse pas les modèles précédents. Un dossier
+de modèle à embeddings existant n'est jamais écrasé.
+
+L'API `/docs`, accessible sur http://localhost:8000/docs, expose :
+
+- `POST /classification/datasets/prepare` : fusion corrections SQL, qualité, manifeste versionné.
+- `GET /classification/weights` : présence des manifestes locaux ; intégrité contrôlée au chargement.
+- `POST /classification/embeddings/extract` : `manifest_key`, architecture, batch, labels faibles explicites.
+- `POST /classification/embeddings/train` : `index_key`, candidats, seed ; nouvelle destination unique.
+- `POST /classification/clustering` : `index_key`, méthode, nombre de groupes ; export sans relabellisation.
+- `POST /classification/comparisons` : `manifest_key`, `model_ids`, split, seuil et vérité vidéo facultative.
+- `GET /classification/comparisons/{task_id}` : rapport durable en SQL, également sous `comparisons/`.
+- `POST /classification/models/{id}/promote` : `comparison_id`, `manual_reason` si échantillon insuffisant.
+- `POST /classification/models/{id}/rollback` : `reason` obligatoire, ancien champion vérifié.
+- `GET /classification/models/{id}/history` : décisions et acteurs.
+
+Exemple de comparaison (PowerShell ; remplacer les identifiants) :
+
+```powershell
+$body = @{ manifest_key = 'benchmark/versions/<version>/training.json'; model_ids = @('<champion>', '<candidat>') } | ConvertTo-Json
+Invoke-RestMethod http://localhost:8000/classification/comparisons -Method Post -ContentType 'application/json' -Body $body
+Invoke-RestMethod http://localhost:8000/console/tasks/<task-id>
+```
+
+Les routes renvoient une tâche `202`, suivie et annulable via `/console/tasks`.
+Les calculs passent par le consommateur Redis unique ; extraction et comparaison
+vérifient l'arrêt entre batches, sélection classique entre ajustements. Un ajustement
+scikit-learn et un clustering ne sont pas interruptibles au milieu d'un appel natif.
+Le test final exige `confirm_final_test=true`, des labels humains et un modèle déjà
+sélectionné sur validation. Il ne sert jamais à la promotion.
+
+L'administration propose ImageNet ou initialisation aléatoire explicite, les quatre
+backbones et le shadow facultatif. Les nouvelles opérations de comparaison et
+d'exploration sont accessibles par API/CLI ; aucune galerie de clusters complète
+n'est ajoutée à ce stade.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \

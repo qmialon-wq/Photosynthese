@@ -8,6 +8,7 @@ from psycopg import OperationalError
 from redis import Redis
 from sqlalchemy import create_engine, text
 
+from app.classification import router as classification_router
 from app.config import database_url, redis_url
 from app.console import router as console_router
 from app.review import router as review_router
@@ -32,6 +33,7 @@ app.include_router(vision_router)
 app.include_router(training_router)
 app.include_router(review_router)
 app.include_router(console_router)
+app.include_router(classification_router)
 
 
 @app.exception_handler(ReviewError)

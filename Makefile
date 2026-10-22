@@ -1,5 +1,25 @@
 .PHONY: up gpu down logs test integration lint gpu-check nvidia-smi config
 
+# Ces commandes soumettent des tâches au worker unique ; ARGS contient des
+# options CLI locales et ne doit jamais provenir d'une saisie HTTP.
+ARCHITECTURE ?= tf_efficientnetv2_b0
+ARGS ?=
+.PHONY: pretrained-fetch embeddings-extract embeddings-train embeddings-cluster classification-dataset
+classification-dataset:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli prepare-dataset $(ARGS)
+
+pretrained-fetch:
+	docker compose -f docker-compose.yml -f docker-compose.ml.yml -f docker-compose.pretrained.yml run --rm --no-deps vision python -m biosentinelle_vision.classification.pretrained $(ARCHITECTURE) --root /storage/models/pretrained
+
+embeddings-extract:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli extract-embeddings $(ARGS)
+
+embeddings-train:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli train-embeddings $(ARGS)
+
+embeddings-cluster:
+	docker compose exec vision python -m biosentinelle_vision.classification.cli cluster-embeddings $(ARGS)
+
 up:
 	docker compose up -d --build --wait
 

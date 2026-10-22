@@ -28,6 +28,7 @@ const config = ref({
   epochs_finetune: 18,
   patience: 6,
   amp: "auto",
+  initialization: "pretrained",
 });
 const selectedDataset = computed(() =>
   datasets.data.value?.find(
@@ -111,6 +112,12 @@ function select(id: string) {
           <option value="tf_efficientnetv2_b0">EfficientNetV2 B0</option>
           <option value="efficientnetv2_s">EfficientNetV2 S</option>
           <option value="convnext_tiny">ConvNeXt Tiny</option>
+          <option value="resnet50">ResNet50 (référence)</option>
+        </select></label
+      ><label
+        >Initialisation<select v-model="config.initialization">
+          <option value="pretrained">ImageNet local (recommandé)</option>
+          <option value="scratch">Aléatoire (expérience explicite)</option>
         </select></label
       ><label
         >Batch<input
@@ -162,9 +169,10 @@ function select(id: string) {
       >
       <div class="wide">
         <p class="muted">
-          Les 10 classes doivent être présentes dans le train et le split
-          validation doit être non vide. Les labels issus des noms seuls sont
-          interdits. Aucun téléchargement de poids préentraînés n’est lancé.
+          Train et validation doivent être non vides. Les classes absentes sont
+          signalées dans les métriques. Le corpus de base conserve des labels
+          provisoires. Les poids ImageNet doivent être préparés avec « make
+          pretrained-fetch » ; aucun téléchargement implicite n’est lancé.
         </p>
         <PButton
           type="submit"

@@ -348,7 +348,12 @@ def perform(
     if kind in KINDS:
         check(stop)
         result = perform_classification(
-            kind, payload, settings, task_id=str(row["id"]), actor=row["actor"]
+            kind,
+            payload,
+            settings,
+            task_id=str(row["id"]),
+            actor=row["actor"],
+            check_cancelled=lambda: check(stop),
         )
         check(stop)
         return result

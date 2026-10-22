@@ -1,0 +1,5 @@
+# Téléchargement explicite uniquement. Aucun port, aucune réservation GPU.
+# Fusionner après docker-compose.ml.yml. Compose >= 2.24.4 (!override).
+services:
+  vision:
+    networks: !override [web]

@@ -81,7 +81,9 @@ jedi==0.20.1
 jinja2==3.1.6
     # via torch
 joblib==1.6.0
-    # via scikit-learn
+    # via
+    #   -r workers/vision/requirements-ml.in
+    #   scikit-learn
 jsonpickle==4.1.4
     # via megadetector
 kiwisolver==1.5.1
@@ -249,9 +251,13 @@ requests==2.34.2
 ruff==0.17.1
     # via megadetector
 safetensors==0.8.0
-    # via timm
+    # via
+    #   -r workers/vision/requirements-ml.in
+    #   timm
 scikit-learn==1.9.1
-    # via megadetector
+    # via
+    #   -r workers/vision/requirements-ml.in
+    #   megadetector
 scipy==1.17.1 ; python_full_version < '3.12'
     # via
     #   scikit-learn

@@ -36,6 +36,18 @@ def load_asset(manifest: Path) -> tuple[dict[str, Any], Path]:
     return data, weights
 
 
+def freeze_asset(manifest: Path) -> Path:
+    """Référence immuable, indépendante de l'alias du dernier téléchargement."""
+    data, weights = load_asset(manifest)
+    frozen = {**data, "weights_key": weights.name}
+    destination = LocalStorage(weights.parent)
+    target = destination.path("manifest.json")
+    if target.exists() and json.loads(target.read_text(encoding="utf-8")) != frozen:
+        raise ModelError("Conflit de version des poids généralistes")
+    destination.write_json("manifest.json", frozen)
+    return target
+
+
 def fetch_pretrained(architecture: str, root: Path, revision: str | None = None) -> dict[str, Any]:
     if architecture not in PRETRAINED_MODELS:
         raise ModelError("Architecture préentraînée non prise en charge")
@@ -43,6 +55,7 @@ def fetch_pretrained(architecture: str, root: Path, revision: str | None = None)
     manifest = destination.path("manifest.json")
     if manifest.exists() and revision is None:
         data, _ = load_asset(manifest)
+        freeze_asset(manifest)
         return {**data, "manifest": str(manifest), "cached": True}
     import timm
     from huggingface_hub import HfApi, hf_hub_download
@@ -87,6 +100,7 @@ def fetch_pretrained(architecture: str, root: Path, revision: str | None = None)
         "pretrained_cfg": config.to_dict(),
     }
     destination.write_json("manifest.json", data)
+    freeze_asset(manifest)
     return {**data, "manifest": str(manifest), "cached": False}
 
 

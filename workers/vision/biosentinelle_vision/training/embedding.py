@@ -1,13 +1,14 @@
 """Sélection sur validation, calibration SVM groupée, aucun apprentissage sur test."""
 
 import hashlib
+from collections.abc import Callable
 from io import BytesIO
 from pathlib import Path
 from typing import Any
 
 from ..classes import load_classes
 from ..classification.embeddings import read_embeddings
-from ..classification.pretrained import load_asset
+from ..classification.pretrained import freeze_asset, load_asset
 from ..datasets.benchmark import canonical
 from ..errors import ManifestError
 from ..evaluation.metrics import classification_metrics
@@ -22,7 +23,10 @@ def train_embedding_classifier(
     candidates: tuple[str, ...] = ("logistic", "knn", "linear_svm"),
     seed: int = 42,
     allow_weak_validation: bool = False,
+    check_cancelled: Callable[[], None] = lambda: None,
 ) -> dict[str, Any]:
+    if output.exists() and any(output.iterdir()):
+        raise ManifestError("La version de modèle existe déjà ; choisir un nouveau dossier")
     import joblib
     import numpy as np
     from sklearn.calibration import CalibratedClassifierCV
@@ -67,9 +71,11 @@ def train_embedding_classifier(
         raise ManifestError("Fuite d'image identique entre splits")
     search, skipped, best, best_score = [], [], None, -1.0
     for algorithm in candidates:
+        check_cancelled()
         if algorithm not in ("logistic", "knn", "linear_svm", "rbf_svm"):
             raise ManifestError(f"Algorithme inconnu : {algorithm}")
         for value in (1, 3, 5) if algorithm == "knn" else (0.1, 1.0, 10.0):
+            check_cancelled()
             if algorithm == "knn":
                 if value > int(train.sum()):
                     continue
@@ -119,6 +125,7 @@ def train_embedding_classifier(
                     make_pipeline(StandardScaler(), estimator), cv=cv, method="sigmoid"
                 )
             model.fit(features[train], labels[train])
+            check_cancelled()
             predicted = model.predict(features[validation])
             metrics = classification_metrics(
                 [classes.names[i] for i in labels[validation]],
@@ -143,7 +150,7 @@ def train_embedding_classifier(
         "classes": classes.model_dump(mode="json"),
         "model_key": "classifier.joblib",
         "model_sha256": digest,
-        "pretrained_manifest": str(pretrained_manifest),
+        "pretrained_manifest": str(freeze_asset(pretrained_manifest)),
         "extractor": data["extractor"],
         "dataset_version": hashlib.sha256(canonical(data)).hexdigest(),
         "selection": chosen,

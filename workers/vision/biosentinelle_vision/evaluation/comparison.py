@@ -4,6 +4,7 @@ import hashlib
 import json
 import time
 from collections import Counter, defaultdict
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -64,6 +65,7 @@ def compare_classifiers(
     lock: Path,
     video_truth: dict[str, str] | None = None,
     allow_weak_labels: bool = False,
+    check_cancelled: Callable[[], None] = lambda: None,
 ) -> dict[str, Any]:
     if (
         split not in ("val", "test")
@@ -107,6 +109,7 @@ def compare_classifiers(
     }
     model_results = []
     for version in versions:
+        check_cancelled()
         with exclusive_gpu(device, lock):
             classifier = None
             began = time.perf_counter()
@@ -121,6 +124,7 @@ def compare_classifiers(
 
                     torch.cuda.reset_peak_memory_stats()
                 for start in range(0, len(records), batch_size):
+                    check_cancelled()
                     images = []
                     for record in records[start : start + batch_size]:
                         with Image.open(storage.path(record.image_key)) as image:

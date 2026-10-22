@@ -2,7 +2,7 @@
 
 import hashlib
 import json
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from io import BytesIO
 from pathlib import Path
 from typing import Any, Protocol
@@ -66,6 +66,7 @@ def extract_cached(
     *,
     batch_size: int = 2,
     allow_weak_labels: bool = False,
+    check_cancelled: Callable[[], None] = lambda: None,
 ) -> dict[str, Any]:
     import numpy as np
 
@@ -77,6 +78,7 @@ def extract_cached(
     identity_hash = hashlib.sha256(canonical(extractor.identity)).hexdigest()
     rows, missing, hits = [], [], 0
     for record in records:
+        check_cancelled()
         digest = file_hash(storage.path(record.image_key))
         key = hashlib.sha256(canonical({"image": digest, "extractor": identity_hash})).hexdigest()
         cache_key = f"vectors/{key}.npy"
@@ -102,6 +104,7 @@ def extract_cached(
     index = 0
     current_batch = batch_size
     while index < len(missing):
+        check_cancelled()
         batch = missing[index : index + current_batch]
         images = []
         for row in batch:
@@ -159,6 +162,7 @@ def extract_embeddings(
     batch_size: int = 2,
     allow_weak_labels: bool = False,
     lock: Path,
+    check_cancelled: Callable[[], None] = lambda: None,
 ) -> dict[str, Any]:
     from ..classes import load_classes
 
@@ -174,6 +178,7 @@ def extract_embeddings(
                 load_classes(),
                 batch_size=batch_size,
                 allow_weak_labels=allow_weak_labels,
+                check_cancelled=check_cancelled,
             )
             result["pretrained_manifest"] = str(pretrained)
             return result
