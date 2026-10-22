@@ -7,9 +7,10 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = [".", "backend"]
+pythonpath = [".", "backend", "workers/vision"]
 markers = [
+  "ml: dépendances PyTorch/timm facultatives, testable sur CPU",
   "integration: nécessite les services Compose démarrés",
   "gpu: nécessite PyTorch CUDA et un GPU NVIDIA",
 ]
-addopts = "-ra"
+addopts = "-ra -m 'not integration and not gpu'"

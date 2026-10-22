@@ -1,0 +1,11 @@
+# Toujours fusionner après le fichier CPU, et après le fichier GPU si utilisé.
+services:
+  vision:
+    image: biosentinelle/vision-ml:local
+    build:
+      target: ml
+    environment:
+      BIOSENTINELLE_VISION_INBOX_ROOT: /storage/datasets/inbox
+      BIOSENTINELLE_VISION_TRAIN_MANIFEST: /storage/results/vision/review.json
+      BIOSENTINELLE_VISION_DETECTOR_WEIGHTS: /storage/models/md_v5a.0.0.pt
+      BIOSENTINELLE_VISION_CLASSIFIER_CHECKPOINT: /storage/checkpoints/classifier_v3_best.pt

@@ -1,10 +1,24 @@
-FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime@sha256:77f17f843507062875ce8be2a6f76aa6aa3df7f9ef1e31d9d7432f4b0f563dee AS gpu
+FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime@sha256:77f17f843507062875ce8be2a6f76aa6aa3df7f9ef1e31d9d7432f4b0f563dee AS dependencies
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app
 WORKDIR /app
-COPY workers/requirements.txt /tmp/requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+COPY workers/vision/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt \
     && useradd --uid 10001 --create-home biosentinelle
+FROM dependencies AS gpu
 COPY shared /app/shared
 COPY workers /app/workers
+RUN pip install --no-cache-dir --no-deps /app/workers/vision
+USER biosentinelle
+CMD ["python", "-m", "workers.vision.main"]
+
+FROM dependencies AS ml
+USER root
+COPY workers/vision/requirements-ml.txt /tmp/requirements-ml.txt
+RUN pip install --no-cache-dir -r /tmp/requirements-ml.txt
+COPY shared /app/shared
+COPY workers /app/workers
+RUN pip install --no-cache-dir --no-deps /app/workers/vision
 USER biosentinelle
 CMD ["python", "-m", "workers.vision.main"]

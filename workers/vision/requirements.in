@@ -1,0 +1,5 @@
+-r ../requirements.in
+pydantic-settings==2.10.1
+opencv-python==4.11.0.86
+numpy==2.2.6
+Pillow==11.2.1

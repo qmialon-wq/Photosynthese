@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biosentinelle-vision"
+version = "0.1.0"
+description = "Modules vision locaux extraits du notebook BioSentinelle V3"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "pydantic-settings==2.10.1",
+  "opencv-python==4.11.0.86",
+  "numpy==2.2.6",
+  "Pillow==11.2.1",
+]
+
+[project.optional-dependencies]
+ml = ["torch==2.6.0", "torchvision==0.21.0", "timm==1.0.15", "megadetector==10.0.28"]
+
+[project.scripts]
+biosentinelle-vision = "biosentinelle_vision.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["biosentinelle_vision*"]
+
+[tool.setuptools.package-data]
+biosentinelle_vision = ["manifests/*.json"]

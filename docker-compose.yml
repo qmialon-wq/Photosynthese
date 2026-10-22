@@ -121,6 +121,11 @@ services:
     environment:
       <<: *python-environment
       REQUIRE_CUDA: "0"
+      BIOSENTINELLE_VISION_DATASET_ROOT: /storage/datasets
+      BIOSENTINELLE_VISION_OUTPUT_ROOT: /storage/results/vision
+      BIOSENTINELLE_VISION_CHECKPOINT_ROOT: /storage/checkpoints
+      BIOSENTINELLE_VISION_GPU_LOCK_PATH: /storage/results/.vision-gpu.lock
+      BIOSENTINELLE_VISION_DEVICE: ${VISION_DEVICE:-cpu}
     volumes:
       - ${DATA_ROOT:-./data}/datasets:/storage/datasets:ro
       - ${DATA_ROOT:-./data}/models:/storage/models

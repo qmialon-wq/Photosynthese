@@ -6,6 +6,7 @@ services:
       target: gpu
     environment:
       REQUIRE_CUDA: "1"
+      BIOSENTINELLE_VISION_DEVICE: cuda
       NVIDIA_DRIVER_CAPABILITIES: compute,utility
     deploy:
       replicas: 1

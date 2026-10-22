@@ -1,0 +1,9 @@
+from typing import Protocol
+
+
+class Storage(Protocol):
+    def read_bytes(self, key: str) -> bytes: ...
+
+    def write_bytes(self, key: str, value: bytes) -> None: ...
+
+    def write_json(self, key: str, value: object) -> None: ...

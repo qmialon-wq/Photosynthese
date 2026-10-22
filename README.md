@@ -1,8 +1,98 @@
 # BioSentinelle Normandie
 
 Socle local Docker : FastAPI, Vue 3 + TypeScript + Vite, PostgreSQL 16 avec
-pgvector 0.8.1, Redis et deux workers Python indépendants. Aucun modèle, analyse
-vidéo, entraînement, ingestion documentaire ou RAG n'est implémenté ici.
+pgvector 0.8.1, Redis et deux workers Python indépendants. Les modules vision
+extraits du notebook V3 sont utilisables explicitement depuis Python ou la CLI :
+voir le [guide vision](workers/vision/README.md) et la
+[correspondance des cellules](workers/vision/NOTEBOOK_MIGRATION.md).
+Aucun poids ni modèle entraîné n'est fourni ; aucun pipeline n'est lancé par
+le worker au démarrage. L'ingestion documentaire et le RAG restent à développer.
+
+## Entraînement et vidéos annotées avec Make
+
+Depuis la racine du projet, utiliser GNU Make (sous Windows, WSL est recommandé).
+Docker doit être démarré ; le venv Python de l'hôte n'a pas d'effet sur ces commandes.
+
+```sh
+make ml-init
+make ml-build DEVICE=cuda
+make train-check
+make train DEVICE=cuda BATCH_SIZE=2
+```
+
+`DEVICE=cpu` est la valeur par défaut, utilisable sans NVIDIA. `DEVICE=cuda`
+convient à la RTX 3050 avec Docker/NVIDIA configuré. `ml-build` installe les
+bibliothèques ML dans une image facultative ; aucun poids n'est téléchargé.
+`train` vérifie d'abord les données, puis construit si nécessaire et lance
+l'entraînement explicitement. Les autres services n'ont pas besoin d'être démarrés.
+
+L'entraînement nécessite `data/results/vision/review.json`, produit par la revue
+des recadrages, avec des exemples **acceptés humainement pour chacune des dix
+classes en train** et un ensemble val indépendant. Les images référencées doivent
+exister sous `data/results/vision/`. `make train-check` indique les éléments
+manquants sans charger PyTorch. Aucune conversion des noms de vidéos en labels
+validés n'est effectuée. La revue est actuellement disponible via la fonction
+Python `datasets.review.apply_review`, sans interface graphique.
+
+Le meilleur checkpoint est écrit dans `data/checkpoints/classifier_v3_best.pt`,
+l'historique dans `data/results/vision/training_history.json`. Une nouvelle session
+d'entraînement peut remplacer ce checkpoint : sauvegarder un modèle à conserver.
+Sans checkpoint initial, les poids sont initialisés aléatoirement ; aucun transfert
+ImageNet n'est téléchargé automatiquement. Exemple avec un checkpoint compatible :
+
+```sh
+make train DEVICE=cuda BATCH_SIZE=2 EPOCHS_HEAD=6 EPOCHS_FINETUNE=18 INITIAL_CHECKPOINT=/storage/checkpoints/initial.pt
+```
+
+Pour l'analyse, placer explicitement les poids MegaDetector dans
+`data/models/md_v5a.0.0.pt`, puis déposer les vidéos dans **`data/datasets/inbox/`** :
+
+```sh
+make analyze DEVICE=cuda
+make analyze DEVICE=cuda VIDEO="ma video.mp4"
+make watch DEVICE=cuda
+```
+
+`analyze` traite les fichiers déjà déposés. `watch` reste actif au premier plan et
+traite automatiquement les nouveaux dépôts ; arrêter avec **Ctrl+C**. Il attend
+dix secondes sans changement de taille/mtime, réglables avec `STABLE_SECONDS=30`.
+Pour une copie longue, copier sous un nom `video.mp4.part`, puis renommer en `.mp4`
+une fois terminé : le suffixe `.part` est ignoré. La stabilité seule ne garantit
+pas qu'une copie temporairement suspendue soit terminée.
+
+Les résultats sont dans :
+
+```text
+data/results/vision/analyses/<nom>-<identifiant>/annotated.mp4
+data/results/vision/analyses/<nom>-<identifiant>/report.json
+data/results/vision/analyses/<nom>-<identifiant>/state.json
+```
+
+Les originaux restent dans inbox. `state.json` distingue `completed` et `error`.
+Les analyses déjà terminées sont ignorées ; une modification du contenu vidéo,
+des poids ou des paramètres produit une nouvelle identité. Les erreurs enregistrées
+ne sont pas relancées en boucle. Pour réessayer explicitement :
+
+```sh
+make analyze DEVICE=cuda VIDEO="ma video.mp4" FORCE=1
+```
+
+Le verrou GPU couvre le chargement, le calcul et la libération des modèles. Une
+analyse ponctuelle échoue si le GPU est déjà occupé par ces commandes ; `watch`
+attend et réessaie. Les modèles sont libérés après chaque lot, pour permettre
+l'entraînement pendant que la surveillance reste en attente. Redémarrer `watch`
+après modification des paramètres ; les fichiers de poids sont relus pour chaque lot.
+
+Variables Make : `DEVICE`, `VIDEO` (chemin relatif à inbox), `MANIFEST`, `DETECTOR`,
+`CHECKPOINT`, `INITIAL_CHECKPOINT`, `BATCH_SIZE`, `EPOCHS_HEAD`, `EPOCHS_FINETUNE`,
+`FORCE`, `POLL_SECONDS` et `STABLE_SECONDS`. Les chemins de modèles/manifeste sont
+ceux **dans le conteneur**, donc préfixés par `/storage/`. `DATA_ROOT` dans `.env`
+permet de changer leur racine hôte. Le dossier inbox autorise le dépôt depuis un
+compte hôte Linux avec un mode sticky ; il reste monté en lecture seule dans vision.
+Les vidéos déposées doivent être lisibles par l'UID 10001.
+
+L'export MP4 ne conserve pas l'audio et le codec `mp4v` n'est pas garanti dans
+tous les navigateurs. Les observations restent des prédictions à valider.
 
 ## Prérequis
 
@@ -93,8 +183,9 @@ docker run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
 
 Retour CPU : `docker compose up -d --build --wait vision`. Ne pas augmenter
 le nombre de répliques vision : la configuration prévoit un seul processus.
-Il ne consomme encore aucune tâche ; le verrou d'exécution des futures tâches
-GPU devra être ajouté avec le véritable système de tâches, avant tout pipeline.
+Il ne consomme encore aucune tâche. Les opérations explicites du package vision
+utilisent déjà un verrou interprocessus ; leur raccordement à une file de tâches
+reste à implémenter.
 
 ## Stockage et réseau
 
@@ -141,8 +232,8 @@ vraies files et leurs tailles seront connues. Les sondes des workers sont des
 clés temporaires, pas des tâches ni des résultats d'analyse.
 
 Les chemins de stockage sont centralisés dans l'environnement et les montages.
-Aucun accès S3 n'est implémenté à cette étape ; une interface de stockage devra
-accompagner les premiers vrais usages de fichiers, sans dépendre des chemins hôte.
+Le package vision expose un contrat de stockage et un adaptateur local avec
+écritures atomiques ; aucun accès S3 n'est implémenté.
 
 ## Variables d'environnement
 
@@ -160,6 +251,7 @@ Les valeurs locales d'exemple conviennent uniquement à un poste de développeme
 | `DATA_ROOT` | `./data` | Racine persistante hôte, relative au fichier Compose |
 | `WORKER_HEARTBEAT_SECONDS` | `5` | Intervalle du signal de vie |
 | `WORKER_HEARTBEAT_MAX_AGE_SECONDS` | `30` | Délai de santé, strictement supérieur à deux intervalles |
+| `VISION_DEVICE` | `cpu` | Périphérique des opérations explicites vision ; le fichier GPU impose `cuda` |
 
 Variables internes définies par Compose : `POSTGRES_HOST=postgres`,
 `POSTGRES_PORT=5432`, `REDIS_URL=redis://redis:6379/0`, `STORAGE_ROOT=/storage`,

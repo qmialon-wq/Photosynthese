@@ -1,0 +1,15 @@
+{
+  "version": "v3-10.1",
+  "classes": [
+    {"id": 0, "name": "chevreuil", "latin": "Capreolus capreolus", "aliases": ["chevreuil", "chevreuils"]},
+    {"id": 1, "name": "sanglier", "latin": "Sus scrofa", "aliases": ["sanglier", "sangliers"]},
+    {"id": 2, "name": "buse", "latin": "Buteo buteo", "aliases": ["buse", "buses"]},
+    {"id": 3, "name": "pigeons", "latin": "Columba palumbus", "aliases": ["pigeon", "pigeons", "pigeon ramier", "pigeons ramiers"]},
+    {"id": 4, "name": "martres", "latin": "Martes martes", "aliases": ["martre", "martres"]},
+    {"id": 5, "name": "renards", "latin": "Vulpes vulpes", "aliases": ["renard", "renards"]},
+    {"id": 6, "name": "blaireaux", "latin": "Meles meles", "aliases": ["blaireau", "blaireaux"]},
+    {"id": 7, "name": "chouette", "latin": "Strix aluco", "aliases": ["chouette", "chouettes", "chouette hulotte"]},
+    {"id": 8, "name": "geai", "latin": "Garrulus glandarius", "aliases": ["geai", "geais"]},
+    {"id": 9, "name": "faisans", "latin": "Phasianus colchicus", "aliases": ["faisan", "faisans"]}
+  ]
+}
