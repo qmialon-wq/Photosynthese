@@ -7,7 +7,7 @@ import BoxEditor from "../../src/components/BoxEditor.vue";
 import LoadState from "../../src/components/LoadState.vue";
 import StatusBadge from "../../src/components/StatusBadge.vue";
 import MetricsPanel from "../../src/components/MetricsPanel.vue";
-import { api } from "../../src/api";
+import { api, reviewer } from "../../src/api";
 
 const global = {
   plugins: [PrimeVue],
@@ -15,6 +15,11 @@ const global = {
 };
 beforeEach(() => localStorage.clear());
 describe("composants de la console", () => {
+  it("attribue automatiquement un identifiant local stable sans nom à saisir", () => {
+    const first = reviewer();
+    expect(first).toMatch(/^local-[0-9a-f-]{36}$/);
+    expect(reviewer()).toBe(first);
+  });
   it("signale les erreurs et permet de réessayer", async () => {
     const wrapper = mount(LoadState, {
       props: { error: "Base indisponible" },

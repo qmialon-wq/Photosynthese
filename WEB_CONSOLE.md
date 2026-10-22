@@ -2,7 +2,7 @@
 
 L'interface Vue 3 / TypeScript utilise Vue Router et PrimeVue, sans calcul ML
 dans le navigateur. PostgreSQL et les fichiers gérés par les workers restent
-les sources de vérité. Le navigateur mémorise uniquement le nom de revue ;
+les sources de vérité. Le navigateur mémorise uniquement un identifiant local automatique ;
 les liens conservent les identifiants de tâches pour retrouver un résultat
 après rechargement.
 
@@ -23,25 +23,38 @@ sont appliquées avant le démarrage de l'API et du consommateur ML.
 mais ne consomme pas les tâches ML. Dans ce mode, les traitements soumis
 restent en attente jusqu'au lancement de `review-up`.
 
-Renseigner **Votre nom de revue** dans la barre supérieure avant une action.
-Il s'agit toujours d'une identité déclarée via `X-Reviewer`, adaptée au poste
-local ; aucune authentification distante ni gestion de rôles n'est ajoutée.
+Aucun nom de revue n'est demandé. Un identifiant `local-<uuid>` est créé au premier
+appel API et conservé dans ce navigateur pour tracer les actions. Les appels API
+sans `X-Reviewer` sont attribués à `local` ; les clients existants peuvent toujours
+fournir cet en-tête. Cette attribution est déclarative, sans identité authentifiée.
+La séparation des espaces organise la navigation et ne constitue pas un contrôle
+d'accès : aucune authentification distante ni gestion de rôles n'est ajoutée.
+
+L'accueil `/` donne accès à **Vidéothèque**, **Analyses** et **Validation humaine**.
+Le lien **Administration** ouvre `/admin` et ses pages de gestion ; le lien
+**Espace observation** permet de revenir. Les anciens liens `/training`, `/datasets`,
+`/models` et `/evaluation` redirigent vers `/admin/...`, en conservant leurs paramètres.
 
 ## Parcours disponibles
 
-1. **Vue d'ensemble** : compteurs réels des vidéos uniques par contenu, espèces validées,
+1. **Accueil** : trois actions principales et les cinq dernières analyses réelles.
+   **Vue d'ensemble administrative** (`/admin`) : compteurs réels des vidéos uniques par contenu, espèces validées,
    recadrages à revoir, tâches de la console et dernier entraînement SQL.
    Un état vide ou « Non mesuré » remplace toute mesure absente. Le nom du
    run permet notamment d'identifier les entraînements de test existants.
-2. **Vidéothèque** : sélectionner un fichier local ou indexer une vidéo déjà
-   présente dans `data/datasets/inbox`. Le transfert utilise des requêtes de
+2. **Vidéothèque** : sélectionner un fichier depuis l'ordinateur. L'indexation d'une vidéo déjà
+   présente dans `data/datasets/inbox` est disponible dans `/admin/videos`. Le transfert utilise des requêtes de
    4 Mio maximum, puis le worker assemble, vérifie, sonde et prépare une
    prévisualisation H.264. Le fichier source reste intact. Le transfert peut
    être annulé. Recherche, espèce provisoire, disponibilité et pagination
    s'appuient sur l'API. La bibliothèque inclut les vidéos de la revue existante.
-3. **Analyses** : choisir la détection seule ou le classificateur actif,
-   définir séparément les seuils de détection, classification et pistes,
-   puis soumettre une tâche. Les compteurs d'images sont publiés au traitement ;
+3. **Analyses** : choisir l'objectif (identifier les espèces avec le modèle actif,
+   ou détecter seulement), puis le détail : équilibré (une image sur 2), détaillé
+   (chaque image), rapide (une image sur 10, susceptible de manquer un passage bref).
+   L'identification est proposée par défaut lorsqu'un modèle est actif ; sinon un
+   message explique la disponibilité de la détection seule. Les seuils distincts
+   et le nombre minimal de détections par piste se règlent dans `/admin/analyses`.
+   Les compteurs d'images sont publiés au traitement ;
    le chargement des modèles et l'encodage restent indéterminés. Le résultat
    contient le MP4 H.264, le JSON intégral, les localisations et les scores
    distincts. Les 200 premières détections apparaissent dans le tableau.
@@ -50,8 +63,14 @@ local ; aucune authentification distante ni gestion de rôles n'est ajoutée.
    depuis une vidéo pour soumettre une détection distincte. La galerie filtre
    les états, espèces, indicateurs de qualité et éventuellement une vidéo.
    Dessiner une boîte sur l'image originale ou utiliser les flèches et les
-   champs xywh normalisés. Choisir explicitement l'espèce et un motif avant
-   confirmation ou rejet. L'API contrôle les révisions concurrentes et le
+   champs xywh normalisés. Choisir explicitement l'espèce avant confirmation ;
+   le commentaire est facultatif, y compris pour rejeter ou rouvrir une annotation.
+   Les cases permettent de sélectionner plusieurs images ou toute la page (24 images),
+   puis d'attribuer une espèce commune ou de rejeter la sélection. Les boîtes sont
+   conservées ; leur correction reste individuelle. La sélection est réinitialisée
+   lors d'un changement de page ou de filtre. Les noms de fichiers restent provisoires.
+   Un lot est atomique : un conflit annule toutes ses modifications, sans validation
+   partielle. L'API contrôle les révisions concurrentes et le
    gel du test. L'historique et les anciens recadrages sont conservés.
 5. **Datasets** : construire une version asynchrone, consulter les effectifs
    par espèce/split et les indicateurs de qualité, télécharger ou reconstruire

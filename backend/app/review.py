@@ -8,15 +8,21 @@ from fastapi.responses import FileResponse
 
 from shared.review import service
 from shared.review.database import ReviewError, transaction
-from shared.review.schemas import DatasetRequest, Decision, ImportVideo, Operation, State
+from shared.review.schemas import (
+    BatchDecision,
+    DatasetRequest,
+    Decision,
+    ImportVideo,
+    Operation,
+    State,
+)
 
 router = APIRouter(prefix="/review", tags=["human-review"])
 
 
-def reviewer(x_reviewer: Annotated[str, Header(min_length=1, max_length=128)]) -> str:
-    if not x_reviewer.strip():
-        raise HTTPException(422, "X-Reviewer doit identifier la personne responsable")
-    return x_reviewer.strip()
+def reviewer(x_reviewer: Annotated[str | None, Header(max_length=128)] = None) -> str:
+    # Attribution locale déclarative, pas une identité authentifiée.
+    return (x_reviewer or "").strip() or "local"
 
 
 Actor = Annotated[str, Depends(reviewer)]
@@ -100,6 +106,11 @@ def sample(identifier: str) -> dict[str, Any]:
 @router.post("/samples/{identifier}/decisions")
 def decision(identifier: str, body: Decision, actor: Actor) -> dict[str, Any]:
     return service.decide(identifier, body, actor)
+
+
+@router.post("/samples/batch-decisions")
+def batch_decisions(body: BatchDecision, actor: Actor) -> list[dict[str, Any]]:
+    return service.decide_batch(body, actor)
 
 
 @router.get("/samples/{identifier}/history")

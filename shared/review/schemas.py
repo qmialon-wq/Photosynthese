@@ -43,13 +43,35 @@ class Decision(Schema):
     decision: Literal["validate", "reject", "reopen"]
     label: str | None = Field(default=None, min_length=1, max_length=80)
     box: Box | None = None
-    reason: str = Field(min_length=1, max_length=1000)
+    reason: str = Field(default="", max_length=1000)
     provenance: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def corrections_require_validation(self) -> "Decision":
         if self.decision != "validate" and (self.label is not None or self.box is not None):
             raise ValueError("Une correction de label ou boîte exige decision=validate")
+        return self
+
+
+class BatchItem(Schema):
+    sample_id: str = Field(min_length=1, max_length=128)
+    expected_revision: int = Field(ge=0)
+
+
+class BatchDecision(Schema):
+    items: list[BatchItem] = Field(min_length=1, max_length=100)
+    decision: Literal["validate", "reject"]
+    label: str | None = Field(default=None, min_length=1, max_length=80)
+    reason: str = Field(default="", max_length=1000)
+
+    @model_validator(mode="after")
+    def explicit_selection(self) -> "BatchDecision":
+        if len({item.sample_id for item in self.items}) != len(self.items):
+            raise ValueError("Un recadrage ne peut figurer deux fois dans le lot")
+        if self.decision == "validate" and self.label is None:
+            raise ValueError("Choisir explicitement une espèce pour le lot")
+        if self.decision == "reject" and self.label is not None:
+            raise ValueError("Un rejet ne peut attribuer une espèce")
         return self
 
 

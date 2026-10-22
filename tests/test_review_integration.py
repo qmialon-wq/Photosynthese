@@ -28,7 +28,7 @@ from psycopg import sql
 from shared.review import database, service
 from shared.review.database import ReviewError, transaction
 from shared.review.outbox import publish_pending
-from shared.review.schemas import DatasetRequest, Decision, ImportVideo
+from shared.review.schemas import BatchDecision, DatasetRequest, Decision, ImportVideo
 
 pytestmark = pytest.mark.integration
 
@@ -115,6 +115,91 @@ def validate(sample, label="chevreuil", **kwargs):
     )
 
 
+def test_batch_without_comment_or_reviewer_keeps_audit_and_boxes(review_db):
+    import_fixture(review_db)
+    samples = service.list_samples(None, None, None, 50, 0)
+    with TestClient(app) as client:
+        response = client.post(
+            "/review/samples/batch-decisions",
+            json={
+                "items": [
+                    {"sample_id": sample["id"], "expected_revision": 0} for sample in samples
+                ],
+                "decision": "validate",
+                "label": "renards",
+            },
+        )
+    assert response.status_code == 200, response.text
+    assert len(response.json()) == 3
+    for original, updated in zip(samples, response.json(), strict=True):
+        assert updated["label"] == "renards" and updated["revision"] == 1
+        assert updated["box"] == original["box"]
+        assert updated["actor"] == "local"
+        assert updated["provenance"]["reason_source"] == "automatic"
+        assert updated["provenance"]["reason"]
+        assert updated["provenance"]["supplied"]["action"] == "batch"
+        assert len(service.history(updated["id"])) == 2
+
+
+def test_batch_stale_revision_rolls_back_all_decisions_and_outbox(review_db):
+    import_fixture(review_db)
+    samples = service.list_samples(None, None, None, 50, 0)
+    validate(samples[1])
+    with transaction() as connection:
+        before = connection.execute("SELECT count(*) AS n FROM review_operations").fetchone()["n"]
+    batch = BatchDecision(
+        items=[{"sample_id": sample["id"], "expected_revision": 0} for sample in samples],
+        decision="reject",
+    )
+    with pytest.raises(ReviewError, match="obsolète"):
+        service.decide_batch(batch, "alice")
+    assert service.get_sample(samples[0]["id"])["revision"] == 0
+    assert service.get_sample(samples[2]["id"])["revision"] == 0
+    with transaction() as connection:
+        after = connection.execute("SELECT count(*) AS n FROM review_operations").fetchone()["n"]
+    assert after == before
+
+
+def test_batch_test_lock_rolls_back_other_samples(review_db):
+    import_fixture(review_db)
+    samples = service.list_samples(None, None, None, 50, 0)
+    test_video = import_fixture(review_db, split="test", name="test.mp4", seed=42)
+    locked = service.list_samples(None, None, None, 50, 0, test_video["video_id"])[0]
+    with transaction(write=True) as connection:
+        connection.execute(
+            "UPDATE review_groups SET test_locked=true WHERE id=%s", (locked["group_id"],)
+        )
+    with TestClient(app) as client:
+        response = client.post(
+            "/review/samples/batch-decisions",
+            json={
+                "items": [
+                    {"sample_id": item["id"], "expected_revision": 0}
+                    for item in [samples[0], locked]
+                ],
+                "decision": "reject",
+            },
+        )
+    assert response.status_code == 409, response.text
+    assert service.get_sample(samples[0]["id"])["revision"] == 0
+
+
+def test_single_reject_without_comment_is_audited(review_db):
+    import_fixture(review_db)
+    sample = service.list_samples(None, None, None, 1, 0)[0]
+    with TestClient(app) as client:
+        response = client.post(
+            f"/review/samples/{sample['id']}/decisions",
+            json={
+                "expected_revision": 0,
+                "decision": "reject",
+            },
+        )
+    assert response.status_code == 200, response.text
+    assert response.json()["state"] == "rejected"
+    assert response.json()["provenance"]["reason"] == "Rejet manuel"
+
+
 def test_api_correction_history_and_reproducible_export(review_db):
     result = import_fixture(review_db)
     samples = service.list_samples(None, None, None, 50, 0)
@@ -128,7 +213,7 @@ def test_api_correction_history_and_reproducible_export(review_db):
                 json={
                     "expected_revision": 0,
                     "decision": "validate",
-                    "label": "renards",
+                    "label": "espece_inconnue",
                     "reason": "Correction",
                 },
             ).status_code

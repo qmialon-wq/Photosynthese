@@ -10,7 +10,7 @@ from biosentinelle_vision.storage import LocalStorage
 from PIL import Image
 from pydantic import ValidationError
 
-from shared.review.schemas import Box, Decision, ImportVideo
+from shared.review.schemas import BatchDecision, Box, Decision, ImportVideo
 from shared.vision_jobs import JobStore, ReviewRequest
 
 
@@ -25,6 +25,26 @@ def test_review_boxes_and_decisions_validate():
         Box(x=0.9, y=0, w=0.5, h=0.5)
     with pytest.raises(ValidationError):
         Decision(expected_revision=0, decision="reject", label="chevreuil", reason="refus")
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"items": []},
+        {"items": [{"sample_id": "x", "expected_revision": 0}] * 2},
+        {"items": [{"sample_id": str(i), "expected_revision": 0} for i in range(101)]},
+        {"label": None},
+        {"decision": "reject"},
+    ],
+)
+def test_bulk_requires_explicit_bounded_selection(changes):
+    payload = {
+        "items": [{"sample_id": "x", "expected_revision": 0}],
+        "decision": "validate",
+        "label": "renards",
+    }
+    with pytest.raises(ValidationError):
+        BatchDecision.model_validate({**payload, **changes})
 
 
 def test_quality_detects_blur_size_and_similarity():

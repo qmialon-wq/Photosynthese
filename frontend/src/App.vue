@@ -1,8 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { navigation } from "./router";
-import { reviewer, saveReviewer } from "./api";
+import { navigation, adminNavigation } from "./router";
 const route = useRoute();
 const open = ref(false);
 const sidebar = ref<HTMLElement | null>(null);
@@ -13,8 +12,10 @@ watch(open, async (visible) => {
     sidebar.value?.querySelector<HTMLAnchorElement>("nav a")?.focus();
   else if (window.matchMedia("(max-width:800px)").matches) menu.value?.focus();
 });
-const identity = ref(reviewer());
-watch(identity, saveReviewer);
+const isAdmin = computed(() => route.path.startsWith("/admin"));
+const visibleNavigation = computed(() =>
+  isAdmin.value ? adminNavigation : navigation,
+);
 watch(
   () => route.path,
   () => {
@@ -23,7 +24,7 @@ watch(
 );
 const title = computed(
   () =>
-    navigation.find((item) => item.path === route.path)?.label ??
+    visibleNavigation.value.find((item) => item.path === route.path)?.label ??
     "BioSentinelle",
 );
 </script>
@@ -42,10 +43,12 @@ const title = computed(
           ><i class="pi pi-globe" aria-hidden="true" /></span
         ><span>BioSentinelle<small>NORMANDIE</small></span></RouterLink
       >
-      <span class="nav-label">ESPACE D’OBSERVATION</span>
+      <span class="nav-label">{{
+        isAdmin ? "ADMINISTRATION" : "ESPACE D’OBSERVATION"
+      }}</span>
       <nav aria-label="Navigation principale">
         <RouterLink
-          v-for="item in navigation"
+          v-for="item in visibleNavigation"
           :key="item.path"
           :to="item.path"
           :class="{ selected: route.path === item.path }"
@@ -54,6 +57,13 @@ const title = computed(
             item.label
           }}</RouterLink
         >
+        <RouterLink :to="isAdmin ? '/' : '/admin'" class="space-switch">
+          <i
+            :class="['pi', isAdmin ? 'pi-arrow-left' : 'pi-cog']"
+            aria-hidden="true"
+          />
+          {{ isAdmin ? "Espace observation" : "Administration" }}
+        </RouterLink>
       </nav>
       <div class="sidebar-footer">
         <span class="local-dot" /> Plateforme locale<small
@@ -80,16 +90,9 @@ const title = computed(
           <i class="pi pi-bars" /></button
         ><span class="breadcrumb"
           >Observatoire <span>/</span> <strong>{{ title }}</strong></span
-        ><label class="reviewer"
-          ><i class="pi pi-user" aria-hidden="true" /><span class="sr-only"
-            >Nom de revue</span
-          ><PInputText
-            v-model="identity"
-            aria-label="Nom de revue"
-            placeholder="Votre nom de revue"
-            size="small"
-            maxlength="128"
-        /></label>
+        ><span class="muted">{{
+          isAdmin ? "Gestion et modèles" : "Observer · Analyser · Valider"
+        }}</span>
       </header>
       <main id="main-content" tabindex="-1"><RouterView /></main>
       <footer class="app-footer">

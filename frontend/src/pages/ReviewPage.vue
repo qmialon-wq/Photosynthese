@@ -1,7 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { api, apiUrl, date, message, percent, post, useResource } from "../api";
+import {
+  ApiError,
+  api,
+  apiUrl,
+  date,
+  message,
+  percent,
+  post,
+  useResource,
+} from "../api";
 import BoxEditor from "../components/BoxEditor.vue";
 import type { Box, Sample, Species } from "../types";
 const route = useRoute();
@@ -23,6 +32,64 @@ const selected = ref<Sample | null>(null),
   success = ref(""),
   busy = ref(false);
 const history = ref<Array<Sample>>([]);
+// Mémoriser la révision au moment de la sélection, même pendant le polling.
+const checked = ref<Record<string, number>>({});
+const bulkLabel = ref("");
+const count = computed(() => Object.keys(checked.value).length);
+const editable = computed(() =>
+  (samples.data.value ?? []).filter((sample) => !sample.test_locked),
+);
+const allChecked = computed(
+  () =>
+    editable.value.length > 0 &&
+    editable.value.every((sample) => checked.value[sample.id] !== undefined),
+);
+watch([state, species, quality, offset, () => route.query.video_id], () => {
+  checked.value = {};
+});
+function toggle(sample: Sample, event: Event) {
+  if ((event.target as HTMLInputElement).checked)
+    checked.value[sample.id] = sample.revision;
+  else delete checked.value[sample.id];
+}
+function toggleAll() {
+  checked.value = allChecked.value
+    ? {}
+    : Object.fromEntries(
+        editable.value.map((sample) => [
+          sample.id,
+          checked.value[sample.id] ?? sample.revision,
+        ]),
+      );
+}
+async function bulk(decision: "validate" | "reject") {
+  busy.value = true;
+  error.value = "";
+  success.value = "";
+  try {
+    const amount = count.value;
+    await post("/review/samples/batch-decisions", {
+      items: Object.entries(checked.value).map(
+        ([sample_id, expected_revision]) => ({ sample_id, expected_revision }),
+      ),
+      decision,
+      ...(decision === "validate" ? { label: bulkLabel.value } : {}),
+    });
+    checked.value = {};
+    success.value =
+      decision === "validate"
+        ? `${amount} annotations enregistrées pour l’espèce ${bulkLabel.value}.`
+        : `${amount} exemples rejetés et exclus des prochains datasets.`;
+    await samples.refresh();
+  } catch (reason) {
+    error.value =
+      reason instanceof ApiError && [404, 409, 422].includes(reason.status)
+        ? `${message(reason)}. Aucune modification du lot n’a été enregistrée. Désélectionnez puis relisez les images concernées avant de réessayer.`
+        : `${message(reason)}. L’état du lot n’a pas pu être confirmé. Actualisez les images et vérifiez leur état avant de réessayer.`;
+  } finally {
+    busy.value = false;
+  }
+}
 watch([state, species, quality], () => {
   offset.value = 0;
 });
@@ -54,6 +121,7 @@ async function decide(decision: "validate" | "reject" | "reopen") {
       provenance: { outil: "console-web" },
     };
     await post(`/review/samples/${selected.value.id}/decisions`, payload);
+    delete checked.value[selected.value.id];
     selected.value = null;
     success.value =
       decision === "reject"
@@ -73,7 +141,8 @@ async function decide(decision: "validate" | "reject" | "reopen") {
       <p class="eyebrow">UNE DÉCISION HUMAINE, UNE DONNÉE FIABLE</p>
       <h1>Validation humaine</h1>
       <p class="subtitle">
-        Vérifiez l’espèce, ajustez le cadre, conservez la provenance.
+        Sélectionnez plusieurs images et attribuez une espèce, ou ouvrez une
+        image pour ajuster son cadre.
       </p>
     </div>
     <PButton
@@ -84,6 +153,7 @@ async function decide(decision: "validate" | "reject" | "reopen") {
     />
   </div>
   <p v-if="success" class="notice success" role="status">{{ success }}</p>
+  <p v-if="error && !selected" class="notice error" role="alert">{{ error }}</p>
   <p v-if="route.query.video_id" class="notice">
     Recadrages de la vidéo sélectionnée.
     <RouterLink to="/review">Afficher toute la file</RouterLink>
@@ -111,6 +181,62 @@ async function decide(decision: "validate" | "reject" | "reopen") {
         <option value="near_duplicate">Quasi identiques</option></select
       ><span class="muted">Priorité : rareté et incertitude</span>
     </div>
+    <div
+      class="bulk-toolbar"
+      aria-label="Actions sur la sélection"
+      :aria-busy="busy"
+    >
+      <label class="check-line"
+        ><input
+          type="checkbox"
+          :checked="allChecked"
+          :indeterminate="count > 0 && !allChecked"
+          :disabled="busy || !editable.length"
+          @change="toggleAll"
+        />
+        Sélectionner la page</label
+      >
+      <span role="status"
+        >{{ count }} sélectionnée{{ count > 1 ? "s" : "" }}</span
+      >
+      <label
+        >Espèce à attribuer<select v-model="bulkLabel" :disabled="busy">
+          <option value="" disabled>Choisir une espèce</option>
+          <option
+            v-for="item in classes.data.value"
+            :key="item.name"
+            :value="item.name"
+          >
+            {{ item.name }}
+          </option>
+        </select></label
+      >
+      <PButton
+        label="Valider la sélection"
+        icon="pi pi-check"
+        :disabled="busy || !count || !bulkLabel"
+        @click="bulk('validate')"
+      />
+      <PButton
+        label="Rejeter la sélection"
+        severity="danger"
+        outlined
+        :disabled="busy || !count"
+        @click="bulk('reject')"
+      />
+      <PButton
+        label="Désélectionner"
+        severity="secondary"
+        text
+        :disabled="busy || !count"
+        @click="checked = {}"
+      />
+    </div>
+    <p class="muted">
+      Vérifiez chaque animal avant d’attribuer une espèce. Les noms de fichiers
+      sont des suggestions. La sélection est limitée à cette page ; les images
+      de test gelées restent protégées.
+    </p>
     <LoadState
       :error="samples.error.value"
       :loading="samples.loading.value && !samples.data.value"
@@ -118,64 +244,82 @@ async function decide(decision: "validate" | "reject" | "reopen") {
       empty-text="Aucun recadrage dans cette sélection"
       @retry="samples.refresh"
       ><div class="crop-grid">
-        <button
+        <article
           v-for="sample in samples.data.value"
           :key="sample.id"
-          class="crop-card"
-          :aria-label="`Revoir ${sample.original_name}, révision ${sample.revision}`"
-          @click="open(sample)"
+          class="crop-card selectable-crop"
+          :class="{ 'is-selected': checked[sample.id] !== undefined }"
         >
-          <img
-            :src="
-              apiUrl(
-                `/review/samples/${sample.id}/images/${sample.render_status === 'ready' ? 'crop' : 'initial_crop'}?revision=${sample.revision}`,
-              )
-            "
-            :alt="`Animal proposé : ${sample.label || sample.predicted_label || sample.species_candidate || 'non identifié'}`"
-            loading="lazy"
-          />
-          <div>
-            <div class="section-head">
-              <StatusBadge :status="sample.state" /><small
-                >{{ sample.split
-                }}{{ sample.test_locked ? " · gelé" : "" }}</small
+          <label class="crop-select"
+            ><input
+              type="checkbox"
+              :checked="checked[sample.id] !== undefined"
+              :disabled="busy || sample.test_locked"
+              :aria-label="`Sélectionner ${sample.original_name}, image ${sample.frame_index}`"
+              @change="toggle(sample, $event)"
+            /><span>{{
+              sample.test_locked ? "Test gelé" : "Sélectionner"
+            }}</span></label
+          >
+          <button
+            class="crop-open"
+            :disabled="busy"
+            :aria-label="`Revoir ${sample.original_name}, révision ${sample.revision}`"
+            @click="open(sample)"
+          >
+            <img
+              :src="
+                apiUrl(
+                  `/review/samples/${sample.id}/images/${sample.render_status === 'ready' ? 'crop' : 'initial_crop'}?revision=${sample.revision}`,
+                )
+              "
+              :alt="`Animal proposé : ${sample.label || sample.predicted_label || sample.species_candidate || 'non identifié'}`"
+              loading="lazy"
+            />
+            <div>
+              <div class="section-head">
+                <StatusBadge :status="sample.state" /><small
+                  >{{ sample.split
+                  }}{{ sample.test_locked ? " · gelé" : "" }}</small
+                >
+              </div>
+              <h3>
+                {{
+                  sample.label ||
+                  sample.predicted_label ||
+                  sample.species_candidate ||
+                  "Espèce à identifier"
+                }}
+              </h3>
+              <p class="muted">{{ sample.original_name }}</p>
+              <small
+                >Détection {{ percent(sample.detection_score) }} ·
+                Classification {{ percent(sample.classification_score) }}</small
               >
+              <div class="quality-flags">
+                <span v-if="sample.quality?.blurry">Flou</span
+                ><span v-if="sample.quality?.too_small">Petit</span
+                ><span v-if="sample.frame_quality.near_duplicate"
+                  >Similaire</span
+                ><span v-if="sample.render_status !== 'ready'"
+                  >Rendu {{ sample.render_status }}</span
+                >
+              </div>
             </div>
-            <h3>
-              {{
-                sample.label ||
-                sample.predicted_label ||
-                sample.species_candidate ||
-                "Espèce à identifier"
-              }}
-            </h3>
-            <p class="muted">{{ sample.original_name }}</p>
-            <small
-              >Détection {{ percent(sample.detection_score) }} · Classification
-              {{ percent(sample.classification_score) }}</small
-            >
-            <div class="quality-flags">
-              <span v-if="sample.quality?.blurry">Flou</span
-              ><span v-if="sample.quality?.too_small">Petit</span
-              ><span v-if="sample.frame_quality.near_duplicate">Similaire</span
-              ><span v-if="sample.render_status !== 'ready'"
-                >Rendu {{ sample.render_status }}</span
-              >
-            </div>
-          </div>
-        </button>
+          </button>
+        </article>
       </div></LoadState
     >
     <div class="pagination">
       <PButton
         label="Précédent"
-        :disabled="offset === 0"
+        :disabled="busy || offset === 0"
         severity="secondary"
         @click="offset = Math.max(0, offset - 24)"
       /><span>Page {{ offset / 24 + 1 }}</span
       ><PButton
         label="Suivant"
-        :disabled="(samples.data.value?.length ?? 0) < 24"
+        :disabled="busy || (samples.data.value?.length ?? 0) < 24"
         severity="secondary"
         @click="offset += 24"
       />
@@ -233,9 +377,8 @@ async function decide(decision: "validate" | "reject" | "reopen") {
             }}
           </p>
           <label
-            >Motif de la décision<textarea
+            >Commentaire (facultatif)<textarea
               v-model="reason"
-              required
               maxlength="1000"
               rows="3"
               :disabled="selected.test_locked"
@@ -246,19 +389,19 @@ async function decide(decision: "validate" | "reject" | "reopen") {
             label="Confirmer l’annotation"
             icon="pi pi-check"
             :loading="busy"
-            :disabled="selected.test_locked || !label || !reason.trim()"
+            :disabled="busy || selected.test_locked || !label"
           /><PButton
             label="Rejeter cet exemple"
             icon="pi pi-times"
             severity="danger"
             outlined
-            :disabled="busy || selected.test_locked || !reason.trim()"
+            :disabled="busy || selected.test_locked"
             @click="decide('reject')"
           /><PButton
             v-if="selected.state !== 'pending'"
             label="Remettre à revoir"
             severity="secondary"
-            :disabled="busy || selected.test_locked || !reason.trim()"
+            :disabled="busy || selected.test_locked"
             @click="decide('reopen')"
           /><PButton
             label="Fermer sans enregistrer"

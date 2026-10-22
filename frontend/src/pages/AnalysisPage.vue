@@ -2,7 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { apiUrl, message, percent, post, useResource } from "../api";
-import type { Operation, Report, Task, Video } from "../types";
+import type { Model, Operation, Report, Task, Video } from "../types";
 const route = useRoute(),
   router = useRouter();
 const videoId = ref(String(route.query.video || "")),
@@ -18,6 +18,16 @@ const report = useResource<Report>(() =>
   completed.value ? `/console/tasks/${taskId.value}/artifacts/report` : null,
 );
 const reviewTask = ref("");
+const isAdmin = computed(() => route.path.startsWith("/admin"));
+const models = useResource<Model[]>(() => "/console/models", 15000);
+const activeModel = computed(() =>
+  models.data.value?.find((model) => model.active),
+);
+const preset = ref("balanced");
+const modeChosen = ref(false);
+watch(activeModel, (model) => {
+  if (!modeChosen.value) config.value.detection_only = !model;
+});
 const config = ref({
   detection_only: true,
   detection_threshold: 0.1,
@@ -46,7 +56,14 @@ async function launch() {
   try {
     const operation = await post<Operation>(
       `/console/videos/${videoId.value}/analyze`,
-      config.value,
+      isAdmin.value
+        ? config.value
+        : {
+            ...config.value,
+            infer_every_n_frames: { detailed: 1, balanced: 2, fast: 10 }[
+              preset.value as "detailed" | "balanced" | "fast"
+            ],
+          },
     );
     await router.replace({
       query: { video: videoId.value, task: operation.id },
@@ -124,53 +141,93 @@ function prepared(task: Task) {
     <section class="panel">
       <h2>Configurer l’analyse</h2>
       <form class="form-grid" @submit.prevent="launch">
-        <label class="check-line"
-          ><input type="checkbox" v-model="config.detection_only" /> Détection
-          seule, sans classification</label
-        ><label
-          >Seuil de détection<input
-            type="number"
-            v-model.number="config.detection_threshold"
-            min="0.005"
-            max="1"
-            step="0.005"
-            required /></label
-        ><label
-          >Seuil de classification<input
-            type="number"
-            v-model.number="config.classification_threshold"
-            :disabled="config.detection_only"
-            min="0"
-            max="1"
-            step="0.01"
-            required /></label
-        ><label
-          >Confiance minimale des pistes<input
-            type="number"
-            v-model.number="config.track_threshold"
-            min="0"
-            max="1"
-            step="0.01"
-            required /></label
-        ><label
-          >Détections minimales par piste<input
-            type="number"
-            v-model.number="config.track_min_hits"
-            min="1"
-            max="100"
-            required /></label
-        ><label
-          >Analyser une image sur<input
-            type="number"
-            v-model.number="config.infer_every_n_frames"
-            min="1"
-            max="1000"
-            required /></label
-        ><PButton
+        <label
+          >Objectif de l'analyse<select
+            v-model="config.detection_only"
+            @change="modeChosen = true"
+            :disabled="models.loading.value || !!models.error.value"
+          >
+            <option :value="false" :disabled="!activeModel">
+              Identifier les espèces
+            </option>
+            <option :value="true">Détecter les animaux seulement</option>
+          </select></label
+        >
+        <LoadState
+          :loading="models.loading.value && !models.data.value"
+          :error="models.error.value"
+          @retry="models.refresh"
+        />
+        <p class="muted" v-if="activeModel">
+          Modèle actif : {{ activeModel.name }}. Les espèces proposées restent à
+          confirmer.
+        </p>
+        <p
+          class="notice"
+          v-else-if="!models.loading.value && !models.error.value"
+        >
+          Aucun classificateur actif. La détection reste disponible ;
+          l'administration peut activer un modèle pour identifier les espèces.
+        </p>
+        <label v-if="!isAdmin"
+          >Niveau de détail<select v-model="preset">
+            <option value="balanced">Équilibré — une image sur 2</option>
+            <option value="detailed">Détaillé — chaque image</option>
+            <option value="fast">Rapide — une image sur 10</option>
+          </select></label
+        >
+        <p v-if="!isAdmin" class="muted">
+          Le mode rapide peut manquer un animal présent très brièvement. Les
+          réglages techniques sont accessibles dans l'administration.
+        </p>
+        <div v-if="isAdmin" class="form-grid">
+          <label
+            >Seuil de détection<input
+              type="number"
+              v-model.number="config.detection_threshold"
+              min="0.005"
+              max="1"
+              step="0.005"
+              required /></label
+          ><label
+            >Seuil de classification<input
+              type="number"
+              v-model.number="config.classification_threshold"
+              :disabled="config.detection_only"
+              min="0"
+              max="1"
+              step="0.01"
+              required /></label
+          ><label
+            >Confiance minimale des pistes<input
+              type="number"
+              v-model.number="config.track_threshold"
+              min="0"
+              max="1"
+              step="0.01"
+              required /></label
+          ><label
+            >Détections minimales par piste<input
+              type="number"
+              v-model.number="config.track_min_hits"
+              min="1"
+              max="100"
+              required /></label
+          ><label
+            >Analyser une image sur<input
+              type="number"
+              v-model.number="config.infer_every_n_frames"
+              min="1"
+              max="1000"
+              required
+          /></label>
+        </div>
+        <PButton
           type="submit"
           label="Lancer l’analyse"
           icon="pi pi-play"
           :loading="busy"
+          :disabled="busy || models.loading.value || !!models.error.value"
         /><PButton
           label="Préparer les recadrages à valider"
           severity="secondary"

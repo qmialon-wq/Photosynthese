@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { api, apiUrl, date, message, post, useResource } from "../api";
 import type { Operation, Species, Task, Video } from "../types";
 const router = useRouter();
+const route = useRoute();
 const search = ref(""),
   species = ref(""),
   status = ref(""),
@@ -121,7 +122,7 @@ async function prepared(task: Task) {
   </div>
   <p v-if="error" class="notice error" role="alert">{{ error }}</p>
   <TaskPanel v-if="taskId" :id="taskId" @completed="prepared" />
-  <details class="panel">
+  <details v-if="route.path.startsWith('/admin')" class="panel">
     <summary>Indexer une vidéo déjà déposée dans le dossier local</summary>
     <form class="inline-form" @submit.prevent="local">
       <label

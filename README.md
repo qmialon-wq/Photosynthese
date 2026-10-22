@@ -12,7 +12,8 @@ L'ingestion documentaire et le RAG restent à développer.
 Pour la validation humaine des recadrages, l'historique des corrections et les
 exports reproductibles, consulter [HUMAN_REVIEW.md](HUMAN_REVIEW.md).
 
-L'interface web à huit pages et ses parcours sont décrits dans
+L'interface web sépare l'espace observation (import, analyse et validation)
+de l'administration (datasets, entraînements, modèles et évaluation). Ses parcours sont décrits dans
 [WEB_CONSOLE.md](WEB_CONSOLE.md).
 
 L'[inférence vidéo et son API](workers/vision/INFERENCE.md) incluent le

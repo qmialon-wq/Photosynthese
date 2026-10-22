@@ -2,7 +2,7 @@ from typing import Any
 from uuid import uuid4
 
 from .database import ReviewError, jsonb, transaction
-from .schemas import Decision
+from .schemas import BatchDecision, Decision
 
 SAMPLE_QUERY = """
  SELECT s.id,s.frame_id,s.original_box,s.original_crop_key,s.detector_identity,
@@ -65,74 +65,82 @@ def history(identifier: str) -> list[dict[str, Any]]:
         ).fetchall()
 
 
-def decide(identifier: str, decision: Decision, actor: str) -> dict[str, Any]:
-    with transaction(write=True) as connection:
-        row = get_sample(identifier, connection)
-        if row["video_status"] != "ready":
-            raise ReviewError("Attendre la fin de l'import vidéo avant de valider")
-        if row["test_locked"]:
-            raise ReviewError("Ce groupe test est gelé dans un dataset versionné")
-        if row["revision"] != decision.expected_revision:
-            raise ReviewError("Révision obsolète ; relire le recadrage avant de corriger")
-        label = None
-        box = decision.box.model_dump() if decision.box else row["box"]
-        state = "rejected" if decision.decision == "reject" else "pending"
-        if decision.decision == "validate":
-            label = decision.label or row["label"]
-            if (
-                label is None
-                or not connection.execute(
-                    "SELECT 1 FROM review_species WHERE name=%s", (label,)
-                ).fetchone()
-            ):
-                raise ReviewError("Choisir explicitement une espèce du manifeste", 422)
-            baseline = row["predicted_label"] or row["species_candidate"]
-            changed = (
-                box != row["original_box"]
-                or (baseline is not None and label != baseline)
-                or (row["label"] is not None and label != row["label"])
-                or row["state"] == "corrected"
-            )
-            state = "corrected" if changed else "validated"
-        revision = row["revision"] + 1
-        render = box != row["box"] or row["crop_key"] is None
-        provenance = {
-            "channel": "api",
-            "reason": decision.reason,
-            "parent_revision": row["revision"],
-            "supplied": decision.provenance,
-            "label_source": "human" if label else None,
-        }
-        connection.execute(
-            """INSERT INTO review_revisions(sample_id,revision,state,label,box,recipe,
-            crop_key,crop_sha256,quality,render_status,actor,provenance)
-            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-            (
-                identifier,
-                revision,
-                state,
-                label,
-                jsonb(box),
-                jsonb(row["recipe"]),
-                None if render else row["crop_key"],
-                None if render else row["crop_sha256"],
-                None if render else jsonb(row["quality"]),
-                "pending" if render else row["render_status"],
-                actor,
-                jsonb(provenance),
-            ),
+def decide(
+    identifier: str, decision: Decision, actor: str, connection: Any = None
+) -> dict[str, Any]:
+    if connection is None:
+        with transaction(write=True) as current:
+            return decide(identifier, decision, actor, current)
+    row = get_sample(identifier, connection)
+    if row["video_status"] != "ready":
+        raise ReviewError("Attendre la fin de l'import vidéo avant de valider")
+    if row["test_locked"]:
+        raise ReviewError("Ce groupe test est gelé dans un dataset versionné")
+    if row["revision"] != decision.expected_revision:
+        raise ReviewError("Révision obsolète ; relire le recadrage avant de corriger")
+    label = None
+    box = decision.box.model_dump() if decision.box else row["box"]
+    state = "rejected" if decision.decision == "reject" else "pending"
+    if decision.decision == "validate":
+        label = decision.label or row["label"]
+        if (
+            label is None
+            or not connection.execute(
+                "SELECT 1 FROM review_species WHERE name=%s", (label,)
+            ).fetchone()
+        ):
+            raise ReviewError("Choisir explicitement une espèce du manifeste", 422)
+        baseline = row["predicted_label"] or row["species_candidate"]
+        changed = (
+            box != row["original_box"]
+            or (baseline is not None and label != baseline)
+            or (row["label"] is not None and label != row["label"])
+            or row["state"] == "corrected"
         )
-        connection.execute(
-            "UPDATE review_samples SET current_revision=%s WHERE id=%s", (revision, identifier)
-        )
-        render_id = (
-            operation(
-                connection, "render_crop", {"sample_id": identifier, "revision": revision}, actor
-            )
-            if render
-            else None
-        )
-        return {**get_sample(identifier, connection), "render_operation_id": render_id}
+        state = "corrected" if changed else "validated"
+    revision = row["revision"] + 1
+    render = box != row["box"] or row["crop_key"] is None
+    provenance = {
+        "channel": "api",
+        "reason": decision.reason.strip()
+        or {
+            "validate": "Validation humaine",
+            "reject": "Rejet manuel",
+            "reopen": "Remise en revue",
+        }[decision.decision],
+        "reason_source": "user" if decision.reason.strip() else "automatic",
+        "parent_revision": row["revision"],
+        "supplied": decision.provenance,
+        "label_source": "human" if label else None,
+    }
+    connection.execute(
+        """INSERT INTO review_revisions(sample_id,revision,state,label,box,recipe,
+        crop_key,crop_sha256,quality,render_status,actor,provenance)
+        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+        (
+            identifier,
+            revision,
+            state,
+            label,
+            jsonb(box),
+            jsonb(row["recipe"]),
+            None if render else row["crop_key"],
+            None if render else row["crop_sha256"],
+            None if render else jsonb(row["quality"]),
+            "pending" if render else row["render_status"],
+            actor,
+            jsonb(provenance),
+        ),
+    )
+    connection.execute(
+        "UPDATE review_samples SET current_revision=%s WHERE id=%s", (revision, identifier)
+    )
+    render_id = (
+        operation(connection, "render_crop", {"sample_id": identifier, "revision": revision}, actor)
+        if render
+        else None
+    )
+    return {**get_sample(identifier, connection), "render_operation_id": render_id}
 
 
 def list_samples(
@@ -193,3 +201,23 @@ def list_videos(status: str | None, limit: int, offset: int) -> list[dict[str, A
             ),
             (status, status, limit, offset),
         ).fetchall()
+
+
+def decide_batch(batch: BatchDecision, actor: str) -> list[dict[str, Any]]:
+    # Une seule transaction : ni correction partielle ni perte de verrouillage test.
+    with transaction(write=True) as connection:
+        return [
+            decide(
+                item.sample_id,
+                Decision(
+                    expected_revision=item.expected_revision,
+                    decision=batch.decision,
+                    label=batch.label,
+                    reason=batch.reason,
+                    provenance={"action": "batch", "size": len(batch.items)},
+                ),
+                actor,
+                connection,
+            )
+            for item in batch.items
+        ]

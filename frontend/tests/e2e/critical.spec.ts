@@ -79,9 +79,7 @@ test("annotation corrigée persistante après rechargement", async ({ page }) =>
   await page.getByRole("button", { name: /Revoir terrain/ }).click();
   await page.getByLabel("Espèce confirmée").selectOption("renards");
   await page.getByRole("spinbutton", { name: "X", exact: true }).fill("0.2");
-  await page
-    .getByLabel("Motif de la décision")
-    .fill("Espèce et boîte vérifiées");
+  // Le commentaire est facultatif, y compris lors d'une correction de boîte.
   await page.getByRole("button", { name: "Confirmer l’annotation" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Décision enregistrée" }),
@@ -284,6 +282,10 @@ test("métriques réelles du registre et navigation mobile", async ({ page }) =>
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await page.getByRole("button", { name: "Menu de navigation" }).click();
+  await page
+    .getByRole("link", { name: "Espace observation", exact: true })
+    .click();
   await page.getByRole("button", { name: "Menu de navigation" }).click();
   await page.getByRole("link", { name: "Vidéothèque", exact: true }).click();
   await expect(

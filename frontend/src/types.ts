@@ -20,6 +20,7 @@ export interface Quality {
   near_duplicate?: boolean;
 }
 export interface Sample {
+  frame_index: number;
   id: string;
   video_id: string;
   original_name: string;

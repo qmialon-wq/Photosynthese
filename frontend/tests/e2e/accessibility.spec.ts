@@ -14,7 +14,7 @@ test("dashboard accessible, états vides et navigation au clavier", async ({
         : [],
     }),
   );
-  await page.goto("/");
+  await page.goto("/admin");
   await expect(
     page.getByRole("heading", { name: "La biodiversité, en perspective." }),
   ).toBeVisible();

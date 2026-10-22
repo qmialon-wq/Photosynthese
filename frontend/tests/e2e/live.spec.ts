@@ -18,9 +18,9 @@ test("vidéo réelle : transfert navigateur, inférence worker, MP4 lisible et r
   await expect(
     page.getByRole("heading", { name: "Configurer l’analyse" }),
   ).toBeVisible({ timeout: 60000 });
-  await page.getByLabel("Analyser une image sur").fill("10");
+  await page.getByLabel("Niveau de détail").selectOption("fast");
   if (process.env.BIOSENTINELLE_LIVE_CLASSIFY === "1")
-    await page.getByLabel("Détection seule, sans classification").uncheck();
+    await page.getByLabel("Objectif de l'analyse").selectOption("false");
   await page
     .getByRole("button", { name: "Lancer l’analyse", exact: true })
     .click();

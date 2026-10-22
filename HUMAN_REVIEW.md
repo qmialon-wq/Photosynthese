@@ -94,10 +94,29 @@ Une simple validation de label peut omettre `box` et réutilise le rendu courant
 États : `pending` = à revoir ; `validated` = validé ; `corrected` = corrigé ;
 `rejected` = rejeté. Pour rejeter, envoyer `decision="reject"`, sans label ni
 boîte. Pour reprendre une revue, utiliser `decision="reopen"`. Les deux actions
-exigent la révision courante et un motif. Chaque décision ajoute une révision
+exigent la révision courante. Le commentaire (`reason`) est facultatif : en son absence,
+le service conserve un motif automatique avec `reason_source="automatic"`.
+Chaque décision ajoute une révision
 datée, avec acteur, motif, provenance et référence à sa révision parente.
 
 ## Recherche et priorité
+
+La route `POST /review/samples/batch-decisions` applique une attribution d'espèce ou
+un rejet en une transaction (1 à 100 recadrages distincts). Exemple :
+
+```json
+{
+  "items": [{"sample_id": "identifiant-du-recadrage", "expected_revision": 0}],
+  "decision": "validate",
+  "label": "renards"
+}
+```
+
+Pour rejeter, utiliser `"decision": "reject"` et omettre `label`. Les boîtes restent
+inchangées. Révision périmée ou groupe test gelé : réponse 409 et aucune modification,
+y compris des rendus mis en file. Label inconnu ou lot invalide : réponse 422. Chaque
+recadrage conserve sa propre révision, sa date, son acteur et la provenance du lot.
+Aucun entraînement n'est lancé après une décision individuelle ou en lot.
 
 | Route | Usage |
 | --- | --- |
@@ -187,7 +206,9 @@ d'import. Le backend garde ce volume en lecture seule. Sauvegarder **ensemble**
 PostgreSQL et les dossiers datasets/results : le hash détecte une altération,
 mais ne remplace pas une sauvegarde. Aucun nettoyage automatique de ces blobs.
 
-`X-Reviewer` est une identité déclarée dans cette application locale, pas une
+La console génère automatiquement un identifiant `local-<uuid>` ; aucun nom n'est
+à saisir. Sans en-tête, l'API utilise l'acteur `local`.
+`X-Reviewer` reste une identité déclarée dans cette application locale, pas une
 authentification. Les ports restent liés à localhost. Une authentification et
 des rôles restent nécessaires avant une ouverture multiutilisateur à distance.
 

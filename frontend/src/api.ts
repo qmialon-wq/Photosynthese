@@ -12,20 +12,29 @@ const taskLabels: Record<string, string> = {
 };
 export const taskLabel = (kind: string): string => taskLabels[kind] ?? kind;
 export function reviewer(): string {
-  return localStorage.getItem("biosentinelle-reviewer")?.trim() ?? "";
+  const existing = localStorage.getItem("biosentinelle-reviewer")?.trim();
+  if (existing) return existing;
+  const identity = `local-${crypto.randomUUID()}`;
+  localStorage.setItem("biosentinelle-reviewer", identity);
+  return identity;
 }
 export function saveReviewer(value: string): void {
   localStorage.setItem("biosentinelle-reviewer", value.trim());
+}
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
 }
 
 export async function api<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  if (options.method && options.method !== "GET" && !reviewer())
-    throw new Error(
-      "Renseignez votre nom de revue en haut de la page avant cette action.",
-    );
   const headers = new Headers(options.headers);
   if (reviewer()) headers.set("X-Reviewer", reviewer());
   if (typeof options.body === "string")
@@ -41,7 +50,7 @@ export async function api<T>(
     } catch {
       /* Conserver le code HTTP si le proxy ne renvoie pas de JSON. */
     }
-    throw new Error(message);
+    throw new ApiError(message, response.status);
   }
   return response.status === 204
     ? (undefined as T)

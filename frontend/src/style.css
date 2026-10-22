@@ -763,7 +763,8 @@ td .muted {
   border-color: #76986b;
   box-shadow: 0 4px 18px #284f4112;
 }
-.crop-card > img {
+.crop-card > img,
+.crop-open > img {
   width: 100%;
   height: 185px;
   object-fit: contain;
@@ -1267,5 +1268,122 @@ details > form {
     transition: none !important;
     animation: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Parcours observation et sélection en lot. */
+.sidebar nav .space-switch {
+  margin-top: 1.5rem;
+  border-top: 1px solid #ffffff26;
+  padding-top: 1.25rem;
+}
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.journey-card {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.journey-card:hover {
+  border-color: #58775c;
+  box-shadow: 0 4px 20px #24472d14;
+}
+.journey-card > .pi {
+  font-size: 1.8rem;
+  color: #365d42;
+}
+.journey-card h2,
+.journey-card p {
+  margin: 0;
+}
+.journey-card p {
+  color: #506653;
+  flex: 1;
+}
+.journey-card > span:last-child {
+  color: #365d42;
+  font-weight: 600;
+}
+.bulk-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  background: #f1f5ee;
+  border-radius: 10px;
+}
+.bulk-toolbar > label:not(.check-line) {
+  display: grid;
+  gap: 0.3rem;
+}
+.selectable-crop {
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.selectable-crop.is-selected {
+  outline: 3px solid #426a48;
+  outline-offset: 1px;
+}
+.crop-select {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  background: #f1f5ee;
+  cursor: pointer;
+}
+.crop-select input,
+.bulk-toolbar input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: #365d42;
+}
+.crop-open {
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+}
+.crop-open > div {
+  padding: 1rem;
+}
+.bulk-toolbar .p-button-danger.p-button-outlined {
+  color: #a62424;
+}
+.bulk-toolbar .p-button-secondary.p-button-text {
+  color: #48586a;
+}
+@media (max-width: 1000px) {
+  .journey-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .topbar > .muted {
+    display: none;
+  }
+  .bulk-toolbar {
+    align-items: stretch;
+  }
+  .bulk-toolbar > * {
+    max-width: 100%;
   }
 }
