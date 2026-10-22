@@ -18,7 +18,7 @@ from ..detection.base import Detector
 from ..errors import ModelError, VideoError
 from ..storage import LocalStorage
 from ..storage.gpu import exclusive_gpu
-from ..tracking.base import Observation, Tracker
+from ..tracking.base import Observation, TrackedObservation, Tracker
 from .render import draw_tracks
 
 
@@ -93,6 +93,7 @@ def _analyze_video(
     temporary = target.with_name(f".{target.stem}-{uuid.uuid4().hex}.mp4")
     cap, writer = cv2.VideoCapture(str(video)), None
     frame_count, observed_tracks, frames = 0, [], []
+    tracked: tuple[TrackedObservation, ...] = ()
     counts: Counter[str] = Counter()
     timer, began = InferenceTimer(settings.device), time.perf_counter()
     try:
@@ -195,7 +196,9 @@ def _analyze_video(
                         "detections": localized,
                     }
                 )
-                draw_tracks(frame, tracked)
+            # Maintien visuel uniquement : aucune inférence ni mise à jour du tracker
+            # entre deux images analysées. Une analyse vide efface aussi le cadre.
+            draw_tracks(frame, tracked)
             writer.write(frame)
             frame_count += 1
         if not frame_count or frame_count < expected_count:
@@ -240,6 +243,7 @@ def _analyze_video(
         "frames_decoded": frame_count,
         "detections": counts["detections"],
         "sample_every_n_frames": settings.infer_every_n_frames,
+        "annotation_display": "hold_last_analysis",
         "detector_identity": detector.identity,
         "models": {
             "detector_api": getattr(detector, "diagnostics", None),

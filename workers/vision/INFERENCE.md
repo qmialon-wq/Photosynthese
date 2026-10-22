@@ -110,6 +110,17 @@ normalisées `x,y,w,h`, score de détection, dix probabilités de classification
 score et label classificateur, identifiant de piste et agrégats temporels.
 La provenance du modèle classificateur est conservée si son checkpoint la fournit.
 
+Le MP4 conserve les cadres, labels et scores de la dernière image analysée sur
+les images intermédiaires : avec un pas de 10, le même résultat est affiché sur
+les 9 images suivantes, sans appel supplémentaire au détecteur, au classificateur
+ou au tracker. L'analyse suivante remplace l'ensemble des annotations ; si elle
+ne détecte aucun animal, les cadres disparaissent. Le dernier résultat est aussi
+conservé jusqu'à la fin d'un bloc incomplet. Il s'agit d'un maintien visuel à
+coordonnées fixes, sans interpolation du mouvement. Le JSON et les statistiques
+comptabilisent uniquement les véritables analyses (`annotation_display` vaut
+`hold_last_analysis`). La version du cache est incrémentée pour les nouveaux
+lancements ; les MP4 déjà générés doivent faire l'objet d'une nouvelle analyse.
+
 | État | Signification |
 | --- | --- |
 | `no_detection` | Aucun animal détecté ; résultat valide, MP4 conservé |

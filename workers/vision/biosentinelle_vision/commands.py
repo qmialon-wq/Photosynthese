@@ -145,7 +145,7 @@ def run_analyses(
     with exclusive_gpu(settings.device, settings.gpu_lock_path):
         detector_path, classifier_path = _weights(settings)
         identity = {
-            "pipeline_version": "2",
+            "pipeline_version": "3",
             "detector": file_hash(detector_path),
             "classifier": file_hash(classifier_path) if classifier_path is not None else None,
             "classes": classes.model_dump(mode="json"),

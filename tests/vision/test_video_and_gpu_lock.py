@@ -1,5 +1,6 @@
 from collections.abc import Callable, Sequence
 from pathlib import Path
+from unittest.mock import Mock
 
 import cv2
 import pytest
@@ -78,6 +79,53 @@ def test_video_error_never_generates_success_report(tmp_path: Path, classes: Cla
         )
     assert not storage.path("video_report.json").exists()
     assert not storage.path("annotated/video.mp4").exists()
+
+
+@pytest.mark.parametrize("stride", [1, 2, 10])
+def test_annotation_is_held_until_next_analysis_without_extra_inference(
+    make_video: Callable, tmp_path: Path, classes: ClassManifest, stride: int, monkeypatch
+) -> None:
+    # Trois blocs, le dernier incomplet : détection, absence, puis détection.
+    total = 2 * stride + 1
+    detector = DetectorFixture()
+    detector.detect = Mock(
+        side_effect=[DetectorFixture().detect(None), (), DetectorFixture().detect(None)]
+    )
+    classifier = ClassifierFixture(classes)
+    classifier.predict = Mock(wraps=classifier.predict)
+    tracker = IoUTracker(classes, TrackingConfig())
+    update = Mock(wraps=tracker.update)
+    monkeypatch.setattr(tracker, "update", update)
+    storage = LocalStorage(tmp_path / "out")
+    report = analyze_video(
+        make_video(frames=total),
+        detector,
+        classifier,
+        tracker,
+        classes,
+        storage,
+        VisionSettings(infer_every_n_frames=stride),
+    )
+    assert detector.detect.call_count == 3
+    assert classifier.predict.call_count == 2
+    assert update.call_count == 3
+    assert report["diagnostics"]["frames_analyzed"] == 3
+    assert report["diagnostics"]["predictions"] == 2
+    assert report["detections"] == 2
+    assert [frame["frame_index"] for frame in report["frames"]] == [0, stride, 2 * stride]
+    assert report["frames"][1]["detections"] == []
+    assert report["annotation_display"] == "hold_last_analysis"
+    cap = cv2.VideoCapture(str(storage.path(report["annotated_key"])))
+    try:
+        for index in range(total):
+            ok, frame = cap.read()
+            assert ok
+            # Bord gauche du cadre, hors de l'animal synthétique et du texte.
+            _, green, red = (int(value) for value in frame[40, 0])
+            assert (green > red + 50) == (index < stride or index >= 2 * stride)
+        assert not cap.read()[0]
+    finally:
+        cap.release()
 
 
 def test_gpu_lock_is_exclusive_without_using_cuda(tmp_path: Path) -> None:
