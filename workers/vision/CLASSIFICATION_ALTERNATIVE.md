@@ -107,6 +107,18 @@ sont exclusivement des artefacts locaux produits par l'application ; leur intég
 et celle de l'extracteur sont contrôlées avant chargement. Ne pas charger de fichiers
 joblib externes non fiables. Le registre pourra les identifier par famille.
 
+## Étape 5 : exploration
+
+`cluster-embeddings --index-key embeddings/datasets/<version>.json
+--output-key exploration/<run>.json --clusters 10` soumet un K-Means exploratoire.
+`--method hdbscan` utilise l'implémentation scikit-learn déjà installée, sans
+nouvelle dépendance. PCA et clustering sont ajustés uniquement sur train ; le test
+est exclu de l'export. K-Means assigne aussi les exemples de validation ; HDBSCAN
+laisse ces exemples non assignés plutôt que simuler une prédiction hors-échantillon.
+L'export contient coordonnées, cluster, espèce annotée, provenance, score d'anomalie
+et exemples à revoir. Aucun label n'est modifié et aucun classificateur de production
+n'est enregistré à partir des clusters.
+
 ```sh
 docker compose --profile test run --rm --no-deps \
   -e PYTHONPATH=/app:/app/backend:/app/workers/vision \

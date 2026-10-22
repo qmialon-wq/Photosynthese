@@ -5,11 +5,21 @@ from typing import Any
 from ..config import VisionSettings
 from ..storage import LocalStorage
 
-KINDS = {"embeddings_extract", "embeddings_train"}
+KINDS = {"embeddings_extract", "embeddings_train", "embeddings_cluster"}
 
 
 def perform(kind: str, payload: dict[str, Any], settings: VisionSettings) -> dict[str, Any]:
     results = LocalStorage(settings.output_root)
+    if kind == "embeddings_cluster":
+        from ..evaluation.clustering import cluster_embeddings
+
+        return cluster_embeddings(
+            results.path(payload["index_key"]),
+            results.path(payload["output_key"]),
+            clusters=payload.get("clusters", 10),
+            method=payload.get("method", "kmeans"),
+            seed=payload.get("seed", 42),
+        )
     architecture = payload.get("architecture", "tf_efficientnetv2_b0")
     from .pretrained import PRETRAINED_MODELS
 

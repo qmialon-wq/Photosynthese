@@ -18,12 +18,19 @@ def main() -> None:
     train.add_argument("--output-key", required=True)
     train.add_argument("--candidates", nargs="+", default=["logistic", "knn", "linear_svm"])
     train.add_argument("--allow-weak-validation", action="store_true")
+    cluster = commands.add_parser("cluster-embeddings")
+    cluster.add_argument("--index-key", required=True)
+    cluster.add_argument("--output-key", required=True)
+    cluster.add_argument("--clusters", type=int, default=10)
+    cluster.add_argument("--method", choices=("kmeans", "hdbscan"), default="kmeans")
     for command in (extract, train):
         command.add_argument("--architecture", default="tf_efficientnetv2_b0")
     args = vars(parser.parse_args())
-    kind = {"extract-embeddings": "embeddings_extract", "train-embeddings": "embeddings_train"}[
-        args.pop("kind")
-    ]
+    kind = {
+        "extract-embeddings": "embeddings_extract",
+        "train-embeddings": "embeddings_train",
+        "cluster-embeddings": "embeddings_cluster",
+    }[args.pop("kind")]
     from shared.console import submit
 
     print(json.dumps(submit(kind, args, "local-cli")))
