@@ -10,6 +10,7 @@ from fastapi.responses import FileResponse
 from app.review import Actor
 from shared.documents import corpus, service
 from shared.documents.config import DocumentSettings
+from shared.documents.relevance import profiles
 from shared.documents.schemas import Decision, ManualImport, Search, Selection, SpeciesKey, Watch
 from shared.review.database import ReviewError
 
@@ -23,6 +24,11 @@ def root() -> Path:
 @router.get("/species")
 def species_catalog() -> list[dict[str, Any]]:
     return corpus.catalog()
+
+
+@router.get("/search-profiles")
+def search_profiles() -> dict[str, Any]:
+    return profiles()
 
 
 @router.post("/search", status_code=202)
@@ -157,10 +163,11 @@ def listing(
     approved_only: bool = False,
     species: SpeciesKey | None = None,
     selected_only: bool = False,
+    focus_only: bool = False,
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
 ) -> list[dict[str, Any]]:
-    return corpus.listing(species, selected_only, status, approved_only, limit, offset)
+    return corpus.listing(species, selected_only, status, approved_only, limit, offset, focus_only)
 
 
 @router.get("/{identifier}")

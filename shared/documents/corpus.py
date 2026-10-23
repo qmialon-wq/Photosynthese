@@ -105,6 +105,7 @@ def listing(
     approved_only: bool,
     limit: int,
     offset: int,
+    focus_only: bool = False,
 ) -> list[dict[str, Any]]:
     with service.transaction() as connection:
         return connection.execute(
@@ -113,6 +114,8 @@ def listing(
              'available',s.enabled AND {READY})), '[]'::jsonb)
            FROM document_species s WHERE s.document_id=d.id) AS species_links
           FROM scientific_documents d WHERE d.merged_into IS NULL
+          AND (NOT %s OR (d.metadata#>>'{{screening,focus}}'='human_activities'
+                        AND d.metadata#>>'{{screening,candidate}}'='true'))
           AND (%s::text IS NULL OR d.status=%s)
           AND (NOT %s OR ({READY}))
           AND (%s::text IS NULL OR EXISTS(SELECT 1 FROM document_species s
@@ -121,6 +124,7 @@ def listing(
                 WHERE s.document_id=d.id AND s.enabled AND (%s::text IS NULL OR s.species=%s))))
           ORDER BY d.updated_at DESC,d.id LIMIT %s OFFSET %s""",
             (
+                focus_only,
                 status,
                 status,
                 approved_only,

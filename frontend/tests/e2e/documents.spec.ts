@@ -63,35 +63,43 @@ test("recherche, consultation et sélection persistante par espèce", async ({
       return route.fulfill({ json: { id: "job" } });
     }
     const result =
-      path === "/api/documents/species"
-        ? [
-            {
-              name: "renards",
-              scientific_name: "Vulpes vulpes",
-              display_name: "Renard",
-              documents_count: 1,
-              selected_count: Number(selected),
-            },
-          ]
-        : path === "/api/documents/fixture"
-          ? doc()
-          : path.includes("/fixture/pages")
-            ? [
-                {
-                  asset_id: "fixture",
-                  page_number: 1,
-                  clean_text: "Texte intégral de fixture.",
-                  language: "fr",
-                  references_data: [],
-                },
-              ]
-            : path === "/api/documents"
-              ? url.searchParams.get("selected_only") === "true" && !selected
-                ? []
-                : [doc()]
-              : path === "/api/documents/tasks/job"
-                ? { id: "job", status: "completed" }
-                : [];
+      path === "/api/documents/search-profiles"
+        ? {
+            version: "test",
+            activities: [
+              { value: "all", label: "Tous les aménagements" },
+              { value: "transport", label: "Routes et transports" },
+            ],
+          }
+        : path === "/api/documents/species"
+          ? [
+              {
+                name: "renards",
+                scientific_name: "Vulpes vulpes",
+                display_name: "Renard",
+                documents_count: 1,
+                selected_count: Number(selected),
+              },
+            ]
+          : path === "/api/documents/fixture"
+            ? doc()
+            : path.includes("/fixture/pages")
+              ? [
+                  {
+                    asset_id: "fixture",
+                    page_number: 1,
+                    clean_text: "Texte intégral de fixture.",
+                    language: "fr",
+                    references_data: [],
+                  },
+                ]
+              : path === "/api/documents"
+                ? url.searchParams.get("selected_only") === "true" && !selected
+                  ? []
+                  : [doc()]
+                : path === "/api/documents/tasks/job"
+                  ? { id: "job", status: "completed" }
+                  : [];
     return route.fulfill({ json: result });
   });
   await page.goto("/documents");
@@ -133,6 +141,12 @@ test("recherche, consultation et sélection persistante par espèce", async ({
     page.getByText("Source sélectionnée", { exact: true }),
   ).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("button", { name: "Rechercher des publications", exact: true })
+    .click();
+  await expect(page.getByLabel("Objectif de la recherche")).toHaveValue(
+    "human_activities",
+  );
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

@@ -1341,6 +1341,15 @@ details > form {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
   gap: 1rem;
 }
+.document-search-form {
+  grid-template-columns: minmax(0, 1fr);
+}
+.document-search-form > * {
+  min-width: 0;
+}
+.document-search-form select {
+  width: 100%;
+}
 .document-card {
   border: 1px solid var(--border, #dce5df);
   border-radius: 12px;

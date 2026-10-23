@@ -44,7 +44,15 @@ beforeEach(() => {
     vi.fn(async (path: string, options: RequestInit = {}) => {
       calls.push({ path, options });
       let result: unknown = [];
-      if (path.endsWith("/species/renards")) {
+      if (path === "/api/documents/search-profiles")
+        result = {
+          version: "test",
+          activities: [
+            { value: "all", label: "Tous les aménagements" },
+            { value: "transport", label: "Routes et transports" },
+          ],
+        };
+      else if (path.endsWith("/species/renards")) {
         selected = JSON.parse(options.body as string).enabled;
         result = {};
       } else if (path === "/api/documents/species")
@@ -101,6 +109,8 @@ describe("bibliothèque documentaire", () => {
     expect(JSON.parse(call.options.body as string)).toMatchObject({
       species: ["Vulpes vulpes"],
       download_fulltext: true,
+      focus: "human_activities",
+      activity: "all",
     });
     expect(calls.some((c) => c.options.method === "PUT")).toBe(false);
     expect(wrapper.text()).toContain("Recherche lancée");

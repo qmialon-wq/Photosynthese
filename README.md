@@ -23,7 +23,7 @@ OpenAlex, Crossref et Europe PMC dans un worker CPU indépendant. Le RAG reste �
 
 ```sh
 make documents-up
-make documents-search ARGS='--species "Vulpes vulpes" --topic ecology --limit 5'
+make documents-search ARGS='--species "Vulpes vulpes" --focus human_activities --activity transport --limit 5'
 ```
 
 Les recherches, imports et sélections de sources par espèce sont également disponibles

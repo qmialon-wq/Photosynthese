@@ -7,30 +7,38 @@ import type {
   ScientificDocument,
   DocumentTask,
   DocumentPage,
+  SearchProfiles,
 } from "../documents";
 
 const catalog = useResource<Species[]>(() => "/documents/species");
+const profiles = useResource<SearchProfiles>(
+  () => "/documents/search-profiles",
+);
 const species = ref("");
 const selectedOnly = ref(false);
+const focusOnly = ref(false);
 const offset = ref(0);
 const limit = 12;
 const documents = useResource<ScientificDocument[]>(() => {
   const query = new URLSearchParams({
     selected_only: String(selectedOnly.value),
+    focus_only: String(focusOnly.value),
     limit: String(limit),
     offset: String(offset.value),
   });
   if (species.value) query.set("species", species.value);
   return `/documents?${query}`;
 });
-watch([species, selectedOnly], () => {
+watch([species, selectedOnly, focusOnly], () => {
   offset.value = 0;
 });
 const searchSpecies = ref("renards");
 watch(species, (value) => {
   if (value) searchSpecies.value = value;
 });
-const topic = ref("ecology");
+const focus = ref("human_activities");
+const activity = ref("all");
+const topic = ref("");
 const territory = ref("");
 const habitat = ref("");
 const fulltext = ref(true);
@@ -142,9 +150,12 @@ async function search() {
         sources: sources.value,
         limit_per_source: resultLimit.value,
         download_fulltext: fulltext.value,
+        focus: focus.value,
+        activity: activity.value,
       })
     ).id;
     species.value = selected.name;
+    focusOnly.value = focus.value === "human_activities";
     selectedOnly.value = false;
     offset.value = 0;
     showSearch.value = false;
@@ -174,6 +185,7 @@ async function upload() {
       })
     ).id;
     species.value = requestedSpecies;
+    focusOnly.value = false;
     selectedOnly.value = false;
     offset.value = 0;
     showImport.value = false;
@@ -261,7 +273,7 @@ async function retry(job: DocumentTask) {
         }}
       </h2>
       <form
-        class="form-grid"
+        class="form-grid document-search-form"
         @submit.prevent="showSearch ? search() : upload()"
       >
         <label
@@ -276,12 +288,44 @@ async function retry(job: DocumentTask) {
           </select></label
         >
         <template v-if="showSearch">
+          <label
+            >Objectif de la recherche<select v-model="focus">
+              <option value="human_activities">
+                Aménagements et activités humaines compatibles avec la faune
+              </option>
+              <option value="general">Recherche scientifique générale</option>
+            </select></label
+          >
+          <LoadState
+            v-if="focus === 'human_activities'"
+            :error="profiles.error.value"
+            :loading="profiles.loading.value && !profiles.data.value"
+            @retry="profiles.refresh"
+          >
+            <label
+              >Type d’activité<select v-model="activity" required>
+                <option
+                  v-for="item in profiles.data.value?.activities"
+                  :key="item.value"
+                  :value="item.value"
+                >
+                  {{ item.label }}
+                </option>
+              </select></label
+            >
+            <p class="muted">
+              Nous ciblons les aménagements, leurs impacts et les mesures
+              d’évitement ou de réduction. Les études montrant des effets
+              négatifs restent utiles pour identifier les pratiques à éviter. Ce
+              ciblage ne prouve pas l’absence d’impact.
+            </p>
+          </LoadState>
           <div class="form-row">
             <label
-              >Thématique<input
+              >Précision thématique (facultative)<input
                 v-model="topic"
                 maxlength="200"
-                placeholder="ecology, conservation…" /></label
+                placeholder="corridors, haies, passages à faune…" /></label
             ><label
               >Habitat (facultatif)<input
                 v-model="habitat"
@@ -330,7 +374,12 @@ async function retry(job: DocumentTask) {
             type="submit"
             label="Lancer la recherche"
             :loading="busy"
-            :disabled="!sources.length || !catalog.data.value?.length"
+            :disabled="
+              !sources.length ||
+              !catalog.data.value?.length ||
+              (focus === 'human_activities' &&
+                !profiles.data.value?.activities?.length)
+            "
           />
         </template>
         <template v-else>
@@ -389,6 +438,10 @@ async function retry(job: DocumentTask) {
         ><input v-model="selectedOnly" type="checkbox" />Sources sélectionnées
         uniquement</label
       >
+      <label class="check-line"
+        ><input v-model="focusOnly" type="checkbox" />Documents ciblés sur les
+        aménagements</label
+      >
     </div>
     <LoadState
       :error="documents.error.value"
@@ -404,6 +457,9 @@ async function retry(job: DocumentTask) {
           class="document-card"
         >
           <div class="actions">
+            <span v-if="doc.metadata?.screening?.candidate" class="document-tag"
+              >Aménagements et impacts</span
+            >
             <span class="document-tag">{{
               documentStatus[doc.status] || doc.status
             }}</span
@@ -515,8 +571,9 @@ async function retry(job: DocumentTask) {
               }}<template v-if="job.result?.observed != null">
                 · {{ job.result.observed }} notices ·
                 {{ job.result.errors || 0 }} erreurs ·
-                {{ job.result.inaccessible || 0 }} textes
-                inaccessibles</template
+                {{ job.result.inaccessible || 0 }} textes inaccessibles ·
+                {{ job.result.filtered_out || 0 }} notices hors
+                ciblage</template
               ></small
             >
             <p v-if="job.error" class="notice error">{{ job.error }}</p>
@@ -609,6 +666,14 @@ async function retry(job: DocumentTask) {
           >
         </div>
         <p>{{ detail.data.value.abstract || "Résumé non disponible." }}</p>
+        <p
+          v-if="detail.data.value.metadata?.screening?.candidate"
+          class="notice"
+        >
+          Ce document a été repéré pour son lien avec les activités humaines et
+          leurs impacts sur la faune. Vérifiez les mesures proposées, les
+          résultats et leurs limites avant de le sélectionner.
+        </p>
         <div class="document-selection">
           <label
             >Espèce concernée<select v-model="targetSpecies">

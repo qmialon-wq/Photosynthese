@@ -5,6 +5,7 @@ import json
 from uuid import UUID
 
 from shared.documents import service
+from shared.documents.relevance import ACTIVITIES
 from shared.documents.schemas import ManualImport, Search, Watch
 
 
@@ -24,6 +25,8 @@ def main() -> None:
         command.add_argument("--sources", nargs="+", default=["openalex", "crossref", "europepmc"])
         command.add_argument("--limit", type=int, default=20)
         command.add_argument("--download-fulltext", action="store_true")
+        command.add_argument("--focus", choices=["general", "human_activities"], default="general")
+        command.add_argument("--activity", choices=list(ACTIVITIES), default="all")
     run = commands.add_parser("run-watch")
     run.add_argument("id", type=UUID)
     status = commands.add_parser("status")
@@ -47,6 +50,8 @@ def main() -> None:
                 sources=args.sources,
                 limit_per_source=args.limit,
                 download_fulltext=args.download_fulltext,
+                focus=args.focus,
+                activity=args.activity,
             )
             if args.command == "watch":
                 result = service.watch(

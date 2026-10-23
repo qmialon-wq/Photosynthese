@@ -6,6 +6,7 @@ from collections.abc import Iterator
 from typing import Any, Protocol
 from urllib.parse import quote
 
+from shared.documents.relevance import query_groups
 from shared.documents.schemas import FullText, Publication, Search, normalize_doi
 
 from .http import SafeHTTP
@@ -36,12 +37,21 @@ def license_code(value: str | None) -> str | None:
 def terms(search: Search, *, boolean: bool = False) -> str:
     groups = [search.species, search.habitats, search.territories, search.topics]
     if boolean:
+        groups += query_groups(search)
         return " AND ".join(
             "(" + " OR ".join('"' + re.sub(r'["\\]', " ", v) + '"' for v in values) + ")"
             for values in groups
             if values
         )
-    return " ".join(v for values in groups for v in values)
+    natural = " ".join(v for values in groups for v in values)
+    if search.focus == "human_activities":
+        # Crossref classe une requête textuelle ; le filtre local reste indispensable.
+        natural += " " + query_groups(search)[0][0] + " wildlife impact mitigation"
+    return natural
+
+
+def retrieval_limit(query: Search) -> int:
+    return min(100, query.limit_per_source * (3 if query.focus == "human_activities" else 1))
 
 
 class ScientificSource(Protocol):
@@ -81,7 +91,7 @@ class OpenAlex(SourceAdapter):
             "https://api.openalex.org/works",
             {
                 "search": terms(query, boolean=True),
-                "per-page": query.limit_per_source,
+                "per-page": retrieval_limit(query),
             },
         )
         yield from self.parse_items(result.get("results", []))
@@ -131,7 +141,7 @@ class Crossref(SourceAdapter):
     name = "crossref"
 
     def search(self, query: Search) -> Iterator[Publication]:
-        params: dict[str, Any] = {"query": terms(query), "rows": query.limit_per_source}
+        params: dict[str, Any] = {"query": terms(query), "rows": retrieval_limit(query)}
         if self.http.settings.contact_email:
             params["mailto"] = self.http.settings.contact_email
         result = self.http.json("https://api.crossref.org/works", params)
@@ -173,7 +183,7 @@ class EuropePMC(SourceAdapter):
                 "query": terms(query, boolean=True),
                 "format": "json",
                 "resultType": "core",
-                "pageSize": query.limit_per_source,
+                "pageSize": retrieval_limit(query),
             },
         )
         yield from self.parse_items(data.get("resultList", {}).get("result", []))

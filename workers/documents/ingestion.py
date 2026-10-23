@@ -8,6 +8,7 @@ from uuid import uuid4
 from shared.documents import service
 from shared.documents.config import DocumentSettings
 from shared.documents.corpus import discover
+from shared.documents.relevance import screen
 from shared.documents.schemas import FullText, ManualImport, Publication, Search
 from shared.review.database import jsonb
 
@@ -274,7 +275,7 @@ class Ingestor:
     def search(self, request: dict[str, Any]) -> dict[str, Any]:
         query = Search.model_validate(request["search"])
         actor = service.task(self.task)["actor"]
-        counts = {"observed": 0, "errors": 0, "sources_ok": 0, "inaccessible": 0}
+        counts = {"observed": 0, "errors": 0, "sources_ok": 0, "inaccessible": 0, "filtered_out": 0}
         documents: set[str] = set()
         for source_name in query.sources:
             self.log(
@@ -284,14 +285,49 @@ class Ingestor:
             )
             try:
                 source = SOURCES[source_name](self.http)
+                accepted = 0
                 for publication in source.search(query):
+                    if accepted >= query.limit_per_source:
+                        break
                     try:
+                        screening = (
+                            screen(publication, query)
+                            if query.focus == "human_activities"
+                            else None
+                        )
+                        if screening and not screening["candidate"]:
+                            counts["filtered_out"] += 1
+                            self.log(
+                                "relevance",
+                                "Notice hors ciblage ou métadonnées insuffisantes",
+                                data={
+                                    "source": source_name,
+                                    "source_id": publication.source_id,
+                                    "title": publication.title,
+                                    "screening": screening,
+                                },
+                            )
+                            continue
                         identifier = service.register(
                             publication, self.task, request.get("watch_id")
                         )
                         documents.add(identifier)
                         discover(identifier, query.species, actor)
                         counts["observed"] += 1
+                        accepted += 1
+                        if screening:
+                            with service.transaction() as connection:
+                                connection.execute(
+                                    "UPDATE scientific_documents SET metadata=metadata || %s "
+                                    "WHERE id=%s",
+                                    (jsonb({"screening": screening}), identifier),
+                                )
+                            self.log(
+                                "relevance",
+                                "Candidat activités humaines et impacts sur la faune",
+                                document=identifier,
+                                data=screening,
+                            )
                         if source_name != "crossref" and publication.doi:
                             try:
                                 complement = Crossref(self.http).lookup(publication.doi)

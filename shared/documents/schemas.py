@@ -41,6 +41,10 @@ class Search(Body):
     sources: list[SourceName] = Field(default=["openalex", "crossref", "europepmc"], min_length=1)
     limit_per_source: int = Field(default=20, ge=1, le=100)
     download_fulltext: bool = False
+    focus: Literal["general", "human_activities"] = "general"
+    activity: Literal[
+        "all", "lighting", "transport", "agriculture", "urban", "recreation", "forestry", "noise"
+    ] = "all"
 
     @field_validator("species", "habitats", "territories", "topics")
     @classmethod

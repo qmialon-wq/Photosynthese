@@ -5,6 +5,10 @@ export interface Species {
   documents_count: number;
   selected_count: number;
 }
+export interface SearchProfiles {
+  version: string;
+  activities: { value: string; label: string }[];
+}
 export interface SpeciesLink {
   species: string;
   enabled: boolean;
@@ -23,6 +27,7 @@ export interface ScientificDocument {
   quality: string;
   language: string | null;
   species_links: SpeciesLink[];
+  metadata?: { screening?: { focus: string; candidate: boolean } };
   assets?: { id: string; format: string; license: string; sha256: string }[];
   provenance?: { source: string; observed_at: string }[];
   selection_history?: {
@@ -39,7 +44,12 @@ export interface DocumentTask {
   error: string | null;
   created_at: string;
   request: { search?: { species: string[] } };
-  result: { observed?: number; errors?: number; inaccessible?: number } | null;
+  result: {
+    observed?: number;
+    errors?: number;
+    inaccessible?: number;
+    filtered_out?: number;
+  } | null;
 }
 export interface DocumentPage {
   asset_id: string;

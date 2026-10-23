@@ -80,6 +80,44 @@ les résultats ; la validation humaine reste distincte de l'ingestion.
 
 ## Veilles périodiques
 
+Le formulaire web cible par défaut les **aménagements et activités humaines** :
+éclairage, routes et passages à faune, agriculture/haies, urbanisation, loisirs,
+gestion forestière et bruit. Un choix « Recherche scientifique générale » permet
+de revenir à une recherche non ciblée. Les anciennes requêtes API et veilles
+conservent leur comportement général si aucun profil n'est précisé.
+
+Pour appliquer le même ciblage en CLI (recherche ou veille) :
+
+```sh
+make documents-search ARGS='--species "Capreolus capreolus" --focus human_activities --activity transport --limit 5'
+```
+
+L'API accepte `focus="human_activities"` et `activity` parmi `all`, `lighting`,
+`transport`, `agriculture`, `urban`, `recreation`, `forestry`, `noise`.
+`GET /documents/search-profiles` expose les activités et la version des règles.
+Les requêtes OpenAlex/Europe PMC combinent espèce, contexte humain et enjeux
+écologiques. Crossref classe une requête textuelle complétée ; un préfiltrage local
+commun vérifie ensuite les termes présents dans les **titres et résumés**.
+
+Le worker examine jusqu'à trois fois le nombre demandé de notices par source
+(première page, 100 maximum) et conserve au plus le nombre demandé de candidats.
+Les notices sans correspondance ou avec des métadonnées insuffisantes ne sont pas
+téléchargées ni ajoutées à la bibliothèque. Les exclusions et leurs indices sont
+journalisés, avec un compteur `filtered_out`. Les candidats conservent les critères,
+la version et les termes repérés dans `metadata.screening`.
+
+Ce filtre lexical peut manquer une étude pertinente ou conserver un faux positif.
+Il ne déduit **ni l'efficacité d'une mesure, ni l'absence d'impact**, et conserve
+les résultats défavorables : ceux-ci éclairent les pratiques à éviter. Les imports
+manuels ne sont pas écartés par ce filtre. L'applicabilité en Normandie et la qualité
+scientifique restent à vérifier avant la sélection d'une source.
+
+Après une recherche ciblée, la bibliothèque active « Documents ciblés sur les
+aménagements », également disponible via `GET /documents?focus_only=true`.
+Les documents et sélections historiques restent conservés ; désactiver ce filtre
+permet de les retrouver. Le mode général et les sources déjà sélectionnées ne sont
+pas modifiés rétroactivement.
+
 ```sh
 make documents-watch ARGS='--name renard-bocage --species "Vulpes vulpes" --topic habitat --interval 86400 --enabled'
 docker compose exec -T documents python -m workers.documents.cli run-watch <identifiant-de-veille>
