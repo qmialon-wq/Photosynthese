@@ -16,6 +16,31 @@ documents-import:
 documents-status:
 	docker compose exec -T documents python -m workers.documents.cli status $(ARGS)
 
+.PHONY: rag-up rag-prepare rag-index rag-search rag-report rag-status rag-result rag-evaluate
+rag-up:
+	docker compose up -d --build --wait backend documents
+
+rag-prepare:
+	docker compose exec -T documents python -m shared.rag.cli prepare
+
+rag-index:
+	docker compose exec -T documents python -m shared.rag.cli index $(ARGS)
+
+rag-search:
+	docker compose exec -T documents python -m shared.rag.cli search $(ARGS)
+
+rag-report:
+	docker compose exec -T documents python -m shared.rag.cli report $(ARGS)
+
+rag-status:
+	docker compose exec -T documents python -m shared.rag.cli status $(ARGS)
+
+rag-result:
+	docker compose exec -T documents python -m shared.rag.cli result $(ARGS)
+
+rag-evaluate:
+	docker compose exec -T documents python -m shared.rag.cli evaluate $(ARGS)
+
 # Ces commandes soumettent des tâches au worker unique ; ARGS contient des
 # options CLI locales et ne doit jamais provenir d'une saisie HTTP.
 ARCHITECTURE ?= tf_efficientnetv2_b0

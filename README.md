@@ -1,5 +1,10 @@
 # BioSentinelle Normandie
 
+Le [module RAG local, étape 1](docs/RAG.md) propose une recherche documentaire
+hybride et des rapports d'extraits sourcés sans LLM. Démarrage : `make rag-up`,
+`make rag-prepare`, puis `make rag-index`. Seules les sources validées participent
+à la recherche ; les recommandations écologiques générées viendront dans une étape distincte.
+
 Le moteur de classification alternatif (CNN préentraîné local, embeddings et
 classifieurs classiques, comparaisons, promotion et rollback) est documenté dans
 [CLASSIFICATION_ALTERNATIVE.md](workers/vision/CLASSIFICATION_ALTERNATIVE.md).

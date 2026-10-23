@@ -15,17 +15,20 @@ anyio==4.15.1
     # via
     #   -c infra/requirements-test.txt
     #   httpx
-    #   httpx2
     #   starlette
-certifi==2026.10.19
+certifi==2026.10.23
     # via
     #   -c infra/requirements-test.txt
     #   httpcore
     #   httpx
+    #   requests
+charset-normalizer==3.5.2
+    # via
+    #   -c infra/requirements-test.txt
+    #   requests
 click==8.5.0
     # via
     #   -c infra/requirements-test.txt
-    #   huggingface-hub
     #   uvicorn
 cloudpickle==3.1.2
     # via joblib
@@ -34,6 +37,10 @@ colorama==0.4.6 ; sys_platform == 'win32'
     #   -c infra/requirements-test.txt
     #   pytest
     #   tqdm
+coloredlogs==15.0.1
+    # via
+    #   -c infra/requirements-test.txt
+    #   onnxruntime
 ctranslate2==4.6.0
     # via
     #   -c infra/requirements-test.txt
@@ -46,12 +53,18 @@ fastapi==0.115.12
     # via
     #   -c infra/requirements-test.txt
     #   -r infra/../backend/requirements.in
-filelock==3.32.3
+filelock==4.2.4
     # via
+    #   -c infra/requirements-test.txt
     #   huggingface-hub
     #   torch
-fsspec==2026.7.0
+flatbuffers==25.12.19
     # via
+    #   -c infra/requirements-test.txt
+    #   onnxruntime
+fsspec==2026.9.0
+    # via
+    #   -c infra/requirements-test.txt
     #   huggingface-hub
     #   torch
 greenlet==3.5.6 ; (python_full_version < '3.14' and platform_machine == 'AMD64') or (python_full_version < '3.14' and platform_machine == 'WIN32') or (python_full_version < '3.14' and platform_machine == 'aarch64') or (python_full_version < '3.14' and platform_machine == 'amd64') or (python_full_version < '3.14' and platform_machine == 'ppc64le') or (python_full_version < '3.14' and platform_machine == 'win32') or (python_full_version < '3.14' and platform_machine == 'x86_64')
@@ -62,31 +75,35 @@ h11==0.16.0
     # via
     #   -c infra/requirements-test.txt
     #   httpcore
-    #   httpcore2
     #   uvicorn
-hf-xet==1.7.0 ; platform_machine == 'AMD64' or platform_machine == 'ARM64' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
-    # via huggingface-hub
+hf-xet==1.7.0 ; platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
+    # via
+    #   -c infra/requirements-test.txt
+    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c infra/requirements-test.txt
     #   httpx
-httpcore2==2.3.0
-    # via httpx2
 httpx==0.28.1
     # via
     #   -c infra/requirements-test.txt
     #   -r infra/../workers/documents/requirements.in
     #   -r infra/requirements-test.in
-httpx2==2.3.0
-    # via huggingface-hub
-huggingface-hub==2.2.0
-    # via timm
+huggingface-hub==0.36.2
+    # via
+    #   -c infra/requirements-test.txt
+    #   timm
+    #   tokenizers
+humanfriendly==10.0
+    # via
+    #   -c infra/requirements-test.txt
+    #   coloredlogs
 idna==3.20
     # via
     #   -c infra/requirements-test.txt
     #   anyio
     #   httpx
-    #   httpx2
+    #   requests
 iniconfig==2.3.1
     # via
     #   -c infra/requirements-test.txt
@@ -111,7 +128,9 @@ markupsafe==3.0.4
     #   jinja2
     #   mako
 mpmath==1.3.0
-    # via sympy
+    # via
+    #   -c infra/requirements-test.txt
+    #   sympy
 narwhals==2.27.1
     # via scikit-learn
 networkx==3.6.1
@@ -122,10 +141,15 @@ numpy==2.2.6
     #   -r infra/../workers/documents/requirements.in
     #   -r infra/../workers/vision/requirements.in
     #   ctranslate2
+    #   onnxruntime
     #   opencv-python
     #   scikit-learn
     #   scipy
     #   torchvision
+onnxruntime==1.22.1
+    # via
+    #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
 opencv-python==4.11.0.86
     # via
     #   -c infra/requirements-test.txt
@@ -134,6 +158,7 @@ packaging==26.3
     # via
     #   -c infra/requirements-test.txt
     #   huggingface-hub
+    #   onnxruntime
     #   pytest
 pillow==11.2.1
     # via
@@ -144,6 +169,10 @@ pluggy==1.7.0
     # via
     #   -c infra/requirements-test.txt
     #   pytest
+protobuf==7.36.2
+    # via
+    #   -c infra/requirements-test.txt
+    #   onnxruntime
 psycopg==3.2.9
     # via
     #   -c infra/requirements-test.txt
@@ -176,6 +205,10 @@ pypdf==6.21.2
     # via
     #   -c infra/requirements-test.txt
     #   -r infra/../workers/documents/requirements.in
+pyreadline3==3.5.6 ; sys_platform == 'win32'
+    # via
+    #   -c infra/requirements-test.txt
+    #   humanfriendly
 pytest==8.4.0
     # via
     #   -c infra/requirements-test.txt
@@ -196,6 +229,10 @@ redis==6.2.0
     #   -r infra/../backend/requirements.in
     #   -r infra/../workers/documents/../requirements.in
     #   -r infra/../workers/vision/../requirements.in
+requests==2.34.2
+    # via
+    #   -c infra/requirements-test.txt
+    #   huggingface-hub
 ruff==0.11.13
     # via
     #   -c infra/requirements-test.txt
@@ -229,11 +266,19 @@ starlette==0.46.2
     #   -c infra/requirements-test.txt
     #   fastapi
 sympy==1.13.1
-    # via torch
+    # via
+    #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
+    #   onnxruntime
+    #   torch
 threadpoolctl==3.7.0
     # via scikit-learn
 timm==1.0.15
     # via -r infra/requirements-vision-ml-test.in
+tokenizers==0.21.2
+    # via
+    #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
 torch==2.6.0 ; sys_platform == 'darwin'
     # via
     #   -r infra/requirements-vision-ml-test.in
@@ -252,12 +297,10 @@ torchvision==0.21.0+cpu ; (platform_machine != 'aarch64' and sys_platform == 'li
     # via
     #   -r infra/requirements-vision-ml-test.in
     #   timm
-tqdm==4.66.5
-    # via huggingface-hub
-truststore==0.10.5
+tqdm==4.70.1
     # via
-    #   httpcore2
-    #   httpx2
+    #   -c infra/requirements-test.txt
+    #   huggingface-hub
 typing-extensions==4.16.0
     # via
     #   -c infra/requirements-test.txt
@@ -280,6 +323,10 @@ tzdata==2026.5 ; sys_platform == 'win32'
     # via
     #   -c infra/requirements-test.txt
     #   psycopg
+urllib3==2.8.0
+    # via
+    #   -c infra/requirements-test.txt
+    #   requests
 uvicorn==0.34.2
     # via
     #   -c infra/requirements-test.txt

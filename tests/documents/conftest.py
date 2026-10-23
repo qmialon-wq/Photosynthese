@@ -38,6 +38,13 @@ def document_db(monkeypatch, tmp_path):
     specification.loader.exec_module(migration)
     try:
         with connect() as connection:
+            review_spec = importlib.util.spec_from_file_location(
+                "rag_review_migration", Path("backend/migrations/versions/0003_human_review.py")
+            )
+            review_migration = importlib.util.module_from_spec(review_spec)
+            review_spec.loader.exec_module(review_migration)
+            monkeypatch.setattr(review_migration.op, "execute", connection.execute)
+            review_migration.upgrade()
             monkeypatch.setattr(migration.op, "execute", connection.execute)
             migration.upgrade()
             spec = importlib.util.spec_from_file_location(
@@ -56,6 +63,13 @@ def document_db(monkeypatch, tmp_path):
             spec.loader.exec_module(collection_migration)
             monkeypatch.setattr(collection_migration.op, "execute", connection.execute)
             collection_migration.upgrade()
+            rag_spec = importlib.util.spec_from_file_location(
+                "rag_migration", Path("backend/migrations/versions/0009_rag.py")
+            )
+            rag_migration = importlib.util.module_from_spec(rag_spec)
+            rag_spec.loader.exec_module(rag_migration)
+            monkeypatch.setattr(rag_migration.op, "execute", connection.execute)
+            rag_migration.upgrade()
         yield DocumentSettings(root=tmp_path / "documents", request_interval=0.2)
     finally:
         admin.execute(sql.SQL("DROP SCHEMA {} CASCADE").format(sql.Identifier(schema)))

@@ -387,6 +387,10 @@ class Ingestor:
         return {**counts, "document_ids": sorted(documents)}
 
     def perform(self, kind: str, request: dict[str, Any], actor: str) -> dict[str, Any]:
+        if kind == "rag":
+            from .rag import perform
+
+            return perform(request["action"], request.get("body", {}), actor, self.task, self.http)
         if kind == "search":
             return self.search(request)
         if kind == "import":
