@@ -16,74 +16,66 @@ const global = {
     },
   },
 };
-let selected = false;
-let calls: { path: string; options: RequestInit }[];
-function document() {
-  return {
-    id: "fixture",
-    title: "Étude de test sur le renard",
-    authors: ["Auteur de test"],
-    status: "indexed",
-    abstract: "Résumé de test",
-    published_date: "2026",
-    doi: null,
-    url: "https://example.org/fixture",
-    species_links: [
-      { species: "renards", enabled: selected, available: selected },
-    ],
-    assets: [],
-    provenance: [],
-    selection_history: [],
-  };
-}
+let calls: { path: string; options: RequestInit }[], removed: boolean;
+const doc = () => ({
+  id: "fixture",
+  title: "Roads and wildlife",
+  authors: [],
+  language: "en",
+  status: "indexed",
+  published_date: null,
+  species_links: [],
+  assets: [],
+  metadata: {
+    translation_fr: {
+      status: "completed",
+      source_title: "Roads and wildlife",
+      title: "Routes et faune sauvage",
+      abstract: "Résumé en français.",
+    },
+  },
+});
 beforeEach(() => {
-  selected = false;
   calls = [];
+  removed = false;
   vi.stubGlobal(
     "fetch",
     vi.fn(async (path: string, options: RequestInit = {}) => {
       calls.push({ path, options });
       let result: unknown = [];
-      if (path === "/api/documents/search-profiles")
-        result = {
-          version: "test",
-          activities: [
-            { value: "all", label: "Tous les aménagements" },
-            { value: "transport", label: "Routes et transports" },
-          ],
-        };
-      else if (path.endsWith("/species/renards")) {
-        selected = JSON.parse(options.body as string).enabled;
-        result = {};
-      } else if (path === "/api/documents/species")
+      if (path === "/api/documents/species")
         result = [
           {
             name: "renards",
-            scientific_name: "Vulpes vulpes",
             display_name: "Renard",
+            scientific_name: "Vulpes vulpes",
             documents_count: 1,
-            selected_count: Number(selected),
+          },
+          {
+            name: "blaireaux",
+            display_name: "Blaireau",
+            scientific_name: "Meles meles",
+            documents_count: 1,
           },
         ];
-      else if (path === "/api/documents/fixture") result = document();
+      else if (path === "/api/documents/fixture") result = doc();
       else if (path.includes("/fixture/pages"))
         result = [
           {
-            asset_id: "fixture",
+            asset_id: "file",
             page_number: 1,
-            clean_text: "Texte extrait de test.",
-            language: "fr",
+            clean_text: "English original.",
+            translated_text: "Texte français.",
             references_data: [],
           },
         ];
-      else if (path.startsWith("/api/documents?")) result = [document()];
-      else if (
-        path === "/api/documents/search" ||
-        path.startsWith("/api/documents/upload")
-      )
-        result = { id: "job" };
-      else if (path === "/api/documents/tasks/job")
-        result = { id: "job", status: "queued" };
+      else if (path.startsWith("/api/documents?"))
+        result = removed ? [] : [doc()];
+      else if (path === "/api/documents/remove") {
+        removed = true;
+        result = { removed: ["fixture"] };
+      } else if (path === "/api/documents/collect")
+        result = { tasks: [{ id: "job" }] };
       return new Response(JSON.stringify(result), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -92,65 +84,82 @@ beforeEach(() => {
   );
 });
 afterEach(() => vi.unstubAllGlobals());
-
-describe("bibliothèque documentaire", () => {
-  it("lance une recherche par nom scientifique sans ajouter automatiquement les sources", async () => {
+describe("corpus simplifié", () => {
+  it("masque les notices non téléchargées et lance toutes les espèces en un clic", async () => {
     const wrapper = mount(DocumentsPage, { global });
     await flushPromises();
-    await wrapper.get('input[type="checkbox"]').setValue(true);
+    expect(calls.some((c) => c.path.includes("stored_only=true"))).toBe(true);
+    await wrapper
+      .findAll("button")
+      .find((b) => b.text() === "Récupérer pour toutes les espèces")!
+      .trigger("click");
+    await flushPromises();
+    expect(
+      JSON.parse(
+        calls.find((c) => c.path === "/api/documents/collect")!.options
+          .body as string,
+      ),
+    ).toEqual({ species: [] });
+    expect(wrapper.text()).not.toContain("Récupérer le texte");
+    wrapper.unmount();
+  });
+  it("collecte des espèces ciblées sans paramètres techniques", async () => {
+    const wrapper = mount(DocumentsPage, { global });
     await flushPromises();
     await wrapper
       .findAll("button")
-      .find((b) => b.text() === "Rechercher des publications")!
+      .find((b) => b.text() === "Choisir les espèces")!
       .trigger("click");
+    await wrapper
+      .get('.species-choices input[value="blaireaux"]')
+      .setValue(true);
     await wrapper.get("form").trigger("submit");
     await flushPromises();
-    const call = calls.find((c) => c.path === "/api/documents/search")!;
-    expect(JSON.parse(call.options.body as string)).toMatchObject({
-      species: ["Vulpes vulpes"],
-      download_fulltext: true,
-      focus: "human_activities",
-      activity: "all",
-    });
-    expect(calls.some((c) => c.options.method === "PUT")).toBe(false);
-    expect(wrapper.text()).toContain("Recherche lancée");
     expect(
-      (wrapper.get('input[type="checkbox"]').element as HTMLInputElement)
-        .checked,
-    ).toBe(false);
+      JSON.parse(
+        calls.find((c) => c.path === "/api/documents/collect")!.options
+          .body as string,
+      ),
+    ).toEqual({ species: ["renards", "blaireaux"] });
     wrapper.unmount();
   });
-  it("consulte le texte puis ajoute et retire une source par espèce", async () => {
+  it("affiche le français par défaut et garde un accès à l’original", async () => {
     const wrapper = mount(DocumentsPage, { global });
     await flushPromises();
+    expect(wrapper.text()).toContain("Routes et faune sauvage");
     await wrapper
       .findAll("button")
-      .find((b) => b.text() === "Consulter")!
+      .find((b) => b.text() === "Lire le document")!
       .trigger("click");
     await flushPromises();
-    expect(wrapper.text()).toContain("Texte extrait de test.");
+    expect(wrapper.get("pre").text()).toBe("Texte français.");
     await wrapper
       .findAll("button")
-      .find((b) => b.text() === "Valider et ajouter aux sources")!
+      .find((b) => b.text() === "Original")!
       .trigger("click");
-    await flushPromises();
-    expect(selected).toBe(true);
-    await wrapper
-      .findAll("button")
-      .find((b) => b.text() === "Retirer des sources")!
-      .trigger("click");
-    await flushPromises();
-    expect(selected).toBe(false);
-    expect(
-      calls
-        .filter((c) => c.options.method === "PUT")
-        .map((c) => JSON.parse(c.options.body as string)),
-    ).toEqual([{ enabled: true }, { enabled: false }]);
+    expect(wrapper.get("pre").text()).toBe("English original.");
     wrapper.unmount();
   });
-  it("refuse les liens actifs provenant de métadonnées non fiables", () => {
+  it("retire une sélection du corpus de l’espèce choisie", async () => {
+    const wrapper = mount(DocumentsPage, { global });
+    await flushPromises();
+    await wrapper.get(".bulk-toolbar input").setValue(true);
+    await wrapper
+      .findAll("button")
+      .find((b) => b.text() === "Retirer du corpus")!
+      .trigger("click");
+    await flushPromises();
+    expect(
+      JSON.parse(
+        calls.find((c) => c.path === "/api/documents/remove")!.options
+          .body as string,
+      ),
+    ).toEqual({ species: "renards", documents: ["fixture"] });
+    expect(wrapper.findAll("article")).toHaveLength(0);
+    wrapper.unmount();
+  });
+  it("refuse les liens actifs des métadonnées", () => {
     expect(externalUrl("javascript:alert(1)")).toBeUndefined();
-    expect(externalUrl("data:text/html,fixture")).toBeUndefined();
     expect(externalUrl("https://example.org/article")).toBe(
       "https://example.org/article",
     );

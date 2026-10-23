@@ -16,6 +16,7 @@ from .extraction import VERSION, chunks, extract_isolated
 from .http import FetchError, SafeHTTP
 from .sources import SOURCES, Crossref, license_code
 from .storage import DocumentStorage
+from .translation import queue as queue_translation
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,7 @@ class Ingestor:
         if hashlib.sha256(path.read_bytes()).hexdigest() != asset["sha256"]:
             raise ValueError("Empreinte du document stocké incompatible")
         if asset["extraction_version"] == VERSION:
+            queue_translation(str(asset["document_id"]))
             self.log("index", "Index existant réutilisé", document=str(asset["document_id"]))
             return {"asset_id": asset_id, "cached": True}
         extracted = extract_isolated(path, asset["format"], self.settings)
@@ -145,6 +147,7 @@ class Ingestor:
                 ("indexed" if count else "imported", extracted["language"], asset["document_id"]),
             )
         self.storage.json(f"extracted/{asset['sha256']}/{VERSION}.json", extracted)
+        queue_translation(str(asset["document_id"]))
         self.log(
             "index",
             "Extraction terminée",
@@ -276,6 +279,7 @@ class Ingestor:
         query = Search.model_validate(request["search"])
         actor = service.task(self.task)["actor"]
         counts = {"observed": 0, "errors": 0, "sources_ok": 0, "inaccessible": 0, "filtered_out": 0}
+        counts["downloaded"] = 0
         documents: set[str] = set()
         for source_name in query.sources:
             self.log(
@@ -308,13 +312,30 @@ class Ingestor:
                                 },
                             )
                             continue
+                        if query.download_fulltext and not publication.fulltexts:
+                            # Une notice Crossref peut enrichir une copie déjà importée,
+                            # mais ne prouve pas qu'un texte soit téléchargeable.
+                            counts["inaccessible"] += 1
+                            continue
                         identifier = service.register(
                             publication, self.task, request.get("watch_id")
                         )
                         documents.add(identifier)
                         discover(identifier, query.species, actor)
+                        if request.get("collection_species"):
+                            with service.transaction() as connection:
+                                excluded = connection.execute(
+                                    """SELECT 1 FROM document_species
+                                  WHERE document_id=%s AND species=%s AND excluded""",
+                                    (
+                                        service.document(identifier)["id"],
+                                        request["collection_species"],
+                                    ),
+                                ).fetchone()
+                            if excluded:
+                                continue
                         counts["observed"] += 1
-                        accepted += 1
+                        accepted += int(not query.download_fulltext)
                         if screening:
                             with service.transaction() as connection:
                                 connection.execute(
@@ -343,6 +364,9 @@ class Ingestor:
                         if query.download_fulltext:
                             result = self.fetch(identifier)
                             counts["inaccessible"] += int(result.get("inaccessible", False))
+                            if not result.get("inaccessible") and not result.get("skipped"):
+                                counts["downloaded"] += 1
+                                accepted += 1
                     except Exception as exc:
                         counts["errors"] += 1
                         self.log(
@@ -371,4 +395,8 @@ class Ingestor:
             return self.fetch(request["document_id"])
         if kind == "index":
             return self.index(request["asset_id"])
+        if kind == "translate":
+            from .translation import run
+
+            return run(request["document_id"], self.settings, self.http, self.task)
         raise ValueError("Type de tâche documentaire inconnu")

@@ -12,6 +12,8 @@ certifi==2026.10.23
     # via
     #   httpcore
     #   httpx
+ctranslate2==4.6.0
+    # via -r workers/documents/requirements.in
 defusedxml==0.7.1
     # via -r workers/documents/requirements.in
 h11==0.16.0
@@ -29,6 +31,10 @@ idna==3.20
     #   httpx
 langdetect==1.0.9
     # via -r workers/documents/requirements.in
+numpy==2.2.6
+    # via
+    #   -r workers/documents/requirements.in
+    #   ctranslate2
 psycopg==3.2.9
     # via
     #   -c backend/requirements.txt
@@ -55,10 +61,16 @@ python-dotenv==1.2.4
     # via
     #   -c backend/requirements.txt
     #   pydantic-settings
+pyyaml==6.0.3
+    # via ctranslate2
 redis==6.2.0
     # via
     #   -c backend/requirements.txt
     #   -r workers/documents/../requirements.in
+sentencepiece==0.2.1
+    # via -r workers/documents/requirements.in
+setuptools==84.2.1
+    # via ctranslate2
 six==1.17.0
     # via langdetect
 typing-extensions==4.16.0

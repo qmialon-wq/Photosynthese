@@ -10,26 +10,30 @@ de recommandation n'est encore actif.
 
 ## Utilisation depuis le navigateur
 
-1. Ouvrir **Documents scientifiques**, dans l'observation ou l'administration.
-2. Choisir une espèce dans la bibliothèque, ou lancer une recherche en utilisant
-   son nom scientifique proposé automatiquement. Les filtres habitat, territoire,
-   thématique et le choix des sources sont facultatifs.
-3. Suivre les recherches/imports et consulter leur journal en bas de page.
-4. Ouvrir une notice pour lire le résumé, le texte extrait par page, les références,
-   les licences et la provenance. Les PDF conservés s'ouvrent ou se téléchargent.
-5. Cliquer **Valider et ajouter aux sources** pour l'espèce souhaitée. Cette action
-   constitue la validation de pertinence et de qualité ; aucun commentaire n'est exigé.
-   Un texte indexé avec des passages et un document non rejeté sont requis.
-6. **Retirer des sources** exclut immédiatement le document pour cette espèce,
-   sans effacer le fichier ou son historique, ni changer ses autres associations.
+1. Cliquer **Récupérer pour toutes les espèces**, ou **Choisir les espèces** puis
+   cocher celles à rechercher. Une tâche indépendante est créée par espèce ; une
+   collecte déjà en attente ou en cours est réutilisée.
+2. Le ciblage des aménagements est appliqué automatiquement. OpenAlex et Europe PMC
+   fournissent les copies autorisées ; Crossref enrichit les DOI. Jusqu'à cinq
+   téléchargements réussis par source et par espèce sont recherchés, sans dépasser
+   la première page de candidats. Aucun texte non autorisé n'est récupéré.
+3. Choisir une espèce dans **Mon corpus**. Seuls les fichiers effectivement importés
+   sont listés : les simples notices et les téléchargements échoués restent dans
+   les journaux techniques. Les métadonnées demeurent consultables via l'API.
+4. Cliquer **Lire le document** : le français est proposé par défaut, et **Original**
+   permet de vérifier le texte source. Les fichiers originaux restent téléchargeables.
+5. Cocher plusieurs documents, ou toute la page, puis **Retirer du corpus**. Ce
+   retrait est propre à l'espèce : fichiers et historique sont conservés, les autres
+   espèces ne sont pas affectées, et une collecte ultérieure ne réactive pas le retrait.
 
 L'import web accepte PDF/TXT/Markdown jusqu'à 32 Mio avec confirmation des droits.
 La recherche et l'import associent des **candidats** à une espèce, sans sélectionner
 automatiquement les sources. Une nouvelle recherche ne réactive pas un retrait.
 Un même document peut être utilisé pour plusieurs espèces. Les documents historiques
 sont associés lorsque leurs anciennes tâches permettent d'identifier exactement le
-nom scientifique ou le nom canonique ; les autres restent visibles dans « Toutes les
-espèces » et peuvent être affectés depuis leur notice.
+nom scientifique ou le nom canonique. Les anciennes API de recherche et de revue
+restent disponibles pour les usages avancés ; elles ne sont plus exposées comme
+réglages du formulaire principal. La collecte ne simule aucune validation humaine.
 
 Le corpus sélectionné est consultable avec
 `GET /documents?species=renards&selected_only=true` : il exclut les documents non
@@ -41,6 +45,44 @@ sélection ou un retrait, l'acteur et la date. Les décisions sont conservées d
 
 Le RAG futur devra consommer ce corpus filtré ; cette étape n'effectue encore
 aucune recherche vectorielle ni génération de recommandation.
+
+## Traduction automatique locale
+
+Après l'extraction, une tâche `translate` est ajoutée automatiquement à la file
+documentaire. Titres, résumés et pages anglaises sont traduits vers le français,
+sur CPU uniquement, avec CTranslate2 4.6.0 et SentencePiece 0.2.1. Les textes déjà
+français sont conservés tels quels. Les autres langues sont signalées comme non
+prises en charge ; aucun texte traduit fictif n'est présenté.
+
+Le modèle Argos/OPUS anglais-français 1.9 est téléchargé à la première traduction,
+jamais lors d'un import Python ou du démarrage du worker. L'archive officielle
+(environ 65 Mo) est vérifiée par SHA-256 puis conservée sous
+`data/models/documents/` ; chaque fichier extrait est également vérifié.
+L'archive, sa version, sa licence et son README sont conservés. Références :
+[modèle officiel Argos](https://data.argosopentech.com/argospm/v1/translate-en_fr-1_9.argosmodel),
+[CTranslate2](https://opennmt.net/CTranslate2/python/ctranslate2.Translator.html).
+Le modèle OPUS d'origine est distribué sous CC BY 4.0, selon le README de l'archive.
+
+La traduction conserve le lien vers chaque page originale, une empreinte du texte
+source et la version du moteur. Une interruption reprend aux pages manquantes.
+Le texte français dérivé est aussi téléchargeable en TXT ; l'original et les chunks
+du futur RAG ne sont pas remplacés. Les PDF scannés sans texte nécessitent de l'OCR,
+qui n'est pas fourni ici. La mise en page PDF n'est pas reconstruite et la traduction
+scientifique automatique reste à vérifier à partir de l'original.
+
+Diagnostic réel, sans GPU :
+
+```sh
+docker compose run --rm --no-deps documents python -m workers.documents.translation
+```
+
+Les erreurs sont persistées et une traduction peut être relancée dans le lecteur,
+ou via `POST /documents/{id}/translate`. Les pages exposent `translated_text` et
+`GET /documents/{id}/translation` fournit le TXT uniquement après un succès complet.
+La collecte utilise `POST /documents/collect` avec `{"species":[]}` pour toutes les
+espèces ou une liste ciblée ; le retrait en lot utilise `POST /documents/remove`
+avec `species` et `documents`. `GET /documents?stored_only=true&species=renards`
+correspond à la liste affichée dans l'interface.
 
 ## Démarrer et rechercher
 
@@ -80,10 +122,9 @@ les résultats ; la validation humaine reste distincte de l'ingestion.
 
 ## Veilles périodiques
 
-Le formulaire web cible par défaut les **aménagements et activités humaines** :
+La collecte web cible les **aménagements et activités humaines** :
 éclairage, routes et passages à faune, agriculture/haies, urbanisation, loisirs,
-gestion forestière et bruit. Un choix « Recherche scientifique générale » permet
-de revenir à une recherche non ciblée. Les anciennes requêtes API et veilles
+gestion forestière et bruit. Les anciennes requêtes API et veilles
 conservent leur comportement général si aucun profil n'est précisé.
 
 Pour appliquer le même ciblage en CLI (recherche ou veille) :
@@ -112,10 +153,8 @@ les résultats défavorables : ceux-ci éclairent les pratiques à éviter. Les 
 manuels ne sont pas écartés par ce filtre. L'applicabilité en Normandie et la qualité
 scientifique restent à vérifier avant la sélection d'une source.
 
-Après une recherche ciblée, la bibliothèque active « Documents ciblés sur les
-aménagements », également disponible via `GET /documents?focus_only=true`.
-Les documents et sélections historiques restent conservés ; désactiver ce filtre
-permet de les retrouver. Le mode général et les sources déjà sélectionnées ne sont
+Le filtre avancé reste disponible via `GET /documents?focus_only=true`.
+Les documents et sélections historiques restent conservés. Le mode général et les sources déjà sélectionnées ne sont
 pas modifiés rétroactivement.
 
 ```sh
@@ -261,6 +300,8 @@ Les autres réglages typés `DocumentSettings` utilisent le préfixe
 backend et documents : `ROOT`, `TIMEOUT_SECONDS` (25), `RETRIES` (3),
 `MAX_FILE_BYTES` (32 Mio), `MAX_PDF_PAGES` (1000), `MAX_TEXT_CHARS` (4 millions),
 `CHUNK_CHARS` (1600), `CHUNK_OVERLAP` (200, inférieur à la taille du passage).
+`TRANSLATION_MODEL_ROOT` vaut `/storage/models/documents` et doit désigner un volume
+inscriptible dans le worker documentaire.
 Appliquer les limites de transfert identiquement au backend et au worker.
 
 Un seul consommateur documentaire, limité à 2 CPU et 1 Gio, limite la concurrence.
@@ -321,7 +362,8 @@ npx.cmd playwright test tests/e2e/documents.spec.ts
 ```
 
 Ce diagnostic importe un PDF synthétique de plus de 6 Mio pour vérifier la limite
-du proxy, consulte son texte puis teste ajout/retrait et persistance. Le document
-porte un titre « Fixture documentaire E2E », est retiré puis rejeté en fin de test,
+du proxy, attend sa traduction locale, consulte les deux langues, puis teste le
+retrait multiple et sa persistance. Le fichier porte un nom « fixture-…pdf »,
+est retiré puis rejeté en fin de test,
 et reste traçable sous l'acteur `diagnostic-documents`. Il ne sert pas de source
 scientifique pour les recommandations.

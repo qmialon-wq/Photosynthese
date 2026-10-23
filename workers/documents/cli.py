@@ -39,6 +39,7 @@ def main() -> None:
     imported.add_argument("--rights-confirmed", action="store_true")
     fetch = commands.add_parser("fetch")
     fetch.add_argument("id", type=UUID)
+    commands.add_parser("translate-all")
     args = parser.parse_args()
     try:
         if args.command in ("search", "watch"):
@@ -69,6 +70,19 @@ def main() -> None:
             result = service.run_watch(str(args.id), "local-cli")
         elif args.command == "status":
             result = service.task(str(args.id))
+        elif args.command == "translate-all":
+            from .translation import queue
+
+            with service.transaction() as connection:
+                rows = connection.execute("""SELECT d.id FROM scientific_documents d
+                  WHERE d.status='indexed' AND d.merged_into IS NULL
+                  AND EXISTS(SELECT 1 FROM document_assets a WHERE a.document_id=d.id)
+                  AND (NOT EXISTS(SELECT 1 FROM document_species s WHERE s.document_id=d.id)
+                    OR EXISTS(SELECT 1 FROM document_species s
+                      WHERE s.document_id=d.id AND NOT s.excluded))""").fetchall()
+            for row in rows:
+                queue(str(row["id"]))
+            result = {"documents_examined": len(rows)}
         elif args.command == "fetch":
             service.document(str(args.id))
             result = service.submit("fetch", {"document_id": str(args.id)}, "local-cli")

@@ -2,8 +2,11 @@
 
 La page **Documents scientifiques**, accessible dans les deux espaces à
 `/documents` ou `/admin/documents`, permet de rechercher et importer des documents,
-suivre les tâches, lire les textes et choisir les sources du futur RAG par espèce.
-Les retraits sont réversibles et tracés. Le moteur RAG n'est pas encore actif.
+suivre les tâches, lire les textes en français et retirer des documents par sélection
+multiple, pour chaque espèce. La collecte se lance pour toutes les espèces ou une
+sélection, télécharge automatiquement les copies autorisées et masque les simples
+notices. Les originaux restent accessibles ; la traduction anglais-français est locale.
+Les retraits sont tracés et conservés lors des prochaines collectes. Le moteur RAG n'est pas encore actif.
 Voir le [guide documentaire](workers/documents/README.md) pour le fonctionnement
 du corpus, les restrictions de licence et les endpoints.
 

@@ -27,7 +27,18 @@ export interface ScientificDocument {
   quality: string;
   language: string | null;
   species_links: SpeciesLink[];
-  metadata?: { screening?: { focus: string; candidate: boolean } };
+  metadata?: {
+    screening?: { focus: string; candidate: boolean };
+    translation_fr?: {
+      status: string;
+      source_title?: string;
+      title?: string;
+      abstract?: string | null;
+      pages_done?: number;
+      pages_total?: number;
+      error?: string;
+    };
+  };
   assets?: { id: string; format: string; license: string; sha256: string }[];
   provenance?: { source: string; observed_at: string }[];
   selection_history?: {
@@ -43,18 +54,20 @@ export interface DocumentTask {
   status: string;
   error: string | null;
   created_at: string;
-  request: { search?: { species: string[] } };
+  request: { search?: { species: string[] }; collection_species?: string };
   result: {
     observed?: number;
     errors?: number;
     inaccessible?: number;
     filtered_out?: number;
+    downloaded?: number;
   } | null;
 }
 export interface DocumentPage {
   asset_id: string;
   page_number: number;
   clean_text: string;
+  translated_text?: string | null;
   language: string;
   references_data: { text?: string; url?: string }[];
 }

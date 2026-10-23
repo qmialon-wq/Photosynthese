@@ -1341,6 +1341,15 @@ details > form {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
   gap: 1rem;
 }
+.species-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.document-species-filter {
+  max-width: 380px;
+}
 .document-search-form {
   grid-template-columns: minmax(0, 1fr);
 }

@@ -8,10 +8,19 @@ from fastapi import APIRouter, Header, Query, Request
 from fastapi.responses import FileResponse
 
 from app.review import Actor
-from shared.documents import corpus, service
+from shared.documents import collection, corpus, service
 from shared.documents.config import DocumentSettings
 from shared.documents.relevance import profiles
-from shared.documents.schemas import Decision, ManualImport, Search, Selection, SpeciesKey, Watch
+from shared.documents.schemas import (
+    Collect,
+    Decision,
+    ManualImport,
+    RemoveDocuments,
+    Search,
+    Selection,
+    SpeciesKey,
+    Watch,
+)
 from shared.review.database import ReviewError
 
 router = APIRouter(prefix="/documents", tags=["scientific-documents"])
@@ -41,6 +50,16 @@ def search(
         actor,
         dedup_key=f"search:{actor}:{idempotency_key}" if idempotency_key else None,
     )
+
+
+@router.post("/collect", status_code=202)
+def collect(body: Collect, actor: Actor) -> dict[str, Any]:
+    return collection.collect(body.species, actor)
+
+
+@router.post("/remove")
+def remove(body: RemoveDocuments, actor: Actor) -> dict[str, Any]:
+    return collection.remove(body.species, body.documents, actor)
 
 
 @router.post("/watches", status_code=201)
@@ -164,10 +183,13 @@ def listing(
     species: SpeciesKey | None = None,
     selected_only: bool = False,
     focus_only: bool = False,
+    stored_only: bool = False,
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
 ) -> list[dict[str, Any]]:
-    return corpus.listing(species, selected_only, status, approved_only, limit, offset, focus_only)
+    return corpus.listing(
+        species, selected_only, status, approved_only, limit, offset, focus_only, stored_only
+    )
 
 
 @router.get("/{identifier}")
@@ -212,6 +234,38 @@ def fetch(identifier: UUID, actor: Actor) -> dict[str, Any]:
     return service.submit("fetch", {"document_id": str(row["id"])}, actor)
 
 
+@router.post("/{identifier}/translate", status_code=202)
+def translate(identifier: UUID, actor: Actor) -> dict[str, Any]:
+    row = service.document(str(identifier))
+    if row["status"] != "indexed":
+        raise ReviewError("Un texte indexé est requis pour la traduction", 409)
+    with service.transaction(write=True) as connection:
+        active = connection.execute(
+            """SELECT id,status FROM document_tasks
+          WHERE kind='translate' AND status IN ('queued','running')
+          AND request->>'document_id'=%s ORDER BY created_at LIMIT 1""",
+            (str(row["id"]),),
+        ).fetchone()
+        if active:
+            return {"id": str(active["id"]), "status": active["status"]}
+        return service.submit(
+            "translate", {"document_id": str(row["id"])}, actor, connection=connection
+        )
+
+
+@router.get("/{identifier}/translation", response_class=FileResponse)
+def translated_file(identifier: UUID) -> FileResponse:
+    row = service.document(str(identifier))
+    if row["metadata"].get("translation_fr", {}).get("status") != "completed":
+        raise ReviewError("La traduction française n'est pas encore disponible", 409)
+    target = (root() / "translations" / str(row["id"]) / "fr.txt").resolve()
+    if not target.is_relative_to(root()) or not target.is_file():
+        raise ReviewError("Fichier traduit absent", 404)
+    return FileResponse(
+        target, filename=f"{row['id']}-fr.txt", media_type="text/plain; charset=utf-8"
+    )
+
+
 @router.get("/{identifier}/chunks")
 def chunks(
     identifier: UUID,
@@ -239,8 +293,12 @@ def pages(
     row = service.document(str(identifier))
     with service.transaction() as connection:
         return connection.execute(
-            """SELECT p.* FROM document_pages p JOIN document_assets a
-            ON a.id=p.asset_id WHERE a.document_id=%s
+            """SELECT p.*,t.translated_text,t.engine AS translation_engine
+            FROM document_pages p JOIN document_assets a
+            ON a.id=p.asset_id LEFT JOIN document_page_translations t
+              ON t.asset_id=p.asset_id AND t.page_number=p.page_number
+              AND t.source_text=p.clean_text
+            WHERE a.document_id=%s
             ORDER BY a.id,p.page_number LIMIT %s OFFSET %s""",
             (row["id"], limit, offset),
         ).fetchall()

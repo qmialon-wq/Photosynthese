@@ -112,6 +112,22 @@ class Selection(Body):
     enabled: bool
 
 
+class Collect(Body):
+    species: list[SpeciesKey] = Field(default_factory=list, max_length=10)
+
+
+class RemoveDocuments(Body):
+    species: SpeciesKey
+    documents: list[str] = Field(min_length=1, max_length=200)
+
+    @field_validator("documents")
+    @classmethod
+    def identifiers(cls, values: list[str]) -> list[str]:
+        from uuid import UUID
+
+        return list(dict.fromkeys(str(UUID(value)) for value in values))
+
+
 class FullText(Body):
     url: str
     license: str

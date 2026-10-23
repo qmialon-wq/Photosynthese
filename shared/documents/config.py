@@ -18,3 +18,4 @@ class DocumentSettings(BaseSettings):
     max_text_chars: int = Field(default=4000000, ge=1000)
     chunk_chars: int = Field(default=1600, ge=200, le=10000)
     chunk_overlap: int = Field(default=200, ge=0, le=1000)
+    translation_model_root: Path = Path("/storage/models/documents")

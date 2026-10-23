@@ -26,7 +26,7 @@ make documents-up
 make documents-search ARGS='--species "Vulpes vulpes" --focus human_activities --activity transport --limit 5'
 ```
 
-Les recherches, imports et sélections de sources par espèce sont également disponibles
+Les collectes globales ou ciblées, imports, traductions locales en français et retraits multiples sont disponibles
 directement dans [Documents scientifiques](http://localhost:8080/documents).
 
 La commande renvoie une tâche asynchrone consultable dans `/documents/tasks/{id}`

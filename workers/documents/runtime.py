@@ -90,7 +90,9 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
             try:
                 result = ingestor.perform(task["kind"], task["request"], task["actor"])
                 status = "completed"
-                if result.get("errors") or result.get("inaccessible"):
+                if result.get("errors") or (
+                    result.get("inaccessible") and not task["request"].get("collection_species")
+                ):
                     status = "partial"
                 if task["kind"] == "search" and not result.get("observed") and result.get("errors"):
                     status = "error"

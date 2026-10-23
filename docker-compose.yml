@@ -173,6 +173,7 @@ services:
     volumes:
       - ${DATA_ROOT:-./data}/documents:/storage/documents
       - ${DATA_ROOT:-./data}/results:/storage/results
+      - ${DATA_ROOT:-./data}/models:/storage/models
     networks: [services, web]
     depends_on:
       storage-init:

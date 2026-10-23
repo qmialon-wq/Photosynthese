@@ -1,103 +1,94 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { api, apiUrl, date, message, post, useResource } from "../api";
-import { documentStatus, externalUrl } from "../documents";
+import { apiUrl, api, date, message, post, useResource } from "../api";
+import { documentStatus } from "../documents";
 import type {
   Species,
   ScientificDocument,
   DocumentTask,
   DocumentPage,
-  SearchProfiles,
 } from "../documents";
 
-const catalog = useResource<Species[]>(() => "/documents/species");
-const profiles = useResource<SearchProfiles>(
-  () => "/documents/search-profiles",
-);
-const species = ref("");
-const selectedOnly = ref(false);
-const focusOnly = ref(false);
-const offset = ref(0);
-const limit = 12;
-const documents = useResource<ScientificDocument[]>(() => {
-  const query = new URLSearchParams({
-    selected_only: String(selectedOnly.value),
-    focus_only: String(focusOnly.value),
-    limit: String(limit),
-    offset: String(offset.value),
-  });
-  if (species.value) query.set("species", species.value);
-  return `/documents?${query}`;
-});
-watch([species, selectedOnly, focusOnly], () => {
-  offset.value = 0;
-});
-const searchSpecies = ref("renards");
-watch(species, (value) => {
-  if (value) searchSpecies.value = value;
-});
-const focus = ref("human_activities");
-const activity = ref("all");
-const topic = ref("");
-const territory = ref("");
-const habitat = ref("");
-const fulltext = ref(true);
-const sources = ref(["openalex", "crossref", "europepmc"]);
-const resultLimit = ref(5);
-const showSearch = ref(false),
-  showImport = ref(false);
-const file = ref<File | null>(null),
-  rights = ref(false),
-  title = ref("");
+const catalog = useResource<Species[]>(() => "/documents/species", 5000);
+const species = ref("renards");
+const offset = ref(0),
+  limit = 12;
+const picked = ref<string[]>([]),
+  targets = ref<string[]>(["renards"]);
+const chooseSpecies = ref(false),
+  importOpen = ref(false);
 const busy = ref(false),
   error = ref(""),
-  success = ref("");
-const tasks = useResource<DocumentTask[]>(
-  () => "/documents/tasks?limit=10",
-  2500,
-);
-const taskId = ref("");
-const eventAfter = ref(0);
-watch(taskId, () => {
-  eventAfter.value = 0;
-});
-const task = useResource<DocumentTask>(
-  () => (taskId.value ? `/documents/tasks/${taskId.value}` : null),
-  2000,
-);
-const events = useResource<
-  { id: number; stage: string; level: string; message: string }[]
->(
+  notice = ref("");
+const documents = useResource<ScientificDocument[]>(
   () =>
-    taskId.value
-      ? `/documents/tasks/${taskId.value}/events?limit=100&after=${eventAfter.value}`
-      : null,
-  2500,
+    `/documents?stored_only=true&species=${encodeURIComponent(species.value)}&limit=${limit}&offset=${offset.value}`,
+  5000,
 );
+watch(species, () => {
+  offset.value = 0;
+  picked.value = [];
+});
+watch(offset, () => {
+  picked.value = [];
+});
+watch(
+  () => documents.data.value,
+  (rows) => {
+    picked.value = picked.value.filter((id) =>
+      rows?.some((row) => row.id === id),
+    );
+  },
+);
+const allPicked = computed(
+  () =>
+    !!documents.data.value?.length &&
+    documents.data.value.every((d) => picked.value.includes(d.id)),
+);
+const tasks = useResource<DocumentTask[]>(
+  () => "/documents/tasks?limit=12",
+  3000,
+);
+const running = computed(
+  () =>
+    tasks.data.value?.filter((t) => ["queued", "running"].includes(t.status))
+      .length ?? 0,
+);
+const file = ref<File | null>(null),
+  rights = ref(false);
 const detailId = ref(""),
   dialog = ref(false),
+  original = ref(false),
   pageOffset = ref(0);
-const detail = useResource<ScientificDocument>(() =>
-  detailId.value ? `/documents/${detailId.value}` : null,
+const detail = useResource<ScientificDocument>(
+  () => (detailId.value ? `/documents/${detailId.value}` : null),
+  4000,
 );
-const pages = useResource<DocumentPage[]>(() =>
-  detailId.value
-    ? `/documents/${detailId.value}/pages?limit=1&offset=${pageOffset.value}`
-    : null,
+const pages = useResource<DocumentPage[]>(
+  () =>
+    detailId.value
+      ? `/documents/${detailId.value}/pages?limit=1&offset=${pageOffset.value}`
+      : null,
+  5000,
 );
-const targetSpecies = ref("renards");
-const chosenSpecies = computed(() =>
-  catalog.data.value?.find((s) => s.name === species.value),
-);
-const summary = computed(() =>
-  chosenSpecies.value
-    ? `${chosenSpecies.value.documents_count} documents · ${chosenSpecies.value.selected_count} sources sélectionnées`
-    : "Publications découvertes et sources sélectionnées pour les dix espèces.",
-);
-function available(doc: ScientificDocument, name: string) {
-  return doc.species_links.some(
-    (link) => link.species === name && link.available,
-  );
+
+function french(doc: ScientificDocument) {
+  const translation = doc.metadata?.translation_fr;
+  return translation?.source_title === doc.title ? translation : undefined;
+}
+function title(doc: ScientificDocument) {
+  return french(doc)?.title || doc.title;
+}
+function translationLabel(doc: ScientificDocument) {
+  if (doc.status !== "indexed") return "Original disponible · texte non extrait";
+  const state = doc.metadata?.translation_fr?.status;
+  if (doc.language === "fr" || state === "original_fr")
+    return "Document en français";
+  if (state === "completed") return "Traduit en français";
+  if (state === "error") return "Traduction à relancer";
+  if (state === "unsupported")
+    return "Traduction indisponible pour cette langue";
+  return "Traduction en préparation";
 }
 async function refresh() {
   await Promise.all([
@@ -108,59 +99,46 @@ async function refresh() {
     pages.refresh(),
   ]);
 }
-watch(
-  () => task.data.value?.status,
-  (status) => {
-    if (status && ["completed", "partial", "error"].includes(status))
-      void refresh();
-  },
-);
-async function action(run: () => Promise<unknown>, notice: string) {
+async function action(run: () => Promise<unknown>, success: string) {
   busy.value = true;
   error.value = "";
-  success.value = "";
+  notice.value = "";
   try {
     await run();
-    success.value = notice;
+    notice.value = success;
   } catch (reason) {
     error.value = message(reason);
   } finally {
     busy.value = false;
   }
 }
-function openDocument(doc: ScientificDocument) {
+async function collect(all: boolean) {
+  await action(async () => {
+    await post("/documents/collect", { species: all ? [] : targets.value });
+    chooseSpecies.value = false;
+    await tasks.refresh();
+  }, "Récupération lancée. Les documents disponibles seront téléchargés puis traduits automatiquement.");
+}
+async function remove() {
+  await action(async () => {
+    await post("/documents/remove", {
+      species: species.value,
+      documents: picked.value,
+    });
+    picked.value = [];
+    await refresh();
+  }, "Documents retirés du corpus de cette espèce.");
+}
+function selectAll(event: Event) {
+  picked.value = (event.target as HTMLInputElement).checked
+    ? (documents.data.value ?? []).map((d) => d.id)
+    : [];
+}
+function open(doc: ScientificDocument) {
   detailId.value = doc.id;
   pageOffset.value = 0;
-  targetSpecies.value =
-    species.value || doc.species_links[0]?.species || "renards";
+  original.value = false;
   dialog.value = true;
-}
-async function search() {
-  await action(async () => {
-    const selected = catalog.data.value?.find(
-      (s) => s.name === searchSpecies.value,
-    );
-    if (!selected) throw new Error("Choisissez une espèce.");
-    taskId.value = (
-      await post<DocumentTask>("/documents/search", {
-        species: [selected.scientific_name],
-        topics: topic.value.trim() ? [topic.value.trim()] : [],
-        habitats: habitat.value.trim() ? [habitat.value.trim()] : [],
-        territories: territory.value.trim() ? [territory.value.trim()] : [],
-        sources: sources.value,
-        limit_per_source: resultLimit.value,
-        download_fulltext: fulltext.value,
-        focus: focus.value,
-        activity: activity.value,
-      })
-    ).id;
-    species.value = selected.name;
-    focusOnly.value = focus.value === "human_activities";
-    selectedOnly.value = false;
-    offset.value = 0;
-    showSearch.value = false;
-    await tasks.refresh();
-  }, "Recherche lancée. Les documents apparaîtront après leur ingestion.");
 }
 function chooseFile(event: Event) {
   file.value = (event.target as HTMLInputElement).files?.[0] ?? null;
@@ -171,360 +149,202 @@ async function upload() {
       throw new Error("Choisissez un fichier et confirmez les droits.");
     if (file.value.size > 32 * 1024 * 1024)
       throw new Error("La taille maximale est de 32 Mio.");
-    const requestedSpecies = searchSpecies.value;
     const query = new URLSearchParams({
       filename: file.value.name,
+      species: species.value,
       rights_confirmed: "true",
-      species: requestedSpecies,
     });
-    if (title.value.trim()) query.set("title", title.value.trim());
-    taskId.value = (
-      await api<DocumentTask>(`/documents/upload?${query}`, {
-        method: "POST",
-        body: file.value,
-      })
-    ).id;
-    species.value = requestedSpecies;
-    focusOnly.value = false;
-    selectedOnly.value = false;
-    offset.value = 0;
-    showImport.value = false;
+    await api(`/documents/upload?${query}`, {
+      method: "POST",
+      body: file.value,
+    });
+    importOpen.value = false;
     rights.value = false;
     await tasks.refresh();
-  }, "Fichier transmis. Son extraction se poursuit en arrière-plan.");
+  }, "Import lancé. Le document sera traduit automatiquement après extraction.");
 }
-async function select(doc: ScientificDocument, name: string, enabled: boolean) {
-  await action(
-    async () => {
-      await api(`/documents/${doc.id}/species/${name}`, {
-        method: "PUT",
-        body: JSON.stringify({ enabled }),
-      });
-      await refresh();
-    },
-    enabled
-      ? "Document validé et ajouté aux sources de cette espèce."
-      : "Document retiré des sources de cette espèce.",
-  );
-}
-async function fetchText(doc: ScientificDocument) {
+async function translate(doc: ScientificDocument) {
   await action(async () => {
-    taskId.value = (await post<DocumentTask>(`/documents/${doc.id}/fetch`)).id;
-    await tasks.refresh();
-  }, "Récupération du texte lancée, sous réserve de sa disponibilité et de sa licence.");
-}
-async function retry(job: DocumentTask) {
-  await action(async () => {
-    taskId.value = (
-      await post<DocumentTask>(`/documents/tasks/${job.id}/retry`)
-    ).id;
-    await tasks.refresh();
-  }, "Nouveau passage lancé.");
+    await post(`/documents/${doc.id}/translate`);
+    await refresh();
+  }, "Traduction lancée.");
 }
 </script>
 
 <template>
   <div class="page-heading">
     <div>
-      <p class="eyebrow">CONNAISSANCE · SOURCES SCIENTIFIQUES</p>
+      <p class="eyebrow">CONNAISSANCE · CORPUS DOCUMENTAIRE</p>
       <h1>Documents scientifiques</h1>
       <p class="subtitle">
-        Consultez et choisissez les publications qui alimenteront les futures
-        recommandations.
+        Des documents sur les aménagements compatibles avec la faune,
+        téléchargés et lisibles en français.
       </p>
     </div>
     <div class="actions">
       <PButton
-        label="Rechercher des publications"
-        icon="pi pi-search"
+        label="Récupérer pour toutes les espèces"
+        icon="pi pi-download"
+        :loading="busy"
+        @click="collect(true)"
+      /><PButton
+        label="Choisir les espèces"
+        severity="secondary"
+        :disabled="busy"
         @click="
-          showSearch = !showSearch;
-          showImport = false;
+          chooseSpecies = !chooseSpecies;
+          importOpen = false;
         "
       />
+    </div>
+  </div>
+  <p v-if="error" class="notice error" role="alert">{{ error }}</p>
+  <p v-if="notice" class="notice" role="status">{{ notice }}</p>
+  <section v-if="chooseSpecies" class="panel">
+    <h2>Pour quelles espèces ?</h2>
+    <LoadState
+      :error="catalog.error.value"
+      :loading="catalog.loading.value && !catalog.data.value"
+      @retry="catalog.refresh"
+    >
+      <form @submit.prevent="collect(false)">
+        <fieldset class="species-choices">
+          <legend>Espèces à rechercher</legend>
+          <label
+            v-for="item in catalog.data.value"
+            :key="item.name"
+            class="check-line"
+            ><input v-model="targets" type="checkbox" :value="item.name" />{{
+              item.display_name
+            }}</label
+          >
+        </fieldset>
+        <PButton
+          type="submit"
+          label="Récupérer les documents des espèces choisies"
+          :loading="busy"
+          :disabled="!targets.length"
+        />
+      </form>
+    </LoadState>
+  </section>
+  <section class="panel">
+    <div class="section-head">
+      <div>
+        <h2>Mon corpus</h2>
+        <p class="muted">
+          Seuls les documents téléchargés apparaissent ici. Les originaux
+          restent accessibles.
+        </p>
+      </div>
       <PButton
         label="Importer un document"
         icon="pi pi-upload"
         severity="secondary"
         @click="
-          showImport = !showImport;
-          showSearch = false;
+          importOpen = !importOpen;
+          chooseSpecies = false;
         "
       />
     </div>
-  </div>
-  <p class="notice">
-    Le RAG n’est pas encore actif. Cette bibliothèque prépare ses sources :
-    seuls les textes indexés et explicitement sélectionnés seront disponibles.
-    L’ajout confirme leur pertinence et leur qualité ; le retrait reste
-    réversible.
-  </p>
-  <p v-if="error" class="notice error" role="alert">{{ error }}</p>
-  <p v-if="success" class="notice" role="status">{{ success }}</p>
-  <LoadState
-    :error="catalog.error.value"
-    :loading="catalog.loading.value && !catalog.data.value"
-    @retry="catalog.refresh"
-  >
-    <section v-if="showSearch || showImport" class="panel">
-      <h2>
-        {{
-          showSearch ? "Rechercher des publications" : "Importer un document"
-        }}
-      </h2>
-      <form
-        class="form-grid document-search-form"
-        @submit.prevent="showSearch ? search() : upload()"
-      >
-        <label
-          >Espèce du document<select v-model="searchSpecies" required>
-            <option
-              v-for="item in catalog.data.value"
-              :key="item.name"
-              :value="item.name"
-            >
-              {{ item.display_name }} — {{ item.scientific_name }}
-            </option>
-          </select></label
-        >
-        <template v-if="showSearch">
-          <label
-            >Objectif de la recherche<select v-model="focus">
-              <option value="human_activities">
-                Aménagements et activités humaines compatibles avec la faune
-              </option>
-              <option value="general">Recherche scientifique générale</option>
-            </select></label
-          >
-          <LoadState
-            v-if="focus === 'human_activities'"
-            :error="profiles.error.value"
-            :loading="profiles.loading.value && !profiles.data.value"
-            @retry="profiles.refresh"
-          >
-            <label
-              >Type d’activité<select v-model="activity" required>
-                <option
-                  v-for="item in profiles.data.value?.activities"
-                  :key="item.value"
-                  :value="item.value"
-                >
-                  {{ item.label }}
-                </option>
-              </select></label
-            >
-            <p class="muted">
-              Nous ciblons les aménagements, leurs impacts et les mesures
-              d’évitement ou de réduction. Les études montrant des effets
-              négatifs restent utiles pour identifier les pratiques à éviter. Ce
-              ciblage ne prouve pas l’absence d’impact.
-            </p>
-          </LoadState>
-          <div class="form-row">
-            <label
-              >Précision thématique (facultative)<input
-                v-model="topic"
-                maxlength="200"
-                placeholder="corridors, haies, passages à faune…" /></label
-            ><label
-              >Habitat (facultatif)<input
-                v-model="habitat"
-                maxlength="200"
-                placeholder="bocage, forest…" /></label
-            ><label
-              >Territoire (facultatif)<input
-                v-model="territory"
-                maxlength="200"
-                placeholder="Normandy, France…"
-            /></label>
-          </div>
-          <fieldset>
-            <legend>Sources à interroger</legend>
-            <label
-              v-for="source in ['openalex', 'crossref', 'europepmc']"
-              :key="source"
-              class="check-line"
-              ><input v-model="sources" type="checkbox" :value="source" />{{
-                {
-                  openalex: "OpenAlex",
-                  crossref: "Crossref",
-                  europepmc: "Europe PMC",
-                }[source]
-              }}</label
-            >
-          </fieldset>
-          <label
-            >Résultats maximum par source<input
-              v-model.number="resultLimit"
-              type="number"
-              min="1"
-              max="100"
-              required
-          /></label>
-          <label class="check-line"
-            ><input v-model="fulltext" type="checkbox" />Récupérer les textes
-            intégraux autorisés</label
-          >
-          <p class="muted">
-            Une recherche associe des candidats à cette espèce ; elle ne les
-            ajoute pas automatiquement aux sources. Un filtre territorial strict
-            peut écarter des études utiles.
-          </p>
-          <PButton
-            type="submit"
-            label="Lancer la recherche"
-            :loading="busy"
-            :disabled="
-              !sources.length ||
-              !catalog.data.value?.length ||
-              (focus === 'human_activities' &&
-                !profiles.data.value?.activities?.length)
-            "
-          />
-        </template>
-        <template v-else>
-          <label
-            >Fichier PDF, TXT ou Markdown (32 Mio maximum)<input
-              type="file"
-              accept=".pdf,.txt,.md"
-              required
-              @change="chooseFile"
-          /></label>
-          <label
-            >Titre (facultatif)<input v-model="title" maxlength="1000"
-          /></label>
-          <label class="check-line"
-            ><input v-model="rights" type="checkbox" required />Je dispose du
-            droit de conserver et de traiter ce document.</label
-          >
-          <PButton
-            type="submit"
-            label="Importer et extraire le texte"
-            :loading="busy"
-            :disabled="!file || !rights"
-          />
-        </template>
-      </form>
-    </section>
-  </LoadState>
-  <section class="panel">
-    <div class="section-head">
-      <div>
-        <h2>Bibliothèque par espèce</h2>
-        <p class="muted">{{ summary }}</p>
-      </div>
-      <PButton
-        label="Actualiser"
-        icon="pi pi-refresh"
-        severity="secondary"
-        :disabled="documents.loading.value"
-        @click="refresh"
-      />
-    </div>
-    <div class="document-filters">
-      <label
-        >Filtrer par espèce<select v-model="species">
-          <option value="">Toutes les espèces et documents non associés</option>
+    <LoadState
+      :error="catalog.error.value"
+      :loading="catalog.loading.value && !catalog.data.value"
+      @retry="catalog.refresh"
+      ><label class="document-species-filter"
+        >Espèce<select v-model="species" aria-label="Espèce">
           <option
             v-for="item in catalog.data.value"
             :key="item.name"
             :value="item.name"
           >
-            {{ item.display_name }} · {{ item.selected_count }} sources
+            {{ item.display_name }} · {{ item.documents_count }} documents
           </option>
         </select></label
-      >
+      ></LoadState
+    >
+    <form
+      v-if="importOpen"
+      class="form-grid document-search-form"
+      @submit.prevent="upload"
+    >
+      <label
+        >Fichier PDF, TXT ou Markdown (32 Mio maximum)<input
+          type="file"
+          accept=".pdf,.txt,.md"
+          required
+          @change="chooseFile" /></label
+      ><label class="check-line"
+        ><input v-model="rights" type="checkbox" required />Je dispose du droit
+        de conserver et traiter ce document.</label
+      ><PButton
+        type="submit"
+        label="Importer le document"
+        :loading="busy"
+        :disabled="!file || !rights"
+      />
+    </form>
+    <div class="bulk-toolbar">
       <label class="check-line"
-        ><input v-model="selectedOnly" type="checkbox" />Sources sélectionnées
-        uniquement</label
-      >
-      <label class="check-line"
-        ><input v-model="focusOnly" type="checkbox" />Documents ciblés sur les
-        aménagements</label
-      >
+        ><input
+          type="checkbox"
+          :checked="allPicked"
+          :disabled="!documents.data.value?.length"
+          @change="selectAll"
+        />Tout sélectionner sur cette page</label
+      ><span aria-live="polite">{{ picked.length }} sélectionné(s)</span
+      ><PButton
+        label="Retirer du corpus"
+        icon="pi pi-trash"
+        severity="danger"
+        :disabled="busy || !picked.length"
+        @click="remove"
+      />
     </div>
     <LoadState
       :error="documents.error.value"
       :loading="documents.loading.value && !documents.data.value"
       :empty="documents.data.value?.length === 0"
-      empty-text="Aucun document pour ces filtres. Lancez une recherche ou importez un document."
+      empty-text="Aucun document téléchargé pour cette espèce. Lancez une récupération ou importez un fichier."
       @retry="documents.refresh"
     >
       <div class="document-grid">
         <article
+          :data-document-id="doc.id"
           v-for="doc in documents.data.value"
           :key="doc.id"
           class="document-card"
         >
-          <div class="actions">
-            <span v-if="doc.metadata?.screening?.candidate" class="document-tag"
-              >Aménagements et impacts</span
-            >
-            <span class="document-tag">{{
-              documentStatus[doc.status] || doc.status
-            }}</span
-            ><span
-              v-if="doc.species_links.some((link) => link.available)"
-              class="document-tag selected"
-              >Source sélectionnée</span
-            >
-          </div>
+          <label class="check-line"
+            ><input
+              v-model="picked"
+              type="checkbox"
+              :value="doc.id"
+              :aria-label="'Sélectionner ' + title(doc)"
+            />Sélectionner</label
+          >
           <h3>
-            <button class="document-title" @click="openDocument(doc)">
-              {{ doc.title }}
+            <button class="document-title" @click="open(doc)">
+              {{ title(doc) }}
             </button>
           </h3>
           <p class="muted">
-            {{ doc.authors.slice(0, 3).join(", ") || "Auteurs non renseignés"
-            }}{{ doc.authors.length > 3 ? " et al." : "" }} ·
-            {{ doc.published_date || "Date inconnue" }}
+            {{ doc.authors.slice(0, 2).join(", ") || "Auteur non renseigné" }} ·
+            {{ doc.published_date || "Date non renseignée" }}
           </p>
           <p class="document-abstract">
             {{
-              doc.abstract ||
-              "Résumé non disponible. Consultez la notice et sa provenance."
+              french(doc)?.abstract ||
+              "Ouvrez le document pour consulter son contenu."
             }}
           </p>
-          <p class="muted">
-            {{
-              doc.species_links
-                .map(
-                  (link) =>
-                    catalog.data.value?.find((s) => s.name === link.species)
-                      ?.display_name || link.species,
-                )
-                .join(" · ") || "Aucune espèce associée"
-            }}
-          </p>
-          <div class="actions">
-            <PButton
-              label="Consulter"
-              severity="secondary"
-              @click="openDocument(doc)"
-            />
-            <PButton
-              v-if="species && available(doc, species)"
-              label="Retirer des sources"
-              severity="secondary"
-              :disabled="busy"
-              @click="select(doc, species, false)"
-            />
-            <PButton
-              v-else-if="species && doc.status === 'indexed'"
-              label="Valider et ajouter"
-              :disabled="busy"
-              @click="select(doc, species, true)"
-            />
-            <PButton
-              v-else-if="
-                ['discovered', 'inaccessible', 'imported'].includes(doc.status)
-              "
-              label="Récupérer le texte"
-              severity="secondary"
-              :disabled="busy"
-              @click="fetchText(doc)"
-            />
-          </div>
+          <p class="muted">{{ translationLabel(doc) }}</p>
+          <PButton
+            label="Lire le document"
+            icon="pi pi-book"
+            severity="secondary"
+            @click="open(doc)"
+          />
         </article>
       </div>
     </LoadState>
@@ -546,235 +366,141 @@ async function retry(job: DocumentTask) {
     </div>
   </section>
   <section class="panel">
-    <h2>Recherches et imports récents</h2>
+    <div class="section-head">
+      <h2>Avancement</h2>
+      <span v-if="running" role="status">Traitement en cours</span>
+    </div>
     <LoadState
       :error="tasks.error.value"
       :loading="tasks.loading.value && !tasks.data.value"
       :empty="tasks.data.value?.length === 0"
-      empty-text="Aucune tâche documentaire lancée."
+      empty-text="Aucune récupération en cours."
       @retry="tasks.refresh"
-    >
-      <ul class="document-tasks">
+      ><ul class="document-tasks">
         <li v-for="job in tasks.data.value" :key="job.id">
           <div>
             <strong>{{
-              {
-                search: "Recherche",
-                import: "Import",
-                fetch: "Récupération",
-                index: "Indexation",
-              }[job.kind] || job.kind
+              job.kind === "translate"
+                ? "Traduction en français"
+                : job.kind === "import"
+                  ? "Import du document"
+                  : "Récupération des documents"
             }}</strong>
             · {{ documentStatus[job.status] || job.status
             }}<small
               >{{ date(job.created_at)
-              }}<template v-if="job.result?.observed != null">
-                · {{ job.result.observed }} notices ·
-                {{ job.result.errors || 0 }} erreurs ·
-                {{ job.result.inaccessible || 0 }} textes inaccessibles ·
-                {{ job.result.filtered_out || 0 }} notices hors
-                ciblage</template
+              }}<template v-if="job.request.collection_species">
+                ·
+                {{
+                  catalog.data.value?.find(
+                    (s) => s.name === job.request.collection_species,
+                  )?.display_name
+                }}</template
+              ><template v-if="job.result?.downloaded != null">
+                · {{ job.result.downloaded }} document(s)
+                téléchargé(s)</template
               ></small
             >
-            <p v-if="job.error" class="notice error">{{ job.error }}</p>
-          </div>
-          <div class="actions">
-            <PButton
-              label="Voir le journal"
-              severity="secondary"
-              @click="taskId = job.id"
-            /><PButton
-              v-if="['error', 'partial'].includes(job.status)"
-              label="Relancer"
-              severity="secondary"
-              :disabled="busy"
-              @click="retry(job)"
-            />
+            <p v-if="job.error" class="notice error">
+              Le traitement a rencontré un problème. Vous pouvez relancer la
+              récupération ou la traduction.
+            </p>
           </div>
         </li>
-      </ul>
-    </LoadState>
-    <div v-if="taskId" class="document-log">
-      <h3>Journal de la tâche</h3>
-      <p v-if="task.data.value" role="status">
-        {{ documentStatus[task.data.value.status] || task.data.value.status }}
-      </p>
-      <LoadState
-        :error="task.error.value || events.error.value"
-        :loading="events.loading.value && !events.data.value"
-        @retry="
-          task.refresh();
-          events.refresh();
-        "
-        ><ol>
-          <li v-for="entry in events.data.value" :key="entry.id">
-            {{ entry.stage }} · {{ entry.message }}
-          </li>
-        </ol></LoadState
-      >
-      <div class="actions">
-        <PButton
-          label="Début du journal"
-          severity="secondary"
-          :disabled="eventAfter === 0 || events.loading.value"
-          @click="eventAfter = 0"
-        />
-        <PButton
-          label="Suite du journal"
-          severity="secondary"
-          :disabled="events.data.value?.length !== 100 || events.loading.value"
-          @click="eventAfter = events.data.value!.at(-1)!.id"
-        />
-      </div>
-    </div>
+      </ul></LoadState
+    >
   </section>
   <PDialog
     v-model:visible="dialog"
     modal
-    header="Document scientifique"
-    :style="{ width: '900px', maxWidth: '95vw' }"
+    header="Lire le document"
+    :style="{ width: '950px', maxWidth: '95vw' }"
   >
     <p v-if="error" class="notice error" role="alert">{{ error }}</p>
-    <p v-if="success" class="notice" role="status">{{ success }}</p>
     <LoadState
       :error="detail.error.value"
-      :loading="detail.loading.value"
+      :loading="detail.loading.value && !detail.data.value"
       @retry="detail.refresh"
       ><template v-if="detail.data.value">
-        <h2>{{ detail.data.value.title }}</h2>
-        <p>{{ detail.data.value.authors.join(", ") }}</p>
-        <p class="muted">
-          {{ detail.data.value.published_date || "Date inconnue" }} ·
-          {{ detail.data.value.language || "Langue non déterminée" }} ·
-          {{ documentStatus[detail.data.value.status] }}
-        </p>
+        <h2>
+          {{ original ? detail.data.value.title : title(detail.data.value) }}
+        </h2>
         <div class="actions">
-          <a
-            v-if="externalUrl(detail.data.value.url)"
-            :href="externalUrl(detail.data.value.url)"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Notice chez la source <i class="pi pi-external-link" /></a
-          ><a
-            v-if="detail.data.value.doi"
-            :href="
-              'https://doi.org/' + encodeURIComponent(detail.data.value.doi)
+          <PButton
+            label="Français"
+            :severity="original ? 'secondary' : 'primary'"
+            :aria-pressed="!original"
+            @click="original = false"
+          /><PButton
+            label="Original"
+            :severity="original ? 'primary' : 'secondary'"
+            :aria-pressed="original"
+            @click="original = true"
+          /><a
+            v-if="
+              detail.data.value.metadata?.translation_fr?.status === 'completed'
             "
-            target="_blank"
-            rel="noopener noreferrer"
-            >DOI : {{ detail.data.value.doi }}</a
+            :href="apiUrl(`/documents/${detailId}/translation`)"
+            download
+            >Télécharger la traduction</a
           >
-        </div>
-        <p>{{ detail.data.value.abstract || "Résumé non disponible." }}</p>
-        <p
-          v-if="detail.data.value.metadata?.screening?.candidate"
-          class="notice"
-        >
-          Ce document a été repéré pour son lien avec les activités humaines et
-          leurs impacts sur la faune. Vérifiez les mesures proposées, les
-          résultats et leurs limites avant de le sélectionner.
-        </p>
-        <div class="document-selection">
-          <label
-            >Espèce concernée<select v-model="targetSpecies">
-              <option
-                v-for="item in catalog.data.value"
-                :key="item.name"
-                :value="item.name"
-              >
-                {{ item.display_name }}
-              </option>
-            </select></label
-          >
-          <PButton
-            v-if="available(detail.data.value, targetSpecies)"
-            label="Retirer des sources"
-            severity="secondary"
-            :disabled="busy"
-            @click="select(detail.data.value!, targetSpecies, false)"
-          />
-          <PButton
-            v-else
-            label="Valider et ajouter aux sources"
-            :disabled="busy || detail.data.value.status !== 'indexed'"
-            @click="select(detail.data.value!, targetSpecies, true)"
-          />
         </div>
         <p class="muted">
-          L’ajout confirme que vous avez vérifié la pertinence et la qualité du
-          texte pour cette espèce. Aucun commentaire ni nom d’utilisateur à
-          saisir.
+          {{
+            original
+              ? "Texte original"
+              : detail.data.value.language === "fr"
+                ? "Document rédigé en français"
+                : "Traduction automatique, original conservé pour vérification."
+          }}
         </p>
-        <p v-if="detail.data.value.status !== 'indexed'" class="notice">
-          Ce document ne peut pas être ajouté tant qu’un texte intégral
-          exploitable n’est pas indexé.
-        </p>
-        <PButton
-          v-if="!['indexed', 'rejected'].includes(detail.data.value.status)"
-          label="Récupérer le texte"
-          severity="secondary"
-          :disabled="busy"
-          @click="fetchText(detail.data.value!)"
-        />
-        <h3>Originaux et licences</h3>
-        <ul>
-          <li v-for="asset in detail.data.value.assets" :key="asset.id">
-            <a
-              :href="apiUrl(`/documents/${detailId}/assets/${asset.id}`)"
-              download
-              >Télécharger le {{ asset.format.toUpperCase() }}</a
-            ><template v-if="asset.format === 'pdf'">
-              ·
-              <a
-                :href="
-                  apiUrl(
-                    `/documents/${detailId}/assets/${asset.id}?inline=true`,
-                  )
-                "
-                target="_blank"
-                rel="noopener noreferrer"
-                >Ouvrir le PDF</a
-              ></template
-            >
-            · {{ asset.license
-            }}<small class="document-hash">SHA-256 : {{ asset.sha256 }}</small>
-          </li>
-        </ul>
-        <p v-if="!detail.data.value.assets?.length" class="muted">
-          Aucun texte intégral conservé. L’accès dépend de la licence et de la
-          disponibilité de la publication.
-        </p>
-        <h3>Texte extrait</h3>
         <LoadState
           :error="pages.error.value"
-          :loading="pages.loading.value"
+          :loading="pages.loading.value && !pages.data.value"
           :empty="pages.data.value?.length === 0"
-          empty-text="Aucune page de texte disponible."
+          empty-text="Le texte n’a pas pu être extrait. Vous pouvez ouvrir le fichier original ci-dessous."
           @retry="pages.refresh"
           ><div
             v-for="page in pages.data.value"
             :key="page.asset_id + ':' + page.page_number"
           >
             <p class="muted">
-              Page {{ page.page_number }} · {{ page.language
+              Page {{ page.page_number
               }}<template
                 v-if="
                   detail.data.value.assets?.find((a) => a.id === page.asset_id)
                     ?.format !== 'pdf'
                 "
               >
-                · page logique, sans pagination PDF</template
+                · page logique du document</template
               >
             </p>
-            <pre class="document-text">{{ page.clean_text }}</pre>
-            <details v-if="page.references_data.length">
-              <summary>Références de cette page</summary>
-              <ul>
-                <li v-for="(reference, i) in page.references_data" :key="i">
-                  {{ reference.text || reference.url }}
-                </li>
-              </ul>
-            </details>
+            <pre
+              v-if="
+                original ||
+                detail.data.value.language === 'fr' ||
+                page.translated_text
+              "
+              class="document-text"
+              >{{
+                original || detail.data.value.language === "fr"
+                  ? page.clean_text
+                  : page.translated_text
+              }}</pre
+            >
+            <p v-else class="notice">
+              {{ translationLabel(detail.data.value)
+              }}<template
+                v-if="
+                  detail.data.value.metadata?.translation_fr?.pages_done != null
+                "
+              >
+                · {{ detail.data.value.metadata.translation_fr.pages_done }}/{{
+                  detail.data.value.metadata.translation_fr.pages_total
+                }}
+                pages</template
+              >
+            </p>
           </div></LoadState
         >
         <div class="actions pagination">
@@ -788,25 +514,40 @@ async function retry(job: DocumentTask) {
             severity="secondary"
             :disabled="!pages.data.value?.length || pages.loading.value"
             @click="pageOffset++"
+          /><PButton
+            v-if="
+              ['error', 'unsupported'].includes(
+                detail.data.value.metadata?.translation_fr?.status || '',
+              ) || !detail.data.value.metadata?.translation_fr
+            "
+            label="Relancer la traduction"
+            severity="secondary"
+            :disabled="busy || detail.data.value.language !== 'en'"
+            @click="translate(detail.data.value!)"
           />
         </div>
         <details>
-          <summary>Provenance et historique des sélections</summary>
+          <summary>Originaux et sources</summary>
+          <p>
+            {{ detail.data.value.authors.join(", ") }} ·
+            {{ detail.data.value.published_date }}
+          </p>
           <ul>
-            <li
-              v-for="(source, index) in detail.data.value.provenance"
-              :key="index"
-            >
-              {{ source.source }} · {{ date(source.observed_at) }}
-            </li>
-            <li
-              v-for="(entry, index) in detail.data.value.selection_history"
-              :key="'h' + index"
-            >
-              {{ entry.enabled ? "Ajout" : "Retrait" }} · {{ entry.species }} ·
-              {{ date(entry.created_at) }} · {{ entry.actor }}
+            <li v-for="asset in detail.data.value.assets" :key="asset.id">
+              <a
+                :href="
+                  apiUrl(
+                    `/documents/${detailId}/assets/${asset.id}?inline=true`,
+                  )
+                "
+                target="_blank"
+                rel="noopener noreferrer"
+                >Ouvrir l’original ({{ asset.format.toUpperCase() }})</a
+              >
+              · {{ asset.license }}
             </li>
           </ul>
+          <p v-if="detail.data.value.doi">DOI : {{ detail.data.value.doi }}</p>
         </details>
       </template></LoadState
     >

@@ -23,6 +23,8 @@ click==8.5.0
     #   uvicorn
 colorama==0.4.6 ; sys_platform == 'win32'
     # via pytest
+ctranslate2==4.6.0
+    # via -r infra/../workers/documents/requirements.in
 defusedxml==0.7.1
     # via -r infra/../workers/documents/requirements.in
 fastapi==0.115.12
@@ -63,7 +65,9 @@ markupsafe==3.0.4
     #   mako
 numpy==2.2.6
     # via
+    #   -r infra/../workers/documents/requirements.in
     #   -r infra/../workers/vision/requirements.in
+    #   ctranslate2
     #   opencv-python
 opencv-python==4.11.0.86
     # via -r infra/../workers/vision/requirements.in
@@ -107,6 +111,8 @@ python-dotenv==1.2.4
     # via
     #   -c backend/requirements.txt
     #   pydantic-settings
+pyyaml==6.0.3
+    # via ctranslate2
 redis==6.2.0
     # via
     #   -c backend/requirements.txt
@@ -115,6 +121,10 @@ redis==6.2.0
     #   -r infra/../workers/vision/../requirements.in
 ruff==0.11.13
     # via -r infra/requirements-test.in
+sentencepiece==0.2.1
+    # via -r infra/../workers/documents/requirements.in
+setuptools==84.2.1
+    # via ctranslate2
 six==1.17.0
     # via langdetect
 sqlalchemy==2.0.41
