@@ -16,7 +16,7 @@ pytestmark = pytest.mark.integration
 
 
 @pytest.mark.usefixtures("console_db")
-def test_candidate_cannot_activate_without_comparison_and_rollback_is_audited():
+def test_optional_comparison_policy_and_rollback_are_audited():
     champion, candidate, comparison_id = str(uuid4()), str(uuid4()), str(uuid4())
     report = example()
     report["classes"] = load_classes().model_dump(mode="json")
@@ -47,8 +47,6 @@ def test_candidate_cannot_activate_without_comparison_and_rollback_is_audited():
           VALUES(%s,%s,%s,'test')""",
             (comparison_id, jsonb(report), hashlib.sha256(canonical(report)).hexdigest()),
         )
-    with pytest.raises(ReviewError, match="Comparer"):
-        console.activate_model(candidate)
     decision = promote(candidate, comparison_id, "test")
     assert decision["activated"] is False
     decision = promote(
@@ -62,3 +60,34 @@ def test_candidate_cannot_activate_without_comparison_and_rollback_is_audited():
             == champion
         )
         assert connection.execute("SELECT count(*) AS n FROM model_promotions").fetchone()["n"] == 3
+
+
+@pytest.mark.usefixtures("console_db")
+def test_candidate_selection_requires_no_comparison_and_is_recorded():
+    first, second, archived = str(uuid4()), str(uuid4()), str(uuid4())
+    with transaction() as connection:
+        for identifier, status in (
+            (first, "active"),
+            (second, "candidate"),
+            (archived, "archived"),
+        ):
+            connection.execute(
+                """INSERT INTO console_models
+                (id,name,checkpoint_key,sha256,metadata,metrics,actor,active,status)
+                VALUES(%s,'test','test.pt',%s,'{}','{}','test',%s,%s)""",
+                (identifier, identifier, status == "active", status),
+            )
+    assert console.activate_model(second, "alice")["active"] is True
+    with transaction() as connection:
+        assert (
+            str(connection.execute("SELECT id FROM console_models WHERE active").fetchone()["id"])
+            == second
+        )
+        event = connection.execute("SELECT * FROM model_promotions").fetchone()
+        assert event["actor"] == "alice" and event["comparison_id"] is None
+        assert event["justification"]["mode"] == "direct_selection"
+    assert console.activate_model(first, "alice")["active"] is True
+    with pytest.raises(ReviewError, match="archivé"):
+        console.activate_model(archived)
+    with pytest.raises(ReviewError, match="inconnu"):
+        console.activate_model(str(uuid4()))

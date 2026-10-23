@@ -96,8 +96,9 @@ Entraînements → Runs et checkpoints existants**. Checkpoints persistants :
 `data/checkpoints/efficientnetv2-poc-v1/{best,last}.pt`. En cas d'interruption, le
 worker reprend `last.pt` à la dernière frontière d'époque enregistrée.
 
-Après réussite, le worker vérifie et enregistre `best.pt` comme candidat. Une
-comparaison sur validation humaine est désormais requise avant promotion explicite.
+Après réussite, le worker vérifie et enregistre `best.pt` comme candidat. Il est
+directement sélectionnable dans Modèles → Définir comme actif, sans validation
+humaine ni comparaison obligatoire.
 L'activation automatique historique est supprimée. Le ConvNeXt reste enregistré et
 son fichier est conservé. Les analyses CLI historiques
 utilisent toujours leur `CLASSIFIER_CHECKPOINT` explicite. Le registre conserve la
@@ -106,9 +107,11 @@ fiable. L'activation signifie que le modèle est utilisable, pas qu'il a démont
 une meilleure qualité que le précédent. Aucun entraînement au démarrage.
 
 Les options génériques `training.register_model_name` et
-`training.activate_on_success` sont désactivées par défaut. L'activation requiert un
-nom d'enregistrement, un entraînement terminé et un chargement strict du checkpoint
-réussi. Ces options ne modifient pas l'empreinte de reprise des anciens runs.
+`training.activate_on_success` sont désactivées par défaut. L'enregistrement requiert
+un nom, un entraînement terminé et un chargement strict du checkpoint réussi.
+La sélection se fait ensuite librement dans la page Modèles ; l'ancienne option
+ne déclenche pas d'activation automatique. Ces options ne modifient pas l'empreinte
+de reprise des anciens runs.
 
 Reprise explicite via la file, uniquement si le run n'est plus en cours :
 

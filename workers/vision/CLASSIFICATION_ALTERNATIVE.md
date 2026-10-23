@@ -6,6 +6,14 @@ SpeciesNet ne figure pas dans le code actif. Les étapes sont livrées séparém
 
 ## Entraîner les quatre CNN puis lancer le benchmark
 
+Depuis le 23 octobre 2026, choisir un modèle enregistré dans **Modèles → Définir
+comme actif** est immédiat : aucune validation humaine ni comparaison préalable
+n'est requise. Les modèles archivés restent exclus. Les vérifications techniques
+des checkpoints et des dix classes sont conservées, ainsi que l'historique des
+sélections. Les annotations humaines et les benchmarks sont indépendants de ce
+choix. La politique de promotion statistique décrite plus bas reste un outil
+facultatif de comparaison ; elle ne bloque plus la sélection directe.
+
 Depuis la racine du dépôt, dans PowerShell ou un terminal Linux/WSL :
 
 ```sh
@@ -218,7 +226,7 @@ requise ; elle ne contourne pas un gain insuffisant ou une régression.
 
 La promotion vérifie aussi champion courant, mapping et empreintes évaluées. Le
 rollback restaure un ancien champion, avec acteur et justification enregistrés.
-L'ancienne route d'activation refuse désormais un candidat non comparé. Le champion
+La route d'activation accepte les candidats sans comparaison préalable. Le champion
 observé à la migration est conservé, sans prétendre que ses labels historiques sont
 validés humainement. Les anciens checkpoints ne sont pas supprimés.
 

@@ -7,8 +7,7 @@ const name = ref(""),
   checkpoint = ref("classifier_v3_best.pt"),
   taskId = ref(""),
   error = ref(""),
-  busy = ref(false),
-  pending = ref<Model | null>(null);
+  busy = ref(false);
 async function register() {
   busy.value = true;
   error.value = "";
@@ -25,13 +24,11 @@ async function register() {
     busy.value = false;
   }
 }
-async function activate() {
-  if (!pending.value) return;
+async function activate(model: Model) {
   busy.value = true;
   error.value = "";
   try {
-    await post(`/console/models/${pending.value.id}/activate`);
-    pending.value = null;
+    await post(`/console/models/${model.id}/activate`);
     await models.refresh();
   } catch (reason) {
     error.value = message(reason);
@@ -101,13 +98,7 @@ async function activate() {
           /><PTag
             v-else
             severity="secondary"
-            :value="
-              model.status === 'validated'
-                ? 'Validé'
-                : model.status === 'archived'
-                  ? 'Archivé'
-                  : 'Candidat à comparer'
-            "
+            :value="model.status === 'archived' ? 'Archivé' : 'Disponible'"
           />
         </div>
         <h2>{{ model.name }}</h2>
@@ -130,7 +121,7 @@ async function activate() {
           "
           class="notice"
         >
-          Métriques sur labels provisoires ; validation humaine encore requise.
+          Scores calculés sur des labels provisoires issus des noms de vidéos.
         </p>
         <dl class="facts">
           <div>
@@ -149,9 +140,9 @@ async function activate() {
         <div class="actions">
           <PButton
             label="Définir comme actif"
-            :disabled="model.active || busy || model.status !== 'validated'"
+            :disabled="model.active || busy || model.status === 'archived'"
             severity="secondary"
-            @click="pending = model"
+            @click="activate(model)"
           /><RouterLink
             :to="{ path: '/evaluation', query: { model: model.id } }"
             >Métriques <i class="pi pi-arrow-up-right"
@@ -160,27 +151,8 @@ async function activate() {
       </article></div
   ></LoadState>
   <p class="notice">
-    Les candidats nécessitent une comparaison sur validation humaine avant
-    promotion. Les opérations de comparaison, promotion justifiée et historique
-    sont disponibles dans l’API /classification (documentation /api/docs).
+    Choisissez directement le modèle des prochaines analyses. Les benchmarks
+    peuvent aider à comparer les versions ; ils sont facultatifs pour la
+    sélection.
   </p>
-  <PDialog
-    :visible="!!pending"
-    header="Changer le modèle actif"
-    modal
-    :style="{ width: 'min(480px,95vw)' }"
-    @update:visible="pending = null"
-    ><p>
-      Utiliser « {{ pending?.name }} » pour les prochaines analyses classifiées
-      ? Les tâches déjà soumises conservent leur version.
-    </p>
-    <template #footer
-      ><PButton
-        label="Annuler"
-        severity="secondary"
-        @click="pending = null" /><PButton
-        label="Confirmer le modèle actif"
-        :loading="busy"
-        @click="activate" /></template
-  ></PDialog>
 </template>

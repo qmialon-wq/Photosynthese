@@ -85,7 +85,7 @@ def execute_job(
             if config.training.activate_on_success:
                 result["activation"] = {
                     "active": False,
-                    "reason": "Comparaison et promotion requises",
+                    "reason": "Modèle disponible ; sélection dans la page Modèles",
                 }
             LocalStorage(config.output_root).write_json(
                 f"training/{config.training.run_id}/registration.json",

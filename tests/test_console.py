@@ -279,7 +279,7 @@ def test_registry_selection_freezes_checkpoint_for_queued_analysis(console_db):
         connection.execute(
             """INSERT INTO console_models
           (id,name,checkpoint_key,sha256,metadata,metrics,actor,status)
-          VALUES(%s,'test-only','test.pt','known-hash','{}','{}','alice','validated')""",
+          VALUES(%s,'test-only','test.pt','known-hash','{}','{}','alice','candidate')""",
             (model_id,),
         )
     with TestClient(app) as client:

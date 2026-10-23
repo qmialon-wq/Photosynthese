@@ -19,8 +19,8 @@ def activate_model(identifier: str, actor: str = "local-api") -> dict[str, Any]:
         ).fetchone()
         if row is None:
             raise ReviewError("Modèle inconnu", 404)
-        if row["status"] not in ("validated", "active"):
-            raise ReviewError("Comparer et promouvoir ce candidat avant activation")
+        if row["status"] == "archived":
+            raise ReviewError("Un modèle archivé ne peut pas être sélectionné")
         previous = connection.execute("SELECT id FROM console_models WHERE active").fetchall()
         connection.execute("UPDATE console_models SET active=false,status='validated' WHERE active")
         connection.execute(
@@ -29,13 +29,13 @@ def activate_model(identifier: str, actor: str = "local-api") -> dict[str, Any]:
         connection.execute(
             """INSERT INTO model_promotions
           (id,model_id,previous_model_id,action,actor,justification)
-          VALUES(%s,%s,%s,'rollback',%s,%s)""",
+          VALUES(%s,%s,%s,'promotion',%s,%s)""",
             (
                 str(uuid4()),
                 identifier,
                 previous[0]["id"] if previous else None,
                 actor,
-                jsonb({"reason": "Activation d'un modèle validé"}),
+                jsonb({"reason": "Sélection directe du modèle", "mode": "direct_selection"}),
             ),
         )
     return {

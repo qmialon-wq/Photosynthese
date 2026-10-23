@@ -94,8 +94,8 @@ function modelName(id: string) {
     <h2>Benchmarks</h2>
     <p class="muted">
       Comparaison des modèles sur les mêmes recadrages de validation. Les scores
-      sur labels provisoires sont exploratoires et ne permettent pas une
-      promotion.
+      sur labels provisoires sont exploratoires. La sélection du modèle reste
+      libre dans la page Modèles.
     </p>
     <LoadState
       :loading="benchmarks.loading.value && !benchmarks.data.value"
