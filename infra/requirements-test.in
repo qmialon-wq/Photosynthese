@@ -1,5 +1,6 @@
 -r ../backend/requirements.in
 -r ../workers/vision/requirements.in
+-r ../workers/documents/requirements.in
 pytest==8.4.0
 httpx==0.28.1
 ruff==0.11.13

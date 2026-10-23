@@ -1,4 +1,4 @@
-from shared.worker_runtime import run
+from workers.documents.runtime import run
 
 if __name__ == "__main__":
-    run("documents")
+    run()

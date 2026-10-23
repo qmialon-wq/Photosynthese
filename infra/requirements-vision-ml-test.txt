@@ -34,6 +34,10 @@ colorama==0.4.6 ; sys_platform == 'win32'
     #   -c infra/requirements-test.txt
     #   pytest
     #   tqdm
+defusedxml==0.7.1
+    # via
+    #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
 fastapi==0.115.12
     # via
     #   -c infra/requirements-test.txt
@@ -67,6 +71,7 @@ httpcore2==2.3.0
 httpx==0.28.1
     # via
     #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
     #   -r infra/requirements-test.in
 httpx2==2.3.0
     # via huggingface-hub
@@ -88,6 +93,10 @@ joblib==1.6.0
     # via
     #   -r infra/requirements-vision-ml-test.in
     #   scikit-learn
+langdetect==1.0.9
+    # via
+    #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
 mako==1.4.3
     # via
     #   -c infra/requirements-test.txt
@@ -133,6 +142,7 @@ psycopg==3.2.9
     # via
     #   -c infra/requirements-test.txt
     #   -r infra/../backend/requirements.in
+    #   -r infra/../workers/documents/requirements.in
 psycopg-binary==3.2.9 ; implementation_name != 'pypy'
     # via
     #   -c infra/requirements-test.txt
@@ -149,11 +159,17 @@ pydantic-core==2.50.1
 pydantic-settings==2.10.1
     # via
     #   -c infra/requirements-test.txt
+    #   -r infra/../backend/requirements.in
+    #   -r infra/../workers/documents/requirements.in
     #   -r infra/../workers/vision/requirements.in
 pygments==2.21.0
     # via
     #   -c infra/requirements-test.txt
     #   pytest
+pypdf==6.21.2
+    # via
+    #   -c infra/requirements-test.txt
+    #   -r infra/../workers/documents/requirements.in
 pytest==8.4.0
     # via
     #   -c infra/requirements-test.txt
@@ -170,6 +186,7 @@ redis==6.2.0
     # via
     #   -c infra/requirements-test.txt
     #   -r infra/../backend/requirements.in
+    #   -r infra/../workers/documents/../requirements.in
     #   -r infra/../workers/vision/../requirements.in
 ruff==0.11.13
     # via
@@ -183,6 +200,10 @@ scipy==1.18.1
     # via scikit-learn
 setuptools==78.1.0
     # via torch
+six==1.17.0
+    # via
+    #   -c infra/requirements-test.txt
+    #   langdetect
 sqlalchemy==2.0.41
     # via
     #   -c infra/requirements-test.txt

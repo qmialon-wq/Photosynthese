@@ -1,0 +1,180 @@
+"""Consommateur documentaire Redis Streams, outbox SQL et ordonnanceur indépendant."""
+
+import logging
+import os
+import signal
+import threading
+import time
+from typing import Any
+
+from redis import Redis
+from redis.exceptions import ResponseError
+
+from shared.documents import service
+from shared.documents.config import DocumentSettings
+from shared.review.database import jsonb
+from shared.worker_runtime import heartbeat_key
+
+from .http import SafeHTTP
+from .ingestion import Ingestor
+
+STREAM, GROUP = "biosentinelle:documents:jobs", "documents"
+logger = logging.getLogger(__name__)
+
+
+def ensure_group(client: Redis) -> None:
+    try:
+        client.xgroup_create(STREAM, GROUP, id="0", mkstream=True)
+    except ResponseError as exc:
+        if "BUSYGROUP" not in str(exc):
+            raise
+
+
+def publish_pending(client: Any) -> int:
+    with service.transaction() as connection:
+        rows = connection.execute("""SELECT id FROM document_tasks WHERE status='queued'
+            AND published_at IS NULL ORDER BY created_at
+            FOR UPDATE SKIP LOCKED LIMIT 20""").fetchall()
+        for row in rows:
+            client.xadd(STREAM, {"task_id": str(row["id"])})
+            connection.execute(
+                "UPDATE document_tasks SET published_at=now() WHERE id=%s", (row["id"],)
+            )
+        return len(rows)
+
+
+def execute(identifier: str, settings: DocumentSettings) -> bool:
+    with service.transaction() as lock:
+        acquired = lock.execute(
+            "SELECT pg_try_advisory_lock(hashtextextended(%s::text,12)) AS ok", (identifier,)
+        ).fetchone()["ok"]
+        lock.commit()
+        if not acquired:
+            return False
+        try:
+            task = service.task(identifier)
+            if task["status"] in ("completed", "partial", "error"):
+                return True
+            if task["attempts"] >= 3:
+                with service.transaction() as connection:
+                    connection.execute(
+                        """UPDATE document_tasks SET status='error',finished_at=now(),
+                        error='Traitement interrompu trois fois ; relancer explicitement'
+                        WHERE id=%s""",
+                        (identifier,),
+                    )
+                    service.event(
+                        identifier,
+                        "error",
+                        "Limite de reprises après interruption atteinte",
+                        level="error",
+                        connection=connection,
+                    )
+                return True
+            with service.transaction() as connection:
+                connection.execute(
+                    """UPDATE document_tasks SET status='running',started_at=now(),
+                    attempts=attempts+1,error=NULL WHERE id=%s""",
+                    (identifier,),
+                )
+                service.event(
+                    identifier,
+                    "start",
+                    "Début du passage",
+                    data={"kind": task["kind"], "attempt": task["attempts"] + 1},
+                    connection=connection,
+                )
+            http = SafeHTTP(settings)
+            ingestor = Ingestor(settings, http, identifier)
+            http.log = ingestor.log
+            try:
+                result = ingestor.perform(task["kind"], task["request"], task["actor"])
+                status = "completed"
+                if result.get("errors") or result.get("inaccessible"):
+                    status = "partial"
+                if task["kind"] == "search" and not result.get("observed") and result.get("errors"):
+                    status = "error"
+                error = (
+                    "Aucune notice récupérée ; consulter les événements"
+                    if status == "error"
+                    else None
+                )
+            except Exception as exc:
+                logger.exception("Échec de la tâche documentaire %s", identifier)
+                result, status, error = {}, "error", f"{type(exc).__name__}: {str(exc)[:2000]}"
+            finally:
+                http.close()
+            with service.transaction() as connection:
+                connection.execute(
+                    """UPDATE document_tasks SET status=%s,result=%s,error=%s,
+                    finished_at=now() WHERE id=%s""",
+                    (status, jsonb(result), error, identifier),
+                )
+                service.event(
+                    identifier,
+                    "finish",
+                    error or "Passage terminé",
+                    level="error" if error else "info",
+                    data={"status": status, "result": result},
+                    connection=connection,
+                )
+            return True
+        finally:
+            lock.execute("SELECT pg_advisory_unlock(hashtextextended(%s::text,12))", (identifier,))
+
+
+def consume_one(client: Redis, settings: DocumentSettings) -> bool:
+    recovered = client.xautoclaim(STREAM, GROUP, "documents-single", 30000, "0-0", count=1)
+    messages = recovered[1] if recovered else []
+    if not messages:
+        streams = client.xreadgroup(GROUP, "documents-single", {STREAM: ">"}, count=1, block=1000)
+        messages = streams[0][1] if streams else []
+    if not messages:
+        return False
+    message_id, values = messages[0]
+    if execute(values["task_id"], settings):
+        client.xack(STREAM, GROUP, message_id)
+        client.xdel(STREAM, message_id)
+    return True
+
+
+def run() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    settings = DocumentSettings()
+    interval = float(os.getenv("WORKER_HEARTBEAT_SECONDS", "5"))
+    max_age = float(os.getenv("WORKER_HEARTBEAT_MAX_AGE_SECONDS", "30"))
+    if interval <= 0 or max_age <= interval * 2:
+        raise ValueError("Délai de heartbeat documentaire invalide")
+    settings.root.mkdir(parents=True, exist_ok=True)
+    stop = threading.Event()
+    for signum in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(signum, lambda *_: stop.set())
+    client = Redis.from_url(
+        os.getenv("REDIS_URL", "redis://redis:6379/0"),
+        decode_responses=True,
+        socket_connect_timeout=3,
+        socket_timeout=4,
+    )
+    ensure_group(client)
+
+    def ticker() -> None:
+        while not stop.is_set():
+            try:
+                client.set(heartbeat_key("documents"), str(time.time()), ex=int(max_age) + 1)
+                service.schedule_due()
+                publish_pending(client)
+            except Exception:
+                logger.exception("Échec du heartbeat ou de l'ordonnanceur documentaire")
+            stop.wait(interval)
+
+    thread = threading.Thread(target=ticker, daemon=True)
+    thread.start()
+    logger.info("Worker documentaire prêt ; aucune veille créée implicitement")
+    try:
+        while not stop.is_set():
+            consume_one(client, settings)
+    finally:
+        stop.set()
+        thread.join(timeout=5)
+        client.delete(heartbeat_key("documents"))
+        client.close()

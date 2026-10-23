@@ -18,7 +18,17 @@ voir le [guide vision](workers/vision/README.md) et la
 [correspondance des cellules](workers/vision/NOTEBOOK_MIGRATION.md).
 Aucun poids ni modèle entraîné n'est distribué dans Git. Le mode ML active
 l'analyse vidéo asynchrone, sans chargement de modèle avant une tâche.
-L'ingestion documentaire et le RAG restent à développer.
+La [veille et l'ingestion scientifiques](workers/documents/README.md) utilisent
+OpenAlex, Crossref et Europe PMC dans un worker CPU indépendant. Le RAG reste à développer.
+
+```sh
+make documents-up
+make documents-search ARGS='--species "Vulpes vulpes" --topic ecology --limit 5'
+```
+
+La commande renvoie une tâche asynchrone consultable dans `/documents/tasks/{id}`
+et dans la documentation API http://localhost:8000/docs. Le téléchargement de texte
+intégral est optionnel (`--download-fulltext`) et limité aux copies explicitement autorisées.
 
 Pour la validation humaine des recadrages, l'historique des corrections et les
 exports reproductibles, consulter [HUMAN_REVIEW.md](HUMAN_REVIEW.md).

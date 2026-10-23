@@ -164,13 +164,20 @@ services:
     build:
       context: .
       dockerfile: workers/documents/Dockerfile
-    environment: *python-environment
+    environment:
+      <<: *python-environment
+      BIOSENTINELLE_DOCUMENTS_CONTACT_EMAIL: ${DOCUMENTS_CONTACT_EMAIL:-}
+      BIOSENTINELLE_DOCUMENTS_OPENALEX_API_KEY: ${OPENALEX_API_KEY:-}
+      BIOSENTINELLE_DOCUMENTS_REQUEST_INTERVAL: ${DOCUMENTS_REQUEST_INTERVAL:-1}
+      BIOSENTINELLE_DOCUMENTS_CACHE_TTL_SECONDS: ${DOCUMENTS_CACHE_TTL_SECONDS:-86400}
     volumes:
       - ${DATA_ROOT:-./data}/documents:/storage/documents
       - ${DATA_ROOT:-./data}/results:/storage/results
-    networks: [services]
+    networks: [services, web]
     depends_on:
       storage-init:
+        condition: service_completed_successfully
+      migrate:
         condition: service_completed_successfully
       redis:
         condition: service_healthy
@@ -179,6 +186,10 @@ services:
       test: ["CMD", "python", "-m", "shared.worker_health", "documents"]
     restart: unless-stopped
     init: true
+    mem_limit: 1g
+    cpus: 2
+    deploy:
+      replicas: 1
 
   tests:
     profiles: [test]
