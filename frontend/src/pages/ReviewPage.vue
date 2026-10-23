@@ -136,6 +136,18 @@ async function decide(decision: "validate" | "reject" | "reopen") {
 }
 </script>
 <template>
+  <RouterLink
+    v-if="route.query.return_video"
+    class="button-link secondary"
+    :to="{
+      path: '/analyses',
+      query: {
+        video: String(route.query.return_video),
+        task: String(route.query.return_task || ''),
+      },
+    }"
+    >Revenir à mon dossier</RouterLink
+  >
   <div class="page-heading">
     <div>
       <p class="eyebrow">UNE DÉCISION HUMAINE, UNE DONNÉE FIABLE</p>

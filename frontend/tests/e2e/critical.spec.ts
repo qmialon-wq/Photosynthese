@@ -153,6 +153,8 @@ test("import, analyse asynchrone et téléchargement JSON", async ({ page }) => 
   await expect(
     page.getByRole("heading", { name: "Configurer l’analyse" }),
   ).toBeVisible();
+  // This existing scenario intentionally covers video-only analysis.
+  await page.getByLabel("Recevoir mon dossier biodiversité").uncheck();
   await page
     .getByRole("button", { name: "Lancer l’analyse", exact: true })
     .click();

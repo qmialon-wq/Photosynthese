@@ -52,6 +52,7 @@ class LocalVideo(Body):
 
 
 class Analysis(Body):
+    parcel_revision: int | None = Field(default=None, gt=0)
     detection_only: bool = False
     detection_threshold: float = Field(default=0.1, ge=0.005, le=1)
     classification_threshold: float = Field(default=0.48, ge=0, le=1)
@@ -285,7 +286,13 @@ def analyze(identifier: str, body: Analysis, actor: Actor) -> dict[str, Any]:
         if shadow["id"] == model["id"]:
             raise ReviewError("Choisir un modèle shadow distinct du champion", 422)
         payload["shadow_model"] = {**shadow, "id": str(shadow["id"])}
-    return console.submit("analysis", payload, actor)
+    with transaction(write=True) as connection:
+        submitted = console.submit("analysis", payload, actor, connection)
+        if body.parcel_revision is not None:
+            from shared.parcels.service import request as request_dossier
+
+            request_dossier(identifier, submitted["id"], body.parcel_revision, actor, connection)
+        return submitted
 
 
 @router.post("/videos/{identifier}/prepare-review", status_code=202, response_model=Operation)

@@ -583,7 +583,7 @@ thead {
 th {
   font-weight: 550;
   font-size: 0.77rem;
-  color: #68806b;
+  color: #506653;
   white-space: nowrap;
 }
 td,
@@ -1438,6 +1438,40 @@ details > form {
   padding: 0;
   position: relative;
   overflow: hidden;
+}
+.parcel-questionnaire {
+  min-width: 0;
+  margin: 0 0 1rem;
+  padding: 1.1rem;
+  border: 1px solid #cbd8c8;
+  border-radius: 12px;
+  background: #f5f8f2;
+}
+.parcel-questionnaire legend {
+  padding: 0 0.4rem;
+  font-weight: 700;
+}
+.parcel-questionnaire .inline-check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.parcel-questionnaire input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #365d42;
+}
+.parcel-dossier {
+  margin-top: 1.2rem;
+  overflow-wrap: anywhere;
+}
+.parcel-dossier details {
+  margin-block: 0.75rem;
+}
+.parcel-dossier blockquote {
+  margin: 0.8rem 0;
+  padding-left: 0.8rem;
+  border-left: 3px solid #9db59c;
 }
 .selectable-crop.is-selected {
   outline: 3px solid #426a48;

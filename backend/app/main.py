@@ -12,6 +12,7 @@ from app.classification import router as classification_router
 from app.config import database_url, redis_url
 from app.console import router as console_router
 from app.documents import router as documents_router
+from app.parcels import router as parcels_router
 from app.rag import router as rag_router
 from app.review import router as review_router
 from app.training import router as training_router
@@ -37,6 +38,7 @@ app.include_router(review_router)
 app.include_router(console_router)
 app.include_router(classification_router)
 app.include_router(documents_router)
+app.include_router(parcels_router)
 app.include_router(rag_router)
 
 

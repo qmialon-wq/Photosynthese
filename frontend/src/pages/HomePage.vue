@@ -12,8 +12,8 @@ const tasks = useResource<Task[]>(
       <p class="eyebrow">BIOSENTINELLE NORMANDIE</p>
       <h1>Vos observations, simplement.</h1>
       <p class="subtitle">
-        Importez une vidéo, laissez l’analyse avancer, puis confirmez les
-        animaux observés.
+        Ajoutez une vidéo, décrivez votre parcelle et retrouvez la vidéo annotée
+        avec votre dossier biodiversité.
       </p>
     </div>
     <RouterLink to="/videos" class="button-link"
@@ -30,23 +30,21 @@ const tasks = useResource<Task[]>(
       <span>Ouvrir la vidéothèque →</span></RouterLink
     >
     <RouterLink to="/analyses" class="panel journey-card"
-      ><span class="eyebrow">02 · CONSULTER</span
+      ><span class="eyebrow">02 · DÉCRIRE VOTRE PROJET</span
       ><i class="pi pi-sparkles" aria-hidden="true" />
-      <h2>Avancement et résultats</h2>
-      <p>
-        Suivez les traitements et retrouvez les vidéos annotées et les rapports.
-      </p>
+      <h2>Votre parcelle, votre projet</h2>
+      <p>Indiquez la surface, le type de terrain et l’activité souhaitée.</p>
       <span>Voir les analyses →</span></RouterLink
     >
-    <RouterLink to="/review" class="panel journey-card"
-      ><span class="eyebrow">03 · CONFIRMER</span
+    <RouterLink to="/analyses" class="panel journey-card"
+      ><span class="eyebrow">03 · RETROUVER VOS RÉSULTATS</span
       ><i class="pi pi-check-square" aria-hidden="true" />
-      <h2>Valider les espèces</h2>
+      <h2>Un dossier pour aménager</h2>
       <p>
-        Sélectionnez plusieurs images pour leur attribuer une espèce en une
-        seule action.
+        Confirmez les espèces, consultez les pistes sourcées et téléchargez
+        votre dossier.
       </p>
-      <span>Ouvrir la validation →</span></RouterLink
+      <span>Vidéo annotée et dossier →</span></RouterLink
     >
   </div>
   <section class="panel">

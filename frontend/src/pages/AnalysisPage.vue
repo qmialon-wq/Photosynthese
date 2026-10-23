@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { apiUrl, message, percent, post, useResource } from "../api";
 import type { Model, Operation, Report, Task, Video } from "../types";
+import ParcelProject from "../components/ParcelProject.vue";
 const route = useRoute(),
   router = useRouter();
 const videoId = ref(String(route.query.video || "")),
@@ -18,6 +19,7 @@ const report = useResource<Report>(() =>
   completed.value ? `/console/tasks/${taskId.value}/artifacts/report` : null,
 );
 const reviewTask = ref("");
+const parcel = ref<InstanceType<typeof ParcelProject> | null>(null);
 const isAdmin = computed(() => route.path.startsWith("/admin"));
 const models = useResource<Model[]>(() => "/console/models", 15000);
 const activeModel = computed(() =>
@@ -55,6 +57,7 @@ async function launch() {
   busy.value = true;
   error.value = "";
   try {
+    const parcelRevision = isAdmin.value ? null : await parcel.value?.save();
     const operation = await post<Operation>(
       `/console/videos/${videoId.value}/analyze`,
       isAdmin.value
@@ -66,6 +69,7 @@ async function launch() {
           }
         : {
             ...config.value,
+            ...(parcelRevision ? { parcel_revision: parcelRevision } : {}),
             infer_every_n_frames: { detailed: 1, balanced: 2, fast: 10 }[
               preset.value as "detailed" | "balanced" | "fast"
             ],
@@ -102,7 +106,11 @@ function prepared(task: Task) {
   if (task.result?.video_id)
     void router.push({
       path: "/review",
-      query: { video_id: task.result.video_id },
+      query: {
+        video_id: task.result.video_id,
+        return_video: videoId.value,
+        return_task: taskId.value,
+      },
     });
 }
 </script>
@@ -112,7 +120,7 @@ function prepared(task: Task) {
       <p class="eyebrow">DÉTECTION · CLASSIFICATION · SUIVI</p>
       <h1>Analyse vidéo</h1>
       <p class="subtitle">
-        Suivez chaque traitement et retrouvez ses résultats localisés.
+        Votre vidéo annotée et votre dossier biodiversité dans un même parcours.
       </p>
     </div>
     <RouterLink class="button-link secondary" to="/videos"
@@ -147,6 +155,14 @@ function prepared(task: Task) {
     <section class="panel">
       <h2>Configurer l’analyse</h2>
       <form class="form-grid" @submit.prevent="launch">
+        <ParcelProject
+          v-if="!isAdmin"
+          ref="parcel"
+          :key="videoId"
+          :video-id="videoId"
+          :analysis-id="taskId"
+          :completed="completed"
+        />
         <label
           >Objectif de l'analyse<select
             v-model="config.detection_only"
@@ -250,7 +266,11 @@ function prepared(task: Task) {
           :loading="busy"
           :disabled="busy || models.loading.value || !!models.error.value"
         /><PButton
-          label="Préparer les recadrages à valider"
+          :label="
+            isAdmin
+              ? 'Préparer les recadrages à valider'
+              : 'Confirmer les espèces'
+          "
           severity="secondary"
           :disabled="busy"
           @click="prepare"

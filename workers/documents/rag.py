@@ -120,6 +120,10 @@ def evaluate(body: Evaluation, settings: RagSettings) -> dict[str, Any]:
 
 
 def perform(action: str, body: dict[str, Any], actor: str, task: str, http: Any) -> dict[str, Any]:
+    if action == "parcel":
+        from workers.documents.parcels import build
+
+        return build(body["dossier_id"])
     with service.transaction() as connection:
         existing = connection.execute(
             "SELECT id,result FROM rag_runs WHERE task_id=%s", (task,)

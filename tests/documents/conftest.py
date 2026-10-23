@@ -45,6 +45,13 @@ def document_db(monkeypatch, tmp_path):
             review_spec.loader.exec_module(review_migration)
             monkeypatch.setattr(review_migration.op, "execute", connection.execute)
             review_migration.upgrade()
+            console_spec = importlib.util.spec_from_file_location(
+                "parcel_console_migration", Path("backend/migrations/versions/0004_web_console.py")
+            )
+            console_migration = importlib.util.module_from_spec(console_spec)
+            console_spec.loader.exec_module(console_migration)
+            monkeypatch.setattr(console_migration.op, "execute", connection.execute)
+            console_migration.upgrade()
             monkeypatch.setattr(migration.op, "execute", connection.execute)
             migration.upgrade()
             spec = importlib.util.spec_from_file_location(
@@ -70,6 +77,13 @@ def document_db(monkeypatch, tmp_path):
             rag_spec.loader.exec_module(rag_migration)
             monkeypatch.setattr(rag_migration.op, "execute", connection.execute)
             rag_migration.upgrade()
+            parcel_spec = importlib.util.spec_from_file_location(
+                "parcel_migration", Path("backend/migrations/versions/0010_parcel_dossiers.py")
+            )
+            parcel_migration = importlib.util.module_from_spec(parcel_spec)
+            parcel_spec.loader.exec_module(parcel_migration)
+            monkeypatch.setattr(parcel_migration.op, "execute", connection.execute)
+            parcel_migration.upgrade()
         yield DocumentSettings(root=tmp_path / "documents", request_interval=0.2)
     finally:
         admin.execute(sql.SQL("DROP SCHEMA {} CASCADE").format(sql.Identifier(schema)))

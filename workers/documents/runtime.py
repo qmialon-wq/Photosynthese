@@ -164,6 +164,9 @@ def run() -> None:
             try:
                 client.set(heartbeat_key("documents"), str(time.time()), ex=int(max_age) + 1)
                 service.schedule_due()
+                from shared.parcels.service import schedule
+
+                schedule()
                 publish_pending(client)
             except Exception:
                 logger.exception("Échec du heartbeat ou de l'ordonnanceur documentaire")

@@ -1,5 +1,11 @@
 # BioSentinelle Normandie
 
+Le [parcours vidéo → parcelle → dossier biodiversité](docs/PARCEL_DOSSIERS.md)
+permet de renseigner surface, terrain et projet, puis de retrouver la vidéo annotée
+et un dossier textuel organisé avec des pistes sourcées. Les recommandations restent
+conditionnelles lorsque les espèces ne sont pas confirmées ; aucun pourcentage de
+terrain vert n'est inventé.
+
 Le [module RAG local, étape 1](docs/RAG.md) propose une recherche documentaire
 hybride et des rapports d'extraits sourcés sans LLM. Démarrage : `make rag-up`,
 `make rag-prepare`, puis `make rag-index`. Seules les sources validées participent
