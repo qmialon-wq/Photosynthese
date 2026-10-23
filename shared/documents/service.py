@@ -213,6 +213,19 @@ def merge(connection: Any, keep: str, other: str) -> None:
     )
     connection.execute("DELETE FROM document_watch_matches WHERE document_id=%s", (other,))
     connection.execute(
+        """INSERT INTO document_species(document_id,species,enabled,origin,actor,updated_at)
+      SELECT %s,species,enabled,origin,actor,updated_at FROM document_species WHERE document_id=%s
+      ON CONFLICT(document_id,species) DO UPDATE SET
+        enabled=excluded.enabled,origin=excluded.origin,actor=excluded.actor,updated_at=excluded.updated_at
+      WHERE excluded.origin='human' AND (document_species.origin='discovery'
+        OR excluded.updated_at>document_species.updated_at)""",
+        (keep, other),
+    )
+    connection.execute("DELETE FROM document_species WHERE document_id=%s", (other,))
+    connection.execute(
+        "UPDATE document_selection_history SET document_id=%s WHERE document_id=%s", (keep, other)
+    )
+    connection.execute(
         "UPDATE scientific_documents SET merged_into=%s WHERE merged_into=%s", (keep, other)
     )
     connection.execute(

@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from shared.documents import service
 from shared.documents.config import DocumentSettings
+from shared.documents.corpus import discover
 from shared.documents.schemas import FullText, ManualImport, Publication, Search
 from shared.review.database import jsonb
 
@@ -255,6 +256,7 @@ class Ingestor:
             raw={"filename": imported.path, "actor": actor, "rights_confirmed": True},
         )
         identifier = service.register(publication, self.task)
+        discover(identifier, imported.species, actor)
         asset = self.asset(
             identifier,
             data,
@@ -271,6 +273,7 @@ class Ingestor:
 
     def search(self, request: dict[str, Any]) -> dict[str, Any]:
         query = Search.model_validate(request["search"])
+        actor = service.task(self.task)["actor"]
         counts = {"observed": 0, "errors": 0, "sources_ok": 0, "inaccessible": 0}
         documents: set[str] = set()
         for source_name in query.sources:
@@ -287,6 +290,7 @@ class Ingestor:
                             publication, self.task, request.get("watch_id")
                         )
                         documents.add(identifier)
+                        discover(identifier, query.species, actor)
                         counts["observed"] += 1
                         if source_name != "crossref" and publication.doi:
                             try:

@@ -1,5 +1,12 @@
 # Console web BioSentinelle
 
+La page **Documents scientifiques**, accessible dans les deux espaces à
+`/documents` ou `/admin/documents`, permet de rechercher et importer des documents,
+suivre les tâches, lire les textes et choisir les sources du futur RAG par espèce.
+Les retraits sont réversibles et tracés. Le moteur RAG n'est pas encore actif.
+Voir le [guide documentaire](workers/documents/README.md) pour le fonctionnement
+du corpus, les restrictions de licence et les endpoints.
+
 L'interface Vue 3 / TypeScript utilise Vue Router et PrimeVue, sans calcul ML
 dans le navigateur. PostgreSQL et les fichiers gérés par les workers restent
 les sources de vérité. Le navigateur mémorise uniquement un identifiant local automatique ;

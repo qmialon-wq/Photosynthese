@@ -5,6 +5,18 @@ from urllib.parse import unquote
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 SourceName = Literal["openalex", "crossref", "europepmc"]
+SpeciesKey = Literal[
+    "chevreuil",
+    "sanglier",
+    "buse",
+    "pigeons",
+    "martres",
+    "renards",
+    "blaireaux",
+    "chouette",
+    "geai",
+    "faisans",
+]
 
 
 def normalize_doi(value: str | None) -> str | None:
@@ -58,6 +70,7 @@ class ManualImport(Body):
     doi: str | None = None
     license: str | None = Field(default=None, max_length=500)
     rights_confirmed: bool
+    species: list[SpeciesKey] = Field(default_factory=list, max_length=10)
 
     _doi = field_validator("doi")(normalize_doi)
 
@@ -89,6 +102,10 @@ class Decision(Body):
     relevance: Literal["pending", "accepted", "rejected"]
     quality: Literal["pending", "accepted", "rejected"]
     note: str = Field(default="", max_length=4000)
+
+
+class Selection(Body):
+    enabled: bool
 
 
 class FullText(Body):

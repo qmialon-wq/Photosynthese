@@ -40,6 +40,14 @@ def document_db(monkeypatch, tmp_path):
         with connect() as connection:
             monkeypatch.setattr(migration.op, "execute", connection.execute)
             migration.upgrade()
+            spec = importlib.util.spec_from_file_location(
+                "document_species_migration",
+                Path("backend/migrations/versions/0007_document_species.py"),
+            )
+            species_migration = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(species_migration)
+            monkeypatch.setattr(species_migration.op, "execute", connection.execute)
+            species_migration.upgrade()
         yield DocumentSettings(root=tmp_path / "documents", request_interval=0.2)
     finally:
         admin.execute(sql.SQL("DROP SCHEMA {} CASCADE").format(sql.Identifier(schema)))

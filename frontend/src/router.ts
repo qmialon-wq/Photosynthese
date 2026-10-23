@@ -5,6 +5,7 @@ export const navigation = [
   { path: "/videos", label: "Vidéothèque", icon: "pi-video" },
   { path: "/analyses", label: "Analyses", icon: "pi-sparkles" },
   { path: "/review", label: "Validation humaine", icon: "pi-check-square" },
+  { path: "/documents", label: "Documents scientifiques", icon: "pi-book" },
 ];
 export const adminNavigation = [
   { path: "/admin", label: "Vue d’ensemble", icon: "pi-th-large" },
@@ -18,6 +19,11 @@ export const adminNavigation = [
   { path: "/admin/training", label: "Entraînements", icon: "pi-bolt" },
   { path: "/admin/models", label: "Modèles", icon: "pi-box" },
   { path: "/admin/evaluation", label: "Évaluation", icon: "pi-chart-bar" },
+  {
+    path: "/admin/documents",
+    label: "Documents scientifiques",
+    icon: "pi-book",
+  },
 ];
 export const router = createRouter({
   history: createWebHistory(),
@@ -35,6 +41,14 @@ export const router = createRouter({
     { path: "/videos", component: () => import("./pages/VideosPage.vue") },
     { path: "/analyses", component: () => import("./pages/AnalysisPage.vue") },
     { path: "/review", component: () => import("./pages/ReviewPage.vue") },
+    {
+      path: "/documents",
+      component: () => import("./pages/DocumentsPage.vue"),
+    },
+    {
+      path: "/admin/documents",
+      component: () => import("./pages/DocumentsPage.vue"),
+    },
     ...["datasets", "training", "models", "evaluation"].map((page) => ({
       path: `/${page}`,
       redirect: (to: import("vue-router").RouteLocation) => ({

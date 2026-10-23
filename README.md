@@ -26,6 +26,9 @@ make documents-up
 make documents-search ARGS='--species "Vulpes vulpes" --topic ecology --limit 5'
 ```
 
+Les recherches, imports et sélections de sources par espèce sont également disponibles
+directement dans [Documents scientifiques](http://localhost:8080/documents).
+
 La commande renvoie une tâche asynchrone consultable dans `/documents/tasks/{id}`
 et dans la documentation API http://localhost:8000/docs. Le téléchargement de texte
 intégral est optionnel (`--download-fulltext`) et limité aux copies explicitement autorisées.

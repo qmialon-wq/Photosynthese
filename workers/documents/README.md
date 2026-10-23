@@ -3,7 +3,44 @@
 Le service découvre des publications réelles dans OpenAlex, Crossref et Europe PMC,
 conserve leurs métadonnées et, sur demande, importe les textes accessibles dont
 les droits sont établis. Il fonctionne sur CPU, indépendamment de la file vision.
-Aucun modèle, LLM, embedding, recommandation ou écran web documentaire n'est ajouté.
+L'interface [Documents scientifiques](http://localhost:8080/documents) permet de
+consulter les publications par espèce, lancer une recherche, importer un fichier
+et sélectionner ou retirer les sources du futur RAG. Aucun LLM, embedding ou moteur
+de recommandation n'est encore actif.
+
+## Utilisation depuis le navigateur
+
+1. Ouvrir **Documents scientifiques**, dans l'observation ou l'administration.
+2. Choisir une espèce dans la bibliothèque, ou lancer une recherche en utilisant
+   son nom scientifique proposé automatiquement. Les filtres habitat, territoire,
+   thématique et le choix des sources sont facultatifs.
+3. Suivre les recherches/imports et consulter leur journal en bas de page.
+4. Ouvrir une notice pour lire le résumé, le texte extrait par page, les références,
+   les licences et la provenance. Les PDF conservés s'ouvrent ou se téléchargent.
+5. Cliquer **Valider et ajouter aux sources** pour l'espèce souhaitée. Cette action
+   constitue la validation de pertinence et de qualité ; aucun commentaire n'est exigé.
+   Un texte indexé avec des passages et un document non rejeté sont requis.
+6. **Retirer des sources** exclut immédiatement le document pour cette espèce,
+   sans effacer le fichier ou son historique, ni changer ses autres associations.
+
+L'import web accepte PDF/TXT/Markdown jusqu'à 32 Mio avec confirmation des droits.
+La recherche et l'import associent des **candidats** à une espèce, sans sélectionner
+automatiquement les sources. Une nouvelle recherche ne réactive pas un retrait.
+Un même document peut être utilisé pour plusieurs espèces. Les documents historiques
+sont associés lorsque leurs anciennes tâches permettent d'identifier exactement le
+nom scientifique ou le nom canonique ; les autres restent visibles dans « Toutes les
+espèces » et peuvent être affectés depuis leur notice.
+
+Le corpus sélectionné est consultable avec
+`GET /documents?species=renards&selected_only=true` : il exclut les documents non
+indexés, rejetés ou en attente de validation, même si une sélection ancienne existe.
+`GET /documents/species` expose les dix espèces et les compteurs réels.
+`PUT /documents/{id}/species/{species}` avec `{"enabled":true|false}` enregistre une
+sélection ou un retrait, l'acteur et la date. Les décisions sont conservées dans
+`document_selection_history` et accessibles dans le détail du document.
+
+Le RAG futur devra consommer ce corpus filtré ; cette étape n'effectue encore
+aucune recherche vectorielle ni génération de recommandation.
 
 ## Démarrer et rechercher
 
@@ -233,3 +270,20 @@ corruption/limites HTTP, redirections privées, licences insuffisantes, pages/la
 validation persistante, outbox, ACK après résultat durable et reprise d'import.
 Le second test est explicitement facultatif : il interroge réellement les trois
 sources, dépend de leur disponibilité et consomme leur quota.
+
+Tests de l'interface : `make web-test` et `make web-e2e` (sous Windows :
+`NPM=npm.cmd`). Le parcours documentaire vérifie également l'accessibilité et
+l'absence de débordement sur mobile. Pour exercer le vrai proxy, backend et worker :
+
+```powershell
+# Depuis frontend, après make documents-up :
+$env:E2E_BASE_URL = 'http://localhost:8080'
+$env:BIOSENTINELLE_DOCUMENTS_E2E = '1'
+npx.cmd playwright test tests/e2e/documents.spec.ts
+```
+
+Ce diagnostic importe un PDF synthétique de plus de 6 Mio pour vérifier la limite
+du proxy, consulte son texte puis teste ajout/retrait et persistance. Le document
+porte un titre « Fixture documentaire E2E », est retiré puis rejeté en fin de test,
+et reste traçable sous l'acteur `diagnostic-documents`. Il ne sert pas de source
+scientifique pour les recommandations.

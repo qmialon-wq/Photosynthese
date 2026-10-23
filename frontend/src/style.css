@@ -1323,6 +1323,95 @@ details > form {
   background: #f1f5ee;
   border-radius: 10px;
 }
+.document-filters,
+.document-selection {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: end;
+  margin: 1rem 0;
+}
+.document-filters label:not(.check-line),
+.document-selection label {
+  display: grid;
+  gap: 0.4rem;
+}
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+  gap: 1rem;
+}
+.document-card {
+  border: 1px solid var(--border, #dce5df);
+  border-radius: 12px;
+  padding: 1.2rem;
+  min-width: 0;
+}
+.document-title {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.document-title:hover {
+  text-decoration: underline;
+}
+.document-abstract {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.document-tag {
+  background: #eef2f4;
+  color: #3c4c56;
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+}
+.document-tag.selected {
+  background: #e2f0e5;
+  color: #205239;
+}
+.document-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  line-height: 1.7;
+  background: #f5f8f4;
+  padding: 1rem;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.document-hash {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #58665c;
+}
+.document-tasks {
+  list-style: none;
+  padding: 0;
+}
+.document-tasks li {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #dce5df;
+}
+.document-tasks small {
+  display: block;
+  margin-top: 0.4rem;
+  color: #58665c;
+}
+.document-log {
+  max-height: 22rem;
+  overflow-y: auto;
+}
 .bulk-toolbar > label:not(.check-line) {
   display: grid;
   gap: 0.3rem;

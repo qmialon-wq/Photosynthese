@@ -8,9 +8,9 @@ from fastapi import APIRouter, Header, Query, Request
 from fastapi.responses import FileResponse
 
 from app.review import Actor
-from shared.documents import service
+from shared.documents import corpus, service
 from shared.documents.config import DocumentSettings
-from shared.documents.schemas import Decision, ManualImport, Search, Watch
+from shared.documents.schemas import Decision, ManualImport, Search, Selection, SpeciesKey, Watch
 from shared.review.database import ReviewError
 
 router = APIRouter(prefix="/documents", tags=["scientific-documents"])
@@ -18,6 +18,11 @@ router = APIRouter(prefix="/documents", tags=["scientific-documents"])
 
 def root() -> Path:
     return DocumentSettings().root.resolve()
+
+
+@router.get("/species")
+def species_catalog() -> list[dict[str, Any]]:
+    return corpus.catalog()
 
 
 @router.post("/search", status_code=202)
@@ -71,6 +76,7 @@ async def upload(
     title: str | None = Query(default=None, max_length=1000),
     doi: str | None = None,
     license: str | None = Query(default=None, max_length=500),
+    species: SpeciesKey | None = None,
 ) -> dict[str, Any]:
     # Transfert brut borné ; parsing, hash, langue et déduplication appartiennent au worker.
     if any(c in filename for c in "/\\:\x00"):
@@ -82,6 +88,7 @@ async def upload(
             title=title,
             doi=doi,
             license=license,
+            species=[species] if species else [],
         )
     except ValueError as exc:
         raise ReviewError(str(exc), 422) from exc
@@ -148,17 +155,12 @@ def listing(
         default=None, pattern="^(discovered|imported|indexed|rejected|inaccessible)$"
     ),
     approved_only: bool = False,
+    species: SpeciesKey | None = None,
+    selected_only: bool = False,
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
 ) -> list[dict[str, Any]]:
-    with service.transaction() as connection:
-        return connection.execute(
-            """SELECT * FROM scientific_documents WHERE merged_into IS NULL
-            AND (%s::text IS NULL OR status=%s)
-            AND (NOT %s OR (relevance='accepted' AND quality='accepted' AND status='indexed'))
-            ORDER BY updated_at DESC,id LIMIT %s OFFSET %s""",
-            (status, status, approved_only, limit, offset),
-        ).fetchall()
+    return corpus.listing(species, selected_only, status, approved_only, limit, offset)
 
 
 @router.get("/{identifier}")
@@ -167,6 +169,11 @@ def document(identifier: UUID) -> dict[str, Any]:
     with service.transaction() as connection:
         return {
             **row,
+            "species_links": corpus.links(str(row["id"])),
+            "selection_history": connection.execute(
+                "SELECT * FROM document_selection_history WHERE document_id=%s ORDER BY id",
+                (row["id"],),
+            ).fetchall(),
             "provenance": connection.execute(
                 "SELECT * FROM document_provenance WHERE document_id=%s ORDER BY id", (row["id"],)
             ).fetchall(),
@@ -183,6 +190,13 @@ def document(identifier: UUID) -> dict[str, Any]:
 @router.post("/{identifier}/review")
 def review(identifier: UUID, body: Decision, actor: Actor) -> dict[str, Any]:
     return service.review(str(identifier), body, actor)
+
+
+@router.put("/{identifier}/species/{species}")
+def select_source(
+    identifier: UUID, species: SpeciesKey, body: Selection, actor: Actor
+) -> dict[str, Any]:
+    return corpus.select(str(identifier), species, body.enabled, actor)
 
 
 @router.post("/{identifier}/fetch", status_code=202)
@@ -226,7 +240,7 @@ def pages(
 
 
 @router.get("/{identifier}/assets/{asset_id}", response_class=FileResponse)
-def asset(identifier: UUID, asset_id: UUID) -> FileResponse:
+def asset(identifier: UUID, asset_id: UUID, inline: bool = False) -> FileResponse:
     row = service.document(str(identifier))
     with service.transaction() as connection:
         file = connection.execute(
@@ -237,4 +251,10 @@ def asset(identifier: UUID, asset_id: UUID) -> FileResponse:
     target = (root() / file["storage_key"]).resolve()
     if not target.is_relative_to(root()) or not target.is_file():
         raise ReviewError("Fichier absent du stockage", 404)
-    return FileResponse(target, filename=f"{row['id']}.{file['format']}")
+    return FileResponse(
+        target,
+        filename=f"{row['id']}.{file['format']}",
+        media_type="application/pdf" if file["format"] == "pdf" else "application/octet-stream",
+        content_disposition_type="inline" if inline and file["format"] == "pdf" else "attachment",
+        headers={"X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox"},
+    )
