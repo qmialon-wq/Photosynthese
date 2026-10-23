@@ -95,13 +95,16 @@ def schedule() -> int:
             ORDER BY d.created_at FOR UPDATE OF d SKIP LOCKED LIMIT 50""").fetchall()
         queued = 0
         for row in rows:
-            if row["analysis_status"] in ("cancelled", "error"):
+            entries = inputs(connection, row)
+            if any(entry["analysis_status"] in ("cancelled", "error") for entry in entries):
                 connection.execute(
                     """UPDATE parcel_dossiers SET status='error',
-                    error='Analyse vidéo interrompue ou en erreur',finished_at=now() WHERE id=%s""",
+                    error='Une analyse du dossier est interrompue ou en erreur. '
+                          'Aucune vidéo ne sera écartée silencieusement.',finished_at=now()
+                    WHERE id=%s""",
                     (row["id"],),
                 )
-            elif row["analysis_status"] == "completed":
+            elif all(entry["analysis_status"] == "completed" for entry in entries):
                 task = documents.submit(
                     "rag",
                     {"action": "parcel", "body": {"dossier_id": str(row["id"])}},
@@ -117,15 +120,47 @@ def schedule() -> int:
         return queued
 
 
+def inputs(connection: Any, row: dict[str, Any]) -> list[dict[str, Any]]:
+    entries = connection.execute(
+        """SELECT v.*,t.status AS analysis_status,t.error AS analysis_error
+        FROM parcel_dossier_videos v JOIN console_tasks t ON t.id=v.analysis_id
+        WHERE v.dossier_id=%s ORDER BY v.ordinal""",
+        (row["id"],),
+    ).fetchall()
+    if entries:
+        return entries
+    video = console.video(row["video_id"])
+    task = console.task(str(row["analysis_id"]))
+    return [
+        {
+            "video_id": row["video_id"],
+            "filename": video["filename"],
+            "sha256": video["sha256"],
+            "analysis_id": row["analysis_id"],
+            "analysis_status": task["status"],
+            "analysis_error": task["error"],
+        }
+    ]
+
+
 def dossier(identifier: str) -> dict[str, Any]:
     with transaction() as connection:
         row = connection.execute(
-            """SELECT d.*,p.profile,t.status AS task_status,t.error AS task_error
-            FROM parcel_dossiers d JOIN parcel_profiles p
+            """SELECT d.*,coalesce(p.profile,c.profile) AS profile,
+            t.status AS task_status,t.error AS task_error
+            FROM parcel_dossiers d LEFT JOIN parcel_profiles p
             ON p.video_id=d.video_id AND p.revision=d.profile_revision
+            LEFT JOIN parcel_corpus_profiles c
+            ON c.corpus_id=d.corpus_id AND c.revision=d.profile_revision
             LEFT JOIN document_tasks t ON t.id=d.task_id WHERE d.id=%s""",
             (identifier,),
         ).fetchone()
+        if row:
+            row["videos"] = inputs(connection, row)
+            row["video_count"] = len(row["videos"])
+            row["completed_video_count"] = sum(
+                v["analysis_status"] == "completed" for v in row["videos"]
+            )
     if not row:
         raise ReviewError("Dossier introuvable", 404)
     if row["task_status"] == "error" and row["status"] != "completed":

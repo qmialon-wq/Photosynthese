@@ -145,11 +145,13 @@ test("import, analyse asynchrone et téléchargement JSON", async ({ page }) => 
     return route.fulfill({ json: [] });
   });
   await page.goto("/videos");
-  await page.getByLabel("Importer une vidéo", { exact: true }).setInputFiles({
-    name: "terrain.mp4",
-    mimeType: "video/mp4",
-    buffer: Buffer.from("test"),
-  });
+  await page
+    .getByLabel("Importer une ou plusieurs vidéos", { exact: true })
+    .setInputFiles({
+      name: "terrain.mp4",
+      mimeType: "video/mp4",
+      buffer: Buffer.from("test"),
+    });
   await expect(
     page.getByRole("heading", { name: "Configurer l’analyse" }),
   ).toBeVisible();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api, apiUrl, date, message, post, useResource } from "../api";
 import type { Operation, Species, Task, Video } from "../types";
@@ -23,36 +23,159 @@ const taskId = ref(""),
 const localPath = ref("");
 let controller: AbortController | null = null;
 let uploadId = "";
+const picked = ref<string[]>([]),
+  importTasks = ref<Array<{ id: string; filename: string }>>([]),
+  batchMode = ref(false),
+  creating = ref(false);
+type ImportState = {
+  id: string;
+  status: string;
+  error: string | null;
+  result: { video_id?: string } | null;
+};
+const importStates = ref<Record<string, ImportState>>({});
+const importsPending = computed(
+  () =>
+    batchMode.value &&
+    importTasks.value.some(
+      (t) =>
+        !["completed", "error", "cancelled"].includes(
+          importStates.value[t.id]?.status || "",
+        ),
+    ),
+);
+const seenCompleted = new Set<string>();
+let polling = false,
+  disposed = false,
+  pollTimer: ReturnType<typeof setInterval>;
+const pollAbort = new AbortController();
+async function pollImports() {
+  if (
+    !batchMode.value ||
+    !importTasks.value.length ||
+    !importsPending.value ||
+    polling ||
+    disposed
+  )
+    return;
+  polling = true;
+  try {
+    const rows = await api<ImportState[]>("/parcels/import-status", {
+      method: "POST",
+      body: JSON.stringify({ task_ids: importTasks.value.map((t) => t.id) }),
+      signal: pollAbort.signal,
+    });
+    if (disposed) return;
+    let refresh = false;
+    for (const row of rows) {
+      importStates.value[row.id] = row;
+      if (
+        row.status === "completed" &&
+        row.result?.video_id &&
+        !seenCompleted.has(row.id)
+      ) {
+        seenCompleted.add(row.id);
+        picked.value = [
+          ...new Set([...picked.value, row.result.video_id]),
+        ].slice(0, 1000);
+        refresh = true;
+      }
+    }
+    if (refresh) await videos.refresh();
+  } catch (reason) {
+    if (!disposed) error.value = message(reason);
+  } finally {
+    polling = false;
+  }
+}
+watch(
+  () => importTasks.value.length,
+  (value) => {
+    if (value === 1) void pollImports();
+  },
+);
+onMounted(() => {
+  pollTimer = setInterval(() => {
+    if (!document.hidden) void pollImports();
+  }, 3000);
+});
+onBeforeUnmount(() => {
+  disposed = true;
+  clearInterval(pollTimer);
+  pollAbort.abort();
+});
+const allPicked = computed(
+  () =>
+    !!videos.data.value?.length &&
+    videos.data.value.every((v) => picked.value.includes(v.id)),
+);
+function togglePage() {
+  const current = videos.data.value?.map((v) => v.id) || [];
+  picked.value = allPicked.value
+    ? picked.value.filter((id) => !current.includes(id))
+    : [...new Set([...picked.value, ...current])].slice(0, 1000);
+}
+async function createCorpus() {
+  creating.value = true;
+  error.value = "";
+  try {
+    const corpus = await post<{ id: string }>("/parcels/corpora", {
+      video_ids: picked.value,
+    });
+    await router.push(`/parcelles/${corpus.id}`);
+  } catch (reason) {
+    error.value = message(reason);
+  } finally {
+    creating.value = false;
+  }
+}
 async function upload(event: Event) {
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (!file) return;
+  const files = Array.from((event.target as HTMLInputElement).files || []);
+  if (!files.length) return;
+  if (files.length > 1000) {
+    error.value = "Importez au maximum 1000 vidéos par lot.";
+    return;
+  }
+  batchMode.value = files.length > 1 || picked.value.length > 0;
+  importTasks.value = [];
+  importStates.value = {};
+  seenCompleted.clear();
+  taskId.value = "";
   busy.value = true;
   error.value = "";
   progress.value = 0;
   controller = new AbortController();
   try {
-    const session = await post<{ id: string; chunk_size: number }>(
-      "/console/uploads",
-      { filename: file.name, size: file.size },
-    );
-    uploadId = session.id;
-    for (
-      let start = 0, index = 0;
-      start < file.size;
-      start += session.chunk_size, index++
-    ) {
-      await api(`/console/uploads/${uploadId}/chunks/${index}`, {
-        method: "PUT",
-        body: file.slice(start, start + session.chunk_size),
-        signal: controller.signal,
-      });
-      progress.value = Math.round(
-        (100 * Math.min(file.size, start + session.chunk_size)) / file.size,
+    const total = files.reduce((sum, file) => sum + file.size, 0);
+    let transferred = 0;
+    for (const file of files) {
+      const session = await post<{ id: string; chunk_size: number }>(
+        "/console/uploads",
+        { filename: file.name, size: file.size },
       );
+      uploadId = session.id;
+      for (
+        let start = 0, index = 0;
+        start < file.size;
+        start += session.chunk_size, index++
+      ) {
+        await api(`/console/uploads/${uploadId}/chunks/${index}`, {
+          method: "PUT",
+          body: file.slice(start, start + session.chunk_size),
+          signal: controller.signal,
+        });
+        progress.value = Math.round(
+          (100 *
+            (transferred + Math.min(file.size, start + session.chunk_size))) /
+            total,
+        );
+      }
+      const imported = (
+        await post<Operation>(`/console/uploads/${uploadId}/complete`)
+      ).id;
+      importTasks.value.push({ id: imported, filename: file.name });
+      transferred += file.size;
     }
-    taskId.value = (
-      await post<Operation>(`/console/uploads/${uploadId}/complete`)
-    ).id;
   } catch (reason) {
     error.value = controller?.signal.aborted
       ? "Transfert annulé."
@@ -73,6 +196,7 @@ async function cancelUpload() {
   }
 }
 async function local() {
+  batchMode.value = false;
   busy.value = true;
   error.value = "";
   try {
@@ -87,7 +211,12 @@ async function local() {
 }
 async function prepared(task: Task) {
   await videos.refresh();
-  if (task.result?.video_id)
+  if (task.result?.video_id && batchMode.value) {
+    picked.value = [...new Set([...picked.value, task.result.video_id])].slice(
+      0,
+      1000,
+    );
+  } else if (task.result?.video_id)
     void router.push({
       path: "/analyses",
       query: { video: task.result.video_id },
@@ -104,11 +233,12 @@ async function prepared(task: Task) {
       </p>
     </div>
     <label class="button-link upload-button"
-      ><i class="pi pi-plus" /> Importer une vidéo<input
+      ><i class="pi pi-plus" /> Importer des vidéos<input
         type="file"
+        multiple
         accept="video/*,.mkv,.avi,.m4v"
-        :disabled="busy"
-        aria-label="Importer une vidéo"
+        :disabled="busy || importsPending"
+        aria-label="Importer une ou plusieurs vidéos"
         @change="upload"
     /></label>
   </div>
@@ -122,6 +252,74 @@ async function prepared(task: Task) {
   </div>
   <p v-if="error" class="notice error" role="alert">{{ error }}</p>
   <TaskPanel v-if="taskId" :id="taskId" @completed="prepared" />
+  <div v-for="item in batchMode ? [] : importTasks" :key="item.id">
+    <p>{{ item.filename }}</p>
+    <TaskPanel :id="item.id" @completed="prepared" />
+  </div>
+  <section
+    v-if="batchMode && importTasks.length"
+    class="panel"
+    aria-label="Import du corpus"
+  >
+    <h2>Import des vidéos</h2>
+    <p role="status">
+      {{ seenCompleted.size }} / {{ importTasks.length }} vidéos prêtes.
+    </p>
+    <details>
+      <summary>Voir le détail des imports</summary>
+      <ul>
+        <li v-for="item in importTasks" :key="item.id">
+          {{ item.filename }} ·
+          {{
+            importStates[item.id]?.status === "completed"
+              ? "Prête"
+              : importStates[item.id]?.status === "error"
+                ? "Échec de l’import"
+                : "Préparation en cours"
+          }}
+          <p
+            v-if="importStates[item.id]?.error"
+            role="alert"
+            class="notice error"
+          >
+            {{ importStates[item.id].error }}
+          </p>
+        </li>
+      </ul>
+    </details>
+    <p
+      v-if="
+        Object.values(importStates).some((s) =>
+          ['error', 'cancelled'].includes(s.status),
+        )
+      "
+      class="notice error"
+      role="alert"
+    >
+      Certains imports ont échoué ou ont été annulés. Ils ne font pas partie de
+      la sélection. Réimportez ces fichiers pour constituer le corpus complet.
+    </p>
+  </section>
+  <section class="panel" aria-label="Vidéos du dossier">
+    <h2>Un dossier pour plusieurs vidéos</h2>
+    <p>
+      Sélectionnez les vidéos d’une même parcelle, puis remplissez le formulaire
+      une seule fois.
+    </p>
+    <div class="actions">
+      <PButton
+        :label="`Préparer un dossier (${picked.length} vidéo${picked.length > 1 ? 's' : ''})`"
+        :loading="creating"
+        :disabled="busy || creating || importsPending || !picked.length"
+        @click="createCorpus"
+      /><PButton
+        label="Effacer la sélection"
+        severity="secondary"
+        :disabled="!picked.length"
+        @click="picked = []"
+      /><RouterLink to="/parcelles">Retrouver mes dossiers</RouterLink>
+    </div>
+  </section>
   <details v-if="route.path.startsWith('/admin')" class="panel">
     <summary>Indexer une vidéo déjà déposée dans le dossier local</summary>
     <form class="inline-form" @submit.prevent="local">
@@ -134,6 +332,10 @@ async function prepared(task: Task) {
     </form>
   </details>
   <section class="panel">
+    <label class="check-line"
+      ><input type="checkbox" :checked="allPicked" @change="togglePage" />
+      Sélectionner les vidéos de cette page</label
+    >
     <div class="toolbar">
       <label class="search-field"
         ><i class="pi pi-search" /><input
@@ -179,6 +381,16 @@ async function prepared(task: Task) {
           :key="video.id"
           class="video-card"
         >
+          <label class="check-line"
+            ><input
+              v-model="picked"
+              type="checkbox"
+              :value="video.id"
+              :aria-label="`Sélectionner ${video.filename}`"
+              :disabled="picked.length >= 1000 && !picked.includes(video.id)"
+            />
+            Inclure dans le dossier</label
+          >
           <button
             class="video-thumbnail"
             :aria-label="`Prévisualiser ${video.filename}`"

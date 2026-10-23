@@ -13,11 +13,12 @@ test("vidéo réelle : transfert navigateur, inférence worker, MP4 lisible et r
   );
   await page.goto("/videos");
   await page
-    .getByLabel("Importer une vidéo", { exact: true })
+    .getByLabel("Importer une ou plusieurs vidéos", { exact: true })
     .setInputFiles(process.env.BIOSENTINELLE_LIVE_VIDEO!);
   await expect(
     page.getByRole("heading", { name: "Configurer l’analyse" }),
   ).toBeVisible({ timeout: 60000 });
+  await page.getByLabel("Recevoir mon dossier biodiversité").uncheck();
   await page.getByLabel("Niveau de détail").selectOption("fast");
   if (process.env.BIOSENTINELLE_LIVE_CLASSIFY === "1")
     await page.getByLabel("Objectif de l'analyse").selectOption("false");

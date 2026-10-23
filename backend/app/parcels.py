@@ -7,9 +7,9 @@ from pydantic import Field
 
 from app.review import Actor
 from shared.documents.schemas import Body
-from shared.parcels import service
-from shared.parcels.schemas import Profile
-from shared.review.database import ReviewError
+from shared.parcels import corpora, service
+from shared.parcels.schemas import CorpusCreate, CorpusRequest, Profile
+from shared.review.database import ReviewError, transaction
 
 router = APIRouter(prefix="/parcels", tags=["parcel-projects"])
 
@@ -19,9 +19,48 @@ class DossierRequest(Body):
     profile_revision: int = Field(gt=0)
 
 
+class Imports(Body):
+    task_ids: list[UUID] = Field(min_length=1, max_length=1000)
+
+
+@router.post("/import-status")
+def import_status(body: Imports) -> list[dict[str, Any]]:
+    with transaction() as connection:
+        return connection.execute(
+            """SELECT id,status,result,error FROM console_tasks
+            WHERE id=ANY(%s::uuid[]) AND kind='import_upload'""",
+            ([str(i) for i in body.task_ids],),
+        ).fetchall()
+
+
 @router.get("/options")
 def options() -> dict[str, Any]:
     return service.options()
+
+
+@router.post("/corpora", status_code=201)
+def create_corpus(body: CorpusCreate, actor: Actor) -> dict[str, Any]:
+    return corpora.create(body.video_ids, actor)
+
+
+@router.get("/corpora")
+def corpus_list() -> list[dict[str, Any]]:
+    return corpora.listing()
+
+
+@router.get("/corpora/{identifier}")
+def corpus(identifier: UUID) -> dict[str, Any]:
+    return corpora.read(str(identifier))
+
+
+@router.put("/corpora/{identifier}/profile")
+def corpus_profile(identifier: UUID, body: Profile, actor: Actor) -> dict[str, Any]:
+    return corpora.save(str(identifier), body, actor)
+
+
+@router.post("/corpora/{identifier}/dossiers", status_code=202)
+def corpus_dossier(identifier: UUID, body: CorpusRequest, actor: Actor) -> dict[str, Any]:
+    return corpora.request(str(identifier), body.profile_revision, actor)
 
 
 @router.get("/videos/{video_id}")

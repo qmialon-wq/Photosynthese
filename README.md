@@ -1,8 +1,9 @@
 # BioSentinelle Normandie
 
 Le [parcours vidéo → parcelle → dossier biodiversité](docs/PARCEL_DOSSIERS.md)
-permet de renseigner surface, terrain et projet, puis de retrouver la vidéo annotée
-et un dossier textuel organisé avec des pistes sourcées. Les recommandations restent
+permet de sélectionner plusieurs vidéos d'une même parcelle, de renseigner une seule
+fois surface, terrain et projet, puis de retrouver les vidéos annotées et un dossier
+textuel commun dans **Mes dossiers**. Les recommandations restent
 conditionnelles lorsque les espèces ne sont pas confirmées ; aucun pourcentage de
 terrain vert n'est inventé.
 

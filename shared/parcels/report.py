@@ -171,7 +171,9 @@ def render(data: dict[str, Any], *, markdown: bool = False) -> str:
         f"Type : {data['land_label']} — Projet : {data['project_label']}",
         f"Commune / secteur : {data['profile'].get('locality') or 'Non renseigné'}",
         data["profile"].get("details", ""),
-        heading("2. Ce que montre la vidéo"),
+        heading("2. Ce que montrent les vidéos"),
+        f"Corpus : {data.get('video_count', 1)} vidéo(s) distincte(s). "
+        "Des détections répétées ne sont pas un décompte d'individus.",
         data["observation_summary"],
     ]
     for row in data["confirmed_species"]:
@@ -211,10 +213,17 @@ def render(data: dict[str, Any], *, markdown: bool = False) -> str:
             f"Provenance : {source['source_url']} — licence : {source['license']}",
             f"Empreinte du document : {source['asset_sha256']}",
         ]
+    lines += [heading("7. Vidéos et versions des données")]
+    for video in data.get("videos", []):
+        lines += [
+            f"- {video['filename']} : {video['annotated_video_url']}",
+            f"  Analyse : {video['analysis_id']} — original : {video['sha256']}",
+            f"  Empreinte du rapport : {video['report_sha256']}",
+        ]
+    if not data.get("videos"):
+        lines.append(f"Vidéo annotée : {data['annotated_video_url']}")
     lines += [
-        heading("7. Vidéo et versions des données"),
-        f"Vidéo annotée : {data['annotated_video_url']}",
-        f"Analyse : {data['analysis_id']} — formulaire : révision {data['profile_revision']}",
+        f"Formulaire : révision {data['profile_revision']}",
         f"Empreinte du contexte : {data['snapshot_sha256']}",
         "Ce dossier est un instantané. Après une correction d'espèce ou du projet, "
         "actualiser le dossier pour intégrer les nouvelles informations.",

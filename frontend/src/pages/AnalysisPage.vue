@@ -110,11 +110,20 @@ function prepared(task: Task) {
         video_id: task.result.video_id,
         return_video: videoId.value,
         return_task: taskId.value,
+        return_corpus: route.query.corpus
+          ? String(route.query.corpus)
+          : undefined,
       },
     });
 }
 </script>
 <template>
+  <RouterLink
+    v-if="route.query.corpus"
+    class="button-link secondary"
+    :to="`/parcelles/${String(route.query.corpus)}`"
+    >Revenir au dossier commun</RouterLink
+  >
   <div class="page-heading">
     <div>
       <p class="eyebrow">DÉTECTION · CLASSIFICATION · SUIVI</p>

@@ -59,3 +59,11 @@ def test_similar_words_do_not_support_unrelated_land_design():
     lighting = "We recommend reducing artificial lighting near wildlife habitats."
     assert supporting_sentence(THEMES[2], lighting)
     assert supporting_sentence(THEMES[3], lighting) is None
+
+
+def test_corpus_accepts_base_dataset_size_and_rejects_empty():
+    from shared.parcels.schemas import CorpusCreate
+
+    assert len(CorpusCreate(video_ids=[str(i) for i in range(342)]).video_ids) == 342
+    with pytest.raises(ValidationError):
+        CorpusCreate(video_ids=[])

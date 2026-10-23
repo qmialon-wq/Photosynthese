@@ -12,6 +12,7 @@ from starlette.concurrency import run_in_threadpool
 
 from app.review import Actor, stored_file
 from shared import console
+from shared.analysis_settings import AnalysisOptions as Analysis
 from shared.base_dataset import BASE_DATASET_ID, describe_base_dataset
 from shared.review.database import ReviewError, transaction
 from shared.review.schemas import Operation
@@ -49,17 +50,6 @@ class LocalVideo(Body):
     @classmethod
     def relative(cls, value: str) -> str:
         return AnalysisRequest(video=value).video
-
-
-class Analysis(Body):
-    parcel_revision: int | None = Field(default=None, gt=0)
-    detection_only: bool = False
-    detection_threshold: float = Field(default=0.1, ge=0.005, le=1)
-    classification_threshold: float = Field(default=0.48, ge=0, le=1)
-    track_threshold: float = Field(default=0.6, ge=0, le=1)
-    track_min_hits: int = Field(default=2, ge=1, le=100)
-    infer_every_n_frames: int = Field(default=2, ge=1, le=1000)
-    shadow_model_id: UUID | None = None
 
 
 class Training(Body):

@@ -1,9 +1,27 @@
 # Parcelle, vidéo et dossier biodiversité
 
-Le parcours client part de la vidéothèque : importer une vidéo, puis remplir les
-trois champs **surface en m²**, **type de parcelle**, **projet souhaité** sur la page
-d'analyse. La commune et les précisions sont facultatives. Décocher « Recevoir mon
-dossier biodiversité » permet de conserver une analyse vidéo seule.
+Le parcours client part de la vidéothèque : importer plusieurs vidéos ou sélectionner
+les vidéos déjà présentes d'une même parcelle, puis cliquer sur **Préparer un dossier**.
+Le groupe accepte de 1 à 1 000 fichiers, dont le corpus de base de 342 vidéos.
+Les fichiers physiquement identiques sont dédupliqués par SHA256, même s'ils ont des
+identifiants d'import différents.
+
+Une seule page demande **surface en m²**, **type de parcelle**, **projet souhaité**
+pour tout le groupe. La commune et les précisions sont facultatives. Un bouton
+**Analyser les vidéos et préparer mon dossier** lance le parcours complet.
+
+Les analyses déjà réussies sont réutilisées ; les analyses actives restent suivies
+et les autres vidéos sont soumises à la file vision existante. La réservation GPU
+unique est conservée. Une vidéo en échec ou annulée bloque explicitement le dossier :
+aucun fichier n'est retiré silencieusement. Une relance réutilise les succès et
+resoumet les vidéos en erreur. Chaque dossier fige ses vidéos, leurs analyses et la
+révision du formulaire. Le modèle actif est enregistré dans les nouvelles tâches
+d'analyse ; sans classificateur actif, elles utilisent la détection seule.
+
+La navigation **Mes dossiers** (`/parcelles`) permet de retrouver les groupes et
+leur avancement après fermeture ou rechargement du navigateur. L'import individuel
+et les anciens dossiers attachés à une analyse restent accessibles sur la page
+d'analyse ; ils ne sont pas migrés ni supprimés.
 
 Les cinq terrains proposés sont bois, pâturage, friche, terrain constructible et
 terrain artificialisé. Les projets sont habitation, culture, élevage, parc/jardin
@@ -32,16 +50,21 @@ indexées, validées en pertinence/qualité et activées dans le corpus RAG.
 
 ## Ce que reçoit l'utilisateur
 
-Après l'analyse, la même page propose la vidéo annotée et un bouton
-**Télécharger mon dossier (.txt)**. Le fichier UTF-8 est organisé ainsi :
+Après toutes les analyses, la page du groupe propose chaque vidéo annotée et un bouton
+**Télécharger mon dossier commun (.txt)**. Le fichier UTF-8 est organisé ainsi :
 
 1. Parcelle et projet.
-2. Résultats de la vidéo, espèces confirmées et hypothèses automatiques.
+2. Résultats du corpus, espèces confirmées et hypothèses automatiques.
 3. Pistes sur végétation, continuités, éclairage, perméabilité, eau et calendrier.
 4. Part de terrain vert : ce qui peut ou ne peut pas être chiffré.
 5. Questions de conception selon le terrain et l'activité, prochaines étapes.
 6. Sources réellement utilisées, DOI, pages, passages, licences et empreintes.
-7. Lien vers la vidéo annotée et versions des données.
+7. Liens vers toutes les vidéos annotées, analyses et empreintes des rapports.
+
+Les espèces sont réunies sans additionner les passages comme des individus.
+Le score d'une hypothèse agrégée est le maximum des scores des images retenues,
+pas une probabilité de présence calculée sur le corpus. Les résultats par vidéo,
+les références des annotations humaines et les fichiers originaux restent traçables.
 
 Les pistes sont proposées par un moteur de règles conservateur, **sans LLM** :
 il exige une phrase de recommandation explicite et une intervention correspondant
@@ -93,6 +116,12 @@ ne sont pas utilisées pour une nouvelle préparation. Aucun entraînement n'est
 | Endpoint | Usage |
 | --- | --- |
 | `GET /parcels/options` | Choix canoniques du formulaire |
+| `POST /parcels/corpora` | Créer un groupe avec `video_ids` ; déduplication par empreinte |
+| `GET /parcels/corpora` | Retrouver les groupes créés |
+| `GET /parcels/corpora/{id}` | Formulaire, vidéos, avancement et dossier commun |
+| `PUT /parcels/corpora/{id}/profile` | Enregistrer le formulaire commun avec `expected_revision` |
+| `POST /parcels/corpora/{id}/dossiers` | Réutiliser/soumettre les analyses et préparer un dossier |
+| `POST /parcels/import-status` | État d'un lot d'imports en une requête, avec `task_ids` |
 | `GET /parcels/videos/{video_id}?analysis_id={uuid}` | Profil et dernier dossier de cette analyse |
 | `PUT /parcels/videos/{video_id}` | Enregistrer le formulaire avec `expected_revision` |
 | `POST /console/videos/{video_id}/analyze` | Ajouter `parcel_revision` pour la préparation automatique |
@@ -107,7 +136,7 @@ ne sont pas utilisées pour une nouvelle préparation. Aucun entraînement n'est
 docker compose --profile test run --rm tests pytest tests/test_parcel_contracts.py tests/documents -m 'not real_model'
 cd frontend
 npm test
-npm run test:e2e -- tests/e2e/parcel.spec.ts
+npm run test:e2e -- tests/e2e/parcel.spec.ts tests/e2e/corpus.spec.ts
 ```
 
 Fixtures synthétiques uniquement dans les tests : aucun modèle simulé ni document

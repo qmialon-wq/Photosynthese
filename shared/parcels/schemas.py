@@ -27,3 +27,11 @@ class Profile(Body):
     locality: str = Field(default="", max_length=200)
     details: str = Field(default="", max_length=1000)
     expected_revision: int = Field(default=0, ge=0)
+
+
+class CorpusCreate(Body):
+    video_ids: list[str] = Field(min_length=1, max_length=1000)
+
+
+class CorpusRequest(Body):
+    profile_revision: int = Field(gt=0)

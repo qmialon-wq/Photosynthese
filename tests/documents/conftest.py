@@ -52,6 +52,14 @@ def document_db(monkeypatch, tmp_path):
             console_spec.loader.exec_module(console_migration)
             monkeypatch.setattr(console_migration.op, "execute", connection.execute)
             console_migration.upgrade()
+            registry_spec = importlib.util.spec_from_file_location(
+                "corpus_registry_migration",
+                Path("backend/migrations/versions/0005_classifier_registry.py"),
+            )
+            registry_migration = importlib.util.module_from_spec(registry_spec)
+            registry_spec.loader.exec_module(registry_migration)
+            monkeypatch.setattr(registry_migration.op, "execute", connection.execute)
+            registry_migration.upgrade()
             monkeypatch.setattr(migration.op, "execute", connection.execute)
             migration.upgrade()
             spec = importlib.util.spec_from_file_location(
@@ -84,6 +92,13 @@ def document_db(monkeypatch, tmp_path):
             parcel_spec.loader.exec_module(parcel_migration)
             monkeypatch.setattr(parcel_migration.op, "execute", connection.execute)
             parcel_migration.upgrade()
+            corpus_spec = importlib.util.spec_from_file_location(
+                "corpus_migration", Path("backend/migrations/versions/0011_video_corpora.py")
+            )
+            corpus_migration = importlib.util.module_from_spec(corpus_spec)
+            corpus_spec.loader.exec_module(corpus_migration)
+            monkeypatch.setattr(corpus_migration.op, "execute", connection.execute)
+            corpus_migration.upgrade()
         yield DocumentSettings(root=tmp_path / "documents", request_interval=0.2)
     finally:
         admin.execute(sql.SQL("DROP SCHEMA {} CASCADE").format(sql.Identifier(schema)))

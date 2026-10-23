@@ -140,7 +140,9 @@ async function decide(decision: "validate" | "reject" | "reopen") {
     v-if="route.query.return_video"
     class="button-link secondary"
     :to="{
-      path: '/analyses',
+      path: route.query.return_corpus
+        ? `/parcelles/${String(route.query.return_corpus)}`
+        : '/analyses',
       query: {
         video: String(route.query.return_video),
         task: String(route.query.return_task || ''),

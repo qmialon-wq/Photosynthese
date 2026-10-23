@@ -76,7 +76,8 @@ def build(identifier: str) -> dict[str, Any]:
     if dossier["status"] == "completed":
         return {"dossier_id": identifier, "status": "completed"}
     profile = dossier["profile"]
-    context = evidence_context(dossier["video_id"], str(dossier["analysis_id"]))
+    contexts = [evidence_context(v["video_id"], str(v["analysis_id"])) for v in dossier["videos"]]
+    context = aggregate(contexts)
     settings, mode, warning = RagSettings(), "hybrid", None
     try:
         model = embeddings.load(settings)
@@ -141,7 +142,7 @@ def build(identifier: str) -> dict[str, Any]:
         summary += "jusqu'à leur confirmation humaine. Les images répétées "
         summary += "ne dénombrent pas des individus."
     result = {
-        "version": "parcel-evidence-v1",
+        "version": "parcel-evidence-v2",
         "created_at": datetime.now(UTC).isoformat(),
         "profile": profile,
         "profile_revision": dossier["profile_revision"],
@@ -149,6 +150,22 @@ def build(identifier: str) -> dict[str, Any]:
         "project_label": PROJECT_TYPES[profile["project_type"]],
         "analysis_id": str(dossier["analysis_id"]),
         "video_id": dossier["video_id"],
+        "corpus_id": str(dossier["corpus_id"]) if dossier["corpus_id"] else None,
+        "videos": [
+            {
+                "video_id": v["video_id"],
+                "filename": v["filename"],
+                "sha256": v["sha256"],
+                "analysis_id": str(v["analysis_id"]),
+                "annotated_video_url": f"/console/tasks/{v['analysis_id']}/artifacts/video",
+                "report_sha256": c["report_sha256"],
+                "detections": c["detections"],
+                "frames_decoded": c["frames_decoded"],
+                "confirmed_species": c["confirmed_species"],
+                "predicted_species": c["predicted_species"],
+            }
+            for v, c in zip(dossier["videos"], contexts, strict=True)
+        ],
         "annotated_video_url": f"/console/tasks/{dossier['analysis_id']}/artifacts/video",
         **context,
         "observation_summary": summary,
@@ -174,7 +191,7 @@ def build(identifier: str) -> dict[str, Any]:
         ],
         "limitations": [
             "Pistes de conception inférées, sans garantie d'efficacité sur ce site.",
-            "Une courte vidéo ne constitue pas un inventaire complet de la biodiversité.",
+            "Ces vidéos ne constituent pas un inventaire complet de la biodiversité.",
             "La localisation déclarée n'établit pas la transférabilité des publications.",
             "Les phrases sources peuvent rester en anglais ; les traductions sont "
             "consultables dans la bibliothèque documentaire.",
@@ -199,3 +216,26 @@ def build(identifier: str) -> dict[str, Any]:
             connection=connection,
         )
     return {"dossier_id": identifier, "status": "completed"}
+
+
+def aggregate(contexts: list[dict[str, Any]]) -> dict[str, Any]:
+    confirmed, predicted, observed = {}, {}, {}
+    for context in contexts:
+        for row in context["confirmed_species"]:
+            confirmed[row["name"]] = row
+        for row in context["predicted_species"]:
+            if row["score"] > predicted.get(row["name"], {}).get("score", -1):
+                predicted[row["name"]] = row
+        for row in context["observations"]:
+            observed[row["sample_id"]] = row
+    return {
+        "confirmed_species": [confirmed[k] for k in sorted(confirmed)],
+        "predicted_species": [predicted[k] for k in sorted(predicted) if k not in confirmed],
+        "observations": list(observed.values()),
+        "uncertain_detections": sum(c["uncertain_detections"] for c in contexts),
+        "unclassified_detections": sum(c["unclassified_detections"] for c in contexts),
+        "detections": sum(c["detections"] for c in contexts),
+        "frames_decoded": sum(c["frames_decoded"] for c in contexts),
+        "video_count": len(contexts),
+        "report_sha256": service.snapshot_sha([c["report_sha256"] for c in contexts]),
+    }

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 export const navigation = [
   { path: "/", label: "Accueil", icon: "pi-th-large" },
   { path: "/videos", label: "Vidéothèque", icon: "pi-video" },
+  { path: "/parcelles", label: "Mes dossiers", icon: "pi-folder" },
   { path: "/analyses", label: "Analyses", icon: "pi-sparkles" },
   { path: "/review", label: "Validation humaine", icon: "pi-check-square" },
   { path: "/documents", label: "Documents scientifiques", icon: "pi-book" },
@@ -39,6 +40,14 @@ export const router = createRouter({
       component: () => import("./pages/AnalysisPage.vue"),
     },
     { path: "/videos", component: () => import("./pages/VideosPage.vue") },
+    {
+      path: "/parcelles",
+      component: () => import("./pages/ParcelCorpusPage.vue"),
+    },
+    {
+      path: "/parcelles/:id",
+      component: () => import("./pages/ParcelCorpusPage.vue"),
+    },
     { path: "/analyses", component: () => import("./pages/AnalysisPage.vue") },
     { path: "/review", component: () => import("./pages/ReviewPage.vue") },
     {

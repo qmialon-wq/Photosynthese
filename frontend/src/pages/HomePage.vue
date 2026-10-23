@@ -12,8 +12,8 @@ const tasks = useResource<Task[]>(
       <p class="eyebrow">BIOSENTINELLE NORMANDIE</p>
       <h1>Vos observations, simplement.</h1>
       <p class="subtitle">
-        Ajoutez une vidéo, décrivez votre parcelle et retrouvez la vidéo annotée
-        avec votre dossier biodiversité.
+        Ajoutez les vidéos d’une même parcelle, décrivez votre projet et
+        retrouvez les vidéos annotées avec un dossier biodiversité commun.
       </p>
     </div>
     <RouterLink to="/videos" class="button-link"
@@ -26,17 +26,17 @@ const tasks = useResource<Task[]>(
       ><span class="eyebrow">01 · IMPORTER</span
       ><i class="pi pi-video" aria-hidden="true" />
       <h2>Vos vidéos de terrain</h2>
-      <p>Ajoutez un fichier depuis votre ordinateur et lancez une analyse.</p>
+      <p>Importez plusieurs vidéos ou sélectionnez celles de votre parcelle.</p>
       <span>Ouvrir la vidéothèque →</span></RouterLink
     >
-    <RouterLink to="/analyses" class="panel journey-card"
+    <RouterLink to="/parcelles" class="panel journey-card"
       ><span class="eyebrow">02 · DÉCRIRE VOTRE PROJET</span
       ><i class="pi pi-sparkles" aria-hidden="true" />
       <h2>Votre parcelle, votre projet</h2>
       <p>Indiquez la surface, le type de terrain et l’activité souhaitée.</p>
       <span>Voir les analyses →</span></RouterLink
     >
-    <RouterLink to="/analyses" class="panel journey-card"
+    <RouterLink to="/parcelles" class="panel journey-card"
       ><span class="eyebrow">03 · RETROUVER VOS RÉSULTATS</span
       ><i class="pi pi-check-square" aria-hidden="true" />
       <h2>Un dossier pour aménager</h2>
