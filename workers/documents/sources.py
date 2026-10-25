@@ -87,14 +87,16 @@ class OpenAlex(SourceAdapter):
     name = "openalex"
 
     def search(self, query: Search) -> Iterator[Publication]:
-        result = self.http.json(
-            "https://api.openalex.org/works",
-            {
-                "search": terms(query, boolean=True),
-                "per-page": retrieval_limit(query),
-            },
-        )
-        yield from self.parse_items(result.get("results", []))
+        size = retrieval_limit(query)
+        for page in range(1, query.max_pages + 1):
+            result = self.http.json(
+                "https://api.openalex.org/works",
+                {"search": terms(query, boolean=True), "per-page": size, "page": page},
+            )
+            items = result.get("results", [])
+            yield from self.parse_items(items)
+            if len(items) < size:
+                break
 
     @staticmethod
     def parse(item: dict[str, Any]) -> Publication:
@@ -177,16 +179,25 @@ class EuropePMC(SourceAdapter):
     name = "europepmc"
 
     def search(self, query: Search) -> Iterator[Publication]:
-        data = self.http.json(
-            "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
-            {
-                "query": terms(query, boolean=True),
-                "format": "json",
-                "resultType": "core",
-                "pageSize": retrieval_limit(query),
-            },
-        )
-        yield from self.parse_items(data.get("resultList", {}).get("result", []))
+        cursor = "*"
+        seen = {cursor}
+        for _ in range(query.max_pages):
+            data = self.http.json(
+                "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+                {
+                    "query": terms(query, boolean=True),
+                    "format": "json",
+                    "resultType": "core",
+                    "pageSize": retrieval_limit(query),
+                    "cursorMark": cursor,
+                },
+            )
+            items = data.get("resultList", {}).get("result", [])
+            yield from self.parse_items(items)
+            cursor = data.get("nextCursorMark")
+            if not items or not cursor or cursor in seen:
+                break
+            seen.add(cursor)
 
     @staticmethod
     def parse(item: dict[str, Any]) -> Publication:

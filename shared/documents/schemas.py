@@ -40,6 +40,7 @@ class Search(Body):
     topics: list[str] = Field(default_factory=list, max_length=10)
     sources: list[SourceName] = Field(default=["openalex", "crossref", "europepmc"], min_length=1)
     limit_per_source: int = Field(default=20, ge=1, le=100)
+    max_pages: int = Field(default=1, ge=1, le=10)
     download_fulltext: bool = False
     focus: Literal["general", "human_activities"] = "general"
     activity: Literal[

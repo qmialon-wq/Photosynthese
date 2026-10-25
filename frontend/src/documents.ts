@@ -61,6 +61,9 @@ export interface DocumentTask {
     inaccessible?: number;
     filtered_out?: number;
     downloaded?: number;
+    corpus_count?: number;
+    target?: number;
+    target_reached?: boolean;
   } | null;
 }
 export interface DocumentPage {

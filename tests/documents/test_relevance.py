@@ -17,6 +17,8 @@ def publication(title: str, abstract: str | None = None) -> Publication:
         ("Effects of urban development on nocturnal activity", True),
         ("Éclairage routier : effets sur l'activité des renards", True),
         ("Les haies améliorent la survie des geais", True),
+        ("Diet and habitat use of suburban Vulpes vulpes", True),
+        ("Population ecology of Capreolus capreolus in cropland", True),
         ("Babesia infection in red foxes: a clinical study", False),
         ("Road engineering materials and asphalt properties", False),
         ("Broad ecological effects in Vulpes vulpes", False),

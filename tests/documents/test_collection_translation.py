@@ -42,6 +42,8 @@ def test_collection_all_species_is_async_and_deduplicates_active_tasks(document_
         assert task["status"] == "queued"
         assert task["request"]["search"]["download_fulltext"] is True
         assert task["request"]["search"]["focus"] == "human_activities"
+        assert task["request"]["collection_target"] == 100
+        assert task["request"]["search"]["max_pages"] == 10
         assert client.post("/documents/collect", json={"species": ["unknown"]}).status_code == 422
 
 
@@ -185,9 +187,11 @@ def test_failed_download_is_hidden_and_next_candidate_is_downloaded(
         document_db,
         client=httpx.Client(
             transport=httpx.MockTransport(
-                lambda request: httpx.Response(404)
-                if "unavailable" in str(request.url)
-                else httpx.Response(200, content=pdf_bytes)
+                lambda request: (
+                    httpx.Response(404)
+                    if "unavailable" in str(request.url)
+                    else httpx.Response(200, content=pdf_bytes)
+                )
             )
         ),
         validate=lambda _: None,
@@ -201,3 +205,109 @@ def test_failed_download_is_hidden_and_next_candidate_is_downloaded(
     with TestClient(app) as client:
         rows = client.get("/documents?stored_only=true&species=renards").json()
         assert len(rows) == 1 and rows[0]["title"].endswith(" available")
+
+
+def test_duplicates_across_sources_do_not_fill_collection_budget(document_db, monkeypatch):
+    from shared.documents.schemas import FullText, Search
+    from workers.documents import ingestion
+
+    class Source:
+        def __init__(self, _):
+            pass
+
+        def search(self, _):
+            for key in ("same", "same", "second"):
+                yield Publication(
+                    source="openalex",
+                    source_id=key,
+                    title="Urban fox ecology " + key,
+                    fulltexts=[
+                        FullText(
+                            url=f"https://example.test/{key}.pdf",
+                            license="cc-by",
+                            evidence="Fixture",
+                        )
+                    ],
+                )
+
+    for name in ("openalex", "europepmc"):
+        monkeypatch.setitem(ingestion.SOURCES, name, Source)
+    fetched = []
+    monkeypatch.setattr(
+        ingestion.Ingestor, "fetch", lambda self, identifier: fetched.append(identifier) or {}
+    )
+    request = {
+        "search": Search(
+            species=["Vulpes vulpes"],
+            sources=["openalex", "europepmc"],
+            limit_per_source=1,
+            download_fulltext=True,
+        ).model_dump()
+    }
+    task = service.submit("search", request, "test")["id"]
+    http = SafeHTTP(document_db)
+    try:
+        result = ingestion.Ingestor(document_db, http, task).search(
+            request,
+            stored=set(),
+            total_limit=2,
+        )
+    finally:
+        http.close()
+    assert result["downloaded"] == 2
+    assert len(fetched) == len(set(fetched)) == 2
+
+
+def test_identical_files_without_doi_count_once(document_db, pdf_bytes, monkeypatch):
+    import httpx
+
+    from shared.documents.schemas import FullText, Search
+    from workers.documents import ingestion
+
+    class Source:
+        def __init__(self, _):
+            pass
+
+        def search(self, _):
+            for key in ("first", "second"):
+                yield Publication(
+                    source="openalex",
+                    source_id=key,
+                    title="Urban ecology " + key,
+                    fulltexts=[
+                        FullText(
+                            url=f"https://example.test/{key}.pdf",
+                            license="cc-by",
+                            evidence="Fixture",
+                        )
+                    ],
+                )
+
+    monkeypatch.setitem(ingestion.SOURCES, "openalex", Source)
+    request = {
+        "search": Search(
+            species=["Vulpes vulpes"],
+            sources=["openalex"],
+            limit_per_source=2,
+            download_fulltext=True,
+        ).model_dump()
+    }
+    task = service.submit("search", request, "test")["id"]
+    http = SafeHTTP(
+        document_db,
+        client=httpx.Client(
+            transport=httpx.MockTransport(
+                lambda _: httpx.Response(200, content=pdf_bytes),
+            )
+        ),
+        validate=lambda _: None,
+        sleep=lambda _: None,
+    )
+    try:
+        result = ingestion.Ingestor(document_db, http, task).search(
+            request, stored=set(), total_limit=2
+        )
+    finally:
+        http.close()
+    assert result["downloaded"] == 1
+    assert len(corpus.listing("renards", False, None, False, 100, 0, stored_only=True)) == 1

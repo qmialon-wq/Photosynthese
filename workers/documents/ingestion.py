@@ -275,13 +275,26 @@ class Ingestor:
         )
         return {"document_id": str(service.document(identifier)["id"]), **self.index(asset)}
 
-    def search(self, request: dict[str, Any]) -> dict[str, Any]:
+    def search(
+        self,
+        request: dict[str, Any],
+        *,
+        stored: set[str] | None = None,
+        total_limit: int | None = None,
+    ) -> dict[str, Any]:
+        if request.get("collection_target"):
+            from .collection import run
+
+            return run(self, request)
         query = Search.model_validate(request["search"])
         actor = service.task(self.task)["actor"]
         counts = {"observed": 0, "errors": 0, "sources_ok": 0, "inaccessible": 0, "filtered_out": 0}
         counts["downloaded"] = 0
         documents: set[str] = set()
+        downloaded: set[str] = set()
         for source_name in query.sources:
+            if total_limit is not None and len(downloaded) >= total_limit:
+                break
             self.log(
                 "source",
                 "Début du passage",
@@ -291,7 +304,9 @@ class Ingestor:
                 source = SOURCES[source_name](self.http)
                 accepted = 0
                 for publication in source.search(query):
-                    if accepted >= query.limit_per_source:
+                    if accepted >= query.limit_per_source or (
+                        total_limit is not None and len(downloaded) >= total_limit
+                    ):
                         break
                     try:
                         screening = (
@@ -320,8 +335,13 @@ class Ingestor:
                         identifier = service.register(
                             publication, self.task, request.get("watch_id")
                         )
+                        identifier = str(service.document(identifier)["id"])
                         documents.add(identifier)
                         discover(identifier, query.species, actor)
+                        if identifier in downloaded or (
+                            stored is not None and identifier in stored
+                        ):
+                            continue
                         if request.get("collection_species"):
                             with service.transaction() as connection:
                                 excluded = connection.execute(
@@ -365,7 +385,16 @@ class Ingestor:
                             result = self.fetch(identifier)
                             counts["inaccessible"] += int(result.get("inaccessible", False))
                             if not result.get("inaccessible") and not result.get("skipped"):
+                                # Le hash du fichier peut rapprocher deux notices sans DOI.
+                                identifier = str(service.document(identifier)["id"])
+                                if identifier in downloaded or (
+                                    stored is not None and identifier in stored
+                                ):
+                                    continue
                                 counts["downloaded"] += 1
+                                downloaded.add(identifier)
+                                if stored is not None:
+                                    stored.add(identifier)
                                 accepted += 1
                     except Exception as exc:
                         counts["errors"] += 1
@@ -384,7 +413,11 @@ class Ingestor:
                     level="error",
                     data={"source": source_name},
                 )
-        return {**counts, "document_ids": sorted(documents)}
+        return {
+            **counts,
+            "document_ids": sorted(documents),
+            "downloaded_ids": sorted(downloaded),
+        }
 
     def perform(self, kind: str, request: dict[str, Any], actor: str) -> dict[str, Any]:
         if kind == "rag":

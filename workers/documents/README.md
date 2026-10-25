@@ -14,9 +14,16 @@ de recommandation n'est encore actif.
    cocher celles à rechercher. Une tâche indépendante est créée par espèce ; une
    collecte déjà en attente ou en cours est réutilisée.
 2. Le ciblage des aménagements est appliqué automatiquement. OpenAlex et Europe PMC
-   fournissent les copies autorisées ; Crossref enrichit les DOI. Jusqu'à cinq
-   téléchargements réussis par source et par espèce sont recherchés, sans dépasser
-   la première page de candidats. Aucun texte non autorisé n'est récupéré.
+   fournissent les copies autorisées ; Crossref enrichit les DOI. L'objectif est
+   de **100 articles distincts par espèce**, documents déjà présents compris.
+   La collecte cherche jusqu'à 25 nouveaux articles sur les milieux urbains, puis
+   25 sur les milieux agricoles, puis complète sur les activités humaines.
+   Ces quotas sont souples : un milieu peu documenté n'empêche pas le complément.
+   OpenAlex et Europe PMC parcourent jusqu'à 10 pages par passage et par source.
+   Seuls les textes conservés comptent ; doublons et retraits humains ne remplissent
+   pas l'objectif. Aucun texte non autorisé n'est récupéré. Les résultats exposent
+   `initial_count`, `corpus_count`, `target`, `target_reached` et les téléchargements
+   par passage. Une collecte insuffisante est signalée comme partielle.
 3. Choisir une espèce dans **Mon corpus**. Seuls les fichiers effectivement importés
    sont listés : les simples notices et les téléchargements échoués restent dans
    les journaux techniques. Les métadonnées demeurent consultables via l'API.
@@ -141,7 +148,7 @@ Les requêtes OpenAlex/Europe PMC combinent espèce, contexte humain et enjeux
 commun vérifie ensuite les termes présents dans les **titres et résumés**.
 
 Le worker examine jusqu'à trois fois le nombre demandé de notices par source
-(première page, 100 maximum) et conserve au plus le nombre demandé de candidats.
+(100 maximum par page) et conserve au plus le nombre demandé de candidats.
 Les notices sans correspondance ou avec des métadonnées insuffisantes ne sont pas
 téléchargées ni ajoutées à la bibliothèque. Les exclusions et leurs indices sont
 journalisés, avec un compteur `filtered_out`. Les candidats conservent les critères,
@@ -329,8 +336,10 @@ Les réponses de métadonnées sont mises en cache avec empreinte ; les fichiers
 réutilisés par SHA. Retries bornés avec backoff/jitter et `Retry-After`, rythme
 adapté aux en-têtes Crossref. Une attente demandée supérieure à 60 secondes est
 persistée et le passage différé avec erreur explicite, sans ignorer le quota.
-Les requêtes sont bornées à la première page de **100 résultats maximum par source**,
-sans pagination profonde. Les quotas et conditions des API peuvent évoluer :
+Les recherches avancées utilisent une page par défaut (`max_pages=1`, maximum 10).
+La collecte parcourt jusqu'à **10 pages de 100 notices maximum** par source et
+par passage (pages OpenAlex, curseur Europe PMC). La recherche Crossref reste
+limitée à une page. Les quotas et conditions des API peuvent évoluer :
 [OpenAlex](https://help.openalex.org/api/authentication/),
 [Crossref](https://www.crossref.org/documentation/retrieve-metadata/rest-api/access-and-authentication/).
 

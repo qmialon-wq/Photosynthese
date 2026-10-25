@@ -132,3 +132,43 @@ def test_malformed_notice_does_not_drop_the_following_notice(tmp_path):
     source = OpenAlex(http)
     publications = list(source.search(Search(species=["Vulpes vulpes"], sources=["openalex"])))
     assert [p.source_id for p in publications] == ["W2"] and source.errors == 1
+
+
+@pytest.mark.parametrize("source_class", [OpenAlex, EuropePMC])
+def test_paginated_discovery_is_lazy_and_bounded(source_class):
+    class HTTP:
+        def __init__(self):
+            self.calls = []
+
+        def json(self, url, params):
+            self.calls.append(params)
+            number = len(self.calls)
+            if source_class is OpenAlex:
+                assert params["page"] == number
+                return {"results": [{"id": f"W{number}", "title": "Fixture"}]}
+            assert params["cursorMark"] == ("*" if number == 1 else "next-1")
+            return {
+                "resultList": {"result": [{"source": "MED", "id": str(number)}]},
+                "nextCursorMark": f"next-{number}",
+            }
+
+    http = HTTP()
+    iterator = source_class(http).search(
+        Search(species=["Vulpes vulpes"], limit_per_source=1, max_pages=2)
+    )
+    assert http.calls == []
+    next(iterator)
+    assert len(http.calls) == 1
+    assert len(list(iterator)) == 1
+    assert len(http.calls) == 2
+
+
+def test_europepmc_stops_on_repeated_cursor():
+    class HTTP:
+        def json(self, url, params):
+            return {
+                "resultList": {"result": [{"source": "MED", "id": "1"}]},
+                "nextCursorMark": "*",
+            }
+
+    assert len(list(EuropePMC(HTTP()).search(Search(species=["Vulpes vulpes"], max_pages=10)))) == 1

@@ -6,14 +6,18 @@ from typing import Any
 
 from .schemas import Publication, Search
 
-VERSION = "human-activities-v1"
+VERSION = "human-activities-v2"
 ACTIVITIES = {
     "all": (
         "Tous les aménagements et activités",
         [
             "land use",
             "urbanization",
+            "urban",
+            "suburban",
             "agriculture",
+            "farmland",
+            "cropland",
             "road",
             "roads",
             "artificial light",
@@ -30,11 +34,11 @@ ACTIVITIES = {
     ),
     "agriculture": (
         "Agriculture, haies et bocage",
-        ["agriculture", "farmland", "hedgerow", "bocage"],
+        ["agriculture", "agricultural", "farmland", "cropland", "crops", "hedgerow", "bocage"],
     ),
     "urban": (
         "Urbanisation et aménagement du territoire",
-        ["urbanization", "land use", "urban planning", "aménagement"],
+        ["urban", "urbanization", "urbanisation", "suburban", "city", "cities", "urban planning"],
     ),
     "recreation": (
         "Loisirs, tourisme et fréquentation",
@@ -73,10 +77,24 @@ ACTIVITY_WORDS = {
         "hedgerow*",
         "pesticide*",
         "crop*",
+        "arable",
+        "pasture*",
         "bocage",
         "haie*",
     ],
-    "urban": ["urban*", "land use", "land-use", "development", "construction", "aménagement*"],
+    "urban": [
+        "urban*",
+        "suburban*",
+        "periurban*",
+        "peri-urban",
+        "city",
+        "cities",
+        "land use",
+        "land-use",
+        "development",
+        "construction",
+        "aménagement*",
+    ],
     "recreation": [
         "recreation*",
         "tourism",
@@ -116,6 +134,13 @@ EFFECT_WORDS = [
     "activity",
     "survival",
     "habitat use",
+    "ecology",
+    "ecological",
+    "diet*",
+    "movement*",
+    "adaptation*",
+    "reproduct*",
+    "nesting",
     "population*",
     "abundance",
     "préserv*",
@@ -139,6 +164,13 @@ EFFECT_QUERY = [
     "impact",
     "effects",
     "connectivity",
+    "ecology",
+    "behavior",
+    "behaviour",
+    "habitat use",
+    "diet",
+    "survival",
+    "population",
     "préservation",
     "effets",
     "réduction",

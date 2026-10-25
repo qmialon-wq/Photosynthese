@@ -30,12 +30,17 @@ def collect(species: list[str], actor: str) -> dict[str, Any]:
                 species=[row["scientific_name"]],
                 focus="human_activities",
                 sources=["openalex", "europepmc"],
-                limit_per_source=5,
+                limit_per_source=100,
+                max_pages=10,
                 download_fulltext=True,
             )
             job = service.submit(
                 "search",
-                {"search": query.model_dump(), "collection_species": row["name"]},
+                {
+                    "search": query.model_dump(),
+                    "collection_species": row["name"],
+                    "collection_target": 100,
+                },
                 actor,
                 connection=connection,
             )

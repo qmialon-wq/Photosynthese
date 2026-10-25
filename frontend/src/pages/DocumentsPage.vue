@@ -80,7 +80,8 @@ function title(doc: ScientificDocument) {
   return french(doc)?.title || doc.title;
 }
 function translationLabel(doc: ScientificDocument) {
-  if (doc.status !== "indexed") return "Original disponible · texte non extrait";
+  if (doc.status !== "indexed")
+    return "Original disponible · texte non extrait";
   const state = doc.metadata?.translation_fr?.status;
   if (doc.language === "fr" || state === "original_fr")
     return "Document en français";
@@ -177,8 +178,9 @@ async function translate(doc: ScientificDocument) {
       <p class="eyebrow">CONNAISSANCE · CORPUS DOCUMENTAIRE</p>
       <h1>Documents scientifiques</h1>
       <p class="subtitle">
-        Des documents sur les aménagements compatibles avec la faune,
-        téléchargés et lisibles en français.
+        Objectif : 100 articles par espèce sur la faune et les activités
+        humaines, avec des recherches dédiées aux milieux urbains et agricoles.
+        Le nombre disponible dépend des publications accessibles.
       </p>
     </div>
     <div class="actions">
@@ -398,6 +400,13 @@ async function translate(doc: ScientificDocument) {
                 }}</template
               ><template v-if="job.result?.downloaded != null">
                 · {{ job.result.downloaded }} document(s)
+                <template v-if="job.result.corpus_count != null">
+                  · Corpus : {{ job.result.corpus_count }} /
+                  {{ job.result.target }}
+                  <template v-if="job.result.target_reached === false">
+                    · Objectif non atteint avec les textes accessibles
+                  </template>
+                </template>
                 téléchargé(s)</template
               ></small
             >
