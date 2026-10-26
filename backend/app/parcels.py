@@ -82,13 +82,28 @@ def request(video_id: str, body: DossierRequest, actor: Actor) -> dict[str, Any]
 def export(identifier: UUID, format: str = "text") -> Response:
     import json
 
-    from shared.parcels.report import render
+    from shared.parcels.report import printable_html, render
 
     row = service.dossier(str(identifier))
     if row["status"] != "completed":
         raise ReviewError("Le dossier n'est pas encore disponible", 409)
+    if format == "html":
+        try:
+            html = printable_html(row["result"])
+        except ValueError as exc:
+            raise ReviewError(str(exc), 409) from exc
+        return Response(
+            html,
+            media_type="text/html",
+            headers={
+                "Content-Security-Policy": (
+                    "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'self'"
+                ),
+                "X-Content-Type-Options": "nosniff",
+            },
+        )
     if format not in ("text", "markdown", "json"):
-        raise ReviewError("Format attendu : text, markdown ou json", 422)
+        raise ReviewError("Format attendu : text, markdown, json ou html", 422)
     text = (
         json.dumps(row["result"], ensure_ascii=False, indent=2)
         if format == "json"

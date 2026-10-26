@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import Field, HttpUrl, model_validator
 
 from shared.documents.schemas import Body, SpeciesKey
+from shared.parcels.schemas import Profile
 
 
 class Filters(Body):
@@ -33,6 +34,7 @@ class Search(Body):
 
 class Report(Search):
     video_ids: list[str] = Field(default_factory=list, max_length=100)
+    profile: Profile | None = None
 
 
 class Context(Body):

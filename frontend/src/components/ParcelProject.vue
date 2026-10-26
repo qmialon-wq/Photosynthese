@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { api, apiUrl, message, post, useResource } from "../api";
+import TerritorialReportView from "./TerritorialReport.vue";
+import type { TerritorialReport } from "../territorial";
 
 interface Profile {
   area_m2: number | null;
@@ -23,6 +25,7 @@ interface Dossier {
   error: string | null;
   profile_revision: number;
   result: null | {
+    territorial_report?: TerritorialReport;
     status: string;
     observation_summary: string;
     green_space: { message: string };
@@ -246,7 +249,7 @@ defineExpose({ save });
             ? "Le dossier sera préparé après l’analyse vidéo."
             : dossier.status === "queued"
               ? "Votre dossier est dans la file d’attente. Vous pouvez quitter cette page."
-              : "Recherche des sources et préparation du dossier en cours…"
+              : "Lecture du corpus documentaire et rédaction du rapport en cours…"
         }}
       </p>
       <p v-if="dossier.status === 'error'" class="notice error" role="alert">
@@ -256,6 +259,11 @@ defineExpose({ save });
         }}
       </p>
       <template v-if="dossier.status === 'completed' && dossier.result">
+        <TerritorialReportView
+          v-if="dossier.result.territorial_report"
+          :report="dossier.result.territorial_report"
+          :dossier-id="dossier.id"
+        />
         <div class="actions">
           <a
             class="button-link"
@@ -286,7 +294,9 @@ defineExpose({ save });
           compléter.
         </p>
         <details
-          v-for="item in dossier.result.recommendations"
+          v-for="item in dossier.result.territorial_report
+            ? []
+            : dossier.result.recommendations"
           :key="item.theme"
         >
           <summary>

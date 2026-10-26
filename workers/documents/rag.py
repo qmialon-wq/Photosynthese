@@ -141,10 +141,54 @@ def perform(action: str, body: dict[str, Any], actor: str, task: str, http: Any)
         result = retrieval.index(Index.model_validate(body), settings)
     elif action in ("search", "report"):
         request = Report.model_validate(body) if action == "report" else Search.model_validate(body)
-        result = retrieval.retrieve(request, settings)
+        result = (
+            {
+                "hits": [],
+                "question": request.question,
+                "status": "reading_corpus",
+                "message": "Analyse de tous les documents du corpus lié aux espèces.",
+                "embedding_version": None,
+                "filters": request.filters.model_dump(mode="json"),
+            }
+            if action == "report" and settings.generation_enabled and request.profile
+            else retrieval.retrieve(request, settings)
+        )
         if action == "report":
             result = report(request, result)
             result["fidelity"] = fidelity(result)
+            if settings.generation_enabled and request.profile:
+                from workers.documents.synthesis import synthesize
+
+                with service.transaction() as connection:
+                    species = connection.execute(
+                        "SELECT * FROM document_species_catalog WHERE name=ANY(%s)",
+                        (request.filters.species,),
+                    ).fetchall()
+                observed_species = {r["species"] for r in result["observed_facts"]}
+                context = {
+                    "confirmed_species": [r for r in species if r["name"] in observed_species],
+                    "predicted_species": [r for r in species if r["name"] not in observed_species],
+                }
+
+                def log(stage, message, **kwargs):
+                    service.event(task, stage, message, **kwargs)
+
+                synthesis = synthesize(request.profile.model_dump(), context, settings, log)
+                result.update(
+                    {
+                        "territorial_report": synthesis,
+                        "generation_enabled": synthesis["status"] == "generated",
+                        "inferred_recommendations": synthesis.get("actions", []),
+                        "recommendation_status": synthesis["status"],
+                        "report_version": "whole-corpus-planning-v1",
+                    }
+                )
+                result["cautions"] = [
+                    "Recommandations rédigées par un modèle local à vérifier sur le site.",
+                    "Les documents en attente de validation restent identifiés dans le registre.",
+                    "Le contrôle des citations ne démontre pas automatiquement "
+                    "la validité écologique de chaque interprétation.",
+                ]
     elif action == "evaluate":
         result = evaluate(Evaluation.model_validate(body), settings)
     else:

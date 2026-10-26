@@ -1,0 +1,16 @@
+# Optional local drafting acceleration. The worker shares the vision GPU lock.
+services:
+  documents:
+    environment:
+      BIOSENTINELLE_RAG_GENERATION_DEVICE: cuda
+  ollama:
+    environment:
+      OLLAMA_FLASH_ATTENTION: "1"
+      OLLAMA_KV_CACHE_TYPE: q8_0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

@@ -80,7 +80,7 @@ def build(identifier: str) -> dict[str, Any]:
     context = aggregate(contexts)
     settings, mode, warning = RagSettings(), "hybrid", None
     try:
-        model = embeddings.load(settings)
+        model = None if settings.generation_enabled else embeddings.load(settings)
     except ValueError:
         model, mode = None, "lexical"
         warning = "Recherche lexicale utilisée : modèle multilingue local non préparé."
@@ -123,7 +123,11 @@ def build(identifier: str) -> dict[str, Any]:
             filters=Filters(species=species),
             limit=8,
         )
-        result = retrieval.retrieve(request, settings, model)
+        result = (
+            {"hits": []}
+            if settings.generation_enabled
+            else retrieval.retrieve(request, settings, model)
+        )
         hits = []
         for hit in result["hits"]:
             if hit["chunk_id"] not in unique:
@@ -198,8 +202,21 @@ def build(identifier: str) -> dict[str, Any]:
         ]
         + ([warning] if warning else []),
     }
+    if settings.generation_enabled:
+        from workers.documents.synthesis import apply_to_dossier, synthesize
+
+        def log(stage, message, **kwargs):
+            documents.event(str(dossier["task_id"]), stage, message, **kwargs)
+
+        synthesis = synthesize(profile, context, settings, log)
+        apply_to_dossier(result, synthesis)
     result["snapshot_sha256"] = service.snapshot_sha(
-        {"profile": profile, "context": context, "sources": sources}
+        {
+            "profile": profile,
+            "context": context,
+            "sources": result["sources"],
+            "synthesis": result.get("territorial_report"),
+        }
     )
     result = json.loads(json.dumps(result, default=str, ensure_ascii=False))
     with documents.transaction() as connection:

@@ -43,6 +43,20 @@ def publish_pending(client: Any) -> int:
         return len(rows)
 
 
+def execute_priority_report(settings: DocumentSettings) -> bool:
+    """Interactive dossiers should not wait behind hundreds of queued translations.
+
+    The normal stream delivery remains durable and will ACK the completed task later.
+    execute() owns the same per-task advisory lock for both delivery paths.
+    """
+    with service.transaction() as connection:
+        row = connection.execute(
+            """SELECT id FROM document_tasks WHERE status='queued' AND kind='rag'
+            AND request->>'action' IN ('parcel','report') ORDER BY created_at,id LIMIT 1"""
+        ).fetchone()
+    return execute(str(row["id"]), settings) if row else False
+
+
 def execute(identifier: str, settings: DocumentSettings) -> bool:
     with service.transaction() as lock:
         acquired = lock.execute(
@@ -181,7 +195,8 @@ def run() -> None:
     logger.info("Worker documentaire prêt ; aucune veille créée implicitement")
     try:
         while not stop.is_set():
-            consume_one(client, settings)
+            if not execute_priority_report(settings):
+                consume_one(client, settings)
     finally:
         stop.set()
         thread.join(timeout=5)

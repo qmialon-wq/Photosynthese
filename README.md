@@ -7,10 +7,13 @@ textuel commun dans **Mes dossiers**. Les recommandations restent
 conditionnelles lorsque les espèces ne sont pas confirmées ; aucun pourcentage de
 terrain vert n'est inventé.
 
-Le [module RAG local, étape 1](docs/RAG.md) propose une recherche documentaire
-hybride et des rapports d'extraits sourcés sans LLM. Démarrage : `make rag-up`,
-`make rag-prepare`, puis `make rag-index`. Seules les sources validées participent
-à la recherche ; les recommandations écologiques générées viendront dans une étape distincte.
+Le [module RAG local](docs/RAG.md) propose une recherche documentaire hybride et
+des dossiers territoriaux de quatre pages rédigés par un modèle local. Les dossiers
+examinent tous les textes extractibles associés aux espèces, puis proposent des
+aménagements adaptés au formulaire, avec références, conditions et suivi.
+Les documents en attente de validation restent identifiés dans l'audit.
+La recherche de passages validés reste disponible avec `make rag-up`,
+`make rag-prepare`, puis `make rag-index` ; voir le guide pour préparer Ollama.
 
 Le moteur de classification alternatif (CNN préentraîné local, embeddings et
 classifieurs classiques, comparaisons, promotion et rollback) est documenté dans
@@ -31,7 +34,8 @@ voir le [guide vision](workers/vision/README.md) et la
 Aucun poids ni modèle entraîné n'est distribué dans Git. Le mode ML active
 l'analyse vidéo asynchrone, sans chargement de modèle avant une tâche.
 La [veille et l'ingestion scientifiques](workers/documents/README.md) utilisent
-OpenAlex, Crossref et Europe PMC dans un worker CPU indépendant. Le RAG reste à développer.
+OpenAlex, Crossref et Europe PMC dans un worker documentaire indépendant.
+La synthèse territoriale locale est décrite dans [le guide RAG](docs/RAG.md).
 
 ```sh
 make documents-up

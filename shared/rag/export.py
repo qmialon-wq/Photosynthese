@@ -5,6 +5,26 @@ from typing import Any
 
 
 def markdown(result: dict[str, Any]) -> str:
+    if result.get("territorial_report", {}).get("status") == "generated":
+        report = result["territorial_report"]
+        lines = ["# Recommandations d'aménagement du territoire", result["question"]]
+        for i, page in enumerate(report["pages"], 1):
+            lines.append(f"## Page {i}/4 — {page['title']}")
+            for paragraph in page["paragraphs"]:
+                lines.append(
+                    paragraph["text"] + " " + " ".join(f"[{c}]" for c in paragraph["citations"])
+                )
+        lines.append("## Annexe : couverture documentaire et constats")
+        for doc in report["ledger"]:
+            lines.append(f"[{doc['citation']}] {doc['title']} — {doc['chunks_read']} passages lus")
+            for finding in doc["findings"]:
+                lines += [
+                    finding["finding"],
+                    finding["limits"],
+                    f"Page {finding['page']} : « {finding['quote']} »",
+                ]
+        return "\n\n".join(lines) + "\n"
+
     # All user/publication text is emitted as plain quoted text, not interpreted instructions.
     def quote(text: Any) -> str:
         return "\n".join("> " + line for line in str(text).splitlines())

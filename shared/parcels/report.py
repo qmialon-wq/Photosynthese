@@ -2,6 +2,7 @@
 
 import re
 from dataclasses import dataclass
+from html import escape
 from typing import Any
 
 
@@ -160,6 +161,9 @@ def planning_questions(profile: dict[str, Any]) -> list[str]:
 
 
 def render(data: dict[str, Any], *, markdown: bool = False) -> str:
+    if data.get("territorial_report", {}).get("status") == "generated":
+        return render_territorial(data, markdown=markdown)
+
     def heading(title: str, level: int = 2) -> str:
         return f"{'#' * level} {title}" if markdown else f"{title}\n{'=' * len(title)}"
 
@@ -229,3 +233,115 @@ def render(data: dict[str, Any], *, markdown: bool = False) -> str:
         "actualiser le dossier pour intégrer les nouvelles informations.",
     ]
     return "\n\n".join(str(line) for line in lines if line) + "\n"
+
+
+def render_territorial(data: dict[str, Any], *, markdown: bool = False) -> str:
+    report = data["territorial_report"]
+    lines = [
+        "# Dossier territorial — recommandations d'aménagement",
+        "",
+        f"Votre parcelle : {data['profile']['area_m2']:g} m² — "
+        f"{data['land_label']} — {data['project_label']}",
+        f"Localité : {data['profile'].get('locality') or 'Non renseignée'}",
+        f"Corpus examiné : {report['coverage']['documents_read']} / "
+        f"{report['coverage']['documents_total']} documents.",
+        "Les recommandations sont des propositions de conception sourcées, à vérifier sur le site.",
+    ]
+    for i, page in enumerate(report["pages"], 1):
+        lines.extend([f"## Page {i}/4 — {page['title']}"])
+        for paragraph in page["paragraphs"]:
+            lines.append(
+                paragraph["text"] + " " + " ".join(f"[{c}]" for c in paragraph["citations"])
+            )
+    lines.append("## Fiches de mise en œuvre")
+    for action in report["actions"]:
+        lines.extend(
+            [
+                f"### {action['title']}",
+                action["action"],
+                f"Où : {action['location']}",
+                f"Justification : {action['rationale']}",
+                f"Conditions : {action['conditions']}",
+                "Priorité : "
+                + {
+                    "before_project": "Avant le projet",
+                    "design": "Conception",
+                    "works": "Travaux",
+                    "monitoring": "Suivi",
+                }[action["priority"]],
+                f"Suivi : {action['monitoring']}",
+                "Références : " + ", ".join(action["citations"]),
+            ]
+        )
+    lines.append("## Annexe — ensemble du corpus examiné")
+    for doc in report["ledger"]:
+        lines.append(
+            f"[{doc['citation']}] {doc['title']} — DOI : {doc['doi'] or 'non renseigné'} — "
+            f"{doc['chunks_read']} passages lus — "
+            f"pertinence : {doc['relevance']} / qualité : {doc['quality']}"
+        )
+        if doc.get("authors"):
+            lines.append("Auteurs : " + ", ".join(doc["authors"]))
+        lines.extend(doc.get("assessments", []))
+        for finding in doc["findings"]:
+            lines.extend(
+                [
+                    finding["finding"],
+                    f"Limites : {finding['limits']}",
+                    f"Extrait original, page {finding['page']} ({finding['chunk_id']}) : "
+                    f"« {finding['quote']} »",
+                ]
+            )
+    lines.extend(["## Limites", *data["limitations"]])
+    text = "\n\n".join(lines) + "\n"
+    return text if markdown else re.sub(r"(?m)^#{1,3} ", "", text)
+
+
+def printable_html(data: dict[str, Any]) -> str:
+    report = data.get("territorial_report", {})
+    if report.get("status") != "generated":
+        raise ValueError("Aucun rapport territorial rédigé pour cet instantané")
+    pages = []
+    coverage = report["coverage"]
+    for i, page in enumerate(report["pages"], 1):
+        compact = sum(len(p["text"]) for p in page["paragraphs"]) > 3000
+        page_class = "page compact" if compact else "page"
+        paragraphs = "".join(
+            f"<p>{escape(p['text'])} <span class='citations'>"
+            + escape(" ".join(f"[{c}]" for c in p["citations"]))
+            + "</span></p>"
+            for p in page["paragraphs"]
+        )
+        pages.append(f"""<section class="{page_class}">
+          <header>BIOSENTINELLE · DOSSIER TERRITORIAL</header>
+          <h1>{escape(page["title"])}</h1>
+          <div class="context">
+          {escape(data["profile"].get("locality") or "Localité non renseignée")} ·
+          {data["profile"]["area_m2"]:g} m² · {escape(data["land_label"])} ·
+          {escape(data["project_label"])}</div>
+          {paragraphs}<footer>{coverage["documents_read"]}/{coverage["documents_total"]}
+          documents examinés ·
+          {coverage.get("documents_pending_review", 0)} en attente de validation · Page {i}/4<br>
+          Références, extraits et fiches de mise en œuvre : annexe complète TXT/JSON du dossier.
+          Recommandations à vérifier sur le site.</footer></section>""")
+    return (
+        """<!doctype html><html lang="fr"><meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Dossier territorial BioSentinelle</title><style>
+      @page {size:A4;margin:0} * {box-sizing:border-box}
+      body {margin:0;background:#ecefe9;color:#19352c;font:10pt/1.35 Georgia,serif}
+      .page {position:relative;width:210mm;min-height:297mm;padding:20mm 20mm 28mm;
+      margin:8mm auto;background:white;break-after:page}
+      .page:last-child {break-after:auto} header {font:9pt Arial,sans-serif;letter-spacing:2px}
+      h1 {font: bold 21pt/1.2 Georgia,serif;margin:5mm 0 4mm}
+      .context {font:9pt Arial,sans-serif;padding-bottom:3mm;border-bottom:1px solid #b4c4b8}
+      p {margin:4mm 0;text-align:left;orphans:3;widows:3} .citations {font:9pt Arial,sans-serif}
+      .compact {font-size:9.5pt;line-height:1.3} .compact p {margin:3mm 0}
+      footer {position:absolute;bottom:12mm;left:20mm;right:20mm;font:8pt/1.4 Arial,sans-serif;
+      border-top:1px solid #b4c4b8;padding-top:3mm}
+      @media print {body {background:white} .page {margin:0;height:297mm;min-height:0}}
+      @media screen and (max-width:800px) {.page {width:auto;margin:0;padding:20px 20px 110px}}
+      </style><body>"""
+        + "".join(pages)
+        + "</body></html>"
+    )

@@ -5,8 +5,8 @@ conserve leurs métadonnées et, sur demande, importe les textes accessibles don
 les droits sont établis. Il fonctionne sur CPU, indépendamment de la file vision.
 L'interface [Documents scientifiques](http://localhost:8080/documents) permet de
 consulter les publications par espèce, lancer une recherche, importer un fichier
-et sélectionner ou retirer les sources du futur RAG. Aucun LLM, embedding ou moteur
-de recommandation n'est encore actif.
+et sélectionner ou retirer les sources. Le module de recherche et les rapports
+territoriaux avec modèle local sont décrits dans [le guide RAG](../../docs/RAG.md).
 
 ## Utilisation depuis le navigateur
 

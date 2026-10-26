@@ -43,10 +43,12 @@ de l'installation existante ; cette fonctionnalité ne télécharge ni n'entraî
 modèle au démarrage. Sans classificateur actif, la détection seule reste proposée.
 
 Pour actualiser seulement le backend, les documents et l'interface, sans relancer
-le worker vision : `make documents-up`. Les embeddings RAG se préparent explicitement
-avec `make rag-prepare` ; sans ce modèle, le dossier reste fonctionnel en recherche
-lexicale avec cette limite signalée. Les publications doivent être téléchargées,
-indexées, validées en pertinence/qualité et activées dans le corpus RAG.
+le worker vision : `make documents-up`. La rédaction locale de quatre pages se
+prépare avec le service Ollama et le modèle décrits dans [RAG.md](RAG.md).
+Elle examine les publications téléchargées et liées aux espèces, sans utiliser
+un top-k de passages. Les candidats non validés sont identifiés dans l'audit ;
+les documents retirés ou rejetés sont exclus. Les fichiers sans texte extrait
+sont signalés. Le mode extractif reste accessible avec `RAG_GENERATION_ENABLED=false`.
 
 ## Ce que reçoit l'utilisateur
 
@@ -66,7 +68,14 @@ Le score d'une hypothèse agrégée est le maximum des scores des images retenue
 pas une probabilité de présence calculée sur le corpus. Les résultats par vidéo,
 les références des annotations humaines et les fichiers originaux restent traçables.
 
-Les pistes sont proposées par un moteur de règles conservateur, **sans LLM** :
+Avec la rédaction locale activée, le dossier principal contient quatre pages A4 :
+diagnostic et implantation, aménagements par espèce, mise en œuvre et chantier,
+puis priorités et suivi. L'interface permet d'ouvrir ces pages pour impression ou
+enregistrement en PDF. L'export TXT/JSON ajoute les fiches de mise en œuvre et
+l'annexe complète des articles examinés, avec constats, limites, pages et citations.
+Les anciens dossiers doivent être actualisés pour utiliser cette rédaction.
+
+En mode extractif, les pistes sont proposées par un moteur de règles conservateur :
 il exige une phrase de recommandation explicite et une intervention correspondant
 au thème, et écarte des négations/conditions courantes. La phrase originale est
 citée. Ce filtre lexical ne prouve pas l'entailment scientifique, ne comprend pas

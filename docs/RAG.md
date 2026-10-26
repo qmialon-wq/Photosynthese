@@ -1,11 +1,82 @@
-# RAG BioSentinelle — étape 1, sans génération LLM
+# RAG BioSentinelle — recherche et recommandations territoriales
 
-Ce module recherche les passages des publications validées et produit un **dossier
-de preuves**, exportable en JSON ou Markdown. Il ne prétend pas encore interpréter
-les conclusions des articles ni générer un conseil écologique spécifique. Les
-champs `observed_facts`, `publication_evidence` et `inferred_recommendations` sont
-séparés ; ce dernier reste vide dans cette étape. Sans source pertinente, le statut
-est `no_sources`, la recommandation `abstained` et le refus est explicite.
+Le moteur propose une recherche de passages validés et une **synthèse territoriale
+locale** pour les dossiers de parcelle. La synthèse examine tous les textes
+extractibles des documents associés aux espèces, puis rédige quatre pages de
+recommandations adaptées au formulaire du projet. Les observations confirmées,
+hypothèses automatiques, résultats des études et propositions de conception restent
+distincts. Sans constat pertinent, aucune recommandation spécifique n'est inventée.
+
+## Dossier territorial de quatre pages
+
+```sh
+docker compose --profile rag-generation up -d ollama
+docker compose exec -T ollama ollama pull qwen3:4b-instruct-2507-q4_K_M
+docker compose up -d --build --no-deps backend documents frontend
+```
+
+Le modèle est téléchargé explicitement, puis exécuté localement via Ollama sur CPU.
+L'accélération NVIDIA est disponible avec
+`docker compose -f docker-compose.yml -f docker-compose.rag-gpu.yml --profile rag-generation up -d --no-deps ollama documents`.
+Elle utilise le verrou `/storage/results/.vision-gpu.lock`, commun avec la vision,
+et décharge le modèle avant de le libérer. Si la vision détient déjà le verrou,
+le dossier peut être relancé après son traitement, en réutilisant les notes en cache.
+Les textes ne sont pas transmis à un fournisseur distant. Compose active la
+rédaction avec `RAG_GENERATION_ENABLED=true` ; `false` conserve le mode extractif.
+`RAG_GENERATOR_URL`, `RAG_GENERATOR_MODEL` et `RAG_GENERATOR_TIMEOUT` configurent
+le service. Le modèle n'est chargé que pendant une génération.
+
+Actualiser un dossier dans **Mes dossiers** réutilise les analyses vidéo réussies.
+Les anciens dossiers restent des instantanés historiques. Les quatre pages sont :
+diagnostic et implantation, aménagements pour les espèces, mise en œuvre du projet,
+puis priorités et suivi. Chaque fiche précise action, localisation, justification,
+conditions, priorité, indicateur de suivi et références.
+
+La synthèse territoriale utilise les documents téléchargés, liés aux espèces et
+non retirés ou rejetés, y compris les candidats encore en attente de validation.
+Leur statut reste inchangé et apparaît dans l'audit. Ce périmètre est distinct de
+la recherche hybride ci-dessous, qui demeure limitée aux sources validées.
+Aucune espèce identifiée ne conduit à lire arbitrairement le corpus des autres.
+
+Tous les passages extraits hors bibliographies sont traités en lots bornés ; aucun
+top-k global ne retire un article du passage d'analyse. Les notes sont mises en
+cache par version du pipeline, modèle et texte. Cette lecture générale est réutilisée
+entre projets ; l'interprétation et la rédaction sont propres au formulaire.
+Le modèle sélectionne des passages par identifiant et indice, puis le système
+recopie les extraits originaux. Les citations verbatim sont comparées aux passages
+originaux ; une référence inconnue, une citation
+inventée, un contexte trop long ou une sortie tronquée empêche la publication.
+Une réduction hiérarchique synthétise ensuite les constats de tous les documents.
+Un document examiné peut être écarté des recommandations pour manque de pertinence ;
+il reste dans le registre, avec ses passages lus et les appréciations du modèle.
+Les fichiers sans texte extrait restent signalés comme non analysables.
+
+`territorial_report.coverage` expose documents présents/lus, passages lus,
+documents en attente de validation et fichiers non analysables. `ledger` conserve
+les constats, limites, extraits exacts, pages et empreintes. Les citations vérifiées
+ne constituent pas une validation automatique de l'interprétation scientifique.
+Les simples études ou inventaires ne sont pas présentés comme des mesures
+d'aménagement. Des contrôles rejettent les interventions sans appui thématique et
+les prescriptions chiffrées non définies localement. Les valeurs des paragraphes
+doivent figurer dans les extraits cités, avec leurs unités, ou dans le formulaire.
+Les durées de suivi inventées sont remplacées par un protocole méthodologique
+qualitatif dont la durée reste à définir après le diagnostic du site.
+La lecture exhaustive est plus lente qu'une recherche de passages ; les événements
+de tâche montrent l'avancement document par document et page par page.
+
+L'export de parcelle `?format=html` produit quatre pages A4 imprimables en PDF depuis
+le navigateur. TXT/Markdown et JSON ajoutent les fiches et l'annexe complète du
+corpus, qui peut dépasser quatre pages. La densité typographique du rapport principal
+s'adapte aux pages les plus détaillées ; des bornes de validation empêchent une
+sortie vide ou démesurée.
+Le corpus est figé au démarrage. Les ajouts ultérieurs sont comptés pour proposer
+une actualisation ; un retrait ou rejet pendant la rédaction empêche sa publication.
+
+`POST /rag/recommendations` active aussi la synthèse complète lorsque le corps
+contient `profile` (mêmes champs que le formulaire de parcelle) et les espèces
+cibles dans `filters.species`. Sans `profile`, le rapport extractif reste disponible.
+Dans le mode territorial, le périmètre est l'ensemble du corpus lié aux espèces :
+les filtres de recherche de passages et `limit` ne le tronquent pas.
 
 ## Démarrage
 
@@ -21,7 +92,9 @@ make rag-report ARGS='--question "Quels effets des routes sur les renards ?" --s
 
 Toutes ces opérations retournent immédiatement un identifiant de tâche. Le worker
 documentaire CPU les exécute séquentiellement via Redis Streams et son outbox SQL.
-Les traductions et les collectes déjà en cours peuvent donc retarder leur exécution.
+Une traduction ou collecte déjà en cours peut retarder leur exécution. Les dossiers
+et rapports sont prioritaires sur les traductions en attente, pour éviter qu'une
+collecte volumineuse bloque la préparation du dossier derrière des centaines de fichiers.
 
 ```sh
 make rag-status ARGS='<task-id>'
@@ -34,7 +107,7 @@ téléchargement ni chargement n'a lieu à l'import ou au démarrage. L'indexati
 recherche hybride échouent explicitement si les fichiers manquent ou sont corrompus.
 Le mode `--mode lexical` fonctionne sans télécharger ni charger le modèle.
 
-## Sources éligibles
+## Sources éligibles à la recherche de passages
 
 Un document doit avoir un texte extrait, être `indexed`, avoir pertinence **et**
 qualité `accepted`, et une association d'espèce activée et non retirée. Une simple
@@ -69,7 +142,7 @@ La documentation interactive est disponible sur `http://localhost:8000/docs`.
 | `POST /rag/prepare` | Préparation explicite du modèle vérifié |
 | `POST /rag/index` | `{"document_ids":[]}` ; tous les documents éligibles par défaut |
 | `POST /rag/search` | Recherche documentaire |
-| `POST /rag/recommendations` | Rapport extractif, sans recommandation générée |
+| `POST /rag/recommendations` | Synthèse territoriale avec `profile`, sinon rapport extractif |
 | `POST /rag/evaluate` | Évaluation sur questions et fragments de référence annotés |
 | `GET /documents/tasks/{id}` | Progression, erreurs et lien du résultat |
 | `GET /documents/tasks/{id}/events` | Journal du passage |
@@ -182,6 +255,5 @@ Test facultatif avec le vrai encodeur préparé, sans GPU :
 docker compose --profile test run --rm -v ./data/models:/storage/models:ro tests pytest tests/documents/test_rag.py -m real_model
 ```
 
-La seconde étape ajoutera un générateur interchangeable (distant/Ollama), désactivé
-par défaut, avec contrôle des citations et évaluation de l'appui des affirmations.
-Aucun générateur LLM ni service Ollama n'est lancé dans cette première étape.
+La recherche et les rapports extractifs restent utilisables sans service Ollama.
+La rédaction territoriale nécessite le modèle local préparé et le profil de parcelle.

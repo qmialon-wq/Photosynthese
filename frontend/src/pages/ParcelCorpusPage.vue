@@ -2,6 +2,8 @@
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { api, apiUrl, date, message, post, useResource } from "../api";
+import TerritorialReportView from "../components/TerritorialReport.vue";
+import type { TerritorialReport } from "../territorial";
 
 interface Profile {
   area_m2: number | null;
@@ -18,6 +20,7 @@ interface Video {
   analysis_error?: string;
 }
 interface Result {
+  territorial_report?: TerritorialReport;
   status: string;
   observation_summary: string;
   video_count: number;
@@ -315,6 +318,11 @@ const labels: Record<string, string> = {
           réussies seront conservées.
         </p>
         <template v-if="dossier.status === 'completed' && dossier.result">
+          <TerritorialReportView
+            v-if="dossier.result.territorial_report"
+            :report="dossier.result.territorial_report"
+            :dossier-id="dossier.id"
+          />
           <a
             class="button-link"
             :href="apiUrl(`/parcels/dossiers/${dossier.id}/export`)"
@@ -346,12 +354,14 @@ const labels: Record<string, string> = {
             v-if="dossier.result.status === 'insufficient_sources'"
             class="notice"
           >
-            Les sources validées sont insuffisantes pour proposer des mesures
-            spécifiques. Le dossier indique les observations et les informations
-            à compléter.
+            Les documents disponibles sont insuffisants pour proposer des
+            mesures spécifiques. Le dossier indique les observations et les
+            informations à compléter.
           </p>
           <details
-            v-for="card in dossier.result.recommendations"
+            v-for="card in dossier.result.territorial_report
+              ? []
+              : dossier.result.recommendations"
             :key="card.theme"
           >
             <summary>
