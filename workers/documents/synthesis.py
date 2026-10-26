@@ -208,15 +208,22 @@ def corpus(species: list[str]) -> list[dict[str, Any]]:
         return []
     with service.transaction() as connection:
         rows = connection.execute(
-            """SELECT d.id,d.title,d.doi,d.authors,d.published_date,d.relevance,d.quality,d.status,
-              coalesce(jsonb_agg(DISTINCT s.species), '[]') AS species,
-              (SELECT count(*) FROM document_chunks c JOIN document_assets a ON a.id=c.asset_id
-               WHERE a.document_id=d.id AND NOT c.is_reference) AS chunk_count
+            """WITH selected AS MATERIALIZED (
+              SELECT d.id,d.title,d.doi,d.authors,d.published_date,d.relevance,d.quality,d.status,
+              coalesce(jsonb_agg(DISTINCT s.species), '[]') AS species
               FROM scientific_documents d JOIN document_species s ON s.document_id=d.id
               WHERE d.merged_into IS NULL AND d.status!='rejected'
               AND s.species=ANY(%s) AND NOT s.excluded
               AND EXISTS(SELECT 1 FROM document_assets a WHERE a.document_id=d.id)
-              GROUP BY d.id ORDER BY d.id""",
+              GROUP BY d.id
+            ), counts AS (
+              SELECT a.document_id,count(*) AS chunk_count
+              FROM selected d JOIN document_assets a ON a.document_id=d.id
+              JOIN document_chunks c ON c.asset_id=a.id
+              WHERE NOT c.is_reference GROUP BY a.document_id
+            )
+            SELECT d.*,coalesce(c.chunk_count,0) AS chunk_count
+            FROM selected d LEFT JOIN counts c ON c.document_id=d.id ORDER BY d.id""",
             (species,),
         ).fetchall()
     return [{**row, "id": str(row["id"]), "citation": f"D{i}"} for i, row in enumerate(rows, 1)]

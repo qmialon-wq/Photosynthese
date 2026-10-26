@@ -43,6 +43,41 @@ def test_all_linked_texts_include_pending_but_exclude_withdrawn_and_rejected(doc
     assert synthesis.corpus([]) == []
 
 
+def test_corpus_counts_each_passage_once_and_keeps_documents_without_text(document_db):
+    from uuid import uuid4
+
+    first, _ = publication()
+    empty, _ = publication(approved=False)
+    with service.transaction() as connection:
+        connection.execute(
+            "DELETE FROM document_chunks WHERE asset_id IN "
+            "(SELECT id FROM document_assets WHERE document_id=%s)",
+            (empty,),
+        )
+        asset = connection.execute(
+            "SELECT asset_id FROM document_chunks WHERE asset_id IN "
+            "(SELECT id FROM document_assets WHERE document_id=%s)",
+            (first,),
+        ).fetchone()["asset_id"]
+        for ordinal, reference in [(1, False), (2, True)]:
+            connection.execute(
+                """INSERT INTO document_chunks
+                (id,asset_id,page_number,ordinal,start_char,end_char,text,language,is_reference)
+                VALUES(%s,%s,3,%s,0,4,'text','en',%s)""",
+                (str(uuid4()), asset, ordinal, reference),
+            )
+        connection.execute(
+            """INSERT INTO document_species(document_id,species,origin,actor)
+            VALUES(%s,'blaireaux','human','test')""",
+            (first,),
+        )
+    docs = {d["id"]: d for d in synthesis.corpus(["renards", "blaireaux"])}
+    assert set(docs) == {first, empty}
+    assert docs[first]["chunk_count"] == 2
+    assert set(docs[first]["species"]) == {"renards", "blaireaux"}
+    assert docs[empty]["chunk_count"] == 0
+
+
 def test_dossier_generation_and_four_page_export_use_whole_linked_corpus(
     document_db,
     tmp_path,
