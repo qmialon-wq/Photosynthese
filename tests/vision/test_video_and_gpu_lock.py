@@ -51,7 +51,8 @@ def test_streaming_video_export_with_contract_fixtures(
         VisionSettings(),
     )
     assert report["frames_decoded"] == 20
-    assert report["detections"] == 10
+    assert report["sample_every_n_frames"] == 10
+    assert report["detections"] == 2
     assert len(report["tracks"]) == 1
     assert report["species"][0]["estimated_tracks"] == 1
     cap = cv2.VideoCapture(str(storage.path(report["annotated_key"])))

@@ -14,5 +14,5 @@ class AnalysisOptions(Body):
     classification_threshold: float = Field(default=0.48, ge=0, le=1)
     track_threshold: float = Field(default=0.6, ge=0, le=1)
     track_min_hits: int = Field(default=2, ge=1, le=100)
-    infer_every_n_frames: int = Field(default=2, ge=1, le=1000)
+    infer_every_n_frames: int = Field(default=10, ge=1, le=1000)
     shadow_model_id: UUID | None = None

@@ -99,7 +99,7 @@ def test_completed_analysis_reused_and_only_missing_video_enqueued(
         assert str(row["videos"][0]["analysis_id"]) == completed
         missing = console.task(str(row["videos"][1]["analysis_id"]))
         assert missing["status"] == "queued" and missing["request"]["detection_only"] is True
-        assert missing["request"]["infer_every_n_frames"] == 2
+        assert missing["request"]["infer_every_n_frames"] == 10
         repeated = client.post(
             f"/parcels/corpora/{identifier}/dossiers", json={"profile_revision": 1}
         )

@@ -38,17 +38,38 @@ Leur statut reste inchangé et apparaît dans l'audit. Ce périmètre est distin
 la recherche hybride ci-dessous, qui demeure limitée aux sources validées.
 Aucune espèce identifiée ne conduit à lire arbitrairement le corpus des autres.
 
-Tous les passages extraits hors bibliographies sont traités en lots bornés ; aucun
-top-k global ne retire un article du passage d'analyse. Les notes sont mises en
-cache par version du pipeline, modèle et texte. Cette lecture générale est réutilisée
-entre projets ; l'interprétation et la rédaction sont propres au formulaire.
-Le modèle sélectionne des passages par identifiant et indice, puis le système
-recopie les extraits originaux. Les citations verbatim sont comparées aux passages
-originaux ; une référence inconnue, une citation
-inventée, un contexte trop long ou une sortie tronquée empêche la publication.
+`RAG_READING_MODE=balanced` est le mode par défaut. Tous les passages hors
+bibliographies sont parcourus par une sélection textuelle locale sans modèle.
+Elle conserve au plus deux extraits exacts par article (450 caractères chacun),
+avec priorité aux thèmes d'aménagement, préconisations et limites ou effets
+défavorables. Tous les documents restent dans l'audit, y compris ceux sans extrait
+retenu. Les indices de rôle sont heuristiques, pas des résultats scientifiques.
+Le modèle croise les extraits en lots bornés, puis rédige les recommandations.
+Ce filtrage peut manquer des résultats implicites ou leur contexte : sa qualité
+n'est pas équivalente à une lecture scientifique intégrale validée.
+
+`RAG_READING_MODE=exhaustive` conserve l'ancien parcours : chaque lot est lu par
+le modèle, qui sélectionne des extraits par identifiant et indice. Ses notes sont
+mises en cache par version, modèle et texte et réutilisées entre projets.
+Ce mode peut demander plusieurs jours sur un GPU de 4 Go pour plusieurs centaines
+d'articles. Le mode équilibré vise une à deux heures pour le corpus courant,
+sans garantie de délai sur tout matériel ou volume ; les contrôles et reprises
+peuvent allonger la rédaction. Les réponses de rédaction sont mises en cache dans
+les deux modes. Le modèle, les contrôles de citations et les quatre pages restent
+identiques ; les lots intermédiaires sont limités à trois propositions concises.
+Avant la consolidation, une sélection bornée des propositions déjà contrôlées
+favorise la diversité des thèmes et des sources (10 propositions et 8 000 caractères
+au maximum). Cela évite de multiplier les appels de réduction. Un lot encore
+invalide après correction ne contribue aucune proposition : son rejet et son motif
+restent dans `coverage.batches_rejected`, avec avertissement dans l'interface.
+Les scores du classificateur ne sont pas transmis au rédacteur pour éviter de les
+confondre avec une mesure écologique.
+
+Une référence inconnue, une citation inventée, un contexte trop long ou une sortie
+tronquée empêche la publication.
 Une réduction hiérarchique synthétise ensuite les constats de tous les documents.
 Un document examiné peut être écarté des recommandations pour manque de pertinence ;
-il reste dans le registre, avec ses passages lus et les appréciations du modèle.
+il reste dans le registre, avec ses passages parcourus et le mode de sélection.
 Les fichiers sans texte extrait restent signalés comme non analysables.
 
 `territorial_report.coverage` expose documents présents/lus, passages lus,

@@ -20,16 +20,29 @@ const priorities: Record<string, string> = {
         v-if="report.coverage.chunks_read != null"
       >
         · {{ report.coverage.chunks_read }} passages lus</span
-      >. Les documents sont analysés dans leur ensemble avant la rédaction.
+      >.
       <span v-if="report.corpus_snapshot_at">
         Corpus figé au démarrage de l’analyse :
         {{ date(report.corpus_snapshot_at) }}.
       </span>
     </p>
+    <p v-if="report.coverage.reading_method" class="notice">
+      {{ report.coverage.reading_method }}
+      <span v-if="report.coverage.excerpts_selected != null"
+        >{{ report.coverage.excerpts_selected }} extraits retenus pour la
+        synthèse.</span
+      >
+    </p>
     <p v-if="report.coverage.documents_pending_review" class="notice">
       {{ report.coverage.documents_pending_review }} document(s) restent en
       attente de validation scientifique. Les recommandations doivent être
       relues avant leur mise en œuvre.
+    </p>
+    <p v-if="report.coverage.batches_rejected?.length" class="notice">
+      {{ report.coverage.batches_rejected.length }} lot(s) n’ont produit aucune
+      proposition validée après correction. Leurs propositions ont été écartées
+      ; les motifs figurent dans l’audit JSON. La synthèse ne doit pas être
+      considérée comme complète sur ces lots.
     </p>
     <p v-if="report.coverage.unreadable_ids?.length" class="notice">
       {{ report.coverage.unreadable_ids.length }} fichier(s) sans texte

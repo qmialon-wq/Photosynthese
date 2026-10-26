@@ -25,7 +25,7 @@ const models = useResource<Model[]>(() => "/console/models", 15000);
 const activeModel = computed(() =>
   models.data.value?.find((model) => model.active),
 );
-const preset = ref("balanced");
+const preset = ref("fast");
 const shadowModel = ref("");
 const modeChosen = ref(false);
 watch(activeModel, (model) => {
@@ -37,7 +37,7 @@ const config = ref({
   classification_threshold: 0.48,
   track_threshold: 0.6,
   track_min_hits: 2,
-  infer_every_n_frames: 2,
+  infer_every_n_frames: 10,
 });
 watch(
   () => route.query,

@@ -5,6 +5,10 @@ export interface TerritorialReport {
     documents_total: number;
     documents_read: number;
     chunks_read?: number;
+    reading_mode?: string;
+    reading_method?: string;
+    excerpts_selected?: number;
+    batches_rejected?: Array<{ batch: number; reason: string }>;
     documents_pending_review?: number;
     unreadable_ids?: string[];
     complete?: boolean;

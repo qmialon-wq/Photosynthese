@@ -51,7 +51,7 @@ def execute_priority_report(settings: DocumentSettings) -> bool:
     """
     with service.transaction() as connection:
         row = connection.execute(
-            """SELECT id FROM document_tasks WHERE status='queued' AND kind='rag'
+            """SELECT id FROM document_tasks WHERE status IN ('queued','running') AND kind='rag'
             AND request->>'action' IN ('parcel','report') ORDER BY created_at,id LIMIT 1"""
         ).fetchone()
     return execute(str(row["id"]), settings) if row else False
@@ -87,7 +87,7 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
                 return True
             with service.transaction() as connection:
                 connection.execute(
-                    """UPDATE document_tasks SET status='running',started_at=now(),
+                    """UPDATE document_tasks SET status='running',started_at=coalesce(started_at,now()),
                     attempts=attempts+1,error=NULL WHERE id=%s""",
                     (identifier,),
                 )

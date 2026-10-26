@@ -22,7 +22,7 @@ class AnalysisRequest(BaseModel):
     classification_threshold: float = Field(default=0.48, ge=0, le=1, allow_inf_nan=False)
     track_threshold: float = Field(default=0.60, ge=0, le=1, allow_inf_nan=False)
     track_min_hits: int = Field(default=2, ge=1)
-    infer_every_n_frames: int = Field(default=2, ge=1)
+    infer_every_n_frames: int = Field(default=10, ge=1)
     force: bool = False
 
     @field_validator("video")

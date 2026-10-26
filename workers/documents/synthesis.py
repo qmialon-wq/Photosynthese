@@ -117,8 +117,13 @@ class Generator:
             )
         )
         output_tokens = 900 if schema is Notes else 1600 if schema is Page else 2200
+        compact_batch = isinstance(payload, dict) and payload.get("stage") == "evidence_batch"
+        if compact_batch:
+            output_tokens = 1400
         contexts = [8192, 16384]
         output_schema = schema.model_json_schema()
+        if compact_batch:
+            output_schema["properties"]["actions"]["maxItems"] = 3
         if schema is Notes and payload.get("evidence"):
             finding = output_schema["$defs"]["Finding"]
             finding["properties"]["quote_id"]["enum"] = [e["quote_id"] for e in payload["evidence"]]
@@ -207,6 +212,8 @@ def corpus(species: list[str]) -> list[dict[str, Any]]:
     if not species:
         return []
     with service.transaction() as connection:
+        # The model and extraction can heavily load this laptop during a refresh.
+        connection.execute("SET LOCAL statement_timeout = '15000ms'")
         rows = connection.execute(
             """WITH selected AS MATERIALIZED (
               SELECT d.id,d.title,d.doi,d.authors,d.published_date,d.relevance,d.quality,d.status,
@@ -425,25 +432,57 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
         {r["name"] for key in ("confirmed_species", "predicted_species") for r in context[key]}
     )
     documents = corpus(species)
+    progress = {
+        "phase": "reading",
+        "documents_total": len(documents),
+        "chunks_total": sum(d["chunk_count"] for d in documents),
+        "documents_done": 0,
+        "detailed_tracking": True,
+        "reading_mode": settings.reading_mode,
+        "generation_started_at": snapshot_at,
+    }
+
+    def report(phase, message, **data):
+        progress.update(phase=phase, **data)
+        log("rag_progress", message, data=dict(progress))
+
+    report("reading", "Corpus recensé ; lecture des articles")
     if not documents:
         return {"status": "no_sources", "coverage": {"documents_total": 0, "documents_read": 0}}
     storage = DocumentStorage(DocumentSettings().root)
     site = {
         "profile": profile,
         "observations": {
-            key: context.get(key)
-            for key in (
-                "confirmed_species",
-                "predicted_species",
-                "video_count",
-                "detections",
-            )
+            key: [
+                {
+                    k: v
+                    for k, v in species.items()
+                    if k in ("name", "display_name", "latin", "scientific_name")
+                }
+                for species in context.get(key, [])
+            ]
+            for key in ("confirmed_species", "predicted_species")
         },
     }
     # The documentary reading is reusable across parcels. Only the subsequent
     # interpretation is site-specific, so editing an area does not reread 100 PDFs.
     reading_context = {"purpose": "Écologie des espèces et aménagement du territoire"}
-    ledger = [read_document(doc, generator, storage, reading_context, log) for doc in documents]
+    ledger = []
+    for index, doc in enumerate(documents):
+        report(
+            "reading",
+            "Lecture d'un article",
+            current_document=doc["title"],
+            current_document_chunks_total=doc["chunk_count"],
+            documents_done=index,
+        )
+        if settings.reading_mode == "balanced":
+            from workers.documents.screening import screen
+
+            ledger.append(screen(doc, chunks(doc), log))
+        else:
+            ledger.append(read_document(doc, generator, storage, reading_context, log))
+        report("reading", "Article examiné", documents_done=index + 1)
     unreadable = [d["id"] for d in ledger if not d["chunks_read"]]
     evidence = [
         {"citation": d["citation"], "title": d["title"], "findings": d["findings"]}
@@ -460,6 +499,16 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
             d["relevance"] != "accepted" or d["quality"] != "accepted" for d in ledger
         ),
         "complete": not unreadable,
+        "reading_mode": settings.reading_mode,
+        "excerpts_selected": sum(len(d["findings"]) for d in ledger),
+        "reading_method": (
+            "Tous les passages sont parcourus par un repérage lexical local. Au plus deux "
+            "extraits par article sont proposés au modèle, avec priorité aux préconisations "
+            "et aux limites ou effets défavorables. Ce filtrage peut manquer des résultats "
+            "implicites ; il ne constitue pas une lecture scientifique exhaustive."
+            if settings.reading_mode == "balanced"
+            else "Chaque lot de passages est examiné par le modèle local avant la synthèse."
+        ),
     }
     if not evidence:
         return {
@@ -475,41 +524,78 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
         check_action_grounding(candidate, source_texts)
 
     # Hierarchical reduction considers every note; no top-k or slice drops a document.
-    groups = list(
-        batches(
-            iter(
-                {
+    def evidence_rows():
+        for entry in evidence:
+            if settings.reading_mode == "balanced":
+                yield {
                     "text": json.dumps(
                         {
-                            "citation": e["citation"],
-                            "title": e["title"],
-                            "finding": {
-                                k: f[k]
-                                for k in (
-                                    "quote",
-                                    "role",
-                                    "direction",
-                                    "limits",
-                                    "page",
-                                    "chunk_id",
-                                )
-                            },
+                            "citation": entry["citation"],
+                            "title": entry["title"],
+                            "excerpts": [
+                                {"quote": f["quote"], "role_hint": f["role"]}
+                                for f in entry["findings"]
+                            ],
                         },
                         ensure_ascii=False,
                     )
                 }
-                for e in evidence
-                for f in e["findings"]
-            ),
+            else:
+                for finding in entry["findings"]:
+                    yield {
+                        "text": json.dumps(
+                            {
+                                "citation": entry["citation"],
+                                "title": entry["title"],
+                                "finding": {
+                                    k: finding[k]
+                                    for k in (
+                                        "quote",
+                                        "role",
+                                        "direction",
+                                        "limits",
+                                        "page",
+                                        "chunk_id",
+                                    )
+                                },
+                            },
+                            ensure_ascii=False,
+                        )
+                    }
+
+    groups = list(
+        batches(
+            iter(evidence_rows()),
             10000,
         )
     )
     briefs = []
-    for group in groups:
+    coverage["batches_rejected"] = []
+
+    def generate_batch(*args):
+        try:
+            return generate_checked(*args)
+        except ValueError as exc:
+            if settings.reading_mode != "balanced":
+                raise
+            # Never publish a failed draft, nor lose the rest of the corpus to one
+            # ungrounded proposal. Rejection and its scope stay visible in the audit.
+            coverage["batches_rejected"].append({"batch": index + 1, "reason": str(exc)})
+            report("recommendations", "Lot sans proposition validée ; rejet consigné dans l’audit")
+            return Actions(actions=[])
+
+    for index, group in enumerate(groups):
+        report(
+            "recommendations",
+            "Élaboration des recommandations par lot",
+            groups_done=index,
+            groups_total=len(groups),
+            current_document=None,
+        )
         group_evidence = [json.loads(row["text"]) for row in group]
-        draft = generate_checked(
+        draft = generate_batch(
             generator,
-            "Propose jusqu'à 6 mesures d'aménagement argumentées à partir de TOUS les documents "
+            "Propose jusqu'à 3 mesures d'aménagement argumentées à partir de TOUS les documents "
             "du lot. action_type=territorial exige une modification spatiale ou de gestion : "
             "le champ action commence par un verbe tel que conserver, restaurer, limiter, adapter. "
             "Un inventaire, une étude ou une simple observation a action_type=assessment. "
@@ -521,7 +607,7 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
             "Aucune prescription locale chiffrée : ni distance, horaire, date ou seuil. "
             "Les résultats chiffrés restent dans rationale, s'ils sont cités. "
             "Renvoie actions=[] si aucune mesure n'est justifiable.",
-            {"site": site, "evidence": group_evidence},
+            {"stage": "evidence_batch", "site": site, "evidence": group_evidence},
             Actions,
             lambda result, allowed={e["citation"] for e in group_evidence}: check_plan(
                 result, allowed
@@ -529,8 +615,19 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
         )
         checked_citations(draft, {e["citation"] for e in group_evidence})
         briefs.append(draft.model_dump())
+        report("recommendations", "Lot de recommandations contrôlé", groups_done=index + 1)
+    if settings.reading_mode == "balanced":
+        from workers.documents.screening import shortlist
+
+        coverage["proposals_before_shortlist"] = sum(len(b["actions"]) for b in briefs)
+        briefs = shortlist(briefs)
+        coverage["proposals_after_shortlist"] = sum(len(b["actions"]) for b in briefs)
+        coverage["recommendation_coverage_complete"] = not coverage["batches_rejected"]
+        if not briefs:
+            return {"status": "no_actionable_evidence", "ledger": ledger, "coverage": coverage}
     # Reduce in bounded groups until the final writing context fits, preserving provenance.
     while len(json.dumps(briefs, ensure_ascii=False)) > 10000:
+        report("consolidating", "Consolidation des recommandations et de leurs sources")
         reduced = []
         for group in batches(
             iter({"text": json.dumps(a, ensure_ascii=False)} for b in briefs for a in b["actions"]),
@@ -550,6 +647,7 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
         if len(json.dumps(reduced)) >= len(json.dumps(briefs)):
             raise ValueError("Synthèse trop volumineuse ; réduction sans perte non obtenue")
         briefs = reduced
+    report("consolidating", "Arbitrage des recommandations pour le territoire")
     plan = (
         Actions.model_validate(briefs[0])
         if len(briefs) == 1
@@ -585,6 +683,7 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
         "Mise en œuvre du projet et précautions de chantier",
         "Priorités, arbitrages et suivi écologique",
     ):
+        report("writing", "Rédaction de la page : " + title, pages_done=len(pages))
 
         def validate_page(page):
             checked_citations(page, {c for action in plan.actions for c in action.citations})
@@ -619,6 +718,7 @@ def synthesize(profile, context, settings, log: Callable[..., None], generator=N
             )
         pages.append({**page.model_dump(), "word_count": words})
         log("synthesis", "Page rédigée et références contrôlées", data={"page": len(pages)})
+    report("checking", "Contrôle final du corpus et des références", pages_done=4)
     current = {d["id"] for d in corpus(species)}
     if not {d["id"] for d in documents} <= current:
         raise ValueError(

@@ -106,7 +106,7 @@ config:
 DEVICE ?= cpu
 IMAGE ?=
 REAL_VIDEO ?= /storage/datasets/inbox/test.mp4
-INFER_STRIDE ?= 2
+INFER_STRIDE ?= 10
 VIDEO ?=
 MANIFEST ?= /storage/results/vision/training.json
 ALLOW_FILENAME_LABELS ?= 1

@@ -247,6 +247,8 @@ def render_territorial(data: dict[str, Any], *, markdown: bool = False) -> str:
         f"{report['coverage']['documents_total']} documents.",
         "Les recommandations sont des propositions de conception sourcées, à vérifier sur le site.",
     ]
+    if report["coverage"].get("reading_method"):
+        lines.append(report["coverage"]["reading_method"])
     for i, page in enumerate(report["pages"], 1):
         lines.extend([f"## Page {i}/4 — {page['title']}"])
         for paragraph in page["paragraphs"]:

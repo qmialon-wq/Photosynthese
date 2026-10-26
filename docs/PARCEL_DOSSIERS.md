@@ -141,6 +141,16 @@ ne sont pas utilisées pour une nouvelle préparation. Aucun entraînement n'est
 
 ## Vérification
 
+Le dossier expose un champ `progress`, actualisé par la page toutes les quatre
+secondes : phase, articles et passages examinés, article en cours, lots de
+recommandations, pages contrôlées, durée et dernière activité. Les compteurs de
+lecture proviennent des lots terminés ; la barre représente les passages lus,
+pas un pourcentage global ni une estimation du temps restant. Après quinze
+minutes sans événement, l'interface signale l'absence de nouvelle étape sans
+affirmer que le calcul est bloqué. Une reprise conserve l'heure de démarrage
+initiale et réutilise les notes en cache. Les anciens journaux restent lisibles,
+avec leurs limites de suivi explicitement indiquées.
+
 ```sh
 docker compose --profile test run --rm tests pytest tests/test_parcel_contracts.py tests/documents -m 'not real_model'
 cd frontend

@@ -17,6 +17,7 @@ class RagSettings(BaseSettings):
     generator_model: str = "qwen3:4b-instruct-2507-q4_K_M"
     generator_timeout: int = Field(default=600, ge=10, le=3600)
     generation_device: Literal["cpu", "cuda"] = "cpu"
+    reading_mode: Literal["balanced", "exhaustive"] = "balanced"
 
     @field_validator("model_manifest", mode="before")
     @classmethod

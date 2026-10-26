@@ -157,6 +157,9 @@ def dossier(identifier: str) -> dict[str, Any]:
         ).fetchone()
         if row:
             row["videos"] = inputs(connection, row)
+            from .progress import read as read_progress
+
+            row["progress"] = read_progress(connection, row["task_id"])
             row["video_count"] = len(row["videos"])
             row["completed_video_count"] = sum(
                 v["analysis_status"] == "completed" for v in row["videos"]

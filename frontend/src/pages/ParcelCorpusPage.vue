@@ -3,6 +3,8 @@ import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { api, apiUrl, date, message, post, useResource } from "../api";
 import TerritorialReportView from "../components/TerritorialReport.vue";
+import DossierProgressView from "../components/DossierProgress.vue";
+import type { DossierProgress } from "../dossier-progress";
 import type { TerritorialReport } from "../territorial";
 
 interface Profile {
@@ -48,6 +50,7 @@ interface Corpus {
   videos: Video[];
   profile: { revision: number; profile: Profile } | null;
   dossier: {
+    progress?: DossierProgress;
     id: string;
     status: string;
     error: string | null;
@@ -317,6 +320,10 @@ const labels: Record<string, string> = {
           {{ dossier.error }} Vous pouvez relancer la préparation ; les analyses
           réussies seront conservées.
         </p>
+        <DossierProgressView
+          v-if="['queued', 'running'].includes(dossier.status)"
+          :progress="dossier.progress"
+        />
         <template v-if="dossier.status === 'completed' && dossier.result">
           <TerritorialReportView
             v-if="dossier.result.territorial_report"

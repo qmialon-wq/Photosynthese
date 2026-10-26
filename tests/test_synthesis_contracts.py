@@ -107,7 +107,7 @@ def test_all_documents_all_batches_and_cache_are_used(monkeypatch, tmp_path):
     result = synthesis.synthesize(
         {"area_m2": 2500},
         context,
-        RagSettings(),
+        RagSettings(reading_mode="exhaustive"),
         lambda *a, **kw: None,
         generator,
     )
@@ -123,7 +123,7 @@ def test_all_documents_all_batches_and_cache_are_used(monkeypatch, tmp_path):
         row["relevance"] = row["quality"] = "accepted"
         row["status"] = "indexed"
     synthesis.synthesize(
-        {"area_m2": 3500}, context, RagSettings(), lambda *a, **kw: None, generator
+        {"area_m2": 3500}, context, RagSettings(reading_mode="exhaustive"), lambda *a, **kw: None, generator
     )
     assert not generator.seen  # Verified notes resume without rereading the model input.
 

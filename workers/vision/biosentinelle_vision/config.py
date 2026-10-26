@@ -103,7 +103,7 @@ class VisionSettings(BaseSettings):
     seed: int = 42
     detection_threshold: float = Field(default=0.10, ge=0.005, le=1)
     classification_threshold: float = Field(default=0.48, ge=0, le=1)
-    infer_every_n_frames: int = Field(default=2, ge=1)
+    infer_every_n_frames: int = Field(default=10, ge=1)
     frames: FramesConfig = Field(default_factory=FramesConfig)
     crops: CropsConfig = Field(default_factory=CropsConfig)
     split: SplitConfig = Field(default_factory=SplitConfig)

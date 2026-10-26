@@ -48,7 +48,7 @@ Kaggle, Colab ou `ultralytics.YOLO` n'est utilisé pour charger ces poids.
 Déposer une vidéo complète dans `data/datasets/inbox/`. Sous PowerShell :
 
 ```powershell
-$body = @{ video='ma-video.mp4'; detection_threshold=0.10; classification_threshold=0.48; track_threshold=0.60; track_min_hits=2; infer_every_n_frames=2 } | ConvertTo-Json
+$body = @{ video='ma-video.mp4'; detection_threshold=0.10; classification_threshold=0.48; track_threshold=0.60; track_min_hits=2; infer_every_n_frames=10 } | ConvertTo-Json
 $job = Invoke-RestMethod -Method Post http://localhost:8000/vision/analyses -ContentType 'application/json' -Body $body
 Invoke-RestMethod ("http://localhost:8000" + $job.status_url)
 ```

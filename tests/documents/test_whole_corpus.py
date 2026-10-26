@@ -8,6 +8,40 @@ from .test_rag import publication
 pytestmark = pytest.mark.integration
 
 
+def test_live_progress_reconstructs_old_jobs_and_tracks_new_stages(document_db):
+    from shared.parcels.progress import read
+
+    first, _ = publication()
+    second, _ = publication(approved=False)
+    task = service.submit("rag", {"action": "parcel", "body": {}}, "test")
+    with service.transaction() as connection:
+        connection.execute(
+            "UPDATE document_tasks SET status='running',started_at=now() WHERE id=%s",
+            (task["id"],),
+        )
+    for doc, count in [(first, 2), (first, 5), (second, 3)]:
+        service.event(task["id"], "synthesis", "Passages examinés",
+                      data={"document_id": doc, "chunks_read": count})
+    with service.transaction() as connection:
+        progress = read(connection, task["id"])
+    assert progress["phase"] == "reading"
+    assert progress["documents_started"] == 2
+    assert progress["chunks_read"] == 8  # Cumulative batch counters must not be added twice.
+    assert not progress["detailed_tracking"]
+    assert progress["current_document"] == "Synthetic ecological fixture"
+    service.event(task["id"], "rag_progress", "Rédaction",
+                  data={"phase": "writing", "documents_total": 2,
+                        "documents_done": 2, "detailed_tracking": True})
+    service.event(task["id"], "synthesis", "Page contrôlée", data={"page": 1})
+    with service.transaction() as connection:
+        progress = read(connection, task["id"])
+    assert progress["phase"] == "writing"
+    assert progress["pages_done"] == 1
+    assert progress["documents_done"] == progress["documents_total"] == 2
+    assert progress["detailed_tracking"]
+    assert progress["current_document"] is None
+
+
 def test_dossiers_have_priority_over_queued_translations(document_db, monkeypatch):
     from workers.documents import runtime
 
@@ -19,6 +53,10 @@ def test_dossiers_have_priority_over_queued_translations(document_db, monkeypatc
     )
     assert runtime.execute_priority_report(document_db)
     assert executed == [report["id"]]
+    with service.transaction() as connection:
+        connection.execute("UPDATE document_tasks SET status='running' WHERE id=%s", (report["id"],))
+    assert runtime.execute_priority_report(document_db)
+    assert executed == [report["id"], report["id"]]
 
 
 def test_all_linked_texts_include_pending_but_exclude_withdrawn_and_rejected(document_db):

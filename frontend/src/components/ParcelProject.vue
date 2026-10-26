@@ -2,6 +2,8 @@
 import { computed, ref, watch } from "vue";
 import { api, apiUrl, message, post, useResource } from "../api";
 import TerritorialReportView from "./TerritorialReport.vue";
+import DossierProgressView from "./DossierProgress.vue";
+import type { DossierProgress } from "../dossier-progress";
 import type { TerritorialReport } from "../territorial";
 
 interface Profile {
@@ -20,6 +22,7 @@ interface Source {
   text: string;
 }
 interface Dossier {
+  progress?: DossierProgress;
   id: string;
   status: string;
   error: string | null;
@@ -258,6 +261,10 @@ defineExpose({ save });
           "La préparation du dossier a échoué. Vous pouvez la relancer."
         }}
       </p>
+      <DossierProgressView
+        v-if="['queued', 'running'].includes(dossier.status)"
+        :progress="dossier.progress"
+      />
       <template v-if="dossier.status === 'completed' && dossier.result">
         <TerritorialReportView
           v-if="dossier.result.territorial_report"

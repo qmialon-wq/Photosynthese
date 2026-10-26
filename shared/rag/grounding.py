@@ -35,6 +35,9 @@ SUPPORT = (
     ),
 )
 NUMBER = re.compile(r"(?<![\w.])\d+(?:[.,]\d+)?(?!\w)")
+GROUPED_NUMBER = re.compile(
+    r"(?<![\w.,])\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?:[.,]\d+)?(?!\w|[.,]\d)"
+)
 PRESCRIPTION = re.compile(
     r"\d|\b(?:deux|trois|quatre|cinq|six|dix|quinze|vingt|trente|cinquante|cent|mille)[-\s]+(?:mètres?|heures?|lux|jours?)\b",
     re.I,
@@ -45,13 +48,18 @@ QUANTITY = re.compile(
 )
 
 
+def normalized_numbers(text):
+    """Treat French thousands spaces as formatting, without joining separate numbers."""
+    return GROUPED_NUMBER.sub(lambda m: re.sub(r"[ \u00a0\u202f]", "", m[0]), text)
+
+
 def numbers(text):
-    return {float(m[0].replace(",", ".")) for m in NUMBER.finditer(text)}
+    return {float(m[0].replace(",", ".")) for m in NUMBER.finditer(normalized_numbers(text))}
 
 
 def quantities(text):
     result = set()
-    for value, unit in QUANTITY.findall(text):
+    for value, unit in QUANTITY.findall(normalized_numbers(text)):
         unit = unit.lower()
         if unit in ("m²", "m2"):
             unit = "m2"
@@ -108,9 +116,11 @@ def validate_page(page, source_texts, profile):
         source = "\n".join(source_texts.get(c, "") for c in paragraph.citations)
         areas = {float(profile["area_m2"])} if profile.get("area_m2") is not None else set()
         allowed_numbers = numbers(source) | areas
-        if not numbers(paragraph.text) <= allowed_numbers:
+        unsupported = numbers(paragraph.text) - allowed_numbers
+        if unsupported:
             raise ValueError(
-                "Chiffre absent du formulaire et des extraits cités : retirer ce chiffre."
+                "Chiffre absent du formulaire et des extraits cités : "
+                f"retirer {', '.join(format(n, 'g') for n in sorted(unsupported))}."
             )
         allowed_quantities = quantities(source) | {(value, "m2") for value in areas}
         if not quantities(paragraph.text) <= allowed_quantities:
