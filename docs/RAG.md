@@ -90,6 +90,12 @@ le navigateur. TXT/Markdown et JSON ajoutent les fiches et l'annexe complète du
 corpus, qui peut dépasser quatre pages. La densité typographique du rapport principal
 s'adapte aux pages les plus détaillées ; des bornes de validation empêchent une
 sortie vide ou démesurée.
+Le rédacteur dispose d'une marge de sortie de 2 200 tokens par page. Si une page
+est tronquée ou reste invalide après correction, elle est reprise en trois
+paragraphes bornés, contrôlés séparément puis assemblés et recontrôlés. Les
+réponses incomplètes ne sont jamais publiées. Les pages validées sont enregistrées
+dans `synthesis/pages`, avec les sources et le contexte dans leur empreinte ;
+une reprise les relit et les valide sans les régénérer.
 Le corpus est figé au démarrage. Les ajouts ultérieurs sont comptés pour proposer
 une actualisation ; un retrait ou rejet pendant la rédaction empêche sa publication.
 
