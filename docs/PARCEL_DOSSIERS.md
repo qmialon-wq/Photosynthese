@@ -141,6 +141,12 @@ ne sont pas utilisées pour une nouvelle préparation. Aucun entraînement n'est
 
 ## Vérification
 
+Les citations du rapport et des fiches affichent le titre de l'article, lié à
+son DOI, à sa source ou à son PDF local, dans un nouvel onglet. Le rendu résout
+les identifiants depuis l'instantané : les dossiers existants en bénéficient
+sans régénération. Les exports HTML et Markdown contiennent également les liens ;
+le TXT inclut les titres et les URL. L'audit JSON conserve les identifiants.
+
 Le dossier expose un champ `progress`, actualisé par la page toutes les quatre
 secondes : phase, articles et passages examinés, article en cours, lots de
 recommandations, pages contrôlées, durée et dernière activité. Les compteurs de

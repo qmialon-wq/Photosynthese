@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from html import escape
 from typing import Any
 
+from .citations import link_text, reference_label, remaining_references, source_index
+
 
 @dataclass(frozen=True)
 class Theme:
@@ -237,6 +239,8 @@ def render(data: dict[str, Any], *, markdown: bool = False) -> str:
 
 def render_territorial(data: dict[str, Any], *, markdown: bool = False) -> str:
     report = data["territorial_report"]
+    sources = source_index(report)
+    format = "markdown" if markdown else "text"
     lines = [
         "# Dossier territorial — recommandations d'aménagement",
         "",
@@ -253,17 +257,19 @@ def render_territorial(data: dict[str, Any], *, markdown: bool = False) -> str:
         lines.extend([f"## Page {i}/4 — {page['title']}"])
         for paragraph in page["paragraphs"]:
             lines.append(
-                paragraph["text"] + " " + " ".join(f"[{c}]" for c in paragraph["citations"])
+                link_text(paragraph["text"], sources, format)
+                + " "
+                + remaining_references(paragraph["citations"], paragraph["text"], sources, format)
             )
     lines.append("## Fiches de mise en œuvre")
     for action in report["actions"]:
         lines.extend(
             [
-                f"### {action['title']}",
-                action["action"],
-                f"Où : {action['location']}",
-                f"Justification : {action['rationale']}",
-                f"Conditions : {action['conditions']}",
+                "### " + link_text(action["title"], sources, format),
+                link_text(action["action"], sources, format),
+                "Où : " + link_text(action["location"], sources, format),
+                "Justification : " + link_text(action["rationale"], sources, format),
+                "Conditions : " + link_text(action["conditions"], sources, format),
                 "Priorité : "
                 + {
                     "before_project": "Avant le projet",
@@ -271,14 +277,16 @@ def render_territorial(data: dict[str, Any], *, markdown: bool = False) -> str:
                     "works": "Travaux",
                     "monitoring": "Suivi",
                 }[action["priority"]],
-                f"Suivi : {action['monitoring']}",
-                "Références : " + ", ".join(action["citations"]),
+                "Suivi : " + link_text(action["monitoring"], sources, format),
+                "Références : "
+                + " · ".join(reference_label(c, sources, format) for c in action["citations"]),
             ]
         )
     lines.append("## Annexe — ensemble du corpus examiné")
     for doc in report["ledger"]:
         lines.append(
-            f"[{doc['citation']}] {doc['title']} — DOI : {doc['doi'] or 'non renseigné'} — "
+            reference_label(doc["citation"], sources, format)
+            + f" — DOI : {doc['doi'] or 'non renseigné'} — "
             f"{doc['chunks_read']} passages lus — "
             f"pertinence : {doc['relevance']} / qualité : {doc['quality']}"
         )
@@ -305,12 +313,13 @@ def printable_html(data: dict[str, Any]) -> str:
         raise ValueError("Aucun rapport territorial rédigé pour cet instantané")
     pages = []
     coverage = report["coverage"]
+    sources = source_index(report)
     for i, page in enumerate(report["pages"], 1):
         compact = sum(len(p["text"]) for p in page["paragraphs"]) > 3000
         page_class = "page compact" if compact else "page"
         paragraphs = "".join(
-            f"<p>{escape(p['text'])} <span class='citations'>"
-            + escape(" ".join(f"[{c}]" for c in p["citations"]))
+            f"<p>{link_text(p['text'], sources)} <span class='citations'>"
+            + remaining_references(p["citations"], p["text"], sources)
             + "</span></p>"
             for p in page["paragraphs"]
         )
@@ -338,6 +347,9 @@ def printable_html(data: dict[str, Any]) -> str:
       h1 {font: bold 21pt/1.2 Georgia,serif;margin:5mm 0 4mm}
       .context {font:9pt Arial,sans-serif;padding-bottom:3mm;border-bottom:1px solid #b4c4b8}
       p {margin:4mm 0;text-align:left;orphans:3;widows:3} .citations {font:9pt Arial,sans-serif}
+      .source-link {display:inline-block;max-width:48mm;vertical-align:bottom;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#245e47;
+      font:8pt/1.25 Arial,sans-serif;text-decoration:underline}
       .compact {font-size:9.5pt;line-height:1.3} .compact p {margin:3mm 0}
       footer {position:absolute;bottom:12mm;left:20mm;right:20mm;font:8pt/1.4 Arial,sans-serif;
       border-top:1px solid #b4c4b8;padding-top:3mm}

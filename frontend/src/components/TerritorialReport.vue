@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { apiUrl, date } from "../api";
+import { computed } from "vue";
+import { sourceIndex, remainingReferences } from "../source-links";
+import SourceText from "./SourceText.vue";
 import type { TerritorialReport } from "../territorial";
 
-defineProps<{ report: TerritorialReport; dossierId: string }>();
+const props = defineProps<{ report: TerritorialReport; dossierId: string }>();
+const articles = computed(() => sourceIndex(props.report.ledger ?? []));
 const priorities: Record<string, string> = {
   before_project: "Avant le projet",
   design: "Pendant la conception",
@@ -71,21 +75,50 @@ const priorities: Record<string, string> = {
       <article v-for="(page, index) in report.pages" :key="index">
         <h4>{{ index + 1 }}. {{ page.title }}</h4>
         <p v-for="(paragraph, p) in page.paragraphs" :key="p">
-          {{ paragraph.text }}
-          <span class="muted">[{{ paragraph.citations.join("][") }}]</span>
+          <SourceText :text="paragraph.text" :sources="articles" />
+          <span class="muted">
+            <SourceText
+              :text="
+                remainingReferences(
+                  paragraph.citations,
+                  paragraph.text,
+                  articles,
+                )
+              "
+              :sources="articles"
+          /></span>
         </p>
       </article>
       <h4>Fiches de mise en œuvre</h4>
       <details v-for="action in report.actions" :key="action.title">
         <summary>
-          {{ action.title }} · {{ priorities[action.priority] }}
+          <SourceText :text="action.title" :sources="articles" /> ·
+          {{ priorities[action.priority] }}
         </summary>
-        <p>{{ action.action }}</p>
-        <p><strong>Où :</strong> {{ action.location }}</p>
-        <p><strong>Pourquoi :</strong> {{ action.rationale }}</p>
-        <p><strong>Conditions :</strong> {{ action.conditions }}</p>
-        <p><strong>Suivi :</strong> {{ action.monitoring }}</p>
-        <p>Sources : [{{ action.citations.join("][") }}]</p>
+        <p><SourceText :text="action.action" :sources="articles" /></p>
+        <p>
+          <strong>Où :</strong>
+          <SourceText :text="action.location" :sources="articles" />
+        </p>
+        <p>
+          <strong>Pourquoi :</strong>
+          <SourceText :text="action.rationale" :sources="articles" />
+        </p>
+        <p>
+          <strong>Conditions :</strong>
+          <SourceText :text="action.conditions" :sources="articles" />
+        </p>
+        <p>
+          <strong>Suivi :</strong>
+          <SourceText :text="action.monitoring" :sources="articles" />
+        </p>
+        <p>
+          Sources :
+          <SourceText
+            :text="action.citations.map((id) => `[${id}]`).join(' · ')"
+            :sources="articles"
+          />
+        </p>
       </details>
     </template>
     <p v-else class="notice">

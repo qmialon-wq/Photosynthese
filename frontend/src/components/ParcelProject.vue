@@ -2,6 +2,8 @@
 import { computed, ref, watch } from "vue";
 import { api, apiUrl, message, post, useResource } from "../api";
 import TerritorialReportView from "./TerritorialReport.vue";
+import SourceText from "./SourceText.vue";
+import { articleHref, sourceIndex } from "../source-links";
 import DossierProgressView from "./DossierProgress.vue";
 import type { DossierProgress } from "../dossier-progress";
 import type { TerritorialReport } from "../territorial";
@@ -81,6 +83,9 @@ const state = useResource<State>(
   4000,
 );
 const dossier = computed(() => state.data.value?.dossier);
+const sourceArticles = computed(() =>
+  sourceIndex(dossier.value?.result?.sources ?? []),
+);
 const options = useResource<{
   land_types: Record<string, string>;
   project_types: Record<string, string>;
@@ -315,7 +320,11 @@ defineExpose({ save });
             {{ item.qualification }}
           </p>
           <blockquote v-if="item.evidence_quote">
-            {{ item.evidence_quote }} [{{ item.citation }}]
+            {{ item.evidence_quote }}
+            <SourceText
+              :text="`[${item.citation}]`"
+              :sources="sourceArticles"
+            />
           </blockquote>
         </details>
         <details>
@@ -328,14 +337,13 @@ defineExpose({ save });
           </summary>
           <ul>
             <li v-for="source in dossier.result.sources" :key="source.citation">
-              [{{ source.citation }}] {{ source.title }} — page
-              {{ source.page }}
               <a
-                :href="apiUrl(source.original_url)"
+                :href="articleHref(source) ?? undefined"
                 target="_blank"
-                rel="noopener"
-                >Lire l’original</a
+                rel="noopener noreferrer"
+                >{{ source.title }}</a
               >
+              — page {{ source.page }}
             </li>
           </ul>
         </details>

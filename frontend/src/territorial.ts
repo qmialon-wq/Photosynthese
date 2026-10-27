@@ -1,6 +1,9 @@
+import type { CitationSource } from "./source-links";
+
 export interface TerritorialReport {
   status: string;
   corpus_snapshot_at?: string;
+  ledger?: CitationSource[];
   coverage: {
     documents_total: number;
     documents_read: number;

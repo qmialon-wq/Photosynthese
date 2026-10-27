@@ -3,6 +3,8 @@ import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { api, apiUrl, date, message, post, useResource } from "../api";
 import TerritorialReportView from "../components/TerritorialReport.vue";
+import SourceText from "../components/SourceText.vue";
+import { articleHref, sourceIndex } from "../source-links";
 import DossierProgressView from "../components/DossierProgress.vue";
 import type { DossierProgress } from "../dossier-progress";
 import type { TerritorialReport } from "../territorial";
@@ -88,6 +90,9 @@ const revision = ref(0),
   busy = ref(false),
   error = ref("");
 const dossier = computed(() => corpus.data.value?.dossier);
+const sourceArticles = computed(() =>
+  sourceIndex(dossier.value?.result?.sources ?? []),
+);
 watch(id, () => {
   initialized.value = false;
   dirty.value = false;
@@ -380,7 +385,11 @@ const labels: Record<string, string> = {
               {{ card.qualification }}
             </p>
             <blockquote v-if="card.evidence_quote">
-              {{ card.evidence_quote }} [{{ card.citation }}]
+              {{ card.evidence_quote }}
+              <SourceText
+                :text="`[${card.citation}]`"
+                :sources="sourceArticles"
+              />
             </blockquote>
           </details>
           <details>
@@ -394,14 +403,13 @@ const labels: Record<string, string> = {
                 v-for="source in dossier.result.sources"
                 :key="source.citation"
               >
-                [{{ source.citation }}] {{ source.title }} — page
-                {{ source.page }}
                 <a
-                  :href="apiUrl(source.original_url)"
+                  :href="articleHref(source) ?? undefined"
                   target="_blank"
-                  rel="noopener"
-                  >Lire l’original</a
+                  rel="noopener noreferrer"
+                  >{{ source.title }}</a
                 >
+                — page {{ source.page }}
               </li>
             </ul>
           </details>
