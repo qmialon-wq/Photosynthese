@@ -1,3 +1,4 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 
 test("benchmark des quatre modèles, labels provisoires et rapport accessibles", async ({
@@ -10,7 +11,7 @@ test("benchmark des quatre modèles, labels provisoires et rapport accessibles",
     "ConvNeXt Tiny",
     "ResNet50",
   ];
-  await page.route("**/api/**", (route) => {
+  await mockApi(page, (route) => {
     const path = new URL(route.request().url()).pathname;
     const models = names.map((name, index) => ({
       id: `test-model-${index}`,

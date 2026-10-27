@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Annotated, Any, Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 
 from shared.review import service
@@ -20,9 +20,8 @@ from shared.review.schemas import (
 router = APIRouter(prefix="/review", tags=["human-review"])
 
 
-def reviewer(x_reviewer: Annotated[str | None, Header(max_length=128)] = None) -> str:
-    # Attribution locale déclarative, pas une identité authentifiée.
-    return (x_reviewer or "").strip() or "local"
+def reviewer(request: Request) -> str:
+    return request.state.user["id"]
 
 
 Actor = Annotated[str, Depends(reviewer)]

@@ -6,6 +6,7 @@ from typing import Any
 from uuid import uuid4
 
 from shared import console
+from shared.access import actor_scope
 from shared.documents import service as documents
 from shared.parcels.schemas import Profile
 from shared.review.database import ReviewError, jsonb, transaction
@@ -20,8 +21,9 @@ def options() -> dict[str, Any]:
 def profile(video_id: str) -> dict[str, Any] | None:
     with transaction() as connection:
         return connection.execute(
-            "SELECT * FROM parcel_profiles WHERE video_id=%s ORDER BY revision DESC LIMIT 1",
-            (video_id,),
+            "SELECT * FROM parcel_profiles WHERE video_id=%s AND (%s::text IS NULL OR "
+            "actor=%s) ORDER BY revision DESC LIMIT 1",
+            (video_id, actor_scope(), actor_scope()),
         ).fetchone()
 
 
@@ -34,6 +36,8 @@ def save(video_id: str, body: Profile, actor: str) -> dict[str, Any]:
             (video_id,),
         ).fetchone()
         revision = previous["revision"] if previous else 0
+        if previous and actor_scope() and previous["actor"] != actor_scope():
+            raise ReviewError("Créez un dossier de parcelle depuis votre groupe de vidéos", 409)
         if revision != body.expected_revision:
             raise ReviewError("La parcelle a été modifiée ailleurs. Rechargez le formulaire.", 409)
         if previous and previous["profile"] == data:
@@ -56,7 +60,9 @@ def request(
         with transaction(write=True) as current:
             return request(video_id, analysis_id, revision, actor, current)
     if not connection.execute(
-        "SELECT 1 FROM parcel_profiles WHERE video_id=%s AND revision=%s", (video_id, revision)
+        "SELECT 1 FROM parcel_profiles WHERE video_id=%s AND revision=%s AND (%s::text "
+        "IS NULL OR actor=%s)",
+        (video_id, revision, actor_scope(), actor_scope()),
     ).fetchone():
         raise ReviewError("Formulaire de parcelle absent ou version inconnue", 422)
     analysis = connection.execute(
@@ -178,8 +184,9 @@ def state(video_id: str, analysis_id: str | None = None) -> dict[str, Any]:
     with transaction() as connection:
         latest = connection.execute(
             """SELECT id FROM parcel_dossiers WHERE video_id=%s
-            AND (%s::uuid IS NULL OR analysis_id=%s) ORDER BY created_at DESC LIMIT 1""",
-            (video_id, analysis_id, analysis_id),
+            AND (%s::uuid IS NULL OR analysis_id=%s) AND (%s::text IS NULL OR actor=%s)
+            ORDER BY created_at DESC LIMIT 1""",
+            (video_id, analysis_id, analysis_id, actor_scope(), actor_scope()),
         ).fetchone()
     return {"profile": profile(video_id), "dossier": dossier(str(latest["id"])) if latest else None}
 

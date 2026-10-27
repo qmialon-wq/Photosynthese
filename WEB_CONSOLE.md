@@ -1,18 +1,18 @@
 # Console web BioSentinelle
 
 La page **Documents scientifiques**, accessible dans les deux espaces à
-`/documents` ou `/admin/documents`, permet de rechercher et importer des documents,
+`/documents` ou `/admin/documents`, permet aux administrateurs de rechercher et importer des documents,
 suivre les tâches, lire les textes en français et retirer des documents par sélection
 multiple, pour chaque espèce. La collecte se lance pour toutes les espèces ou une
 sélection, télécharge automatiquement les copies autorisées et masque les simples
 notices. Les originaux restent accessibles ; la traduction anglais-français est locale.
-Les retraits sont tracés et conservés lors des prochaines collectes. Le moteur RAG n'est pas encore actif.
+Les retraits sont tracés et conservés lors des prochaines collectes. Les clients consultent la bibliothèque commune en lecture seule. Le moteur RAG utilise ce corpus pour les dossiers de parcelle.
 Voir le [guide documentaire](workers/documents/README.md) pour le fonctionnement
 du corpus, les restrictions de licence et les endpoints.
 
 L'interface Vue 3 / TypeScript utilise Vue Router et PrimeVue, sans calcul ML
 dans le navigateur. PostgreSQL et les fichiers gérés par les workers restent
-les sources de vérité. Le navigateur mémorise uniquement un identifiant local automatique ;
+les sources de vérité. Le navigateur utilise une session authentifiée dans un cookie HttpOnly ;
 les liens conservent les identifiants de tâches pour retrouver un résultat
 après rechargement.
 
@@ -27,18 +27,18 @@ make review-up DEVICE=cuda
 make review-up DEVICE=cpu
 ```
 
-Ouvrir <http://localhost:8080>. Les migrations jusqu'à `0004_web_console`
+Ouvrir <http://localhost:8080>. Les migrations jusqu'à `0012_authentication`
 sont appliquées avant le démarrage de l'API et du consommateur ML.
 `docker compose up -d --build --wait` démarre l'interface, l'API et les bases,
 mais ne consomme pas les tâches ML. Dans ce mode, les traitements soumis
 restent en attente jusqu'au lancement de `review-up`.
 
-Aucun nom de revue n'est demandé. Un identifiant `local-<uuid>` est créé au premier
-appel API et conservé dans ce navigateur pour tracer les actions. Les appels API
-sans `X-Reviewer` sont attribués à `local` ; les clients existants peuvent toujours
-fournir cet en-tête. Cette attribution est déclarative, sans identité authentifiée.
-La séparation des espaces organise la navigation et ne constitue pas un contrôle
-d'accès : aucune authentification distante ni gestion de rôles n'est ajoutée.
+Au premier lancement, ouvrir `/initialisation` et saisir le jeton du fichier local
+`data/results/auth/bootstrap-token`, puis choisir l’adresse e-mail et le mot de passe
+du premier administrateur. Les clients peuvent ensuite s’inscrire librement.
+Les permissions sont vérifiées par l’API et l’en-tête `X-Reviewer` n’attribue plus
+d’identité. Le guide [Authentification et données personnelles](docs/AUTHENTICATION.md)
+décrit les rôles, les sessions et les demandes d’effacement.
 
 L'accueil `/` donne accès à **Vidéothèque**, **Analyses** et **Validation humaine**.
 Le lien **Administration** ouvre `/admin` et ses pages de gestion ; le lien

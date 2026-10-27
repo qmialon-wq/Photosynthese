@@ -1,4 +1,5 @@
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { auth, clearSession } from "./auth-state";
 
 export const apiUrl = (path: string): string => `/api${path}`;
 const taskLabels: Record<string, string> = {
@@ -13,16 +14,6 @@ const taskLabels: Record<string, string> = {
   prepare_review: "Préparation des recadrages",
 };
 export const taskLabel = (kind: string): string => taskLabels[kind] ?? kind;
-export function reviewer(): string {
-  const existing = localStorage.getItem("biosentinelle-reviewer")?.trim();
-  if (existing) return existing;
-  const identity = `local-${crypto.randomUUID()}`;
-  localStorage.setItem("biosentinelle-reviewer", identity);
-  return identity;
-}
-export function saveReviewer(value: string): void {
-  localStorage.setItem("biosentinelle-reviewer", value.trim());
-}
 
 export class ApiError extends Error {
   constructor(
@@ -38,11 +29,23 @@ export async function api<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const headers = new Headers(options.headers);
-  if (reviewer()) headers.set("X-Reviewer", reviewer());
+  if (
+    auth.csrf &&
+    !["GET", "HEAD"].includes((options.method ?? "GET").toUpperCase())
+  )
+    headers.set("X-CSRF-Token", auth.csrf);
   if (typeof options.body === "string")
     headers.set("Content-Type", "application/json");
-  const response = await fetch(apiUrl(path), { ...options, headers });
+  const response = await fetch(apiUrl(path), {
+    ...options,
+    credentials: "same-origin",
+    headers,
+  });
   if (!response.ok) {
+    if (response.status === 401 && auth.user) {
+      clearSession();
+      window.dispatchEvent(new Event("auth-expired"));
+    }
     let message = `Erreur HTTP ${response.status}`;
     try {
       const body = await response.json();

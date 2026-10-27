@@ -7,6 +7,8 @@ x-python-environment: &python-environment
   POSTGRES_USER: ${POSTGRES_USER:-biosentinelle}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biosentinelle_local}
   REDIS_URL: redis://redis:6379/0
+  AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+  AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:8000,http://127.0.0.1:8000}
   STORAGE_ROOT: /storage
   TORCH_HOME: /storage/models/cache/torch
   HF_HOME: /storage/models/cache/huggingface

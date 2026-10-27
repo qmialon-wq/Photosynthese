@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { apiUrl, api, date, message, post, useResource } from "../api";
+import { auth } from "../auth-state";
+const canManage = computed(() => auth.user?.role === "admin");
 import { documentStatus } from "../documents";
 import type {
   Species,
@@ -183,7 +185,7 @@ async function translate(doc: ScientificDocument) {
         Le nombre disponible dépend des publications accessibles.
       </p>
     </div>
-    <div class="actions">
+    <div v-if="canManage" class="actions">
       <PButton
         label="Récupérer pour toutes les espèces"
         icon="pi pi-download"
@@ -202,7 +204,7 @@ async function translate(doc: ScientificDocument) {
   </div>
   <p v-if="error" class="notice error" role="alert">{{ error }}</p>
   <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-  <section v-if="chooseSpecies" class="panel">
+  <section v-if="canManage && chooseSpecies" class="panel">
     <h2>Pour quelles espèces ?</h2>
     <LoadState
       :error="catalog.error.value"
@@ -240,6 +242,7 @@ async function translate(doc: ScientificDocument) {
         </p>
       </div>
       <PButton
+        v-if="canManage"
         label="Importer un document"
         icon="pi pi-upload"
         severity="secondary"
@@ -266,7 +269,7 @@ async function translate(doc: ScientificDocument) {
       ></LoadState
     >
     <form
-      v-if="importOpen"
+      v-if="canManage && importOpen"
       class="form-grid document-search-form"
       @submit.prevent="upload"
     >
@@ -286,7 +289,7 @@ async function translate(doc: ScientificDocument) {
         :disabled="!file || !rights"
       />
     </form>
-    <div class="bulk-toolbar">
+    <div v-if="canManage" class="bulk-toolbar">
       <label class="check-line"
         ><input
           type="checkbox"
@@ -317,7 +320,7 @@ async function translate(doc: ScientificDocument) {
           :key="doc.id"
           class="document-card"
         >
-          <label class="check-line"
+          <label v-if="canManage" class="check-line"
             ><input
               v-model="picked"
               type="checkbox"
@@ -525,9 +528,11 @@ async function translate(doc: ScientificDocument) {
             @click="pageOffset++"
           /><PButton
             v-if="
-              ['error', 'unsupported'].includes(
+              canManage &&
+              (['error', 'unsupported'].includes(
                 detail.data.value.metadata?.translation_fr?.status || '',
-              ) || !detail.data.value.metadata?.translation_fr
+              ) ||
+                !detail.data.value.metadata?.translation_fr)
             "
             label="Relancer la traduction"
             severity="secondary"

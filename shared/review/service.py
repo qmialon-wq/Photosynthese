@@ -1,6 +1,8 @@
 from typing import Any
 from uuid import uuid4
 
+from shared.access import video_ids
+
 from .database import ReviewError, jsonb, transaction
 from .schemas import BatchDecision, Decision
 
@@ -170,6 +172,7 @@ def list_samples(
      AND (%s::text IS NULL OR coalesce(label,predicted_label,species_candidate)=%s)
      AND (%s::text IS NULL OR quality->>%s='true' OR frame_quality->>%s='true')
      AND (%s::text IS NULL OR video_id=%s)
+     AND (%s::text[] IS NULL OR video_id=ANY(%s))
      ORDER BY priority DESC,id LIMIT %s OFFSET %s"""
     )
     with transaction() as connection:
@@ -185,6 +188,8 @@ def list_samples(
                 quality,
                 video_id,
                 video_id,
+                video_ids(connection),
+                video_ids(connection),
                 limit,
                 offset,
             ),
@@ -197,9 +202,10 @@ def list_videos(status: str | None, limit: int, offset: int) -> list[dict[str, A
             (
                 "SELECT v.*,g.split,g.test_locked FROM review_videos v JOIN review_groups g ON "
                 "g.id=v.group_id "
-                "WHERE (%s::text IS NULL OR v.status=%s) ORDER BY v.id LIMIT %s OFFSET %s"
+                "WHERE (%s::text IS NULL OR v.status=%s) AND (%s::text[] IS NULL OR "
+                "v.id=ANY(%s)) ORDER BY v.id LIMIT %s OFFSET %s"
             ),
-            (status, status, limit, offset),
+            (status, status, video_ids(connection), video_ids(connection), limit, offset),
         ).fetchall()
 
 

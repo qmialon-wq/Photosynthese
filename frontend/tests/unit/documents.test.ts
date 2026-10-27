@@ -5,6 +5,18 @@ import Button from "primevue/button";
 import DocumentsPage from "../../src/pages/DocumentsPage.vue";
 import LoadState from "../../src/components/LoadState.vue";
 import { externalUrl } from "../../src/documents";
+import { auth } from "../../src/auth-state";
+
+beforeEach(() => {
+  auth.user = {
+    id: "admin",
+    email: "admin@example.test",
+    display_name: "Admin",
+    role: "admin",
+    created_at: "2026-10-27T10:00:00Z",
+    deleted_at: null,
+  };
+});
 
 const global = {
   plugins: [PrimeVue],

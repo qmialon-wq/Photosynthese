@@ -1,3 +1,4 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -27,7 +28,7 @@ test("sélection de plusieurs vidéos, formulaire unique et dossier commun persi
   let profile: Record<string, unknown> | null = null,
     started = false,
     complete = false;
-  await page.context().route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const path = new URL(route.request().url()).pathname;
     let data: unknown = [];
     if (path.endsWith("/console/videos")) data = videos;
@@ -145,7 +146,7 @@ test("import de plusieurs fichiers et suivi groupé sans une boucle de polling p
     "11111111-1111-4111-8111-111111111111",
     "33333333-3333-4333-8333-333333333333",
   ];
-  await page.route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const path = new URL(route.request().url()).pathname;
     let data: unknown = [];
     if (path.endsWith("/console/uploads"))

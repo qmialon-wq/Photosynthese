@@ -1528,3 +1528,70 @@ details > form {
     max-width: 100%;
   }
 }
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.auth-card {
+  width: min(100%, 520px);
+}
+.auth-card .brand {
+  color: #214a3a;
+  padding: 0 0 24px;
+}
+.account-button {
+  border: 1px solid #28614c;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: #28614c;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+.account-button:hover:not(:disabled) {
+  background: #214a3a;
+}
+.account-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.account-button:focus-visible {
+  outline: 3px solid #729c6e;
+  outline-offset: 3px;
+}
+.sidebar-footer .account-button {
+  margin-top: 12px;
+}
+.account-form {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0;
+  max-width: 620px;
+}
+.account-form label {
+  display: grid;
+  gap: 6px;
+}
+.account-form input,
+.account-form select,
+.account-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #b7c6c0;
+  border-radius: 8px;
+  font: inherit;
+  background: white;
+  color: #213e34;
+}
+.account-form button {
+  justify-self: start;
+}
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}

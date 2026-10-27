@@ -1,8 +1,9 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test("accueil client simple et administration distincte", async ({ page }) => {
-  await page.route("**/api/**", (route) => route.fulfill({ json: [] }));
+  await mockApi(page, (route) => route.fulfill({ json: [] }));
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Vos observations, simplement." }),
@@ -50,7 +51,7 @@ for (const conflict of [false, true]) {
       detection_score: 0.9,
     }));
     let submitted = false;
-    await page.route("**/api/**", async (route) => {
+    await mockApi(page, async (route) => {
       const url = new URL(route.request().url());
       if (url.pathname.endsWith("/review/species"))
         return route.fulfill({ json: [{ name: "renards", class_index: 5 }] });
@@ -62,7 +63,7 @@ for (const conflict of [false, true]) {
         ]);
         expect(body.label).toBe("renards");
         expect(body.reason).toBeUndefined();
-        expect(route.request().headers()["x-reviewer"]).toMatch(/^local-/);
+        expect(route.request().headers()["x-csrf-token"]).toBe("test-csrf");
         submitted = true;
         if (conflict)
           return route.fulfill({

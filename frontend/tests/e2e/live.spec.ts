@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { loginLive } from "./live-auth";
 test("vidéo réelle : transfert navigateur, inférence worker, MP4 lisible et rapport", async ({
   page,
 }, info) => {
@@ -8,9 +9,7 @@ test("vidéo réelle : transfert navigateur, inférence worker, MP4 lisible et r
     "Fournir explicitement une vidéo de test locale et démarrer Compose ML.",
   );
   test.setTimeout(180000);
-  await page.addInitScript(() =>
-    localStorage.setItem("biosentinelle-reviewer", "diagnostic-navigateur"),
-  );
+  await loginLive(page);
   await page.goto("/videos");
   await page
     .getByLabel("Importer une ou plusieurs vidéos", { exact: true })

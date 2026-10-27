@@ -1,7 +1,31 @@
 ﻿<script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  ref,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 import { useRoute } from "vue-router";
-import { navigation, adminNavigation } from "./router";
+import { navigation, adminNavigation, router } from "./router";
+import { auth, clearSession } from "./auth-state";
+import { post, message } from "./api";
+const logoutError = ref("");
+async function logout() {
+  try {
+    await post("/auth/logout");
+    clearSession();
+    await router.push("/connexion");
+  } catch (error) {
+    logoutError.value = message(error);
+  }
+}
+const expired = () => {
+  void router.push("/connexion");
+};
+onMounted(() => window.addEventListener("auth-expired", expired));
+onBeforeUnmount(() => window.removeEventListener("auth-expired", expired));
 const route = useRoute();
 const open = ref(false);
 const sidebar = ref<HTMLElement | null>(null);
@@ -30,7 +54,10 @@ const title = computed(
 </script>
 <template>
   <a href="#main-content" class="skip-link">Aller au contenu</a>
-  <div class="app-shell">
+  <main v-if="route.meta.public" id="main-content" class="auth-shell">
+    <RouterView />
+  </main>
+  <div v-else-if="auth.user" class="app-shell">
     <aside
       ref="sidebar"
       id="primary-navigation"
@@ -57,18 +84,26 @@ const title = computed(
             item.label
           }}</RouterLink
         >
-        <RouterLink :to="isAdmin ? '/' : '/admin'" class="space-switch">
+        <RouterLink
+          v-if="auth.user.role === 'admin'"
+          :to="isAdmin ? '/' : '/admin'"
+          class="space-switch"
+        >
           <i
             :class="['pi', isAdmin ? 'pi-arrow-left' : 'pi-cog']"
             aria-hidden="true"
           />
           {{ isAdmin ? "Espace observation" : "Administration" }}
         </RouterLink>
+        <RouterLink to="/profil"><i class="pi pi-user" />Mon profil</RouterLink>
       </nav>
       <div class="sidebar-footer">
-        <span class="local-dot" /> Plateforme locale<small
-          >Vos données restent sur cette machine.</small
-        >
+        <strong>{{ auth.user.display_name }}</strong
+        ><small>{{
+          auth.user.role === "admin" ? "Administrateur" : "Client"
+        }}</small>
+        <button class="account-button" @click="logout">Se déconnecter</button>
+        <p v-if="logoutError" role="alert">{{ logoutError }}</p>
       </div>
     </aside>
     <button

@@ -1,10 +1,11 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 
 test("le corpus de base se sélectionne et soumet un véritable choix de source", async ({
   page,
 }) => {
   let submitted = false;
-  await page.route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith("/training/datasets"))
       return route.fulfill({
@@ -71,7 +72,7 @@ test("le corpus de base se sélectionne et soumet un véritable choix de source"
 });
 
 test("un corpus non préparé est visible mais désactivé", async ({ page }) => {
-  await page.route("**/api/**", (route) =>
+  await mockApi(page, (route) =>
     route.fulfill({
       json: route.request().url().includes("/training/datasets")
         ? [

@@ -1,3 +1,5 @@
+import { mockApi } from "./mock-api";
+import { loginLive } from "./live-auth";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -50,7 +52,7 @@ test("collecte globale/ciblée, français, retrait multiple persistant par espè
       },
     };
   }
-  await page.route("**/api/**", (route) => {
+  await mockApi(page, (route) => {
     const url = new URL(route.request().url()),
       path = url.pathname;
     if (path === "/api/documents/collect") {
@@ -158,22 +160,18 @@ test("PDF réel importé, traduit localement et retiré depuis le navigateur", a
   );
   test.setTimeout(90000);
   const identity = `fixture-${Date.now()}`;
-  await page.addInitScript(() =>
-    localStorage.setItem("biosentinelle-reviewer", "diagnostic-documents"),
-  );
+  await loginLive(page);
   let documentId: string | undefined;
   try {
     await page.goto("/documents");
     await page
       .getByRole("button", { name: "Importer un document", exact: true })
       .click();
-    await page
-      .getByLabel(/Fichier PDF, TXT/)
-      .setInputFiles({
-        name: identity + ".pdf",
-        mimeType: "application/pdf",
-        buffer: pdfFixture(identity),
-      });
+    await page.getByLabel(/Fichier PDF, TXT/).setInputFiles({
+      name: identity + ".pdf",
+      mimeType: "application/pdf",
+      buffer: pdfFixture(identity),
+    });
     await page.getByLabel(/Je dispose du droit/).check();
     const uploaded = page.waitForResponse(
       (r) =>
@@ -220,9 +218,10 @@ test("PDF réel importé, traduit localement et retiré depuis le navigateur", a
     await expect(card).toHaveCount(0);
   } finally {
     if (documentId) {
+      const session = await (await page.request.get("/api/auth/me")).json();
       await page.request.post("/api/documents/remove", {
         data: { species: "renards", documents: [documentId] },
-        headers: { "X-Reviewer": "diagnostic-documents" },
+        headers: { "X-CSRF-Token": session.csrf_token },
       });
       await page.request.post(`/api/documents/${documentId}/review`, {
         data: {
@@ -230,7 +229,7 @@ test("PDF réel importé, traduit localement et retiré depuis le navigateur", a
           quality: "rejected",
           note: "Fixture synthétique de test navigateur, hors corpus scientifique.",
         },
-        headers: { "X-Reviewer": "diagnostic-documents" },
+        headers: { "X-CSRF-Token": session.csrf_token },
       });
     }
   }

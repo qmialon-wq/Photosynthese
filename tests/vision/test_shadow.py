@@ -28,7 +28,7 @@ def test_shadow_uses_same_crops_without_changing_primary_or_detector_calls(
         IoUTracker(classes, TrackingConfig()),
         classes,
         LocalStorage(tmp_path / "out"),
-        VisionSettings(),
+        VisionSettings(infer_every_n_frames=2),
         shadow_classifier=shadow,
     )
     assert detector.detect.call_count == 10 and shadow.predict.call_count == 10

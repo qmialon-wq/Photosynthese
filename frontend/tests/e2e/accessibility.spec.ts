@@ -1,9 +1,10 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 test("dashboard accessible, états vides et navigation au clavier", async ({
   page,
 }) => {
-  await page.route("**/api/**", (route) =>
+  await mockApi(page, (route) =>
     route.fulfill({
       json: route.request().url().includes("/dashboard")
         ? {

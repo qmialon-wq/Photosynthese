@@ -4,6 +4,7 @@ from typing import Any
 from uuid import uuid4
 
 from shared import console
+from shared.access import actor_scope
 from shared.analysis_settings import AnalysisOptions
 from shared.parcels import service
 from shared.parcels.schemas import Profile
@@ -37,11 +38,15 @@ def create(video_ids: list[str], actor: str) -> dict[str, Any]:
 
 def listing() -> list[dict[str, Any]]:
     with transaction() as connection:
-        return connection.execute("""SELECT c.*,count(v.video_id) AS video_count,
+        return connection.execute(
+            """SELECT c.*,count(v.video_id) AS video_count,
             (SELECT id FROM parcel_dossiers d WHERE d.corpus_id=c.id
              ORDER BY created_at DESC LIMIT 1) AS latest_dossier_id
             FROM parcel_corpora c JOIN parcel_corpus_videos v ON v.corpus_id=c.id
-            GROUP BY c.id ORDER BY c.created_at DESC LIMIT 100""").fetchall()
+            WHERE (%s::text IS NULL OR c.actor=%s)
+            GROUP BY c.id ORDER BY c.created_at DESC LIMIT 100""",
+            (actor_scope(), actor_scope()),
+        ).fetchall()
 
 
 def read(identifier: str) -> dict[str, Any]:
@@ -100,9 +105,9 @@ def _analysis(connection: Any, video_id: str, actor: str) -> str:
     existing = connection.execute(
         """SELECT id FROM console_tasks WHERE kind='analysis'
         AND request->>'video_id'=%s AND status IN ('completed','queued','running')
-        AND NOT cancel_requested
+        AND NOT cancel_requested AND (%s::text IS NULL OR actor=%s)
         ORDER BY (status='completed') DESC,created_at DESC LIMIT 1""",
-        (video_id,),
+        (video_id, actor_scope(), actor_scope()),
     ).fetchone()
     if existing:
         return str(existing["id"])

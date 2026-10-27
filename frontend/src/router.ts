@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { api, ApiError, message } from "./api";
+import { auth, acceptSession, clearSession, type Session } from "./auth-state";
 
 export const navigation = [
   { path: "/", label: "Accueil", icon: "pi-th-large" },
@@ -9,6 +11,7 @@ export const navigation = [
   { path: "/documents", label: "Documents scientifiques", icon: "pi-book" },
 ];
 export const adminNavigation = [
+  { path: "/admin/utilisateurs", label: "Utilisateurs", icon: "pi-users" },
   { path: "/admin", label: "Vue d’ensemble", icon: "pi-th-large" },
   { path: "/admin/videos", label: "Gestion des vidéos", icon: "pi-video" },
   {
@@ -29,6 +32,18 @@ export const adminNavigation = [
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    ...["connexion", "inscription", "initialisation", "reinitialiser"].map(
+      (page) => ({
+        path: `/${page}`,
+        component: () => import("./pages/AuthPage.vue"),
+        meta: { public: true },
+      }),
+    ),
+    { path: "/profil", component: () => import("./pages/ProfilePage.vue") },
+    {
+      path: "/admin/utilisateurs",
+      component: () => import("./pages/UsersPage.vue"),
+    },
     { path: "/", component: () => import("./pages/HomePage.vue") },
     { path: "/admin", component: () => import("./pages/DashboardPage.vue") },
     {
@@ -85,4 +100,19 @@ export const router = createRouter({
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],
   scrollBehavior: () => ({ top: 0 }),
+});
+
+router.beforeEach(async (to) => {
+  if (!auth.loaded) {
+    try {
+      acceptSession(await api<Session>("/auth/me"));
+    } catch (error) {
+      clearSession();
+      if (!(error instanceof ApiError) || error.status !== 401)
+        auth.error = message(error);
+    }
+  }
+  if (to.meta.public) return;
+  if (!auth.user) return { path: "/connexion" };
+  if (to.path.startsWith("/admin") && auth.user.role !== "admin") return "/";
 });

@@ -8,6 +8,7 @@ from fastapi import APIRouter, Header, Query, Request
 from fastapi.responses import FileResponse
 
 from app.review import Actor
+from shared.access import actor_scope
 from shared.documents import collection, corpus, service
 from shared.documents.config import DocumentSettings
 from shared.documents.relevance import profiles
@@ -147,8 +148,9 @@ def tasks(
 ) -> list[dict[str, Any]]:
     with service.transaction() as connection:
         return connection.execute(
-            "SELECT * FROM document_tasks ORDER BY created_at DESC LIMIT %s OFFSET %s",
-            (limit, offset),
+            "SELECT * FROM document_tasks WHERE (%s::text IS NULL OR actor=%s) ORDER BY "
+            "created_at DESC LIMIT %s OFFSET %s",
+            (actor_scope(), actor_scope(), limit, offset),
         ).fetchall()
 
 

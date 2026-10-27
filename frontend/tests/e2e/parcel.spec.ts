@@ -1,3 +1,4 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -26,7 +27,7 @@ test("parcelle, analyse, dossier téléchargeable et persistance après recharge
       message: "Aucun pourcentage justifié par les sources disponibles.",
     },
   };
-  await page.route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const request = route.request(),
       path = new URL(request.url()).pathname;
     let response: unknown = [];

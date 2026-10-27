@@ -7,19 +7,18 @@ import BoxEditor from "../../src/components/BoxEditor.vue";
 import LoadState from "../../src/components/LoadState.vue";
 import StatusBadge from "../../src/components/StatusBadge.vue";
 import MetricsPanel from "../../src/components/MetricsPanel.vue";
-import { api, reviewer } from "../../src/api";
+import { auth, clearSession } from "../../src/auth-state";
+import { api } from "../../src/api";
 
 const global = {
   plugins: [PrimeVue],
   components: { PButton: Button, PTag: Tag },
 };
-beforeEach(() => localStorage.clear());
+beforeEach(() => {
+  localStorage.clear();
+  clearSession();
+});
 describe("composants de la console", () => {
-  it("attribue automatiquement un identifiant local stable sans nom à saisir", () => {
-    const first = reviewer();
-    expect(first).toMatch(/^local-[0-9a-f-]{36}$/);
-    expect(reviewer()).toBe(first);
-  });
   it("signale les erreurs et permet de réessayer", async () => {
     const wrapper = mount(LoadState, {
       props: { error: "Base indisponible" },
@@ -123,7 +122,7 @@ describe("composants de la console", () => {
     expect(wrapper.text()).toContain("Métriques vidéo non disponibles");
   });
   it("transmet l’identité et les erreurs de validation API", async () => {
-    localStorage.setItem("biosentinelle-reviewer", "alice");
+    auth.csrf = "test-csrf";
     const fetch = vi
       .fn()
       .mockResolvedValue(
@@ -136,7 +135,11 @@ describe("composants de la console", () => {
     await expect(
       api("/review/samples/x/decisions", { method: "POST", body: "{}" }),
     ).rejects.toThrow("Révision invalide");
-    expect(fetch.mock.calls[0][1].headers.get("X-Reviewer")).toBe("alice");
+    expect(fetch.mock.calls[0][1].headers.get("X-Reviewer")).toBeNull();
+    expect(fetch.mock.calls[0][1].headers.get("X-CSRF-Token")).toBe(
+      "test-csrf",
+    );
+    expect(fetch.mock.calls[0][1].credentials).toBe("same-origin");
     await flushPromises();
     vi.unstubAllGlobals();
   });

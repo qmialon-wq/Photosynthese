@@ -12,6 +12,7 @@ from starlette.concurrency import run_in_threadpool
 
 from app.review import Actor, stored_file
 from shared import console
+from shared.access import actor_scope, video_ids
 from shared.analysis_settings import AnalysisOptions as Analysis
 from shared.base_dataset import BASE_DATASET_ID, describe_base_dataset
 from shared.review.database import ReviewError, transaction
@@ -223,8 +224,19 @@ def videos(
             + """) v
           WHERE filename ILIKE %s AND (%s='' OR species_candidate=%s)
           AND (%s::text IS NULL OR status=%s)
+          AND (%s::text[] IS NULL OR id=ANY(%s))
           ORDER BY created_at DESC,id LIMIT %s OFFSET %s""",
-            (f"%{q}%", species, species, status, status, limit, offset),
+            (
+                f"%{q}%",
+                species,
+                species,
+                status,
+                status,
+                video_ids(connection),
+                video_ids(connection),
+                limit,
+                offset,
+            ),
         ).fetchall()
 
 
@@ -296,8 +308,8 @@ def tasks(kind: str | None = None, limit: int = Query(50, ge=1, le=200)) -> list
     with transaction() as connection:
         return connection.execute(
             "SELECT * FROM console_tasks WHERE (%s::text IS NULL OR kind=%s) "
-            "ORDER BY created_at DESC LIMIT %s",
-            (kind, kind, limit),
+            "AND (%s::text IS NULL OR actor=%s) ORDER BY created_at DESC LIMIT %s",
+            (kind, kind, actor_scope(), actor_scope(), limit),
         ).fetchall()
 
 
@@ -402,7 +414,9 @@ def train(body: Training, actor: Actor) -> dict[str, Any]:
 def models() -> list[dict[str, Any]]:
     with transaction() as connection:
         return connection.execute(
-            "SELECT * FROM console_models ORDER BY created_at DESC"
+            "SELECT * FROM console_models WHERE (%s::text IS NULL OR active) ORDER BY "
+            "created_at DESC",
+            (actor_scope(),),
         ).fetchall()
 
 

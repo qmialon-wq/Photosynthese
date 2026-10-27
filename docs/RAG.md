@@ -141,12 +141,15 @@ qualité `accepted`, et une association d'espèce activée et non retirée. Une 
 collecte, un téléchargement ou une traduction ne constitue pas une validation.
 Les références bibliographiques identifiées sont exclues du retrieval.
 
-L'API existante permet de valider et ajouter une source (sans commentaire) :
+L'API existante permet à un administrateur connecté de valider et ajouter une source
+(sans commentaire). Utiliser le cookie de session reçu à la connexion et le jeton
+CSRF renvoyé par `/auth/me` ; voir le [guide d’authentification](AUTHENTICATION.md).
 
 ```http
 PUT /documents/<document-id>/species/renards
 Content-Type: application/json
-X-Reviewer: ecologue
+Cookie: biosentinelle_session=<session>
+X-CSRF-Token: <jeton-csrf>
 
 {"enabled": true}
 ```

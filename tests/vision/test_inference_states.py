@@ -64,7 +64,7 @@ def test_states_scores_and_diagnostics(
         IoUTracker(classes, TrackingConfig()),
         classes,
         LocalStorage(tmp_path / "result"),
-        VisionSettings(),
+        VisionSettings(infer_every_n_frames=2),
     )
     assert report["status"] == state
     assert report["diagnostics"]["frames_analyzed"] == 10
@@ -115,7 +115,7 @@ def test_explicit_detection_only_keeps_localized_tracks(
         IoUTracker(classes, TrackingConfig()),
         classes,
         LocalStorage(tmp_path),
-        VisionSettings(detection_only=True),
+        VisionSettings(detection_only=True, infer_every_n_frames=2),
     )
     assert report["status"] == "detection_unclassified"
     assert report["diagnostics"]["valid_crops"] == 10

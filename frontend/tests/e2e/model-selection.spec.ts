@@ -1,3 +1,4 @@
+import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 
 test("sélection directe d'un candidat sans dialogue ni validation, persistante au rechargement", async ({
@@ -5,7 +6,7 @@ test("sélection directe d'un candidat sans dialogue ni validation, persistante 
 }) => {
   let active = "current";
   let selections = 0;
-  await page.route("**/api/**", (route) => {
+  await mockApi(page, (route) => {
     const path = new URL(route.request().url()).pathname;
     if (
       route.request().method() === "POST" &&

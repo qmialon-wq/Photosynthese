@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { mockApi } from "./mock-api";
+import { test, expect } from "@playwright/test";
 
 // Contrats HTTP simulés uniquement dans ce fichier de test. Aucun mode démo dans l'app.
 const id = "11111111-1111-4111-8111-111111111111";
@@ -15,13 +16,8 @@ const classes = [
   "geai",
   "faisans",
 ];
-async function identify(page: Page) {
-  await page.addInitScript(() =>
-    localStorage.setItem("biosentinelle-reviewer", "alice"),
-  );
-}
+
 test("annotation corrigée persistante après rechargement", async ({ page }) => {
-  await identify(page);
   let sample = {
     id: sampleId,
     video_id: "video",
@@ -44,7 +40,7 @@ test("annotation corrigée persistante après rechargement", async ({ page }) =>
     detection_score: 0.9,
     classification_score: null,
   };
-  await page.route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const url = new URL(route.request().url()),
       path = url.pathname;
     if (path.endsWith("/review/species"))
@@ -94,7 +90,6 @@ test("annotation corrigée persistante après rechargement", async ({ page }) =>
 });
 
 test("import, analyse asynchrone et téléchargement JSON", async ({ page }) => {
-  await identify(page);
   let kind = "import_upload",
     analysisStarted = false;
   const video = {
@@ -105,7 +100,7 @@ test("import, analyse asynchrone et téléchargement JSON", async ({ page }) => 
     metadata: { duration_seconds: 3 },
     created_at: new Date().toISOString(),
   };
-  await page.route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith("/uploads"))
       return route.fulfill({ json: { id, chunk_size: 4194304 } });
@@ -174,10 +169,9 @@ test("import, analyse asynchrone et téléchargement JSON", async ({ page }) => 
 test("soumettre un entraînement, voir sa progression et demander son arrêt", async ({
   page,
 }) => {
-  await identify(page);
   let started = false,
     cancelled = false;
-  await page.route("**/api/**", async (route) => {
+  await mockApi(page, async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path === "/api/console/training") {
       started = true;
@@ -252,7 +246,7 @@ test("soumettre un entraînement, voir sa progression et demander son arrêt", a
 
 test("métriques réelles du registre et navigation mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.route("**/api/**", (route) => {
+  await mockApi(page, (route) => {
     const path = new URL(route.request().url()).pathname;
     return route.fulfill({
       json: path.endsWith("/models")

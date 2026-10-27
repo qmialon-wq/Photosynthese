@@ -1,5 +1,13 @@
 # BioSentinelle Normandie
 
+La plateforme dispose de comptes **client** (inscription libre) et **administrateur**,
+d’un profil, d’un export personnel et d’une suppression douce avec suivi des demandes
+d’effacement. Au premier lancement, créer l’administrateur depuis `/initialisation`
+avec le jeton du fichier local `data/results/auth/bootstrap-token`.
+Voir le [guide d’authentification](docs/AUTHENTICATION.md) pour l’accès, les droits
+et les limites de la suppression. Les appels API métier exigent désormais une
+session ; les écritures exigent également un jeton CSRF.
+
 Le [parcours vidéo → parcelle → dossier biodiversité](docs/PARCEL_DOSSIERS.md)
 permet de sélectionner plusieurs vidéos d'une même parcelle, de renseigner une seule
 fois surface, terrain et projet, puis de retrouver les vidéos annotées et un dossier
