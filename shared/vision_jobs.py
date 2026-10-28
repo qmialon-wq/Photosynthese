@@ -9,6 +9,8 @@ from uuid import uuid4
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from redis import Redis
 
+from shared.task_priority import INTERACTIVE_JOBS
+
 STREAM = "biosentinelle:vision:jobs"
 GROUP = "vision"
 CONSUMER = "vision-single"
@@ -84,6 +86,8 @@ class JobStore:
         with self.client.pipeline(transaction=True) as pipeline:
             pipeline.set(self.key(job["id"]), json.dumps(job))
             pipeline.xadd(STREAM, {"id": job["id"]})
+            if job["kind"] in ("analysis", "review"):
+                pipeline.zadd(INTERACTIVE_JOBS, {job["id"]: 0})
             pipeline.execute()
         return job
 
@@ -99,4 +103,5 @@ class JobStore:
             pipeline.set(self.key(job["id"]), json.dumps(job, ensure_ascii=False, allow_nan=False))
             pipeline.xack(STREAM, GROUP, message_id)
             pipeline.xdel(STREAM, message_id)
+            pipeline.zrem(INTERACTIVE_JOBS, job["id"])
             pipeline.execute()

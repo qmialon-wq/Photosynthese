@@ -261,6 +261,7 @@ Depuis la racine, facultativement copier `.env.example` vers `.env` :
 
 ```sh
 cp .env.example .env
+docker network inspect web || docker network create web
 docker compose up -d --build --wait
 docker compose ps -a
 ```
@@ -271,13 +272,103 @@ construit les images manquantes. Après modification du code, ajouter `--build`.
 
 - Interface : <http://localhost:8080> ; elle affiche le statut réel de l'API.
 - API : <http://localhost:8000/health> ; documentation : <http://localhost:8000/docs>.
-- Depuis le navigateur : `/api/health` est relayé par Nginx vers `backend:8000/health`,
+- Depuis le navigateur : `/api/health` est relayé par Nginx vers `photosynthese-backend:8000/health`,
   sans URL Docker dans le navigateur ni configuration CORS supplémentaire.
 - `storage-init` et `migrate` doivent terminer avec le code 0 ; les six services
   persistants doivent être `healthy`. La migration Alembic active `vector` avant
   le démarrage de l'API. `/health` renvoie 503 si PostgreSQL/pgvector ou Redis échoue.
 
+### Accès depuis le réseau local
+
+Le réseau Docker `web` est externe et partagé avec Caddy dans le projet
+`../internal-server`. Le frontend utilise l'alias `photosynthese` et l'API
+`photosynthese-backend` pour éviter les collisions avec les autres projets.
+PostgreSQL et Redis restent sur le réseau privé `services`, avec les alias
+`photosynthese-postgres` et `photosynthese-redis` utilisés par les services.
+
+Le `Caddyfile` de ce projet voisin expose <https://photosynthese.local> :
+
+```caddyfile
+photosynthese.local {
+    reverse_proxy photosynthese:80
+    tls internal
+}
+```
+
+Après modification, valider et recharger Caddy depuis `../internal-server` :
+
+```sh
+docker compose exec -T caddy caddy validate --config /etc/caddy/Caddyfile
+docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile
+```
+
+Les machines clientes doivent résoudre `photosynthese.local` vers l'adresse LAN
+du serveur (actuellement `192.168.129.220`), via leur DNS local ou cette entrée
+dans leur fichier `hosts` :
+
+```text
+192.168.129.220 photosynthese.local
+```
+
+Le certificat utilise l'autorité locale de Caddy, comme les autres sites du
+serveur ; cette autorité doit être approuvée sur les machines clientes.
+L'origine `https://photosynthese.local` est autorisée par défaut ; la conserver
+si `AUTH_ALLOWED_ORIGINS` est redéfini dans `.env`.
+Si le port local 8080 est occupé, définir `FRONTEND_PORT=8081` dans `.env` et
+adapter les origines locales autorisées à ce port. Cela ne change pas l'URL Caddy.
+
 ## Démarrage et diagnostic GPU
+
+### Priorité des tâches
+
+Les workers choisissent les tâches dans cet ordre : opérations client (analyses,
+imports vidéo, dossiers et recherches interactives), entraînements et évaluations,
+préparation/téléchargement/indexation des ressources RAG, puis traductions.
+À priorité égale, l'ordre d'arrivée est conservé, y compris pour les messages déjà
+en attente dans Redis. Le terminal de l'administration affiche cette priorité.
+
+Un entraînement CNN cède la place à une opération client et reprend depuis le
+dernier checkpoint d'époque ; une époque incomplète est rejouée. Les traductions
+cèdent entre deux pages et les collectes entre deux articles, sans épuiser leur
+budget de tentatives. Une opération indivisible déjà engagée termine son étape.
+Les workers indépendants peuvent travailler en parallèle ; le GPU reste protégé
+par le verrou partagé et un entraînement attend la fin d'un dossier interactif.
+
+Pour une RTX 50 (Blackwell), utiliser CUDA 12.8 avec le fichier additionnel :
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml -f docker-compose.ml.yml -f docker-compose.blackwell.yml up -d --build --wait
+make train-benchmark DEVICE=cuda BLACKWELL=1 BENCHMARK_WEAK_LABELS=1
+```
+
+`infra/prepare_platform.py` permet une préparation explicite et reprenable dans
+les conteneurs. Le mode `vision` vérifie les poids préentraînés, enregistre le
+classificateur existant (activé seulement si aucun modèle n'est actif), lance les
+quatre CNN et leur benchmark, puis les embeddings, les classifieurs logistique,
+k-NN, SVM linéaire/RBF et les regroupements exploratoires. Le mode `documents`
+prépare les embeddings RAG et la traduction, collecte jusqu'à 20 notices par source
+et par espèce avec téléchargement des textes accessibles, puis indexe les sources
+éligibles. Il conserve la validation humaine des documents et n'entraîne pas de LLM.
+
+Après démarrage du worker ML adapté et d'Ollama (profil `rag-generation`) :
+
+```sh
+docker compose exec -T ollama ollama pull qwen3:4b-instruct-2507-q4_K_M
+docker compose cp infra/prepare_platform.py vision:/tmp/prepare_platform.py
+docker compose cp infra/prepare_platform.py documents:/tmp/prepare_platform.py
+docker compose exec -d vision python /tmp/prepare_platform.py vision
+docker compose exec -d documents python /tmp/prepare_platform.py documents
+```
+
+Les deux processus continuent après fermeture du terminal. Leur progression et
+leurs identifiants sont conservés dans `data/results/platform-setup/{vision,documents}.json`
+et les journaux `.log` voisins ; les tâches apparaissent dans l'administration.
+Après recréation d'un conteneur, recopier le script et relancer uniquement son mode
+pour reprendre les tâches existantes. Un échec est conservé et demande un examen.
+Ne pas lancer deux préparations du même mode simultanément, ni lancer en parallèle
+une autre campagne d'entraînement. Les nouvelles campagnes utilisent les labels
+provisoires des noms de vidéos ; leurs métriques restent exploratoires et les
+nouveaux candidats ne remplacent pas automatiquement le modèle actif.
 
 Le fichier additionnel remplace uniquement l'image du worker vision et réserve
 un GPU NVIDIA selon la [configuration Compose officielle](https://docs.docker.com/compose/how-tos/gpu-support/).

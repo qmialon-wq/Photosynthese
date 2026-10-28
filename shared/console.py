@@ -87,12 +87,13 @@ def task(identifier: str) -> dict[str, Any]:
 
 
 def publish_pending(client: Any) -> int:
+    from .task_priority import priority_sql
     from .vision_jobs import ConsoleRequest, JobStore
 
     with transaction() as connection:
         rows = connection.execute(
-            "SELECT id FROM console_tasks WHERE published_at IS NULL AND status='queued' "
-            "ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 20"
+            "SELECT id FROM console_tasks t WHERE published_at IS NULL AND status='queued' "
+            f"ORDER BY {priority_sql('vision')},created_at,id FOR UPDATE SKIP LOCKED LIMIT 20"
         ).fetchall()
         for row in rows:
             JobStore(client).enqueue(ConsoleRequest(task_id=str(row["id"])))

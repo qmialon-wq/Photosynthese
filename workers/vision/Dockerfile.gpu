@@ -1,4 +1,5 @@
-FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime@sha256:77f17f843507062875ce8be2a6f76aa6aa3df7f9ef1e31d9d7432f4b0f563dee AS dependencies
+ARG PYTORCH_IMAGE=pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime@sha256:77f17f843507062875ce8be2a6f76aa6aa3df7f9ef1e31d9d7432f4b0f563dee
+FROM ${PYTORCH_IMAGE} AS dependencies
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 \
@@ -15,7 +16,8 @@ CMD ["python", "-m", "workers.vision.main"]
 
 FROM dependencies AS ml
 USER root
-COPY workers/vision/requirements-ml.txt /tmp/requirements-ml.txt
+ARG ML_REQUIREMENTS=workers/vision/requirements-ml.txt
+COPY ${ML_REQUIREMENTS} /tmp/requirements-ml.txt
 RUN pip install --no-cache-dir -r /tmp/requirements-ml.txt
 COPY workers/vision/requirements-training.txt /tmp/requirements-training.txt
 RUN pip install --no-cache-dir -r /tmp/requirements-training.txt

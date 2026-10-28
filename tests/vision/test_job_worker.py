@@ -11,6 +11,7 @@ from shared.vision_jobs import JobStore
 @pytest.mark.parametrize("outcome", ["completed", "busy", "error"])
 def test_worker_acknowledges_after_result_and_retries_gpu_busy(monkeypatch, classes, outcome):
     client = MagicMock()
+    monkeypatch.setattr(job_worker, "next_message", lambda *_: ("1-0", {"id": "job"}))
     client.xreadgroup.return_value = [("stream", [("1-0", {"id": "job"})])]
     job = {"id": "job", "status": "queued", "request": {"video": "video.mp4"}}
     monkeypatch.setattr(JobStore, "get", lambda *_: job)

@@ -11,6 +11,7 @@ from shared.documents.corpus import discover
 from shared.documents.relevance import screen
 from shared.documents.schemas import FullText, ManualImport, Publication, Search
 from shared.review.database import jsonb
+from shared.task_priority import TaskDeferred, document_checkpoint
 
 from .extraction import VERSION, chunks, extract_isolated
 from .http import FetchError, SafeHTTP
@@ -25,6 +26,7 @@ class Ingestor:
     def __init__(self, settings: DocumentSettings, http: SafeHTTP, task: str) -> None:
         self.settings, self.http, self.task = settings, http, task
         self.storage = DocumentStorage(settings.root)
+        self.priority = 2
 
     def log(
         self,
@@ -304,6 +306,7 @@ class Ingestor:
                 source = SOURCES[source_name](self.http)
                 accepted = 0
                 for publication in source.search(query):
+                    document_checkpoint(self.task, self.priority)
                     if accepted >= query.limit_per_source or (
                         total_limit is not None and len(downloaded) >= total_limit
                     ):
@@ -405,6 +408,8 @@ class Ingestor:
                         )
                 counts["sources_ok"] += 1
                 counts["errors"] += getattr(source, "errors", 0)
+            except TaskDeferred:
+                raise
             except Exception as exc:
                 counts["errors"] += 1
                 self.log(

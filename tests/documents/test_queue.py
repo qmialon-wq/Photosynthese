@@ -9,6 +9,7 @@ from workers.documents import runtime
 @pytest.mark.parametrize("finished", [True, False])
 def test_queue_acknowledges_only_after_processing(monkeypatch, finished):
     client = MagicMock()
+    monkeypatch.setattr(runtime, "next_message", lambda *_: ("1-0", {"task_id": "test-only"}))
     client.xautoclaim.return_value = ["0-0", []]
     client.xreadgroup.return_value = [("stream", [("1-0", {"task_id": "test-only"})])]
     calls = []

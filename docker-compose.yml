@@ -1,14 +1,14 @@
 name: ${COMPOSE_PROJECT_NAME:-biosentinelle}
 
 x-python-environment: &python-environment
-  POSTGRES_HOST: postgres
+  POSTGRES_HOST: photosynthese-postgres
   POSTGRES_PORT: "5432"
   POSTGRES_DB: ${POSTGRES_DB:-biosentinelle}
   POSTGRES_USER: ${POSTGRES_USER:-biosentinelle}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biosentinelle_local}
-  REDIS_URL: redis://redis:6379/0
+  REDIS_URL: redis://photosynthese-redis:6379/0
   AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
-  AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:8000,http://127.0.0.1:8000}
+  AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-https://photosynthese.local,http://localhost:8080,http://127.0.0.1:8080,http://localhost:8000,http://127.0.0.1:8000}
   STORAGE_ROOT: /storage
   TORCH_HOME: /storage/models/cache/torch
   HF_HOME: /storage/models/cache/huggingface
@@ -40,7 +40,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biosentinelle_local}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    networks: [services]
+    networks:
+      services:
+        aliases: [photosynthese-postgres]
     healthcheck:
       <<: *healthcheck
       test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
@@ -51,7 +53,9 @@ services:
     command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec", "--maxmemory-policy", "noeviction"]
     volumes:
       - redis-data:/data
-    networks: [services]
+    networks:
+      services:
+        aliases: [photosynthese-redis]
     healthcheck:
       <<: *healthcheck
       test: ["CMD", "redis-cli", "ping"]
@@ -86,7 +90,10 @@ services:
       - ${DATA_ROOT:-./data}/checkpoints:/storage/checkpoints:ro
       - ${DATA_ROOT:-./data}/documents:/storage/documents
       - ${DATA_ROOT:-./data}/results:/storage/results
-    networks: [web, services]
+    networks:
+      web:
+        aliases: [photosynthese-backend]
+      services:
     depends_on:
       storage-init:
         condition: service_completed_successfully
@@ -106,7 +113,9 @@ services:
       dockerfile: frontend/Dockerfile
     ports:
       - "127.0.0.1:${FRONTEND_PORT:-8080}:80"
-    networks: [web]
+    networks:
+      web:
+        aliases: [photosynthese]
     depends_on:
       backend:
         condition: service_healthy
@@ -178,7 +187,7 @@ services:
       BIOSENTINELLE_RAG_MODEL_MANIFEST: ${RAG_MODEL_MANIFEST:-}
       BIOSENTINELLE_RAG_GENERATION_ENABLED: ${RAG_GENERATION_ENABLED:-true}
       BIOSENTINELLE_RAG_READING_MODE: ${RAG_READING_MODE:-balanced}
-      BIOSENTINELLE_RAG_GENERATOR_URL: ${RAG_GENERATOR_URL:-http://ollama:11434}
+      BIOSENTINELLE_RAG_GENERATOR_URL: ${RAG_GENERATOR_URL:-http://photosynthese-ollama:11434}
       BIOSENTINELLE_RAG_GENERATOR_MODEL: ${RAG_GENERATOR_MODEL:-qwen3:4b-instruct-2507-q4_K_M}
       BIOSENTINELLE_RAG_GENERATOR_TIMEOUT: ${RAG_GENERATOR_TIMEOUT:-600}
       BIOSENTINELLE_RAG_GENERATION_DEVICE: ${RAG_GENERATION_DEVICE:-cpu}
@@ -213,7 +222,11 @@ services:
       OLLAMA_CONTEXT_LENGTH: "16384"
     volumes:
       - ${DATA_ROOT:-./data}/models/ollama:/root/.ollama
-    networks: [services, web]
+    networks:
+      services:
+        aliases: [photosynthese-ollama]
+      web:
+        aliases: [photosynthese-ollama]
     restart: unless-stopped
     mem_limit: 6g
     cpus: 4
@@ -233,6 +246,7 @@ services:
 
 networks:
   web:
+    external: true
   services:
     internal: true
 

@@ -127,6 +127,13 @@ def dashboard() -> dict[str, Any]:
     }
 
 
+@router.get("/workers")
+def workers(request: Request) -> dict[str, Any]:
+    from shared.worker_activity import activity
+
+    return activity(request.app.state.redis)
+
+
 @router.post("/uploads", status_code=201)
 def create_upload(body: Upload, actor: Actor) -> dict[str, Any]:
     identifier = str(uuid4())

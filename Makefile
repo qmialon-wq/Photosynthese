@@ -1,5 +1,11 @@
 .PHONY: up gpu down logs test integration lint gpu-check nvidia-smi config
 
+# RTX 50 : make train-benchmark DEVICE=cuda BLACKWELL=1 BENCHMARK_WEAK_LABELS=1
+BLACKWELL ?= 0
+ifeq ($(BLACKWELL),1)
+GPU_RUNTIME = -f docker-compose.blackwell.yml
+endif
+
 .PHONY: documents-up documents-search documents-watch documents-import documents-status
 documents-up:
 	docker compose up -d --build --wait backend documents frontend
@@ -75,7 +81,7 @@ up:
 	docker compose up -d --build --wait
 
 gpu:
-	docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d --build --wait
+	docker compose -f docker-compose.yml -f docker-compose.gpu.yml $(GPU_RUNTIME) up -d --build --wait
 
 down:
 	docker compose down
@@ -93,14 +99,14 @@ lint:
 	docker compose --profile test run --build --rm tests ruff check backend shared workers tests infra/init_storage.py
 
 gpu-check:
-	docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --build --rm --no-deps vision python -m workers.vision.cuda_check
+	docker compose -f docker-compose.yml -f docker-compose.gpu.yml $(GPU_RUNTIME) run --build --rm --no-deps vision python -m workers.vision.cuda_check
 
 nvidia-smi:
-	docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --build --rm --no-deps vision nvidia-smi
+	docker compose -f docker-compose.yml -f docker-compose.gpu.yml $(GPU_RUNTIME) run --build --rm --no-deps vision nvidia-smi
 
 config:
 	docker compose config --quiet
-	docker compose -f docker-compose.yml -f docker-compose.gpu.yml config --quiet
+	docker compose -f docker-compose.yml -f docker-compose.gpu.yml $(GPU_RUNTIME) config --quiet
 
 # Les valeurs sont transmises par l'environnement, jamais interpolées dans le shell.
 DEVICE ?= cpu
@@ -162,7 +168,7 @@ endif
 ifeq ($(DEVICE),cpu)
 ML_COMPOSE = docker compose -f docker-compose.yml -f docker-compose.ml.yml
 else ifeq ($(DEVICE),cuda)
-ML_COMPOSE = docker compose -f docker-compose.yml -f docker-compose.gpu.yml -f docker-compose.ml.yml
+ML_COMPOSE = docker compose -f docker-compose.yml -f docker-compose.gpu.yml -f docker-compose.ml.yml $(GPU_RUNTIME)
 else
 $(error DEVICE doit valoir cpu ou cuda)
 endif

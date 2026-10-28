@@ -11,6 +11,7 @@ from typing import Any
 from redis import Redis
 from redis.exceptions import ResponseError
 
+from shared.task_priority import PriorityStop, next_message, recover_interrupted
 from shared.vision_jobs import CONSUMER, GROUP, STREAM, AnalysisRequest, JobStore, TrainingRequest
 from shared.worker_runtime import heartbeat_key
 
@@ -58,6 +59,7 @@ def execute_job(
                 "status": "completed",
                 "metrics": evaluate_classifier(config, classes, request.split),
             }
+        stop = PriorityStop(stop)
         if not config.training.run_id:
             config.training.run_id = job["id"]
         last = config.checkpoint_root / config.training.run_id / "last.pt"
@@ -119,12 +121,10 @@ def consume_one(
     stop: threading.Event | None = None,
 ) -> bool:
     # Nom stable : reprise des tâches interrompues au redémarrage.
-    messages = client.xreadgroup(GROUP, CONSUMER, {STREAM: "0"}, count=1)
-    if not messages or not messages[0][1]:
-        messages = client.xreadgroup(GROUP, CONSUMER, {STREAM: ">"}, count=1, block=1000)
-    if not messages or not messages[0][1]:
+    message = next_message(client, STREAM, GROUP, CONSUMER, "vision")
+    if message is None:
         return False
-    message_id, fields = messages[0][1][0]
+    message_id, fields = message
     store = JobStore(client)
     job = store.get(fields["id"])
     if job is None:
@@ -165,6 +165,7 @@ def run() -> None:
     lease = client.lock("biosentinelle:vision:consumer-lock", timeout=30, thread_local=False)
     if not lease.acquire(blocking=False):
         raise VisionError("Un consommateur vision est déjà actif")
+    recover_interrupted("vision")
     interval = float(os.getenv("WORKER_HEARTBEAT_SECONDS", "5"))
     max_age = float(os.getenv("WORKER_HEARTBEAT_MAX_AGE_SECONDS", "30"))
     if not 0 < interval < min(10, max_age / 2):

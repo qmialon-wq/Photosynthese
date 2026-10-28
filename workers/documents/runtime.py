@@ -13,6 +13,13 @@ from redis.exceptions import ResponseError
 from shared.documents import service
 from shared.documents.config import DocumentSettings
 from shared.review.database import jsonb
+from shared.task_priority import (
+    TaskDeferred,
+    next_message,
+    priority,
+    priority_sql,
+    recover_interrupted,
+)
 from shared.worker_runtime import heartbeat_key
 
 from .http import SafeHTTP
@@ -32,8 +39,8 @@ def ensure_group(client: Redis) -> None:
 
 def publish_pending(client: Any) -> int:
     with service.transaction() as connection:
-        rows = connection.execute("""SELECT id FROM document_tasks WHERE status='queued'
-            AND published_at IS NULL ORDER BY created_at
+        rows = connection.execute(f"""SELECT id FROM document_tasks t WHERE status='queued'
+            AND published_at IS NULL ORDER BY {priority_sql("documents")},created_at,id
             FOR UPDATE SKIP LOCKED LIMIT 20""").fetchall()
         for row in rows:
             client.xadd(STREAM, {"task_id": str(row["id"])})
@@ -69,6 +76,7 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
             task = service.task(identifier)
             if task["status"] in ("completed", "partial", "error"):
                 return True
+            deferred = False
             if task["attempts"] >= 3:
                 with service.transaction() as connection:
                     connection.execute(
@@ -87,7 +95,8 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
                 return True
             with service.transaction() as connection:
                 connection.execute(
-                    """UPDATE document_tasks SET status='running',started_at=coalesce(started_at,now()),
+                    """UPDATE document_tasks SET status='running',
+                    started_at=coalesce(started_at,now()),
                     attempts=attempts+1,error=NULL WHERE id=%s""",
                     (identifier,),
                 )
@@ -100,6 +109,7 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
                 )
             http = SafeHTTP(settings)
             ingestor = Ingestor(settings, http, identifier)
+            ingestor.priority = priority("documents", task["kind"], task["request"])
             http.log = ingestor.log
             try:
                 result = ingestor.perform(task["kind"], task["request"], task["actor"])
@@ -119,6 +129,10 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
                     if status == "error"
                     else None
                 )
+            except TaskDeferred as exc:
+                deferred = True
+                result, status, error = task.get("result") or {}, "queued", None
+                service.event(identifier, "priority", str(exc))
             except Exception as exc:
                 logger.exception("Échec de la tâche documentaire %s", identifier)
                 result, status, error = {}, "error", f"{type(exc).__name__}: {str(exc)[:2000]}"
@@ -127,31 +141,34 @@ def execute(identifier: str, settings: DocumentSettings) -> bool:
             with service.transaction() as connection:
                 connection.execute(
                     """UPDATE document_tasks SET status=%s,result=%s,error=%s,
-                    finished_at=now() WHERE id=%s""",
-                    (status, jsonb(result), error, identifier),
+                    finished_at=CASE WHEN %s THEN NULL ELSE now() END,
+                    attempts=attempts-CASE WHEN %s THEN 1 ELSE 0 END WHERE id=%s""",
+                    (status, jsonb(result), error, deferred, deferred, identifier),
                 )
                 service.event(
                     identifier,
                     "finish",
-                    error or "Passage terminé",
+                    error
+                    or (
+                        "Tâche en attente d'une priorité supérieure"
+                        if deferred
+                        else "Passage terminé"
+                    ),
                     level="error" if error else "info",
                     data={"status": status, "result": result},
                     connection=connection,
                 )
-            return True
+            return not deferred
         finally:
             lock.execute("SELECT pg_advisory_unlock(hashtextextended(%s::text,12))", (identifier,))
 
 
 def consume_one(client: Redis, settings: DocumentSettings) -> bool:
-    recovered = client.xautoclaim(STREAM, GROUP, "documents-single", 30000, "0-0", count=1)
-    messages = recovered[1] if recovered else []
-    if not messages:
-        streams = client.xreadgroup(GROUP, "documents-single", {STREAM: ">"}, count=1, block=1000)
-        messages = streams[0][1] if streams else []
-    if not messages:
+    client.xautoclaim(STREAM, GROUP, "documents-single", 30000, "0-0", count=256)
+    message = next_message(client, STREAM, GROUP, "documents-single", "documents")
+    if message is None:
         return False
-    message_id, values = messages[0]
+    message_id, values = message
     if execute(values["task_id"], settings):
         client.xack(STREAM, GROUP, message_id)
         client.xdel(STREAM, message_id)
@@ -176,6 +193,7 @@ def run() -> None:
         socket_timeout=4,
     )
     ensure_group(client)
+    recover_interrupted("documents")
 
     def ticker() -> None:
         while not stop.is_set():
@@ -195,8 +213,8 @@ def run() -> None:
     logger.info("Worker documentaire prêt ; aucune veille créée implicitement")
     try:
         while not stop.is_set():
-            if not execute_priority_report(settings):
-                consume_one(client, settings)
+            if not consume_one(client, settings):
+                stop.wait(0.5)
     finally:
         stop.set()
         thread.join(timeout=5)

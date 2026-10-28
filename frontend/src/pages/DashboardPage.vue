@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { date, percent, taskLabel, useResource } from "../api";
 import type { Dashboard, Task } from "../types";
+import WorkerTerminal from "../components/WorkerTerminal.vue";
 const dashboard = useResource<Dashboard>(() => "/console/dashboard", 10000);
 const tasks = useResource<Task[]>(() => "/console/tasks?limit=6", 4000);
 const cards = [
@@ -21,6 +22,7 @@ const cards = [
       ><i class="pi pi-plus" /> Importer une vidéo</RouterLink
     >
   </div>
+  <WorkerTerminal />
   <LoadState
     :error="dashboard.error.value"
     :loading="dashboard.loading.value && !dashboard.data.value"

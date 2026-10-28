@@ -534,10 +534,18 @@ def execute(
         last_update = time.monotonic()
 
     def monitor() -> None:
+        from shared.task_priority import has_client_work, priority
+
         while not done.is_set():
             try:
-                if console.task(identifier)["cancel_requested"] or (shutdown and shutdown.is_set()):
+                current = console.task(identifier)
+                if current["cancel_requested"] or (shutdown and shutdown.is_set()):
                     local_stop.set()
+                elif priority("vision", current["kind"], current["request"]) == 1:
+                    if has_client_work():
+                        # Only training has a durable checkpoint for cooperative yielding.
+                        if current["kind"] == "training":
+                            local_stop.set()
             except Exception:
                 pass
             done.wait(0.5)
@@ -575,6 +583,11 @@ def execute(
                     with transaction() as connection:
                         connection.execute(
                             "UPDATE console_tasks SET status='queued' WHERE id=%s", (identifier,)
+                        )
+                        console.log(
+                            connection,
+                            identifier,
+                            "Entraînement en attente ; reprise depuis le dernier checkpoint",
                         )
                     raise
                 result, status, error = None, "cancelled", str(exc)

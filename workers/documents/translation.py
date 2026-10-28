@@ -12,6 +12,7 @@ from typing import Any
 from shared.documents import service
 from shared.documents.config import DocumentSettings
 from shared.review.database import jsonb
+from shared.task_priority import TaskDeferred, document_checkpoint
 
 from .http import SafeHTTP
 from .storage import DocumentStorage
@@ -198,10 +199,12 @@ def run(document_id: str, settings: DocumentSettings, http: SafeHTTP, task: str)
         return {"document_id": identifier, "unsupported": True}
     state("running", pages_done=0, pages_total=len(pages))
     try:
+        document_checkpoint(task, 3)
         translator = engine(str(prepare_model(settings, http)))
         title = translator.translate(document["title"])
         abstract = translator.translate(document["abstract"]) if document["abstract"] else None
         for index, page in enumerate(pages):
+            document_checkpoint(task, 3)
             source_hash = digest(page["clean_text"])
             if page["source_sha256"] != source_hash or page["engine"] != ENGINE:
                 language = page["language"] if page["language"] != "und" else document["language"]
@@ -280,6 +283,9 @@ def run(document_id: str, settings: DocumentSettings, http: SafeHTTP, task: str)
             "pages": len(pages),
             "seconds": round(time.perf_counter() - started, 3),
         }
+    except TaskDeferred:
+        state("queued", pages_done=index if "index" in locals() else 0, pages_total=len(pages))
+        raise
     except Exception as exc:
         state("error", error=str(exc)[:1000])
         raise
