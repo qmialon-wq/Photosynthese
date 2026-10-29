@@ -4,6 +4,7 @@ services:
     environment:
       BIOSENTINELLE_RAG_GENERATION_DEVICE: cuda
   ollama:
+    mem_limit: 8g
     environment:
       OLLAMA_FLASH_ATTENTION: "1"
       OLLAMA_KV_CACHE_TYPE: q8_0

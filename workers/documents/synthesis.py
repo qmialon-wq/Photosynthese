@@ -5,7 +5,9 @@ import json
 import logging
 import os
 import re
+import time
 from collections.abc import Callable, Iterator
+from contextlib import ExitStack, contextmanager
 from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
@@ -57,8 +59,37 @@ def taxonomy_glossary():
 
 
 class Generator:
-    def __init__(self, settings: RagSettings):
+    def __init__(self, settings: RagSettings, log: Callable[..., None] | None = None):
         self.settings = settings
+        self.log = log
+        self._gpu_session: ExitStack | None = None
+        self._gpu_acquired = False
+
+    @contextmanager
+    def session(self) -> Iterator[None]:
+        """Keep one model warm, retaining the shared GPU lock until it is unloaded."""
+        if self.settings.generation_device != "cuda" or self._gpu_session is not None:
+            yield
+            return
+        with ExitStack() as stack:
+            self._gpu_session = stack
+            try:
+                yield
+            finally:
+                try:
+                    if self._gpu_acquired:
+                        self._unload()
+                finally:
+                    self._gpu_session = None
+                    self._gpu_acquired = False
+
+    def _unload(self) -> None:
+        with httpx.Client(timeout=60, trust_env=False) as client:
+            unloaded = client.post(
+                self.settings.generator_url.rstrip("/") + "/api/generate",
+                json={"model": self.settings.generator_model, "keep_alive": 0, "stream": False},
+            )
+            unloaded.raise_for_status()
 
     def generate(self, instruction: str, payload: Any, schema: type[T]) -> T:
         cache_key = None
@@ -87,25 +118,25 @@ class Generator:
             if path.is_file():
                 return schema.model_validate_json(path.read_text(encoding="utf-8"))
         lock = Path(os.getenv("STORAGE_ROOT", "/storage")) / "results/.vision-gpu.lock"
+
+        def produce() -> T:
+            result = self._generate(instruction, payload, schema)
+            if cache_key:
+                storage.json(cache_key, result.model_dump())
+            return result
+
+        if self._gpu_session is not None:
+            if not self._gpu_acquired:
+                self._gpu_session.enter_context(exclusive_gpu("cuda", lock))
+                self._gpu_acquired = True
+            return produce()
         with exclusive_gpu(self.settings.generation_device, lock):
             try:
-                result = self._generate(instruction, payload, schema)
-                if cache_key:
-                    storage.json(cache_key, result.model_dump())
-                return result
+                return produce()
             finally:
                 if self.settings.generation_device == "cuda":
                     # Explicitly unload before releasing the vision lock, including after errors.
-                    with httpx.Client(timeout=60, trust_env=False) as client:
-                        unloaded = client.post(
-                            self.settings.generator_url.rstrip("/") + "/api/generate",
-                            json={
-                                "model": self.settings.generator_model,
-                                "keep_alive": 0,
-                                "stream": False,
-                            },
-                        )
-                        unloaded.raise_for_status()
+                    self._unload()
 
     def _generate(self, instruction: str, payload: Any, schema: type[T]) -> T:
         prompt = (
@@ -165,6 +196,7 @@ class Generator:
                         citations["items"]["enum"] = allowed
         with httpx.Client(timeout=self.settings.generator_timeout, trust_env=False) as client:
             for context_size in contexts:
+                started = time.monotonic()
                 response = client.post(
                     self.settings.generator_url.rstrip("/") + "/api/generate",
                     json={
@@ -173,7 +205,9 @@ class Generator:
                         "prompt": prompt,
                         "format": output_schema,
                         "stream": False,
-                        "keep_alive": 0 if self.settings.generation_device == "cuda" else "5m",
+                        "keep_alive": ("1m" if self._gpu_session is not None else 0)
+                        if self.settings.generation_device == "cuda"
+                        else "5m",
                         "options": {
                             "temperature": 0,
                             "num_ctx": context_size,
@@ -193,6 +227,27 @@ class Generator:
                     )
                 response.raise_for_status()
                 result = response.json()
+                metrics = {
+                    "device": self.settings.generation_device,
+                    "model": self.settings.generator_model,
+                    "seconds": round(time.monotonic() - started, 2),
+                    "context_size": context_size,
+                    "input_tokens": result.get("prompt_eval_count"),
+                    "output_tokens": result.get("eval_count"),
+                    "load_seconds": round(result.get("load_duration", 0) / 1e9, 2),
+                    "tokens_per_second": round(
+                        result["eval_count"] * 1e9 / result["eval_duration"], 1
+                    )
+                    if result.get("eval_duration") and result.get("eval_count")
+                    else None,
+                    "done_reason": result.get("done_reason"),
+                }
+                logger.info("Mesure de rédaction locale : %s", metrics)
+                if self.log:
+                    hardware = "GPU" if self.settings.generation_device == "cuda" else "CPU"
+                    self.log(
+                        "generation", f"Rédaction {hardware} : {metrics['seconds']} s", data=metrics
+                    )
                 # Reserve output space and retry with a larger context rather than
                 # silently losing the end of any document or evidence batch.
                 if result.get("prompt_eval_count", 0) > context_size - output_tokens - 256:
@@ -523,8 +578,15 @@ def checked_citations(value: BaseModel, allowed: set[str]) -> None:
 
 
 def synthesize(profile, context, settings, log: Callable[..., None], generator=None):
+    generator = generator or Generator(settings, log=log)
+    if isinstance(generator, Generator):
+        with generator.session():
+            return _synthesize(profile, context, settings, log, generator)
+    return _synthesize(profile, context, settings, log, generator)
+
+
+def _synthesize(profile, context, settings, log: Callable[..., None], generator):
     snapshot_at = datetime.now(UTC).isoformat()
-    generator = generator or Generator(settings)
     species = sorted(
         {r["name"] for key in ("confirmed_species", "predicted_species") for r in context[key]}
     )

@@ -123,7 +123,11 @@ def test_all_documents_all_batches_and_cache_are_used(monkeypatch, tmp_path):
         row["relevance"] = row["quality"] = "accepted"
         row["status"] = "indexed"
     synthesis.synthesize(
-        {"area_m2": 3500}, context, RagSettings(reading_mode="exhaustive"), lambda *a, **kw: None, generator
+        {"area_m2": 3500},
+        context,
+        RagSettings(reading_mode="exhaustive"),
+        lambda *a, **kw: None,
+        generator,
     )
     assert not generator.seen  # Verified notes resume without rereading the model input.
 
@@ -280,6 +284,52 @@ def test_gpu_drafting_respects_the_vision_lock(monkeypatch, tmp_path):
         generator.generate("No network call should start", {}, Notes)
 
 
+def test_generation_records_real_model_timing_and_device(monkeypatch, tmp_path):
+    import httpx
+
+    original = httpx.Client
+    monkeypatch.setenv("STORAGE_ROOT", str(tmp_path))
+    requests, events = [], []
+
+    def respond(request):
+        import json
+
+        requests.append(json.loads(request.content))
+        return httpx.Response(
+            200,
+            json={
+                "response": '{"findings":[],"relevance":"relevant"}',
+                "done_reason": "stop",
+                "prompt_eval_count": 100,
+                "eval_count": 20,
+                "eval_duration": 2_000_000_000,
+                "load_duration": 1_000_000_000,
+            },
+        )
+
+    monkeypatch.setattr(
+        synthesis.httpx,
+        "Client",
+        lambda **kw: original(
+            transport=httpx.MockTransport(respond),
+            **kw,
+        ),
+    )
+    generator = synthesis.Generator(
+        RagSettings(generation_device="cuda"),
+        log=lambda stage, message, **kw: events.append((stage, message, kw["data"])),
+    )
+    with generator.session():
+        generator.generate("Lire ces données", {}, Notes)
+    assert requests[0]["options"]["num_gpu"] == 99
+    assert requests[0]["keep_alive"] == "1m"
+    assert requests[-1]["keep_alive"] == 0
+    assert events[0][0] == "generation"
+    assert events[0][2]["device"] == "cuda"
+    assert events[0][2]["tokens_per_second"] == 10.0
+    assert events[0][2]["load_seconds"] == 1.0
+
+
 def test_gpu_model_is_unloaded_before_releasing_lock(monkeypatch, tmp_path):
     from workers.vision.biosentinelle_vision.errors import GpuBusyError
     from workers.vision.biosentinelle_vision.storage.gpu import exclusive_gpu
@@ -313,6 +363,47 @@ def test_gpu_model_is_unloaded_before_releasing_lock(monkeypatch, tmp_path):
     monkeypatch.setattr(generator, "_generate", lambda *args: "test")
     assert generator.generate("test", {}, Notes) == "test"
     assert unloaded == [True]
+    with exclusive_gpu("cuda", lock):
+        pass
+
+
+@pytest.mark.parametrize("failed", [False, True])
+def test_gpu_session_keeps_model_and_lock_between_batches_and_unloads_on_exit(
+    monkeypatch,
+    tmp_path,
+    failed,
+):
+    from workers.vision.biosentinelle_vision.errors import GpuBusyError
+    from workers.vision.biosentinelle_vision.storage.gpu import exclusive_gpu
+
+    monkeypatch.setenv("STORAGE_ROOT", str(tmp_path))
+    lock = tmp_path / "results/.vision-gpu.lock"
+    generator = synthesis.Generator(RagSettings(generation_device="cuda"))
+    calls = []
+
+    def generate(*args):
+        assert generator._gpu_session is not None
+        with pytest.raises(GpuBusyError), exclusive_gpu("cuda", lock):
+            pass
+        return Notes(findings=[], relevance="relevant")
+
+    def unload():
+        with pytest.raises(GpuBusyError), exclusive_gpu("cuda", lock):
+            pass
+        calls.append("unload")
+
+    monkeypatch.setattr(generator, "_generate", generate)
+    monkeypatch.setattr(generator, "_unload", unload)
+    try:
+        with generator.session():
+            generator.generate("first", {}, Notes)
+            generator.generate("second", {}, Notes)
+            assert not calls
+            if failed:
+                raise ValueError("generation failed")
+    except ValueError:
+        assert failed
+    assert calls == ["unload"]
     with exclusive_gpu("cuda", lock):
         pass
 

@@ -18,9 +18,20 @@ docker compose up -d --build --no-deps backend documents frontend
 Le modèle est téléchargé explicitement, puis exécuté localement via Ollama sur CPU.
 L'accélération NVIDIA est disponible avec
 `docker compose -f docker-compose.yml -f docker-compose.rag-gpu.yml --profile rag-generation up -d --no-deps ollama documents`.
-Elle utilise le verrou `/storage/results/.vision-gpu.lock`, commun avec la vision,
-et décharge le modèle avant de le libérer. Si la vision détient déjà le verrou,
+Elle utilise le verrou `/storage/results/.vision-gpu.lock`, commun avec la vision.
+Le modèle reste chargé entre les lots d'un même dossier et est déchargé avant
+de libérer le verrou, y compris après une erreur. Le verrou est acquis au premier
+appel non présent en cache, puis conservé jusqu'à la fin du dossier.
+Si la vision détient déjà le verrou,
 le dossier peut être relancé après son traitement, en réutilisant les notes en cache.
+
+Sur le serveur RTX 5080, conserver `docker-compose.rag-gpu.yml` dans `COMPOSE_FILE`
+pour que cette accélération reste activée après un redémarrage. `ollama ps` doit
+afficher `100% GPU` pendant la rédaction ; le mode CPU est limité à quatre cœurs.
+L'override GPU autorise 8 Go de RAM hôte pour Ollama. Les événements `generation`
+enregistrent le matériel, la durée, les tokens générés et leur débit mesuré.
+La reprise réutilise les réponses déjà mises en cache, avec les mêmes contrôles
+de citations et de justification ; aucun article n'est supprimé pour accélérer.
 Les textes ne sont pas transmis à un fournisseur distant. Compose active la
 rédaction avec `RAG_GENERATION_ENABLED=true` ; `false` conserve le mode extractif.
 `RAG_GENERATOR_URL`, `RAG_GENERATOR_MODEL` et `RAG_GENERATOR_TIMEOUT` configurent
