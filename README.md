@@ -1,5 +1,10 @@
 # BioSentinelle Normandie
 
+Le [guide d’hébergement et de CI/CD](docs/HEBERGEMENT_CICD.md) décrit un déploiement
+entièrement distant sur CPU, sans dépendance au PC, avec conservation des modèles
+entraînés, migration vérifiée et sauvegardes distantes. Le budget cible est de
+10 €/mois, sous réserve du tarif final, des volumes et de la recette mémoire.
+
 La plateforme dispose de comptes **client** (inscription libre) et **administrateur**,
 d’un profil, d’un export personnel et d’une suppression douce avec suivi des demandes
 d’effacement. Au premier lancement, créer l’administrateur depuis `/initialisation`
