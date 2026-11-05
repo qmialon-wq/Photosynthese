@@ -47,7 +47,9 @@ test("inscription client, profil, navigation protégée et déconnexion", async 
   });
   await page.goto("/admin/utilisateurs");
   await expect(page).toHaveURL(/\/connexion$/);
-  await page.getByRole("link", { name: "S’inscrire" }).click();
+  await page
+    .getByRole("link", { name: "Créer un compte", exact: true })
+    .click();
   await page.getByLabel("Nom du profil").fill("Camille");
   await page.getByLabel("Adresse e-mail").fill("client@example.test");
   await page
