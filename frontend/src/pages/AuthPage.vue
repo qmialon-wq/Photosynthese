@@ -94,7 +94,7 @@ async function submit() {
 </script>
 <template>
   <section class="panel auth-card">
-    <RouterLink to="/connexion" class="brand">BioSentinelle</RouterLink>
+    <RouterLink to="/connexion" class="brand">Symbiose</RouterLink>
     <h1>{{ title }}</h1>
     <p v-if="mode === 'inscription'" class="muted">
       Votre compte permet d’importer des vidéos, de valider vos observations et

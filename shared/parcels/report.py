@@ -324,7 +324,7 @@ def printable_html(data: dict[str, Any]) -> str:
             for p in page["paragraphs"]
         )
         pages.append(f"""<section class="{page_class}">
-          <header>BIOSENTINELLE · DOSSIER TERRITORIAL</header>
+          <header>SYMBIOSE · DOSSIER TERRITORIAL</header>
           <h1>{escape(page["title"])}</h1>
           <div class="context">
           {escape(data["profile"].get("locality") or "Localité non renseignée")} ·
@@ -338,7 +338,7 @@ def printable_html(data: dict[str, Any]) -> str:
     return (
         """<!doctype html><html lang="fr"><meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Dossier territorial BioSentinelle</title><style>
+      <title>Dossier territorial Symbiose</title><style>
       @page {size:A4;margin:0} * {box-sizing:border-box}
       body {margin:0;background:#ecefe9;color:#19352c;font:10pt/1.35 Georgia,serif}
       .page {position:relative;width:210mm;min-height:297mm;padding:20mm 20mm 28mm;

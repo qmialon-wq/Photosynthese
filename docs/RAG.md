@@ -1,4 +1,4 @@
-# RAG BioSentinelle — recherche et recommandations territoriales
+# RAG Symbiose — recherche et recommandations territoriales
 
 Le moteur propose une recherche de passages validés et une **synthèse territoriale
 locale** pour les dossiers de parcelle. La synthèse examine tous les textes

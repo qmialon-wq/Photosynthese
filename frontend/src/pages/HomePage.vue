@@ -9,7 +9,7 @@ const tasks = useResource<Task[]>(
 <template>
   <div class="page-heading">
     <div>
-      <p class="eyebrow">BIOSENTINELLE NORMANDIE</p>
+      <p class="eyebrow">SYMBIOSE NORMANDIE</p>
       <h1>Vos observations, simplement.</h1>
       <p class="subtitle">
         Ajoutez les vidéos d’une même parcelle, décrivez votre projet et

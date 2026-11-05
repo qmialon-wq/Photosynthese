@@ -49,7 +49,7 @@ watch(
 const title = computed(
   () =>
     visibleNavigation.value.find((item) => item.path === route.path)?.label ??
-    "BioSentinelle",
+    "Symbiose",
 );
 </script>
 <template>
@@ -65,10 +65,10 @@ const title = computed(
       :class="{ 'is-open': open }"
       @keydown.esc="open = false"
     >
-      <RouterLink to="/" class="brand" aria-label="BioSentinelle — accueil"
+      <RouterLink to="/" class="brand" aria-label="Symbiose — accueil"
         ><span class="brand-mark"
           ><i class="pi pi-globe" aria-hidden="true" /></span
-        ><span>BioSentinelle<small>NORMANDIE</small></span></RouterLink
+        ><span>Symbiose<small>NORMANDIE</small></span></RouterLink
       >
       <span class="nav-label">{{
         isAdmin ? "ADMINISTRATION" : "ESPACE D’OBSERVATION"
@@ -131,7 +131,7 @@ const title = computed(
       </header>
       <main id="main-content" tabindex="-1"><RouterView /></main>
       <footer class="app-footer">
-        BioSentinelle Normandie
+        Symbiose Normandie
         <span>Observation · Validation · Connaissance</span>
       </footer>
     </div>

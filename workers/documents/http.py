@@ -127,7 +127,7 @@ class SafeHTTP:
                     )
                 self.sleep(delay)
                 headers = {
-                    "User-Agent": "BioSentinelle/0.1"
+                    "User-Agent": "Symbiose/0.1"
                     + (
                         f" (mailto:{self.settings.contact_email})"
                         if self.settings.contact_email

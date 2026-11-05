@@ -30,7 +30,7 @@ def markdown(result: dict[str, Any]) -> str:
         return "\n".join("> " + line for line in str(text).splitlines())
 
     lines = [
-        "# Rapport écologique BioSentinelle — extraits sourcés",
+        "# Rapport écologique Symbiose — extraits sourcés",
         "",
         quote(result["question"]),
         "",
