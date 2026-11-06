@@ -10,7 +10,7 @@ const mode = computed(() => route.path.slice(1));
 const title = computed(
   () =>
     ({
-      connexion: "Se connecter",
+      connexion: "Connexion",
       inscription: "Créer un compte client",
       initialisation: "Premier administrateur",
       reinitialiser: "Nouveau mot de passe",
@@ -223,7 +223,13 @@ async function submit() {
         type="submit"
         :disabled="busy || (mode === 'reinitialiser' && !token)"
       >
-        {{ busy ? "Veuillez patienter…" : title }}
+        {{
+          busy
+            ? "Veuillez patienter…"
+            : mode === "connexion"
+              ? "Se connecter"
+              : title
+        }}
         <i v-if="!busy" class="pi pi-arrow-right" aria-hidden="true" />
       </button>
     </form>
@@ -279,13 +285,13 @@ async function submit() {
 }
 .auth-tagline {
   margin: -12px 0 0;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1.25;
   letter-spacing: -0.5px;
 }
 .auth-card h1 {
   margin: 28px 0 16px;
-  font-size: 26px;
+  font-size: 23px;
   line-height: 1.25;
   font-weight: 650;
   letter-spacing: -0.7px;
@@ -471,7 +477,7 @@ async function submit() {
   }
   .auth-card h1 {
     margin-top: 28px;
-    font-size: 24px;
+    font-size: 23px;
   }
   .auth-card .auth-signup {
     margin-top: 26px;

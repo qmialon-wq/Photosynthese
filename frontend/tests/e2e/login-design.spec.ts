@@ -26,7 +26,7 @@ for (const viewport of [
     await unauthenticated(page);
     await page.goto("/connexion");
     await expect(
-      page.getByRole("heading", { name: "Se connecter" }),
+      page.getByRole("heading", { name: "Connexion" }),
     ).toBeVisible();
     const logo = page.getByRole("img", { name: "Symbiose", exact: true });
     await expect(logo).toBeVisible();
