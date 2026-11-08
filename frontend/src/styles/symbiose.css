@@ -254,6 +254,17 @@
 .sym-wheel-link.has-compact-label .sym-wheel-label {
   font-size: 17px;
 }
+/* Le libellé de validation reste lisible dans la pilule desktop de 186 × 62. */
+@media (min-width: 951px) {
+  .sym-wheel-link.is-active[data-section="/review"] {
+    width: 186px;
+  }
+  .sym-wheel-link.is-active[data-section="/review"] .sym-wheel-label {
+    font-size: 16px;
+    line-height: 1.15;
+    white-space: normal;
+  }
+}
 .sym-wheel-tooltip {
   position: absolute;
   left: calc(100% + 12px);

@@ -44,7 +44,9 @@ export const router = createRouter({
               ? () => import("./pages/DesignProjectsPage.vue")
               : section.path === "/analyses"
                 ? () => import("./pages/DesignAnalysisPage.vue")
-                : () => import("./pages/DesignPlaceholderPage.vue"),
+                : section.path === "/review"
+                  ? () => import("./pages/DesignValidationPage.vue")
+                  : () => import("./pages/DesignPlaceholderPage.vue"),
       meta: { designPreview: true, public: true },
     })),
     ...["connexion", "inscription", "initialisation", "reinitialiser"].map(
