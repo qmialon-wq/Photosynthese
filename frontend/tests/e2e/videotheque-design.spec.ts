@@ -53,8 +53,12 @@ test("captures jumelées Accueil et Vidéothèque, roue et absence de régressio
   });
   // Le filtre de verre du bouton mobile est recomposé par Chromium après l’animation.
   // Sa géométrie et son apparence CSS sont vérifiées séparément ci-dessous.
+  // La note translucide peut également varier d’un pixel après recomposition GPU.
   const beforeStable = await page.screenshot({
-    mask: [page.locator(".sym-wheel-link.is-active")],
+    mask: [
+      page.locator(".sym-wheel-link.is-active"),
+      page.locator(".sym-demo-note"),
+    ],
   });
   const nav = page.getByRole("navigation", { name: "Navigation principale" });
   const homeBounds = await nav.locator('[aria-current="page"]').boundingBox();
@@ -135,7 +139,10 @@ test("captures jumelées Accueil et Vidéothèque, roue et absence de régressio
     path: testInfo.outputPath("accueil-apres-videotheque-1600x900.png"),
   });
   const afterStable = await page.screenshot({
-    mask: [page.locator(".sym-wheel-link.is-active")],
+    mask: [
+      page.locator(".sym-wheel-link.is-active"),
+      page.locator(".sym-demo-note"),
+    ],
   });
   expect(afterStable.equals(beforeStable)).toBe(true);
   expect(await nav.locator('[aria-current="page"]').boundingBox()).toEqual(

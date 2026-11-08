@@ -24,7 +24,7 @@ Depuis `frontend/` :
 - `npm run build` et `npm test` : compiler et vérifier les tests unitaires.
 - `npx playwright test tests/e2e/videotheque-design.spec.ts tests/e2e/symbiose-design.spec.ts tests/e2e/profile-logout.spec.ts` : vérifier la nouvelle page et le socle commun.
 
-Le test de captures jumelées produit `accueil-1600x900.png`, `videotheque-1600x900.png` et `accueil-apres-videotheque-1600x900.png` dans son répertoire `frontend/test-results/`. Les captures livrées sont complètes. La comparaison automatisée de l’Accueil avant/après visite masque uniquement la pilule active, dont le verre est recomposé par Chromium après l’animation ; sa géométrie, sa couleur, sa bordure et son ombre sont vérifiées séparément. Le reste de l’écran est comparé à l’octet près. Le test contrôle également le même SVG d’arc et l’absence d’appels à l’API.
+Le test de captures jumelées produit `accueil-1600x900.png`, `videotheque-1600x900.png` et `accueil-apres-videotheque-1600x900.png` dans son répertoire `frontend/test-results/`. Les captures livrées sont complètes. La comparaison automatisée de l’Accueil avant/après visite masque la pilule active et la petite note translucide de démonstration, dont le rendu peut être recomposé par Chromium après l’animation ; la géométrie, la couleur, la bordure et l’ombre de la pilule sont vérifiées séparément. Le reste de l’écran est comparé à l’octet près. Le test contrôle également le même SVG d’arc et l’absence d’appels à l’API.
 
 Les captures finales prises sur la version locale Docker sont conservées sous `output/symbiose/etape-2/accueil-1600x900.png` et `output/symbiose/etape-2/videotheque-1600x900.png`. Ce dossier persiste après le nettoyage des résultats de tests et sert de référence pour les prochaines étapes.
 

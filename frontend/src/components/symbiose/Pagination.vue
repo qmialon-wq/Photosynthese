@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { computed } from "vue";
-const props = defineProps<{ page: number; total: number; pageSize: number }>();
+const props = withDefaults(
+  defineProps<{
+    page: number;
+    total: number;
+    pageSize: number;
+    itemLabel?: string;
+    navigationLabel?: string;
+  }>(),
+  {
+    itemLabel: "vidéo",
+    navigationLabel: "Pagination des vidéos",
+  },
+);
 const emit = defineEmits<{ change: [page: number] }>();
 const pageCount = computed(() =>
   Math.max(1, Math.ceil(props.total / props.pageSize)),
@@ -29,9 +41,10 @@ const buttons = computed(() => {
 <template>
   <div class="sv-pagination">
     <p role="status">
-      {{ start }} – {{ end }} sur {{ total }} vidéo{{ total === 1 ? "" : "s" }}
+      {{ start }} – {{ end }} sur {{ total }} {{ itemLabel
+      }}{{ total === 1 ? "" : "s" }}
     </p>
-    <nav aria-label="Pagination des vidéos">
+    <nav :aria-label="navigationLabel">
       <button
         class="sv-page-step"
         :disabled="page <= 1"

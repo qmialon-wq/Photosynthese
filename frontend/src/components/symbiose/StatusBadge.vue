@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VideoStatus } from "../../data/video-preview";
 import SymIcon from "./SymIcon.vue";
-defineProps<{ status: VideoStatus }>();
+defineProps<{ status: VideoStatus; label?: string }>();
 const labels = {
   validated: "Validée",
   pending: "En validation",
@@ -20,6 +20,8 @@ const icons = {
       'is-pending': status === 'pending',
       'is-unanalysed': status === 'unanalysed',
     }"
-    ><SymIcon :name="icons[status]" :size="15" />{{ labels[status] }}</span
+    ><SymIcon :name="icons[status]" :size="15" />{{
+      label || labels[status]
+    }}</span
   >
 </template>
