@@ -6,7 +6,7 @@ Le menu du profil propose « Se déconnecter ». Cette action réutilise l’aut
 
 Depuis `frontend/`, lancer `npm ci` si nécessaire, puis `npm run dev`. Ouvrir l’URL affichée par Vite. La compilation se fait avec `npm run build`.
 
-Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` présentent le socle graphique. L’Accueil, la Vidéothèque, Mes dossiers, Analyse vidéo et Validation humaine sont intégrés ; Documents scientifiques reste provisoire. Les anciens écrans métier restent dans le dépôt, et les routes d’administration existantes conservent leur fonctionnement. Les valeurs de `src/data/home-preview.ts`, `src/data/video-preview.ts`, `src/data/project-preview.ts`, `src/data/analysis-preview.ts` et `src/data/observation-preview.ts` sont explicitement fictives. Aucun backend ou stockage supplémentaire n’a été ajouté.
+Les six routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` sont intégrées graphiquement. Les anciens écrans métier restent dans le dépôt, et les routes d’administration existantes conservent leur fonctionnement. Les données de `src/data/home-preview.ts`, `src/data/video-preview.ts`, `src/data/project-preview.ts`, `src/data/analysis-preview.ts`, `src/data/observation-preview.ts` et `src/data/document-preview.ts` sont explicitement fictives. Aucun backend ou stockage supplémentaire n’a été ajouté.
 
 ## Composants et variables
 
@@ -16,7 +16,7 @@ Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` 
 - `src/styles/symbiose.css` : variables `--sym-*` pour couleurs, police, verre, bordure, ombre, rayon, espacements et animation. Les styles sont isolés des anciens écrans.
 - `src/symbiose-navigation.ts` : ordre cyclique unique et coordonnées des six emplacements. Le quatrième emplacement est toujours actif. Un changement d’URL repositionne les six liens ; l’arc reste fixe. La pilule active garde un fond vert translucide, une bordure lumineuse et un texte blanc.
 
-Pour intégrer une future page, conserver sa route et ses métadonnées `designPreview`, remplacer uniquement son composant provisoire et utiliser les composants communs. L’AppShell n’a pas à être reconstruit.
+Les six écrans conservent leurs métadonnées `designPreview` et utilisent les composants communs. Une future connexion à des données réelles doit conserver AppShell et WheelNavigation.
 
 À chaque nouvelle étape, réaliser deux captures finales en 1600 × 900 : la page intégrée et l’Accueil. Les conserver dans `output/symbiose/etape-N/`, hors du dossier temporaire des tests. Comparer aussi l’Accueil après un aller-retour vers la nouvelle page pour détecter les styles qui débordent sur les composants communs. La roue doit conserver ses six positions, son arc et sa pilule active.
 
@@ -29,6 +29,7 @@ Pour intégrer une future page, conserver sa route et ses métadonnées `designP
 - `npx playwright test tests/e2e/dossiers-design.spec.ts` : captures des trois pages, non-régression visuelle, ordre et styles de la roue, filtres et pagination des dossiers, aperçu fictif, menus au clavier et mobile. Voir `DOSSIERS_SYMBIOSE.md`.
 - `npx playwright test tests/e2e/analyse-design.spec.ts` : captures des quatre pages, non-régression visuelle, roue, alignement du calque, aperçu simulé, lecture réelle du fichier local, volume, plein écran, réglages, progression fictive et mobile. Voir `ANALYSE_SYMBIOSE.md`.
 - `npx playwright test tests/e2e/validation-design.spec.ts` : grille 4 × 2 et captures des cinq pages, sélection limitée au contenu visible, protection des images de test, filtres, confirmations, attribution fictive, retrait local, lecteur réutilisé, clavier et mobile. Voir `VALIDATION_SYMBIOSE.md`.
+- `npx playwright test tests/e2e/documents-design.spec.ts` : état vide initial, captures des six pages, non-régression, espèce et compteurs, pagination, retraits confirmés, imports limités aux noms de fichiers, récupération simulée, absence de réseau et de stockage, clavier et mobile. Voir `DOCUMENTS_SYMBIOSE.md`.
 
 Les tests fonctionnels historiques des écrans métier ne décrivent pas ces routes de validation graphique, qui restent des démonstrations locales.
 

@@ -7,10 +7,12 @@ const props = withDefaults(
     pageSize: number;
     itemLabel?: string;
     navigationLabel?: string;
+    variant?: "numbered" | "simple";
   }>(),
   {
     itemLabel: "vidéo",
     navigationLabel: "Pagination des vidéos",
+    variant: "numbered",
   },
 );
 const emit = defineEmits<{ change: [page: number] }>();
@@ -40,7 +42,7 @@ const buttons = computed(() => {
 </script>
 <template>
   <div class="sv-pagination">
-    <p role="status">
+    <p v-if="variant === 'numbered'" role="status">
       {{ start }} – {{ end }} sur {{ total }} {{ itemLabel
       }}{{ total === 1 ? "" : "s" }}
     </p>
@@ -50,8 +52,12 @@ const buttons = computed(() => {
         :disabled="page <= 1"
         @click="emit('change', page - 1)"
       >
-        Précédent</button
-      ><template v-for="button in buttons" :key="button"
+        {{ variant === "simple" ? "Page précédente" : "Précédent" }}</button
+      ><span v-if="variant === 'simple'" class="sv-page-current" role="status"
+        >Page {{ page }}</span
+      ><template
+        v-for="button in variant === 'numbered' ? buttons : []"
+        :key="button"
         ><button
           v-if="typeof button === 'number'"
           class="sv-page-number"
@@ -67,7 +73,7 @@ const buttons = computed(() => {
         :disabled="page >= pageCount"
         @click="emit('change', page + 1)"
       >
-        Suivant
+        {{ variant === "simple" ? "Page suivante" : "Suivant" }}
       </button>
     </nav>
   </div>

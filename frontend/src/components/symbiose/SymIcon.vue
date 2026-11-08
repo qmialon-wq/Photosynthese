@@ -76,6 +76,10 @@ const paths: Record<string, string[]> = {
   "volume-off": ["M3 9h4l5-5v16l-5-5H3z M17 9l5 6 M22 9l-5 6"],
   fullscreen: ["M3 9V3h6 M15 3h6v6 M21 15v6h-6 M9 21H3v-6"],
   info: ["M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z M12 11v6 M12 7h.01"],
+  download: ["M12 2v13 m-5-5 5 5 5-5 M3 15v6h18v-6"],
+  upload: ["M12 16V2 m-5 5 5-5 5 5 M3 15v6h18v-6"],
+  inbox: ["M3 13 6 3h12l3 10v8H3z M3 13h5l2 4h4l2-4h5"],
+  chart: ["M3 15h4v7H3z M10 8h4v14h-4z M17 2h4v20h-4z"],
 };
 </script>
 <template>

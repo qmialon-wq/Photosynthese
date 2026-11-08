@@ -264,6 +264,14 @@
     line-height: 1.15;
     white-space: normal;
   }
+  .sym-wheel-link.is-active[data-section="/documents"] {
+    width: 186px;
+  }
+  .sym-wheel-link.is-active[data-section="/documents"] .sym-wheel-label {
+    font-size: 14px;
+    line-height: 1.15;
+    white-space: normal;
+  }
 }
 .sym-wheel-tooltip {
   position: absolute;
