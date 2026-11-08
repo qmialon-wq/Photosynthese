@@ -1,0 +1,61 @@
+<script setup lang="ts">
+import { computed } from "vue";
+const props = defineProps<{ page: number; total: number; pageSize: number }>();
+const emit = defineEmits<{ change: [page: number] }>();
+const pageCount = computed(() =>
+  Math.max(1, Math.ceil(props.total / props.pageSize)),
+);
+const start = computed(() =>
+  props.total ? (props.page - 1) * props.pageSize + 1 : 0,
+);
+const end = computed(() => Math.min(props.total, props.page * props.pageSize));
+const buttons = computed(() => {
+  const last = pageCount.value;
+  if (last <= 7) return Array.from({ length: last }, (_, i) => i + 1);
+  const center = Math.min(Math.max(props.page - 1, 1), last - 2);
+  const pages = [...new Set([1, center, center + 1, center + 2, last])].sort(
+    (a, b) => a - b,
+  );
+  const result: (number | string)[] = [];
+  pages.forEach((page, i) => {
+    const previous = pages[i - 1];
+    if (previous && page - previous === 2) result.push(page - 1);
+    else if (previous && page - previous > 2) result.push(`gap-${previous}`);
+    result.push(page);
+  });
+  return result;
+});
+</script>
+<template>
+  <div class="sv-pagination">
+    <p role="status">
+      {{ start }} – {{ end }} sur {{ total }} vidéo{{ total === 1 ? "" : "s" }}
+    </p>
+    <nav aria-label="Pagination des vidéos">
+      <button
+        class="sv-page-step"
+        :disabled="page <= 1"
+        @click="emit('change', page - 1)"
+      >
+        Précédent</button
+      ><template v-for="button in buttons" :key="button"
+        ><button
+          v-if="typeof button === 'number'"
+          class="sv-page-number"
+          :class="{ 'is-current': page === button }"
+          :aria-label="`Page ${button}`"
+          :aria-current="page === button ? 'page' : undefined"
+          @click="emit('change', button)"
+        >
+          {{ button }}</button
+        ><span v-else class="sv-page-gap" aria-hidden="true">…</span></template
+      ><button
+        class="sv-page-step"
+        :disabled="page >= pageCount"
+        @click="emit('change', page + 1)"
+      >
+        Suivant
+      </button>
+    </nav>
+  </div>
+</template>

@@ -59,6 +59,12 @@ const paths: Record<string, string[]> = {
     "M5 2h14 M5 22h14 M6 2v4c0 3 12 9 12 12v4 M18 2v4c0 3-12 9-12 12v4",
   ],
   close: ["m5 5 14 14 M19 5 5 19"],
+  plus: ["M12 3v18 M3 12h18"],
+  clock: ["M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z", "M12 5v7l5 3"],
+  trash: ["M3 5h18 M9 5V2h6v3 M5 5l1 17h12l1-17 M10 9v8 M14 9v8"],
+  calendar: ["M3 5h18v17H3z M7 2v6 M17 2v6 M3 10h18 M7 14h2 M13 14h2 M7 18h2"],
+  refresh: ["M21 10a9 9 0 1 0-2 8", "M21 3v7h-7"],
+  more: ["M4 12h.01 M12 12h.01 M20 12h.01"],
 };
 </script>
 <template>

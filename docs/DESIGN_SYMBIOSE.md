@@ -6,7 +6,7 @@ Le menu du profil propose « Se déconnecter ». Cette action réutilise l’aut
 
 Depuis `frontend/`, lancer `npm ci` si nécessaire, puis `npm run dev`. Ouvrir l’URL affichée par Vite. La compilation se fait avec `npm run build`.
 
-Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` présentent le socle graphique. Seul l’Accueil est intégré ; les cinq autres rubriques sont des pages provisoires. Les anciens écrans métier restent dans le dépôt, et les routes d’administration existantes conservent leur fonctionnement. Les valeurs de `src/data/home-preview.ts` sont explicitement fictives. Aucun backend ou stockage supplémentaire n’a été ajouté.
+Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` présentent le socle graphique. L’Accueil et la Vidéothèque sont intégrés ; les quatre autres rubriques restent des pages provisoires. Les anciens écrans métier restent dans le dépôt, et les routes d’administration existantes conservent leur fonctionnement. Les valeurs de `src/data/home-preview.ts` et `src/data/video-preview.ts` sont explicitement fictives. Aucun backend ou stockage supplémentaire n’a été ajouté.
 
 ## Composants et variables
 
@@ -18,11 +18,14 @@ Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` 
 
 Pour intégrer une future page, conserver sa route et ses métadonnées `designPreview`, remplacer uniquement son composant provisoire et utiliser les composants communs. L’AppShell n’a pas à être reconstruit.
 
+À chaque nouvelle étape, réaliser deux captures finales en 1600 × 900 : la page intégrée et l’Accueil. Les conserver dans `output/symbiose/etape-N/`, hors du dossier temporaire des tests. Comparer aussi l’Accueil après un aller-retour vers la nouvelle page pour détecter les styles qui débordent sur les composants communs. La roue doit conserver ses six positions, son arc et sa pilule active.
+
 ## Vérification
 
 - `npm test` : tests unitaires, dont les six permutations cycliques de la roue.
 - `npx playwright test tests/e2e/symbiose-design.spec.ts` : Accueil en 1600 × 900, accessibilité, absence d’appels API, six rotations, positions fixes, historique du navigateur, clavier, actions et adaptation mobile. Les captures sont dans `frontend/test-results/`.
 - `npx playwright test tests/e2e/profile-logout.spec.ts` : déconnexion après rechargement, session absente, erreur serveur et nouvelle tentative.
+- `npx playwright test tests/e2e/videotheque-design.spec.ts` : captures jumelées, Accueil identique avant/après visite, ordre de la roue, pilule active de même taille, sélection entre pages, filtres, pagination, menus, simulations et mobile. Voir `VIDEOTHEQUE_SYMBIOSE.md`.
 
 Les tests fonctionnels historiques des écrans métier ne décrivent pas le nouveau mode de validation graphique : ses six routes sont volontairement provisoires.
 

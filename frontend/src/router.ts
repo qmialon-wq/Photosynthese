@@ -38,7 +38,9 @@ export const router = createRouter({
       component:
         section.path === "/"
           ? () => import("./pages/DesignHomePage.vue")
-          : () => import("./pages/DesignPlaceholderPage.vue"),
+          : section.path === "/videos"
+            ? () => import("./pages/DesignVideosPage.vue")
+            : () => import("./pages/DesignPlaceholderPage.vue"),
       meta: { designPreview: true, public: true },
     })),
     ...["connexion", "inscription", "initialisation", "reinitialiser"].map(

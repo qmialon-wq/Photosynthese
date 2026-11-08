@@ -140,6 +140,7 @@ function focusAdjacent(event: KeyboardEvent, index: number) {
         :class="{
           'is-active': item.slot === ACTIVE_WHEEL_SLOT,
           'has-long-label': item.label.length > 20,
+          'has-compact-label': item.label.length > 8 && item.label.length <= 12,
         }"
         :style="{
           left: `${item.position.x / 3}%`,

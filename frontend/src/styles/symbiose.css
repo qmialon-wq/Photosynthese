@@ -247,6 +247,13 @@
   width: max-content;
   max-width: 285px;
 }
+/* Les libellés intermédiaires tiennent dans la même pilule que l’Accueil. */
+.sym-wheel-link.is-active.has-compact-label {
+  width: 186px;
+}
+.sym-wheel-link.has-compact-label .sym-wheel-label {
+  font-size: 17px;
+}
 .sym-wheel-tooltip {
   position: absolute;
   left: calc(100% + 12px);
@@ -952,6 +959,9 @@
   }
 }
 @media (max-width: 950px) {
+  .sym-wheel-link.has-compact-label .sym-wheel-label {
+    font-size: 14px;
+  }
   .symbiose-shell {
     padding: 0;
   }
@@ -1057,6 +1067,9 @@
   }
 }
 @media (max-width: 620px) {
+  .sym-wheel-link.has-compact-label .sym-wheel-label {
+    font-size: 10px;
+  }
   .symbiose-shell {
     padding: 0;
   }
