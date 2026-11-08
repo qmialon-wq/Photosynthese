@@ -6,6 +6,8 @@ video datathon/
 *.mp4
 *.avi
 *.mov
+!frontend/src/assets/squirrel-local.mp4
+!frontend/src/data/
 *.pt
 *.pth
 .venv/

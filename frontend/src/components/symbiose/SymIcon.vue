@@ -65,6 +65,17 @@ const paths: Record<string, string[]> = {
   calendar: ["M3 5h18v17H3z M7 2v6 M17 2v6 M3 10h18 M7 14h2 M13 14h2 M7 18h2"],
   refresh: ["M21 10a9 9 0 1 0-2 8", "M21 3v7h-7"],
   more: ["M4 12h.01 M12 12h.01 M20 12h.01"],
+  file: ["M5 2h9l5 5v15H5z M14 2v6h5"],
+  sliders: [
+    "M2 5h5 M11 5h11 M2 12h11 M17 12h5 M2 19h5 M11 19h11",
+    "M11 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z M17 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z M11 19a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z",
+  ],
+  play: ["m7 3 14 9-14 9V3Z"],
+  pause: ["M6 3h3v18H6z M15 3h3v18h-3z"],
+  volume: ["M3 9h4l5-5v16l-5-5H3z M16 7c4 2 4 8 0 10 M19 3c7 5 7 13 0 18"],
+  "volume-off": ["M3 9h4l5-5v16l-5-5H3z M17 9l5 6 M22 9l-5 6"],
+  fullscreen: ["M3 9V3h6 M15 3h6v6 M21 15v6h-6 M9 21H3v-6"],
+  info: ["M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z M12 11v6 M12 7h.01"],
 };
 </script>
 <template>

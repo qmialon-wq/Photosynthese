@@ -6,7 +6,7 @@ Le menu du profil propose « Se déconnecter ». Cette action réutilise l’aut
 
 Depuis `frontend/`, lancer `npm ci` si nécessaire, puis `npm run dev`. Ouvrir l’URL affichée par Vite. La compilation se fait avec `npm run build`.
 
-Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` présentent le socle graphique. L’Accueil, la Vidéothèque et Mes dossiers sont intégrés ; les trois autres rubriques restent des pages provisoires. Les anciens écrans métier restent dans le dépôt, et les routes d’administration existantes conservent leur fonctionnement. Les valeurs de `src/data/home-preview.ts`, `src/data/video-preview.ts` et `src/data/project-preview.ts` sont explicitement fictives. Aucun backend ou stockage supplémentaire n’a été ajouté.
+Les routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documents` présentent le socle graphique. L’Accueil, la Vidéothèque, Mes dossiers et Analyse vidéo sont intégrés ; Validation humaine et Documents scientifiques restent provisoires. Les anciens écrans métier restent dans le dépôt, et les routes d’administration existantes conservent leur fonctionnement. Les valeurs de `src/data/home-preview.ts`, `src/data/video-preview.ts`, `src/data/project-preview.ts` et `src/data/analysis-preview.ts` sont explicitement fictives. Aucun backend ou stockage supplémentaire n’a été ajouté.
 
 ## Composants et variables
 
@@ -27,6 +27,7 @@ Pour intégrer une future page, conserver sa route et ses métadonnées `designP
 - `npx playwright test tests/e2e/profile-logout.spec.ts` : déconnexion après rechargement, session absente, erreur serveur et nouvelle tentative.
 - `npx playwright test tests/e2e/videotheque-design.spec.ts` : captures jumelées, Accueil identique avant/après visite, ordre de la roue, pilule active de même taille, sélection entre pages, filtres, pagination, menus, simulations et mobile. Voir `VIDEOTHEQUE_SYMBIOSE.md`.
 - `npx playwright test tests/e2e/dossiers-design.spec.ts` : captures des trois pages, non-régression visuelle, ordre et styles de la roue, filtres et pagination des dossiers, aperçu fictif, menus au clavier et mobile. Voir `DOSSIERS_SYMBIOSE.md`.
+- `npx playwright test tests/e2e/analyse-design.spec.ts` : captures des quatre pages, non-régression visuelle, roue, alignement du calque, aperçu simulé, lecture réelle du fichier local, volume, plein écran, réglages, progression fictive et mobile. Voir `ANALYSE_SYMBIOSE.md`.
 
 Les tests fonctionnels historiques des écrans métier ne décrivent pas le nouveau mode de validation graphique : ses six routes sont volontairement provisoires.
 

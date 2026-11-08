@@ -42,7 +42,9 @@ export const router = createRouter({
             ? () => import("./pages/DesignVideosPage.vue")
             : section.path === "/parcelles"
               ? () => import("./pages/DesignProjectsPage.vue")
-              : () => import("./pages/DesignPlaceholderPage.vue"),
+              : section.path === "/analyses"
+                ? () => import("./pages/DesignAnalysisPage.vue")
+                : () => import("./pages/DesignPlaceholderPage.vue"),
       meta: { designPreview: true, public: true },
     })),
     ...["connexion", "inscription", "initialisation", "reinitialiser"].map(
