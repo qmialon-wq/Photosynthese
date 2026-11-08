@@ -11,6 +11,7 @@ import { useRoute } from "vue-router";
 import { navigation, adminNavigation, router } from "./router";
 import { auth, clearSession } from "./auth-state";
 import { post, message } from "./api";
+import AppShell from "./components/symbiose/AppShell.vue";
 const logoutError = ref("");
 async function logout() {
   try {
@@ -54,7 +55,8 @@ const title = computed(
 </script>
 <template>
   <a href="#main-content" class="skip-link">Aller au contenu</a>
-  <main v-if="route.meta.public" id="main-content" class="auth-shell">
+  <AppShell v-if="route.meta.designPreview"><RouterView /></AppShell>
+  <main v-else-if="route.meta.public" id="main-content" class="auth-shell">
     <RouterView />
   </main>
   <div v-else-if="auth.user" class="app-shell">

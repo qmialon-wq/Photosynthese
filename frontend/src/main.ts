@@ -15,6 +15,7 @@ import MetricsPanel from "./components/MetricsPanel.vue";
 import { router } from "./router";
 import "primeicons/primeicons.css";
 import "./style.css";
+import "./styles/symbiose.css";
 
 const app = createApp(App)
   .use(router)
