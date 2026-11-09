@@ -11,7 +11,15 @@ import {
 } from "../../data/analysis-preview";
 const objective = defineModel<string>("objective", { required: true });
 const detail = defineModel<string>("detail", { required: true });
-defineProps<{ phase: "idle" | "running" | "completed"; progress: number }>();
+withDefaults(
+  defineProps<{
+    phase: "idle" | "running" | "completed";
+    progress: number;
+    enabled?: boolean;
+    caption?: string;
+  }>(),
+  { enabled: true, caption: modelCaption },
+);
 const emit = defineEmits<{ run: []; prepare: [] }>();
 </script>
 <template>
@@ -20,7 +28,7 @@ const emit = defineEmits<{ run: []; prepare: [] }>();
       <SymIcon name="sliders" :size="29" />Configurer l’analyse
     </h2>
     <GlassPanel class="sa-setting-block"
-      ><fieldset :disabled="phase === 'running'">
+      ><fieldset :disabled="!enabled || phase === 'running'">
         <legend class="sym-sr-only">Objectif de l’analyse</legend>
         <h3>Objectif de l’analyse</h3>
         <FilterSelect
@@ -28,11 +36,11 @@ const emit = defineEmits<{ run: []; prepare: [] }>();
           label="Objectif de l’analyse"
           :options="analysisObjectives"
         />
-        <p>{{ modelCaption }}</p>
+        <p>{{ caption }}</p>
       </fieldset></GlassPanel
     >
     <GlassPanel class="sa-setting-block"
-      ><fieldset :disabled="phase === 'running'">
+      ><fieldset :disabled="!enabled || phase === 'running'">
         <legend class="sym-sr-only">Niveau de détail</legend>
         <h3>Niveau de détail</h3>
         <FilterSelect
@@ -40,12 +48,18 @@ const emit = defineEmits<{ run: []; prepare: [] }>();
           label="Niveau de détail"
           :options="analysisDetailOptions"
         />
-        <p>{{ detailCaptions[detail] }}</p>
+        <p>
+          {{
+            enabled
+              ? detailCaptions[detail]
+              : "Paramètres non appliqués en consultation."
+          }}
+        </p>
       </fieldset></GlassPanel
     >
     <button
       class="sym-button sa-run"
-      :disabled="phase === 'running'"
+      :disabled="!enabled || phase === 'running'"
       :aria-busy="phase === 'running'"
       @click="emit('run')"
     >
@@ -54,10 +68,13 @@ const emit = defineEmits<{ run: []; prepare: [] }>();
         :size="24"
       />{{ phase === "running" ? "Analyse en cours…" : "Lancer l’analyse" }}
     </button>
-    <AnalysisStatus :phase="phase" :progress="progress" />
+    <AnalysisStatus v-if="enabled" :phase="phase" :progress="progress" />
+    <p v-else class="sym-read-only">
+      Lancement et préparation indisponibles dans cet écran en lecture seule.
+    </p>
     <button
       class="sa-prepare-crops"
-      :disabled="phase === 'running'"
+      :disabled="!enabled || phase === 'running'"
       @click="emit('prepare')"
     >
       <SymIcon name="layers" :size="24" />Préparer les recadrages à valider

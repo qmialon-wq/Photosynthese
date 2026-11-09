@@ -262,7 +262,7 @@ test("recherche, filtres combinés, résultat vide et 62 pages", async ({
     .click();
   await page.getByRole("button", { name: "Page 62", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "VID_00371.mp4" }),
+    page.getByRole("heading", { name: "19136320-hd_1080_1920_50fps.mp4" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Suivant", exact: true }),

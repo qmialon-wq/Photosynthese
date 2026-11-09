@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import type { DemoProject } from "../../data/project-preview";
+import type { Project } from "../../data/contracts";
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
 import StatusBadge from "./StatusBadge.vue";
-defineProps<{ project: DemoProject }>();
-const emit = defineEmits<{ open: [project: DemoProject] }>();
+defineProps<{ project: Project }>();
+const emit = defineEmits<{ open: [project: Project] }>();
 const router = useRouter();
 const menu = ref<HTMLDetailsElement>(),
   openButton = ref<HTMLButtonElement>(),
@@ -25,7 +25,7 @@ function closeMenu() {
 function outside(event: PointerEvent) {
   if (!menu.value?.contains(event.target as Node)) closeMenu();
 }
-function openProject(project: DemoProject) {
+function openProject(project: Project) {
   closeMenu();
   openButton.value?.focus();
   emit("open", project);
@@ -61,7 +61,11 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
     >
       <div
         class="sf-project-photo"
-        :class="`sf-landscape-${project.landscape}`"
+        :class="
+          project.landscape
+            ? `sf-landscape-${project.landscape}`
+            : 'sym-thumbnail-empty'
+        "
       >
         <StatusBadge
           :status="project.status"
@@ -73,12 +77,12 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
         <div class="sf-project-counts">
           <span
             ><SymIcon name="video" :size="21" />{{
-              project.videos
+              project.videos ?? "—"
             }}
             vidéos</span
           ><span
             ><SymIcon name="paw" :size="23" />{{
-              project.species
+              project.species ?? "—"
             }}
             espèces</span
           >

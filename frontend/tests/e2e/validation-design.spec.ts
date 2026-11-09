@@ -266,7 +266,7 @@ test("filtres combinés, résultat vide et sélection limitée aux observations 
   await page
     .getByLabel("Filtrer les observations par espèce", { exact: true })
     .selectOption("chevreuil");
-  await expect(page.locator(".sr-observation")).toHaveCount(7);
+  await expect(page.locator(".sr-observation")).toHaveCount(5);
   await page
     .getByLabel("Filtrer les observations par qualité", { exact: true })
     .selectOption("too_small");
@@ -302,7 +302,7 @@ test("validation confirmée, attribution et statut fictifs sans stockage ni API"
     exact: true,
   });
   await expect(dialog).toContainText("validation fictive de 2 observations");
-  await expect(page.locator(".sr-observation-meta .sv-status")).toHaveCount(0);
+  await expect(page.locator(".sr-observation-meta .sv-status")).toHaveCount(2);
   await dialog.getByRole("button", { name: "Annuler", exact: true }).click();
   await expect(selectionCount(page)).toHaveText("2 sélectionnées");
   await validate.click();
@@ -320,7 +320,7 @@ test("validation confirmée, attribution et statut fictifs sans stockage ni API"
     );
   }
   await expect(card(page, 1).locator(".sr-observation-filename")).toHaveText(
-    "Chevreuil-Score-271.mp4",
+    "VID_00124.mp4",
   );
   await expect(card(page, 6).locator(".sr-review-status")).toHaveText(
     "À revoir",
@@ -328,7 +328,7 @@ test("validation confirmée, attribution et statut fictifs sans stockage ni API"
   await page
     .getByLabel("Filtrer les observations par espèce", { exact: true })
     .selectOption("renard");
-  await expect(page.locator(".sr-observation")).toHaveCount(2);
+  await expect(page.locator(".sr-observation")).toHaveCount(4);
   expect(
     await page.evaluate(() => ({
       local: JSON.stringify(localStorage),
@@ -337,7 +337,7 @@ test("validation confirmée, attribution et statut fictifs sans stockage ni API"
   ).toEqual(storage);
   await page.reload();
   await expect(page.locator(".sr-observation")).toHaveCount(8);
-  await expect(page.locator(".sr-observation-meta .sv-status")).toHaveCount(0);
+  await expect(page.locator(".sr-observation-meta .sv-status")).toHaveCount(2);
   expect(calls).toEqual([]);
 });
 

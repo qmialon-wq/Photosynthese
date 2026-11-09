@@ -443,8 +443,9 @@ test("récupération globale confirmée sans réseau ni stockage et arrêt en qu
   await page.clock.fastForward(10000);
   await page.locator('.sym-wheel-link[data-section="/documents"]').click();
   await expect(page.locator(".sd-task")).toHaveCount(0);
+  // Le corpus partagé conserve la première récupération achevée ; la seconde a été annulée.
   await expect(corpusSpecies(page).locator("option:checked")).toHaveText(
-    "Renard · 0 documents",
+    "Renard · 1 document",
   );
   expect(errors).toEqual([]);
 });

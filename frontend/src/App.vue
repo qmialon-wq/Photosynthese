@@ -12,6 +12,9 @@ import { navigation, adminNavigation, router } from "./router";
 import { auth, clearSession } from "./auth-state";
 import { post, message } from "./api";
 import AppShell from "./components/symbiose/AppShell.vue";
+import ModeSelector from "./components/symbiose/ModeSelector.vue";
+import { useDataMode } from "./data/data-mode";
+const dataMode = useDataMode();
 const logoutError = ref("");
 async function logout() {
   try {
@@ -28,6 +31,11 @@ const expired = () => {
 onMounted(() => window.addEventListener("auth-expired", expired));
 onBeforeUnmount(() => window.removeEventListener("auth-expired", expired));
 const route = useRoute();
+watch(
+  () => !!route.meta.designPreview,
+  (value) => dataMode.setActive(value),
+  { immediate: true },
+);
 const open = ref(false);
 const sidebar = ref<HTMLElement | null>(null);
 const menu = ref<HTMLButtonElement | null>(null);
@@ -55,7 +63,10 @@ const title = computed(
 </script>
 <template>
   <a href="#main-content" class="skip-link">Aller au contenu</a>
-  <AppShell v-if="route.meta.designPreview"><RouterView /></AppShell>
+  <AppShell v-if="route.meta.designPreview"
+    ><RouterView
+      :key="`${dataMode.mode.value}:${dataMode.revision.value}:${dataMode.sourceId.value}`"
+  /></AppShell>
   <main v-else-if="route.meta.public" id="main-content" class="auth-shell">
     <RouterView />
   </main>
@@ -116,6 +127,7 @@ const title = computed(
     />
     <div class="workspace">
       <header class="topbar">
+        <ModeSelector />
         <button
           class="menu-toggle"
           ref="menu"
@@ -131,7 +143,18 @@ const title = computed(
           isAdmin ? "Gestion et modèles" : "Observer · Analyser · Valider"
         }}</span>
       </header>
-      <main id="main-content" tabindex="-1"><RouterView /></main>
+      <main id="main-content" tabindex="-1">
+        <RouterView v-if="dataMode.isReal.value || route.path === '/profil'" />
+        <div v-else class="notice">
+          <h1>Espace métier</h1>
+          <p>
+            Les outils d’administration utilisent des services réels.
+            Sélectionnez « Données réelles » pour y accéder avec vos permissions
+            habituelles.
+          </p>
+          <RouterLink to="/">Revenir à la démonstration Symbiose</RouterLink>
+        </div>
+      </main>
       <footer class="app-footer">
         Symbiose Normandie
         <span>Observation · Validation · Connaissance</span>

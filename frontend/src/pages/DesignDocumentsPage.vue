@@ -12,7 +12,6 @@ import {
   corpusSpecies,
   corpusSpeciesLabel,
   currentDocumentSelection,
-  demoScientificDocuments,
   documentPageSize,
   documentSpeciesOptions,
   documentsForSpecies,
@@ -29,15 +28,38 @@ import {
 import "../styles/videotheque.css";
 import "../styles/scientific-documents.css";
 
-const documents = ref(
-  demoScientificDocuments.map((document) => ({ ...document })),
-);
+import { useCollection } from "../data/data-mode";
+import SourceState from "../components/symbiose/SourceState.vue";
+const { items: documents, state: source, store } = useCollection("documents");
 const species = ref("renard"),
   page = ref(1),
   selected = ref(new Set<string>());
-const speciesOptions = computed(() => documentSpeciesOptions(documents.value));
+const speciesOptions = computed(() =>
+  store.capabilities.value.simulate
+    ? documentSpeciesOptions(documents.value)
+    : [
+        { value: "", label: "Toutes les espèces" },
+        ...[
+          ...new Set(
+            documents.value
+              .flatMap((d) => d.speciesIds || [d.species])
+              .filter(Boolean),
+          ),
+        ].map((value) => ({ value, label: value })),
+      ],
+);
+watch(
+  speciesOptions,
+  (options) => {
+    if (!options.some((o) => o.value === species.value))
+      species.value = options[0]?.value || "";
+  },
+  { immediate: true },
+);
 const filtered = computed(() =>
-  documentsForSpecies(documents.value, species.value),
+  species.value
+    ? documentsForSpecies(documents.value, species.value)
+    : documents.value,
 );
 const visible = computed(() =>
   filtered.value.slice(
@@ -127,6 +149,7 @@ function chooseSpecies() {
   dialog.value = "species";
 }
 function startRetrieval(targets: string[]) {
+  if (!store.capabilities.value.simulate) return;
   const ids = corpusSpecies
     .filter((option) => targets.includes(option.value))
     .map((option) => option.value);
@@ -158,6 +181,7 @@ function startRetrieval(targets: string[]) {
   }, retrievalQueueDelay);
 }
 function openFilePicker() {
+  if (!store.capabilities.value.simulate) return;
   importError.value = "";
   importSpecies.value = species.value;
   fileInput.value?.click();
@@ -183,6 +207,7 @@ function chooseFile(event: Event) {
   dialog.value = "import";
 }
 function confirmImport() {
+  if (!store.capabilities.value.simulate) return;
   if (!pendingImport.value) return;
   const pending = pendingImport.value;
   species.value = pending.species;
@@ -204,6 +229,7 @@ function confirmImport() {
   closeDialog();
 }
 function removeSelection() {
+  if (!store.capabilities.value.simulate) return;
   if (!selection.value.length) {
     closeDialog();
     return;
@@ -246,18 +272,31 @@ onBeforeUnmount(stopTimers);
         </div>
       </div>
       <div class="sd-header-actions">
-        <button class="sym-button" :disabled="busy" @click="dialog = 'all'">
+        <button
+          class="sym-button"
+          :disabled="!store.capabilities.value.simulate || busy"
+          @click="dialog = 'all'"
+        >
           <SymIcon name="download" :size="23" />Récupérer pour toutes les
           espèces</button
         ><button
           class="sv-button-quiet"
-          :disabled="busy"
+          :disabled="!store.capabilities.value.simulate || busy"
           @click="chooseSpecies"
         >
           Choisir les espèces
         </button>
       </div>
     </header>
+    <SourceState
+      :resource="source"
+      empty-text="Aucun document scientifique disponible."
+      @retry="store.refresh"
+    />
+    <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
+      Documents enregistrés uniquement. Import, récupération et retrait
+      désactivés dans cet écran en lecture seule.
+    </p>
     <GlassPanel class="sd-corpus" aria-labelledby="sd-corpus-title"
       ><header class="sd-corpus-header">
         <div class="sd-corpus-heading">
@@ -272,7 +311,11 @@ onBeforeUnmount(stopTimers);
             </p>
           </div>
         </div>
-        <button class="sv-button-quiet sd-import" @click="openFilePicker">
+        <button
+          class="sv-button-quiet sd-import"
+          :disabled="!store.capabilities.value.simulate"
+          @click="openFilePicker"
+        >
           <SymIcon name="upload" :size="23" />Importer un document</button
         ><input
           ref="fileInput"
@@ -305,7 +348,7 @@ onBeforeUnmount(stopTimers);
           >{{ selection.length }} sélectionné(s)</span
         ><button
           class="sv-button-quiet sym-button-danger sd-remove"
-          :disabled="!selection.length"
+          :disabled="!store.capabilities.value.simulate || !selection.length"
           @click="dialog = 'remove'"
         >
           <SymIcon name="trash" :size="20" />Retirer du corpus
@@ -318,8 +361,12 @@ onBeforeUnmount(stopTimers);
         @toggle="toggle"
         @preview="preview"
       /><DocumentEmptyState
-        v-else
-        message="Aucun document téléchargé pour cette espèce. Lancez une récupération ou importez un fichier."
+        v-else-if="source.state === 'success' || source.state === 'empty'"
+        :message="
+          store.capabilities.value.simulate
+            ? 'Aucun document téléchargé pour cette espèce. Lancez une récupération ou importez un fichier.'
+            : 'Aucun document téléchargé pour cette espèce.'
+        "
       />
       <Pagination
         class="sd-pagination"
@@ -336,8 +383,23 @@ onBeforeUnmount(stopTimers);
     <p v-if="importError" class="sd-feedback sd-error" role="alert">
       {{ importError }}
     </p>
-    <RetrievalProgress :task="task" />
-    <DemoDialog :open="!!dialog" :title="dialogTitle" @close="closeDialog"
+    <RetrievalProgress
+      :task="task"
+      :empty-message="
+        store.capabilities.value.readOnly
+          ? 'Suivi des récupérations non connecté dans cet écran.'
+          : undefined
+      "
+    />
+    <DemoDialog
+      :notice="
+        store.capabilities.value.readOnly
+          ? 'DONNÉES RÉELLES · CONSULTATION'
+          : undefined
+      "
+      :open="!!dialog"
+      :title="dialogTitle"
+      @close="closeDialog"
       ><template v-if="dialog === 'all'"
         ><p>
           Cette démonstration simule une récupération pour les
@@ -426,9 +488,20 @@ onBeforeUnmount(stopTimers);
       <template v-else-if="dialog === 'preview' && currentDocument"
         ><h3 class="sd-preview-title">{{ currentDocument.title }}</h3>
         <p>
-          Cette entrée est fictive. Aucun texte scientifique authentique n’a été
-          récupéré ou analysé et aucun fichier n’est ouvert.
+          {{
+            store.capabilities.value.readOnly
+              ? "Métadonnées du document enregistré. Aucun contenu de remplacement n’est généré."
+              : "Cette entrée est fictive. Aucun texte scientifique authentique n’a été récupéré ou analysé et aucun fichier n’est ouvert."
+          }}
         </p>
+        <a
+          v-if="currentDocument.url"
+          :href="currentDocument.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="sv-button-quiet"
+          >Consulter la source originale</a
+        >
         <dl>
           <div>
             <dt>Espèce</dt>
@@ -436,11 +509,17 @@ onBeforeUnmount(stopTimers);
           </div>
           <div>
             <dt>Type</dt>
-            <dd>{{ currentDocument.kind }}</dd>
+            <dd>{{ currentDocument.kind || "—" }}</dd>
           </div>
           <div>
-            <dt>Date fictive</dt>
-            <dd>{{ currentDocument.date }}</dd>
+            <dt>
+              {{
+                store.capabilities.value.simulate
+                  ? "Date fictive"
+                  : "Date de publication"
+              }}
+            </dt>
+            <dd>{{ currentDocument.date || "—" }}</dd>
           </div>
           <div v-if="currentDocument.filename">
             <dt>Nom local</dt>

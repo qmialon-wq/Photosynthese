@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Detection } from "../../data/analysis-preview";
+import type { Detection } from "../../data/contracts";
 withDefaults(defineProps<{ detections: Detection[]; label?: string }>(), {
   label: "Détections simulées",
 });
@@ -25,10 +25,10 @@ withDefaults(defineProps<{ detections: Detection[]; label?: string }>(), {
       <span class="sa-detection-label"
         >{{ detection.label }} ·
         {{
-          detection.confidence.toLocaleString("fr-FR", {
+          detection.confidence?.toLocaleString("fr-FR", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-          })
+          }) ?? "—"
         }}</span
       >
     </div>

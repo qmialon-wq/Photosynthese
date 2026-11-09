@@ -4,12 +4,16 @@ import FilterSelect from "./FilterSelect.vue";
 import SymIcon from "./SymIcon.vue";
 import { observationAssignmentOptions } from "../../data/observation-preview";
 const species = defineModel<string>("species", { required: true });
-defineProps<{
-  count: number;
-  allSelected: boolean;
-  partlySelected: boolean;
-  selectable: number;
-}>();
+withDefaults(
+  defineProps<{
+    count: number;
+    allSelected: boolean;
+    partlySelected: boolean;
+    selectable: number;
+    enabled?: boolean;
+  }>(),
+  { enabled: true },
+);
 const emit = defineEmits<{
   togglePage: [];
   validate: [];
@@ -37,6 +41,7 @@ const emit = defineEmits<{
     <div class="sr-assign">
       <span aria-hidden="true">Espèce à attribuer</span
       ><FilterSelect
+        :disabled="!enabled"
         v-model="species"
         label="Espèce à attribuer"
         :options="observationAssignmentOptions"
@@ -44,7 +49,7 @@ const emit = defineEmits<{
     </div>
     <button
       class="sym-button sr-validate"
-      :disabled="!count || !species"
+      :disabled="!enabled || !count || !species"
       :title="
         !count
           ? 'Sélectionnez au moins une observation.'
@@ -58,7 +63,7 @@ const emit = defineEmits<{
     </button>
     <button
       class="sv-button-quiet sr-remove"
-      :disabled="!count"
+      :disabled="!enabled || !count"
       @click="emit('remove')"
     >
       <SymIcon name="trash" :size="19" />Effacer la sélection

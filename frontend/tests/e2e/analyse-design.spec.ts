@@ -64,14 +64,26 @@ async function aligned(
   page: Page,
   expected = { x: 0.645, y: 0.36, width: 0.285, height: 0.395 },
 ) {
-  const surface = await page.locator(".sa-media-surface").boundingBox();
-  const box = await page.locator(".sa-detection").boundingBox();
-  expect(surface).not.toBeNull();
-  expect(box).not.toBeNull();
-  expect((box!.x - surface!.x) / surface!.width).toBeCloseTo(expected.x, 2);
-  expect((box!.y - surface!.y) / surface!.height).toBeCloseTo(expected.y, 2);
-  expect(box!.width / surface!.width).toBeCloseTo(expected.width, 2);
-  expect(box!.height / surface!.height).toBeCloseTo(expected.height, 2);
+  // Le plein écran déclenche ResizeObserver : mesurer les deux rectangles dans
+  // la même frame et attendre leur mise à jour, avec la même tolérance de 0,005.
+  await expect
+    .poll(() =>
+      page.evaluate((expected) => {
+        const surface = document
+          .querySelector(".sa-media-surface")!
+          .getBoundingClientRect();
+        const box = document
+          .querySelector(".sa-detection")!
+          .getBoundingClientRect();
+        return Math.max(
+          Math.abs((box.x - surface.x) / surface.width - expected.x),
+          Math.abs((box.y - surface.y) / surface.height - expected.y),
+          Math.abs(box.width / surface.width - expected.width),
+          Math.abs(box.height / surface.height - expected.height),
+        );
+      }, expected),
+    )
+    .toBeLessThan(0.005);
 }
 async function range(page: Page, label: string, value: number) {
   await page.getByLabel(label, { exact: true }).evaluate((element, next) => {
@@ -193,7 +205,7 @@ test("aperçu honnête : lecture simulée, position, volume et plein écran", as
   await page
     .getByRole("button", { name: "Démarrer la lecture simulée", exact: true })
     .click();
-  await expect(page.locator(".sa-player-time")).not.toHaveText("0:00 / 0:33");
+  await expect(page.locator(".sa-player-time")).not.toHaveText("0:00 / 0:27");
   await page
     .getByRole("button", {
       name: "Mettre la lecture simulée en pause",
@@ -201,7 +213,7 @@ test("aperçu honnête : lecture simulée, position, volume et plein écran", as
     })
     .click();
   await range(page, "Position de lecture", 16);
-  await expect(page.locator(".sa-player-time")).toHaveText("0:16 / 0:33");
+  await expect(page.locator(".sa-player-time")).toHaveText("0:16 / 0:27");
   await page
     .getByRole("button", { name: "Régler le volume", exact: true })
     .click();
@@ -287,12 +299,12 @@ test("sélection fictive et véritable lecture du fichier local portrait", async
     .click();
   await page
     .getByRole("button", {
-      name: "Sélectionner Renard-Scene-018.mp4",
+      name: "Sélectionner VID_00125.mp4",
       exact: true,
     })
     .click();
   await expect(page.locator(".sa-detection-label")).toHaveText("Renard · 0,91");
-  await expect(page.locator("#sa-filename")).toHaveText("Renard-Scene-018.mp4");
+  await expect(page.locator("#sa-filename")).toHaveText("VID_00125.mp4");
   await page
     .getByRole("button", { name: "Choisir une vidéo", exact: true })
     .click();

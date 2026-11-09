@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Symbiose — deux modes de données</title>
+<style>
+  body { margin: 32px auto; padding: 0 24px; max-width: 1400px; font: 16px/1.5 system-ui,sans-serif; background: #073322; color: #f5f8ef; }
+  a { color: #b9ef84; } nav { display: flex; gap: 20px; flex-wrap: wrap; margin: 24px 0; }
+  section { margin: 40px 0; } h1 { font-size: 30px; } h2 { font-size: 23px; }
+  .views { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; } figure { margin: 0; min-width: 0; }
+  figcaption { margin: 10px 0; } img { display: block; width: 100%; height: auto; border: 1px solid #8ba881; border-radius: 12px; }
+  .notice { padding: 16px; border: 1px solid #8ba881; border-radius: 16px; background: #1f4c32; }
+  @media(max-width: 800px) { .views { grid-template-columns: 1fr; } }
+</style>
+<h1>Symbiose — Démonstration et Données réelles</h1>
+<p>Les mêmes six rubriques, le même cadre et la même roue. Seules les collections, leurs états et les actions disponibles changent.</p>
+<p class="notice"><strong>Provenance des captures :</strong> à gauche, le scénario local de démonstration. À droite, le fournisseur réel testé avec des réponses API interceptées par Playwright. Ces captures de test ne représentent pas les dossiers ou publications privés de l’utilisateur. Sans cookie de session, le serveur local répond 401 ; cet état est capturé séparément.</p>
+<nav>
+  <a href="tests-navigateur.json">Résultats des tests navigateur</a>
+  <a href="tests-recontrole.json">Dernier passage : 14 scénarios réussis</a>
+  <a href="test-alignement.json">Contrôle d’alignement après plein écran</a>
+  <a href="reel-session-requise-1600x900.png">Serveur local — session requise</a>
+  <a href="selecteur-mobile-390x844.png">Sélecteur sur mobile</a>
+  <a href="verification-locale.json">Vérifications locales</a>
+</nav>
+<div id="gallery"></div>
+<script>
+  const names = ["Accueil", "Vidéothèque", "Mes dossiers", "Analyses", "Validation humaine", "Documents scientifiques"];
+  names.forEach((name, index) => {
+    const section = document.createElement("section");
+    section.innerHTML = `<h2>${name} · 1600 × 900</h2><div class="views">${[["demo", "Démonstration locale"], ["api-test", "Fournisseur réel — réponses API de test"]].map(([prefix, label]) => `<figure><figcaption>${label}</figcaption><a href="${prefix}-${index + 1}-1600x900.png"><img loading="lazy" src="${prefix}-${index + 1}-1600x900.png" alt="${name} : ${label}"></a></figure>`).join("")}</div>`;
+    document.querySelector("#gallery").append(section);
+  });
+</script>
+</html>

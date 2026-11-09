@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { playbackTime } from "../../data/analysis-preview";
-import {
-  observationSpeciesLabel,
-  type DemoObservation,
-} from "../../data/observation-preview";
+import { playbackTime } from "../../data/media";
+import type { Observation } from "../../data/contracts";
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
 import StatusBadge from "./StatusBadge.vue";
-defineProps<{ observation: DemoObservation; selected: boolean }>();
+const speciesLabels: Record<string, string> = { ecureuil: "écureuil", "cerf-elaphe": "cerf élaphe" };
+const observationSpeciesLabel = (value: string) => (speciesLabels[value] || value).toLocaleLowerCase("fr-FR");
+defineProps<{ observation: Observation; selected: boolean }>();
 const emit = defineEmits<{
   toggle: [id: string];
-  preview: [observation: DemoObservation];
+  preview: [observation: Observation];
 }>();
 function thumbnailFrame(event: Event) {
   const video = event.target as HTMLVideoElement;
@@ -103,7 +102,9 @@ function thumbnailFrame(event: Event) {
         status="validated"
         label="Validée"
       /><span v-else class="sr-review-status"
-        ><SymIcon name="info" :size="15" />À revoir</span
+        ><SymIcon name="info" :size="15" />{{
+          observation.statusLabel || "À revoir"
+        }}</span
       ><span>{{ observation.context }}</span>
     </div>
   </GlassPanel>

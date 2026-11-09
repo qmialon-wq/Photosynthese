@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
-import type { DemoVideo } from "../../data/video-preview";
+import type { Video } from "../../data/contracts";
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
 import StatusBadge from "./StatusBadge.vue";
-const props = defineProps<{ video: DemoVideo; selected: boolean }>();
+const props = defineProps<{ video: Video; selected: boolean }>();
 const emit = defineEmits<{
   toggle: [id: string];
-  preview: [video: DemoVideo];
-  details: [video: DemoVideo];
+  preview: [video: Video];
+  details: [video: Video];
 }>();
 const menuOpen = ref(false),
   root = ref<HTMLElement>(),
@@ -61,7 +61,11 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
       :class="{ 'is-selected': selected }"
       ><div
         class="sym-photo sv-thumbnail"
-        :class="`sv-photo-${video.thumbnail}`"
+        :class="
+          video.thumbnail
+            ? `sv-photo-${video.thumbnail}`
+            : 'sym-thumbnail-empty'
+        "
       >
         <button
           class="sv-play-button"
@@ -78,7 +82,7 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
             :checked="selected"
             @change="emit('toggle', video.id)" /></label
         ><span class="sv-duration"
-          ><SymIcon name="video" :size="13" />{{ video.duration }}</span
+          ><SymIcon name="video" :size="13" />{{ video.duration || "—" }}</span
         >
       </div>
       <div class="sv-video-info">
@@ -97,10 +101,10 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
           </button>
         </div>
         <p class="sv-video-parcel">
-          <SymIcon name="pin" :size="14" />{{ video.parcel }}
+          <SymIcon name="pin" :size="14" />{{ video.parcel || "Non renseigné" }}
         </p>
         <p class="sv-video-date">
-          <SymIcon name="calendar" :size="14" />{{ video.date }}
+          <SymIcon name="calendar" :size="14" />{{ video.date || "—" }}
         </p>
         <StatusBadge :status="video.status" /></div
     ></GlassPanel>

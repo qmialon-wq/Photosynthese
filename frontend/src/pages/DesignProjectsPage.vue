@@ -9,15 +9,30 @@ import DemoDialog from "../components/symbiose/DemoDialog.vue";
 import StatusBadge from "../components/symbiose/StatusBadge.vue";
 import ProjectCard from "../components/symbiose/ProjectCard.vue";
 import {
-  demoProjects,
   filterDemoProjects,
   projectStatusOptions,
-  projectTypeOptions,
+  projectTypeOptions as seedProjectTypeOptions,
   type DemoProject,
 } from "../data/project-preview";
 // Réutilisation des styles des contrôles existants, sans copie ni modification.
 import "../styles/videotheque.css";
 import "../styles/dossiers.css";
+import { useCollection } from "../data/data-mode";
+import SourceState from "../components/symbiose/SourceState.vue";
+const { items: projects, state: source, store } = useCollection("projects");
+const projectTypeOptions = computed(() => [
+  { value: "", label: "Tous les projets" },
+  ...[
+    ...new Set(
+      projects.value.map((project) => project.project).filter(Boolean),
+    ),
+  ].map((value) => ({
+    value,
+    label:
+      seedProjectTypeOptions.find((option) => option.value === value)?.label ||
+      value,
+  })),
+]);
 const query = ref(""),
   type = ref(""),
   status = ref(""),
@@ -25,7 +40,7 @@ const query = ref(""),
 const current = ref<DemoProject | null>(null),
   feedback = ref("");
 const filtered = computed(() =>
-  filterDemoProjects(demoProjects, query.value, type.value, status.value),
+  filterDemoProjects(projects.value, query.value, type.value, status.value),
 );
 const visible = computed(() =>
   filtered.value.slice((page.value - 1) * 6, page.value * 6),
@@ -35,6 +50,10 @@ watch([query, type, status], () => {
   feedback.value = "";
 });
 function refresh() {
+  if (store.capabilities.value.readOnly) {
+    void store.refresh();
+    return;
+  }
   query.value = "";
   type.value = "";
   status.value = "";
@@ -43,8 +62,9 @@ function refresh() {
 }
 const projectLabel = computed(
   () =>
-    projectTypeOptions.find((option) => option.value === current.value?.project)
-      ?.label,
+    projectTypeOptions.value.find(
+      (option) => option.value === current.value?.project,
+    )?.label,
 );
 </script>
 <template>
@@ -72,6 +92,14 @@ const projectLabel = computed(
         vidéos</RouterLink
       >
     </header>
+    <SourceState
+      :resource="source"
+      empty-text="Aucun dossier enregistré."
+      @retry="store.refresh"
+    />
+    <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
+      Consultation des dossiers enregistrés, sans création ni modification.
+    </p>
     <div class="sv-filters sf-filters">
       <SearchField
         v-model="query"
@@ -101,7 +129,7 @@ const projectLabel = computed(
         @open="current = $event"
       />
     </div>
-    <div v-else class="sv-empty sf-empty">
+    <div v-else-if="source.state === 'success'" class="sv-empty sf-empty">
       <SymIcon name="folder" :size="36" />
       <h2>Aucun dossier ne correspond à votre recherche</h2>
       <p>Essayez un autre nom, un autre projet ou un autre statut.</p>
@@ -119,6 +147,11 @@ const projectLabel = computed(
     />
     <p v-if="feedback" class="sv-feedback" role="status">{{ feedback }}</p>
     <DemoDialog
+      :notice="
+        store.capabilities.value.readOnly
+          ? 'DONNÉES RÉELLES · CONSULTATION'
+          : undefined
+      "
       :open="!!current"
       :title="current?.name || 'Dossier de démonstration'"
       @close="current = null"
@@ -126,7 +159,11 @@ const projectLabel = computed(
       <template v-if="current"
         ><div
           class="sf-project-photo sf-demo-photo"
-          :class="`sf-landscape-${current.landscape}`"
+          :class="
+            current.landscape
+              ? `sf-landscape-${current.landscape}`
+              : 'sym-thumbnail-empty'
+          "
           role="img"
           :aria-label="`Paysage du dossier ${current.name}`" />
         <StatusBadge
@@ -134,21 +171,24 @@ const projectLabel = computed(
           :status="current.status"
           :label="current.status === 'validated' ? 'Validé' : undefined" />
         <p>
-          Ce dossier présente des données fictives. Aucun traitement, stockage
-          ou résultat métier réel n’est disponible dans cet aperçu.
+          {{
+            store.capabilities.value.readOnly
+              ? "Informations du dossier enregistré. Les champs absents sont indiqués par un tiret."
+              : "Ce dossier présente des données fictives. Aucun traitement, stockage ou résultat métier réel n’est disponible dans cet aperçu."
+          }}
         </p>
         <dl>
           <div>
             <dt>Projet</dt>
-            <dd>{{ projectLabel }}</dd>
+            <dd>{{ projectLabel || current.project || "—" }}</dd>
           </div>
           <div>
             <dt>Vidéos</dt>
-            <dd>{{ current.videos }} vidéos</dd>
+            <dd>{{ current.videos ?? "—" }} vidéos</dd>
           </div>
           <div>
             <dt>Espèces</dt>
-            <dd>{{ current.species }} espèces</dd>
+            <dd>{{ current.species ?? "—" }} espèces</dd>
           </div>
         </dl>
         <RouterLink class="sym-button sf-demo-action" to="/videos"

@@ -12,6 +12,9 @@ import logo from "../../assets/symbiose-logo.png";
 import { symbioseNavigation } from "../../symbiose-navigation";
 import WheelNavigation from "./WheelNavigation.vue";
 import SymIcon from "./SymIcon.vue";
+import ModeSelector from "./ModeSelector.vue";
+import { useDataMode } from "../../data/data-mode";
+const dataMode = useDataMode();
 const route = useRoute();
 const router = useRouter();
 const logoutBusy = ref(false);
@@ -100,6 +103,7 @@ function closePanel() {
           ></RouterLink
         >
         <div class="sym-header-actions" aria-label="Actions du compte">
+          <ModeSelector />
           <button
             v-for="(action, i) in actions"
             :key="action.key"
@@ -115,7 +119,7 @@ function closePanel() {
             @click="togglePanel(action.key)"
           >
             <SymIcon :name="action.icon" :size="25" /><span
-              v-if="action.key === 'notifications'"
+              v-if="action.key === 'notifications' && dataMode.capabilities.value.simulate"
               class="sym-notification-dot"
               aria-hidden="true"
             />
@@ -181,9 +185,20 @@ function closePanel() {
         >
         <template v-else-if="panel === 'profile'"
           ><h2>Votre espace Symbiose</h2>
-          <p>{{ auth.user?.display_name || "Profil de démonstration" }}</p>
+          <p>
+            {{
+              auth.user?.display_name ||
+              (dataMode.isDemo.value
+                ? "Profil de démonstration"
+                : "Session non connectée")
+            }}
+          </p>
           <p v-if="!auth.user">
-            Cette première étape présente uniquement l’interface graphique.
+            {{
+              dataMode.isDemo.value
+                ? "Données de démonstration locales, sans serveur."
+                : "Connectez-vous pour consulter les données enregistrées."
+            }}
           </p>
           <button
             class="sym-profile-logout"
@@ -199,13 +214,15 @@ function closePanel() {
         >
         <template v-else
           ><h2>Notifications</h2>
-          <p>Aucune notification dans cette maquette.</p></template
+          <p>Notifications non connectées.</p></template
         >
       </aside>
       <main id="main-content" class="sym-main" tabindex="-1"><slot /></main>
-      <span class="sym-demo-note"
-        >Aperçu graphique · données de démonstration</span
-      >
+      <span class="sym-demo-note">{{
+        dataMode.isDemo.value
+          ? "Mode démonstration · données fictives"
+          : "Données réelles · lecture seule"
+      }}</span>
     </div>
   </div>
 </template>

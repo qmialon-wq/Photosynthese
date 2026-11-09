@@ -5,16 +5,9 @@ export const corpusSpecies = [
   { value: "blaireau", label: "Blaireau" },
   { value: "cerf-elaphe", label: "Cerf élaphe" },
 ];
-export type DemoDocumentKind = "PDF" | "DOCX" | "TXT";
-export type DemoScientificDocument = {
-  id: string;
-  species: string;
-  title: string;
-  kind: DemoDocumentKind;
-  date: string;
-  origin: "example" | "import" | "retrieval";
-  filename?: string;
-};
+import type { ScientificDocument, DocumentKind } from "./contracts";
+export type DemoDocumentKind = DocumentKind;
+export type DemoScientificDocument = ScientificDocument;
 export type DemoRetrievalTask = {
   species: string[];
   status: "queued" | "running" | "completed";
@@ -67,7 +60,9 @@ export function documentsForSpecies(
   documents: DemoScientificDocument[],
   species: string,
 ) {
-  return documents.filter((document) => document.species === species);
+  return documents.filter((document) =>
+    (document.speciesIds || [document.species]).includes(species),
+  );
 }
 export function documentSpeciesOptions(documents: DemoScientificDocument[]) {
   return corpusSpecies.map((option) => {

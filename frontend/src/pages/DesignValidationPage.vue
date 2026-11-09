@@ -8,11 +8,9 @@ import ObservationCard from "../components/symbiose/ObservationCard.vue";
 import BulkSelectionToolbar from "../components/symbiose/BulkSelectionToolbar.vue";
 import ValidationPreviewModal from "../components/symbiose/ValidationPreviewModal.vue";
 import {
-  demoObservations,
   editableSelection,
   filterDemoObservations,
   observationQualityFilters,
-  observationSpeciesFilters,
   observationSpeciesLabel,
   removeDemoObservations,
   validateDemoObservations,
@@ -21,9 +19,17 @@ import {
 import "../styles/videotheque.css";
 import "../styles/validation.css";
 
-const observations = ref(
-  demoObservations.map((observation) => ({ ...observation })),
-);
+import { useCollection } from "../data/data-mode";
+import SourceState from "../components/symbiose/SourceState.vue";
+const {
+  items: observations,
+  state: source,
+  store,
+} = useCollection("observations");
+const observationSpeciesFilters = computed(() => [
+  { value: "", label: "Toutes les espèces" },
+  ...store.data.species.data,
+]);
 const speciesFilter = ref(""),
   qualityFilter = ref(""),
   assignedSpecies = ref("");
@@ -73,6 +79,7 @@ function togglePage() {
     );
 }
 function requestConfirmation(action: "validate" | "remove") {
+  if (!store.capabilities.value.simulate) return;
   if (
     !selection.value.length ||
     (action === "validate" && !assignedSpecies.value)
@@ -81,6 +88,7 @@ function requestConfirmation(action: "validate" | "remove") {
   confirmation.value = action;
 }
 function confirm() {
+  if (!store.capabilities.value.simulate) return;
   const ids = new Set(selection.value.map((observation) => observation.id));
   if (!ids.size) {
     confirmation.value = null;
@@ -135,7 +143,16 @@ function resetFilters() {
         />
       </div>
     </header>
+    <SourceState
+      :resource="source"
+      empty-text="Aucune observation disponible."
+      @retry="store.refresh"
+    />
+    <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
+      Validation et retrait désactivés : consultation en lecture seule.
+    </p>
     <BulkSelectionToolbar
+      :enabled="store.capabilities.value.simulate"
       v-model:species="assignedSpecies"
       :count="selection.length"
       :all-selected="allSelected"
@@ -169,7 +186,7 @@ function resetFilters() {
         @preview="preview = $event"
       />
     </div>
-    <div v-else class="sr-empty">
+    <div v-else-if="source.state === 'success'" class="sr-empty">
       <SymIcon name="search" :size="30" />
       <h2>Aucune observation à afficher</h2>
       <p>
@@ -224,6 +241,10 @@ function resetFilters() {
         </div></template
       ></DemoDialog
     >
-    <ValidationPreviewModal :observation="preview" @close="preview = null" />
+    <ValidationPreviewModal
+      :read-only="store.capabilities.value.readOnly"
+      :observation="preview"
+      @close="preview = null"
+    />
   </GlassPanel>
 </template>

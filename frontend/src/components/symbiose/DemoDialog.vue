@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { nextTick, ref, watch } from "vue";
 import SymIcon from "./SymIcon.vue";
-const props = defineProps<{ open: boolean; title: string }>();
+const props = withDefaults(
+  defineProps<{ open: boolean; title: string; notice?: string }>(),
+  { notice: "DÉMONSTRATION · DONNÉES FICTIVES" },
+);
 const emit = defineEmits<{ close: [] }>();
 const dialog = ref<HTMLDialogElement>();
 watch(
@@ -29,7 +32,7 @@ watch(
       <SymIcon name="close" :size="22" />
     </button>
     <div class="sv-dialog-body">
-      <span class="sv-demo-kicker">DÉMONSTRATION · DONNÉES FICTIVES</span>
+      <span class="sv-demo-kicker">{{ notice }}</span>
       <h2>{{ title }}</h2>
       <slot />
     </div>

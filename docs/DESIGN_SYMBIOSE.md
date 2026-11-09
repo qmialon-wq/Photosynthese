@@ -10,6 +10,8 @@ Les six routes `/`, `/videos`, `/parcelles`, `/analyses`, `/review` et `/documen
 
 ## Composants et variables
 
+L’étape 8 ajoute les modes Démonstration et Données réelles aux mêmes six écrans. Le sélecteur, les contrats communs, les adaptateurs GET et leurs limites sont décrits dans [DATA_MODES_SYMBIOSE.md](DATA_MODES_SYMBIOSE.md). En mode réel, les six pages consultent les sources authentifiées disponibles et ne déclenchent aucun traitement métier.
+
 - `src/components/symbiose/AppShell.vue` : cadre forestier, marque, trois actions de l’en-tête et paramètres indépendants.
 - `WheelNavigation.vue` : six liens stables, état actif dérivé de l’URL, déplacement le long de l’arc par l’API d’animation du navigateur, pictogrammes fixes, navigation au clavier et mouvements réduits.
 - `GlassPanel.vue`, `StatCard.vue`, `PillButton.vue`, `SymIcon.vue`, `TopographicPattern.vue` : composants visuels réutilisables.

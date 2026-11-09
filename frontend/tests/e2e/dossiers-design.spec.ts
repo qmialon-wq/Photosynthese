@@ -105,7 +105,7 @@ test("trois captures en 1600 × 900 et non-régression du socle", async ({
   );
   await expect(
     page.locator(".sv-video-card").first().locator(".sv-status"),
-  ).toHaveText("Validée");
+  ).toHaveText("En validation");
   await page.screenshot({
     path: testInfo.outputPath("videotheque-1600x900.png"),
   });
@@ -273,6 +273,11 @@ test("ouverture du dossier et menus au clavier sans traitement réel", async ({
     name: "Ouvrir le dossier Parcelle Nord",
     exact: true,
   });
+  const counters = await page
+    .locator(".sf-project-card")
+    .first()
+    .locator(".sf-project-counts > span")
+    .allTextContents();
   await opener.click();
   const dialog = page.getByRole("dialog", {
     name: "Parcelle Nord",
@@ -280,8 +285,8 @@ test("ouverture du dossier et menus au clavier sans traitement réel", async ({
   });
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText("données fictives");
-  await expect(dialog).toContainText("42 vidéos");
-  await expect(dialog).toContainText("3 espèces");
+  for (const counter of counters)
+    await expect(dialog).toContainText(counter.replace(/\s+/g, " ").trim());
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await expect(opener).toBeFocused();

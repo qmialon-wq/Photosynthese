@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, useId, watch } from "vue";
-import {
-  containedMedia,
-  playbackTime,
-  type AnalysisVideo,
-} from "../../data/analysis-preview";
+import { containedMedia, playbackTime } from "../../data/media";
+import type { AnalysisVideo } from "../../data/contracts";
 import SymIcon from "./SymIcon.vue";
 import DetectionOverlay from "./DetectionOverlay.vue";
 const props = withDefaults(
@@ -29,8 +26,8 @@ const viewport = computed(() =>
   containedMedia(
     frame.value.width,
     frame.value.height,
-    dimensions.value.width,
-    dimensions.value.height,
+    dimensions.value.width || 3,
+    dimensions.value.height || 2,
   ),
 );
 const surfaceStyle = computed(() => ({
@@ -49,14 +46,16 @@ function stopClock() {
 function startClock() {
   stopClock();
   clock = setInterval(() => {
-    elapsed.value = Math.min(duration.value, elapsed.value + 0.1);
-    if (elapsed.value >= duration.value) {
+    elapsed.value = Math.min(duration.value || 0, elapsed.value + 0.1);
+    if (elapsed.value >= (duration.value || 0)) {
       playing.value = false;
       stopClock();
     }
   }, 100);
 }
 async function togglePlayback() {
+  if (props.video.kind !== "video" && props.video.playback === "read-only")
+    return;
   error.value = "";
   if (props.video.kind === "video") {
     if (!media.value) return;
@@ -72,7 +71,7 @@ async function togglePlayback() {
       playing.value = false;
       stopClock();
     } else {
-      if (elapsed.value >= duration.value) elapsed.value = 0;
+      if (elapsed.value >= (duration.value || 0)) elapsed.value = 0;
       playing.value = true;
       startClock();
     }
@@ -82,7 +81,7 @@ function seek(event: Event) {
   const value = Number((event.target as HTMLInputElement).value);
   elapsed.value = Math.max(
     0,
-    Math.min(duration.value, Number.isFinite(value) ? value : 0),
+    Math.min(duration.value || 0, Number.isFinite(value) ? value : 0),
   );
   if (media.value && props.video.kind === "video")
     media.value.currentTime = elapsed.value;
@@ -148,9 +147,10 @@ onBeforeUnmount(() => {
     class="sa-player"
     role="group"
     :aria-label="
-      video.kind === 'video'
+      video.accessibleLabel ||
+      (video.kind === 'video'
         ? 'Lecteur vidéo local, détection simulée'
-        : 'Aperçu fixe, contrôles de lecture simulés'
+        : 'Aperçu fixe, contrôles de lecture simulés')
     "
     @keydown.esc.stop="volumeOpen = false"
   >
@@ -176,23 +176,28 @@ onBeforeUnmount(() => {
         v-else
         class="sa-poster"
         :style="{
-          backgroundImage: `url(${video.poster})`,
+          backgroundImage: video.poster ? `url(${video.poster})` : 'none',
           backgroundSize: video.posterSize || 'cover',
           backgroundPosition: video.posterPosition || 'center',
         }"
         role="img"
-        :aria-label="`Aperçu de démonstration : ${video.species} en forêt`"
+        :aria-label="
+          video.accessibleLabel ||
+          `Aperçu de démonstration : ${video.species} en forêt`
+        "
       />
       <DetectionOverlay v-if="showDetections" :detections="video.detections" />
     </div>
     <span class="sa-player-demo">{{
-      video.kind === "video"
+      video.notice ||
+      (video.kind === "video"
         ? "VIDÉO LOCALE · DÉTECTION SIMULÉE"
-        : "IMAGE FIXE · LECTURE SIMULÉE"
+        : "IMAGE FIXE · LECTURE SIMULÉE")
     }}</span>
     <div class="sa-player-controls">
       <button
         class="sa-player-button"
+        :disabled="video.kind !== 'video' && video.playback === 'read-only'"
         :aria-label="
           video.kind === 'video'
             ? playing
@@ -219,7 +224,8 @@ onBeforeUnmount(() => {
         class="sa-seek"
         type="range"
         min="0"
-        :max="duration"
+        :max="duration || 0"
+        :disabled="video.kind !== 'video' && video.playback === 'read-only'"
         step="0.1"
         :value="elapsed"
         :style="{

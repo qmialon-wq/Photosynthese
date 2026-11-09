@@ -1,13 +1,5 @@
-import type { VideoStatus } from "./video-preview";
-export type DemoProject = {
-  id: string;
-  name: string;
-  videos: number;
-  species: number;
-  status: VideoStatus;
-  project: string;
-  landscape: "forest" | "valley" | "wetland" | "meadow" | "bocage";
-};
+import type { Project } from "./contracts";
+export type DemoProject = Project;
 // Douze dossiers de présentation, sans identifiant ou donnée métier réelle.
 export const demoProjects: DemoProject[] = [
   {

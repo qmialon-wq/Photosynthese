@@ -1,10 +1,22 @@
 <script setup lang="ts">
-import {
-  overview,
-  journey,
-  indicators,
-  latestAnalyses,
-} from "../data/home-preview";
+import { computed } from "vue";
+import { journey } from "../data/home-preview";
+import { useDataMode } from "../data/data-mode";
+import SourceState from "../components/symbiose/SourceState.vue";
+const store = useDataMode();
+const overview = computed(() => store.summary.value.overview);
+const indicators = computed(() => store.summary.value.indicators);
+const latestAnalyses = computed(() => store.summary.value.latestAnalyses);
+const recommendation = computed(() => store.summary.value.recommendations[0]);
+const notices = computed(() => [
+  ...new Map(
+    Object.values(store.data)
+      .filter((source) =>
+        ["error", "unconnected", "loading"].includes(source.state),
+      )
+      .map((source) => [source.message || source.state, source]),
+  ).values(),
+]);
 import StatCard from "../components/symbiose/StatCard.vue";
 import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import PillButton from "../components/symbiose/PillButton.vue";
@@ -14,9 +26,20 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
 <template>
   <div class="sym-home">
     <h1 class="sym-sr-only">Accueil Symbiose</h1>
-    <div class="sym-overview" aria-label="Indicateurs de démonstration">
+    <div class="sym-overview" aria-label="Indicateurs de suivi">
       <StatCard v-for="stat in overview" :key="stat.label" v-bind="stat" />
     </div>
+    <template v-for="(source, key) in notices" :key="key">
+      <SourceState
+        v-if="
+          source.state === 'error' ||
+          source.state === 'unconnected' ||
+          source.state === 'loading'
+        "
+        :resource="source"
+        @retry="store.refresh"
+      />
+    </template>
     <div class="sym-journey">
       <GlassPanel
         v-for="card in journey"
@@ -44,7 +67,11 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
           <div
             class="sym-gauge"
             role="img"
-            aria-label="État écologique de démonstration : 78 sur 100"
+            :aria-label="
+              store.summary.value.score == null
+                ? 'Diagnostic écologique non disponible'
+                : `État écologique de démonstration : ${store.summary.value.score} sur 100`
+            "
           >
             <svg viewBox="0 0 250 140" fill="none" aria-hidden="true">
               <defs>
@@ -75,12 +102,19 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
                 stroke-width="17"
                 stroke-linecap="round"
                 pathLength="100"
-                stroke-dasharray="78 100"
+                :stroke-dasharray="`${store.summary.value.score ?? 0} 100`"
               />
             </svg>
             <div>
-              <strong>78</strong><span>/100</span>
-              <p>État écologique</p>
+              <strong>{{ store.summary.value.score ?? "—" }}</strong
+              ><span>/100</span>
+              <p>
+                {{
+                  store.summary.value.score == null
+                    ? "Non disponible"
+                    : "État écologique"
+                }}
+              </p>
             </div>
           </div>
           <div class="sym-indicators">
@@ -114,18 +148,15 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
           <span><SymIcon name="sprout" :size="25" /></span>Recommandation
           prioritaire
         </h2>
-        <div class="sym-recommendation-body">
+        <div v-if="recommendation" class="sym-recommendation-body">
           <div
             class="sym-photo sym-photo-hedgerow"
             role="img"
             aria-label="Haies et prairie normandes"
           />
           <div>
-            <h3>Maintenir et renforcer les haies</h3>
-            <p>
-              Favorise le déplacement de la faune et améliore la connectivité
-              des habitats.
-            </p>
+            <h3>{{ recommendation.title }}</h3>
+            <p>{{ recommendation.description }}</p>
           </div>
           <RouterLink
             to="/parcelles"
@@ -134,7 +165,10 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
             ><SymIcon name="arrow" :size="23"
           /></RouterLink>
         </div>
-        <div class="sym-carousel-dots" aria-hidden="true">
+        <div v-else class="sym-data-unavailable">
+          Recommandations non connectées.
+        </div>
+        <div v-if="recommendation" class="sym-carousel-dots" aria-hidden="true">
           <span class="is-active" /><span /><span /></div
       ></GlassPanel>
     </div>
@@ -145,7 +179,11 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
           >Tout consulter<SymIcon name="arrow" :size="22"
         /></RouterLink>
       </div>
-      <ul class="sym-analysis-list">
+      <SourceState
+        :resource="store.data.analyses"
+        empty-text="Aucune analyse enregistrée."
+        @retry="store.refresh" />
+      <ul v-if="latestAnalyses.length" class="sym-analysis-list">
         <li v-for="analysis in latestAnalyses" :key="analysis.name">
           <RouterLink
             to="/analyses"
@@ -153,7 +191,11 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
             :aria-label="`Ouvrir l’analyse ${analysis.name}`"
             ><div
               class="sym-photo sym-analysis-photo"
-              :class="`sym-photo-${analysis.thumbnail}`"
+              :class="
+                analysis.thumbnail
+                  ? `sym-photo-${analysis.thumbnail}`
+                  : 'sym-thumbnail-empty'
+              "
             >
               <span class="sym-play" aria-hidden="true"
                 ><svg viewBox="0 0 16 16"><path d="m6 3 7 5-7 5Z" /></svg
@@ -168,14 +210,14 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
               :status="analysis.validated ? 'validated' : 'pending'"
               :label="analysis.status" /><span class="sym-analysis-species"
               ><SymIcon name="paw" :size="23" />{{
-                analysis.species
+                analysis.species ?? "—"
               }}
-              espèces</span
+              espèce{{ analysis.species === 1 ? "" : "s" }}</span
             ><span class="sym-analysis-observations"
               ><SymIcon name="camera" :size="23" />{{
-                analysis.observations
+                analysis.observations ?? "—"
               }}
-              observations</span
+              observation{{ analysis.observations === 1 ? "" : "s" }}</span
             ><SymIcon name="chevron" :size="22"
           /></RouterLink>
         </li></ul

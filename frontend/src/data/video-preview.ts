@@ -1,25 +1,17 @@
-export type VideoStatus = "validated" | "pending" | "unanalysed";
-export type DemoVideo = {
-  id: string;
-  filename: string;
-  species: string;
-  parcel: string;
-  date: string;
-  duration: string;
-  status: VideoStatus;
-  thumbnail: "deer" | "fox" | "badger" | "boar";
-};
+import type { Video, VideoStatus } from "./contracts";
+export type { VideoStatus } from "./contracts";
+export type DemoVideo = Video;
 
-export const videoOverview = [
-  { icon: "video", value: "248", label: "Vidéos importées", detail: "" },
-  { icon: "clock", value: "186 h", label: "Durée totale", detail: "" },
-  { icon: "layers", value: "3", label: "Dossiers", detail: "" },
-];
 export const videoStatusOptions = [
   { value: "", label: "Tous les statuts" },
   { value: "validated", label: "Validée" },
   { value: "pending", label: "En validation" },
   { value: "unanalysed", label: "À analyser" },
+  { value: "ready", label: "Prête" },
+  { value: "processing", label: "En cours" },
+  { value: "no_detections", label: "Aucune détection" },
+  { value: "error", label: "En erreur" },
+  { value: "unknown", label: "Non renseigné" },
 ];
 export const videoSpeciesOptions = [
   { value: "", label: "Toutes les espèces" },

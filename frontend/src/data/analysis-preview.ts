@@ -3,26 +3,8 @@ import photoSheet from "../assets/biodiversity-thumbnails.png";
 import forestPoster from "../assets/auth-forest.png";
 import squirrelVideo from "../assets/squirrel-local.mp4";
 
-export type Detection = {
-  id: string;
-  label: string;
-  confidence: number;
-  bounds: { x: number; y: number; width: number; height: number };
-};
-export type AnalysisVideo = {
-  id: string;
-  filename: string;
-  species: string;
-  kind: "poster" | "video";
-  source?: string;
-  poster: string;
-  posterSize?: string;
-  posterPosition?: string;
-  duration: number;
-  width: number;
-  height: number;
-  detections: Detection[];
-};
+import type { AnalysisVideo } from "./contracts";
+export type { AnalysisVideo, Detection } from "./contracts";
 // Les résultats et le modèle ci-dessous sont fictifs, y compris sur la vidéo locale.
 export const analysisVideos: AnalysisVideo[] = [
   {
@@ -104,29 +86,4 @@ export const detailCaptions: Record<string, string> = {
 export const simulationSteps = [10, 25, 42, 60, 78, 92, 100];
 export const simulationStepDuration = 250;
 
-/** Zone réellement occupée par un média en mode contain, en coordonnées normalisées. */
-export function containedMedia(
-  frameWidth: number,
-  frameHeight: number,
-  mediaWidth: number,
-  mediaHeight: number,
-) {
-  if (
-    ![frameWidth, frameHeight, mediaWidth, mediaHeight].every(
-      (value) => Number.isFinite(value) && value > 0,
-    )
-  )
-    return { x: 0, y: 0, width: 1, height: 1 };
-  const frameRatio = frameWidth / frameHeight,
-    mediaRatio = mediaWidth / mediaHeight;
-  if (mediaRatio < frameRatio) {
-    const width = mediaRatio / frameRatio;
-    return { x: (1 - width) / 2, y: 0, width, height: 1 };
-  }
-  const height = frameRatio / mediaRatio;
-  return { x: 0, y: (1 - height) / 2, width: 1, height };
-}
-export function playbackTime(seconds: number) {
-  const value = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
-  return `${Math.floor(value / 60)}:${String(value % 60).padStart(2, "0")}`;
-}
+export { containedMedia, playbackTime } from "./media";

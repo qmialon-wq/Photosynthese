@@ -1,22 +1,8 @@
 import { analysisVideos, type AnalysisVideo } from "./analysis-preview";
 
-export type ObservationQuality =
-  | "clear"
-  | "blurry"
-  | "too_small"
-  | "near_duplicate";
-export type DemoObservation = {
-  id: string;
-  number: number;
-  filename: string;
-  suggestedSpecies: string;
-  assignedSpecies?: string;
-  quality: ObservationQuality;
-  protected: boolean;
-  status: "review" | "validated";
-  context: string;
-  media: AnalysisVideo;
-};
+import type { Observation, ObservationQuality } from "./contracts";
+export type { ObservationQuality } from "./contracts";
+export type DemoObservation = Observation;
 export const observationSpecies = [
   { value: "chevreuil", label: "Chevreuil" },
   { value: "renard", label: "Renard" },

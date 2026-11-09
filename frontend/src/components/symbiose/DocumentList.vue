@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import type { DemoScientificDocument } from "../../data/document-preview";
-import { corpusSpeciesLabel } from "../../data/document-preview";
+import type { ScientificDocument } from "../../data/contracts";
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
+const corpusSpeciesLabel = (value: string) =>
+  value
+    ? value[0].toLocaleUpperCase("fr-FR") + value.slice(1).replaceAll("-", " ")
+    : "";
 defineProps<{
-  documents: DemoScientificDocument[];
+  documents: ScientificDocument[];
   selected: ReadonlySet<string>;
 }>();
 const emit = defineEmits<{
   toggle: [id: string];
-  preview: [document: DemoScientificDocument];
+  preview: [document: ScientificDocument];
 }>();
 </script>
 <template>
-  <div class="sd-document-list" aria-label="Documents de démonstration">
+  <div class="sd-document-list" aria-label="Documents scientifiques">
     <GlassPanel
       v-for="document in documents"
       :key="document.id"
@@ -31,8 +34,9 @@ const emit = defineEmits<{
       <div class="sd-document-copy">
         <h3 :id="`${document.id}-title`">{{ document.title }}</h3>
         <p>
-          {{ corpusSpeciesLabel(document.species) }} · {{ document.kind }} ·
-          {{ document.date }} (date fictive)
+          {{ corpusSpeciesLabel(document.species) || "Espèce non renseignée" }}
+          · {{ document.kind || "—" }} · {{ document.date || "—" }}
+          {{ document.dateNote }}
         </p>
       </div>
       <button

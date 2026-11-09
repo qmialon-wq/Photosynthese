@@ -9,14 +9,21 @@ import FilterSelect from "../components/symbiose/FilterSelect.vue";
 import Pagination from "../components/symbiose/Pagination.vue";
 import DemoDialog from "../components/symbiose/DemoDialog.vue";
 import {
-  demoVideos,
   filterDemoVideos,
-  videoOverview,
-  videoSpeciesOptions,
   videoStatusOptions,
   type DemoVideo,
 } from "../data/video-preview";
 import "../styles/videotheque.css";
+import { useCollection } from "../data/data-mode";
+import SourceState from "../components/symbiose/SourceState.vue";
+const { items: videos, state: source, store } = useCollection("videos");
+const videoOverview = computed(() => store.summary.value.videoOverview);
+const videoSpeciesOptions = computed(() => [
+  { value: "", label: "Toutes les espèces" },
+  ...[...new Set(videos.value.map((v) => v.species).filter(Boolean))].map(
+    (value) => ({ value, label: value }),
+  ),
+]);
 const query = ref(""),
   species = ref(""),
   status = ref(""),
@@ -24,7 +31,7 @@ const query = ref(""),
 const selected = ref(new Set<string>());
 const feedback = ref("");
 const filtered = computed(() =>
-  filterDemoVideos(demoVideos, query.value, species.value, status.value),
+  filterDemoVideos(videos.value, query.value, species.value, status.value),
 );
 const visible = computed(() =>
   filtered.value.slice((page.value - 1) * 4, page.value * 4),
@@ -40,7 +47,7 @@ const partlySelected = computed(
     visible.value.some((video) => selected.value.has(video.id)),
 );
 const selection = computed(() =>
-  demoVideos.filter((video) => selected.value.has(video.id)),
+  videos.value.filter((video) => selected.value.has(video.id)),
 );
 watch([query, species, status], () => {
   page.value = 1;
@@ -58,6 +65,10 @@ function togglePage() {
   });
 }
 function refresh() {
+  if (store.capabilities.value.readOnly) {
+    void store.refresh();
+    return;
+  }
   query.value = "";
   species.value = "";
   status.value = "";
@@ -88,6 +99,7 @@ function chooseFiles(event: Event) {
   ).map((file) => file.name);
 }
 function finishDemo() {
+  if (!store.capabilities.value.simulate) return;
   feedback.value =
     dialog.value === "import"
       ? `Simulation terminée : ${importNames.value.length} fichier(s) sélectionné(s). Aucun fichier n’a été envoyé.`
@@ -110,11 +122,24 @@ function finishDemo() {
           <p>Importez vos captures. Gardez la trace de chaque observation.</p>
         </div>
       </div>
-      <button class="sym-button sv-import" @click="open('import')">
+      <button
+        class="sym-button sv-import"
+        :disabled="!store.capabilities.value.simulate"
+        @click="open('import')"
+      >
         <SymIcon name="plus" :size="27" />Importer des vidéos
       </button>
     </header>
-    <div class="sv-stats" aria-label="Indicateurs de démonstration">
+    <SourceState
+      :resource="source"
+      empty-text="Aucune vidéo disponible."
+      @retry="store.refresh"
+    />
+    <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
+      Consultation en lecture seule. Import et création de dossier indisponibles
+      dans cet écran.
+    </p>
+    <div class="sv-stats" aria-label="Indicateurs de la vidéothèque">
       <StatCard v-for="stat in videoOverview" :key="stat.label" v-bind="stat" />
     </div>
     <GlassPanel class="sv-prepare" topography
@@ -131,7 +156,7 @@ function finishDemo() {
       <div class="sv-prepare-actions">
         <button
           class="sym-button sv-prepare-button"
-          :disabled="!selected.size"
+          :disabled="!store.capabilities.value.simulate || !selected.size"
           @click="open('prepare')"
         >
           <SymIcon name="folder" :size="20" />Préparer un dossier ({{
@@ -188,7 +213,7 @@ function finishDemo() {
           @details="open('details', $event)"
         />
       </div>
-      <div v-else class="sv-empty">
+      <div v-else-if="source.state === 'success'" class="sv-empty">
         <SymIcon name="search" :size="30" />
         <h2>Aucune vidéo ne correspond à votre recherche</h2>
         <p>Essayez une autre espèce, un autre statut ou un autre nom.</p>
@@ -203,7 +228,16 @@ function finishDemo() {
         @change="page = $event"
     /></GlassPanel>
     <p v-if="feedback" class="sv-feedback" role="status">{{ feedback }}</p>
-    <DemoDialog :open="!!dialog" :title="dialogTitle" @close="dialog = null">
+    <DemoDialog
+      :notice="
+        store.capabilities.value.readOnly
+          ? 'DONNÉES RÉELLES · CONSULTATION'
+          : undefined
+      "
+      :open="!!dialog"
+      :title="dialogTitle"
+      @close="dialog = null"
+    >
       <template v-if="dialog === 'import'"
         ><p>
           Choisissez des fichiers pour essayer l’interface. Il s’agit d’une
@@ -246,17 +280,31 @@ function finishDemo() {
         </button></template
       >
       <template v-else-if="currentVideo"
-        ><div
+        ><video
+          v-if="currentVideo.source"
+          class="sym-real-preview"
+          :src="currentVideo.source"
+          controls
+          preload="metadata"
+        />
+        <div
+          v-else
           class="sym-photo sv-demo-photo"
-          :class="`sv-photo-${currentVideo.thumbnail}`"
+          :class="
+            currentVideo.thumbnail
+              ? `sv-photo-${currentVideo.thumbnail}`
+              : 'sym-thumbnail-empty'
+          "
           role="img"
           :aria-label="currentVideo.species"
         />
         <p class="sv-demo-warning">
           {{
-            dialog === "preview"
-              ? "Aperçu de démonstration : la lecture vidéo réelle n’est pas activée."
-              : "Les informations ci-dessous sont fictives."
+            store.capabilities.value.readOnly
+              ? "Informations enregistrées. Les champs absents sont indiqués par un tiret."
+              : dialog === "preview"
+                ? "Aperçu de démonstration : la lecture vidéo réelle n’est pas activée."
+                : "Les informations ci-dessous sont fictives."
           }}
         </p>
         <dl>
@@ -266,19 +314,19 @@ function finishDemo() {
           </div>
           <div>
             <dt>Parcelle</dt>
-            <dd>{{ currentVideo.parcel }}</dd>
+            <dd>{{ currentVideo.parcel || "—" }}</dd>
           </div>
           <div>
             <dt>Espèce</dt>
-            <dd>{{ currentVideo.species }}</dd>
+            <dd>{{ currentVideo.species || "—" }}</dd>
           </div>
           <div>
             <dt>Date</dt>
-            <dd>{{ currentVideo.date }}</dd>
+            <dd>{{ currentVideo.date || "—" }}</dd>
           </div>
           <div>
             <dt>Durée</dt>
-            <dd>{{ currentVideo.duration }}</dd>
+            <dd>{{ currentVideo.duration || "—" }}</dd>
           </div>
         </dl></template
       >

@@ -7,7 +7,10 @@ import {
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
 import DocumentEmptyState from "./DocumentEmptyState.vue";
-defineProps<{ task: DemoRetrievalTask | null }>();
+withDefaults(
+  defineProps<{ task: DemoRetrievalTask | null; emptyMessage?: string }>(),
+  { emptyMessage: "Aucune récupération en cours." },
+);
 </script>
 <template>
   <GlassPanel
@@ -17,11 +20,7 @@ defineProps<{ task: DemoRetrievalTask | null }>();
     ><h2 id="sd-progress-title" class="sd-section-title">
       <SymIcon name="chart" :size="30" />Avancement
     </h2>
-    <DocumentEmptyState
-      v-if="!task"
-      compact
-      message="Aucune récupération en cours."
-    />
+    <DocumentEmptyState v-if="!task" compact :message="emptyMessage" />
     <div v-else class="sd-task">
       <div class="sd-task-heading">
         <strong
