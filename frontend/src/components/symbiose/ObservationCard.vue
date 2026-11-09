@@ -20,6 +20,7 @@ function thumbnailFrame(event: Event) {
 </script>
 <template>
   <GlassPanel
+    depth="card"
     as="article"
     class="sr-observation"
     :class="{ 'is-selected': selected, 'is-protected': observation.protected }"

@@ -9,6 +9,7 @@ import StatCard from "../components/symbiose/StatCard.vue";
 import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import PillButton from "../components/symbiose/PillButton.vue";
 import SymIcon from "../components/symbiose/SymIcon.vue";
+import StatusBadge from "../components/symbiose/StatusBadge.vue";
 </script>
 <template>
   <div class="sym-home">
@@ -162,14 +163,10 @@ import SymIcon from "../components/symbiose/SymIcon.vue";
               <h3>{{ analysis.name }}</h3>
               <p>Analysée le {{ analysis.date }}</p>
             </div>
-            <span
-              class="sym-status"
-              :class="{ 'is-pending': !analysis.validated }"
-              ><SymIcon
-                :name="analysis.validated ? 'check' : 'hourglass'"
-                :size="16"
-              />{{ analysis.status }}</span
-            ><span class="sym-analysis-species"
+            <StatusBadge
+              placement="inline"
+              :status="analysis.validated ? 'validated' : 'pending'"
+              :label="analysis.status" /><span class="sym-analysis-species"
               ><SymIcon name="paw" :size="23" />{{
                 analysis.species
               }}

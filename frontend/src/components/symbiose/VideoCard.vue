@@ -55,6 +55,7 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
 <template>
   <article ref="root" class="sv-video-wrapper">
     <GlassPanel
+      depth="card"
       as="div"
       class="sv-video-card"
       :class="{ 'is-selected': selected }"

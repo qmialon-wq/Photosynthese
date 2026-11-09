@@ -22,6 +22,8 @@ Les six écrans conservent leurs métadonnées `designPreview` et utilisent les 
 
 ## Vérification
 
+L’audit final de l’étape 7 est décrit dans [AUDIT_GRAPHIQUE_SYMBIOSE.md](AUDIT_GRAPHIQUE_SYMBIOSE.md). Les contrôles communs sont désormais chargés depuis `symbiose-controls.css`, les profondeurs de `GlassPanel` sont explicites et les éléments du cadre restent attachés au viewport. La galerie comparative est conservée dans `output/symbiose/etape-7/index.html`. Les maquettes originales étaient absentes de cette session : leur fidélité pixel par pixel reste à vérifier.
+
 - `npm test` : tests unitaires, dont les six permutations cycliques de la roue.
 - `npx playwright test tests/e2e/symbiose-design.spec.ts` : Accueil en 1600 × 900, accessibilité, absence d’appels API, six rotations, positions fixes, historique du navigateur, clavier, actions et adaptation mobile. Les captures sont dans `frontend/test-results/`.
 - `npx playwright test tests/e2e/profile-logout.spec.ts` : déconnexion après rechargement, session absente, erreur serveur et nouvelle tentative.

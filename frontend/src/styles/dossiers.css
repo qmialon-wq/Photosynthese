@@ -39,9 +39,6 @@
   padding-top: 10px;
   padding-bottom: 10px;
 }
-.sf-filters .sv-select > .sym-icon {
-  top: 16px;
-}
 .sf-filters .sv-refresh {
   width: 48px;
   height: 48px;
@@ -55,11 +52,6 @@
 .sf-project-card {
   overflow: visible;
   border-radius: 21px;
-  background: linear-gradient(
-    110deg,
-    rgb(137 174 108 / 35%),
-    rgb(27 74 48 / 62%)
-  );
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -200,7 +192,7 @@
   padding: 5px;
   border: var(--sym-border);
   border-radius: 12px;
-  background: #204b36;
+  background: var(--sym-surface-solid);
   box-shadow: 0 10px 24px rgb(0 20 0 / 30%);
 }
 .sf-project-menu [role="menuitem"] {
@@ -370,9 +362,6 @@
   .sf-filters .sv-select select {
     height: 42px;
     font-size: 12px;
-  }
-  .sf-filters .sv-select > .sym-icon {
-    top: 13px;
   }
   .sf-filters .sv-refresh {
     width: 36px;

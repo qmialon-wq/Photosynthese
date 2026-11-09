@@ -48,7 +48,12 @@ const projectLabel = computed(
 );
 </script>
 <template>
-  <GlassPanel class="sv-page sf-page" topography aria-labelledby="sf-title">
+  <GlassPanel
+    depth="page"
+    class="sv-page sf-page"
+    topography
+    aria-labelledby="sf-title"
+  >
     <header class="sv-header sf-header">
       <div class="sv-heading">
         <span class="sv-heading-icon"

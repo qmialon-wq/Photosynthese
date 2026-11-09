@@ -7,6 +7,45 @@
   --sym-lime-bright: #a8f251;
   --sym-text: #f5f8ef;
   --sym-text-soft: #e1ebdf;
+  --sym-focus: #d5ffb1;
+  --sym-surface-solid: #204b36;
+  --sym-control-bg: rgb(179 208 165 / 13%);
+  --sym-control-hover: rgb(186 218 154 / 23%);
+  --sym-control-border: 1px solid rgb(225 241 209 / 78%);
+  --sym-control-reflection: inset 0 1px rgb(236 255 223 / 15%);
+  --sym-action-bg: linear-gradient(105deg, #b8e982, #c7f29c);
+  --sym-action-text: #102a11;
+  --sym-success-bg: #baf28a;
+  --sym-success-text: #18370c;
+  --sym-pending-bg: #ffe399;
+  --sym-pending-text: #473712;
+  --sym-neutral-bg: #e5ebe5;
+  --sym-neutral-text: #26382d;
+  --sym-danger-bg: linear-gradient(
+    115deg,
+    rgb(167 86 73 / 85%),
+    rgb(143 64 57 / 85%)
+  );
+  --sym-danger-border: rgb(224 155 134 / 70%);
+  --sym-selected: #c1fa8d;
+  --sym-selected-shadow:
+    0 0 0 1px #b8f18b, inset 0 0 18px rgb(189 250 118 / 12%);
+  --sym-glass-page: linear-gradient(
+    112deg,
+    rgb(148 170 73 / 38%),
+    rgb(15 72 46 / 67%) 35%,
+    rgb(7 54 35 / 74%)
+  );
+  --sym-glass-card: linear-gradient(
+    120deg,
+    rgb(144 176 103 / 35%),
+    rgb(34 83 55 / 56%)
+  );
+  --sym-glass-inset: linear-gradient(
+    120deg,
+    rgb(127 165 110 / 30%),
+    rgb(27 78 49 / 29%)
+  );
   --sym-glass: linear-gradient(
     115deg,
     rgb(150 179 127 / 33%),
@@ -20,6 +59,8 @@
   --sym-blur: 18px;
   --sym-space: 24px;
   --sym-motion: 700ms cubic-bezier(0.22, 0.75, 0.22, 1);
+  --sym-wheel-diameter: 62px;
+  --sym-wheel-active-width: 186px;
   min-height: 100svh;
   padding: 0;
   color: var(--sym-text);
@@ -54,8 +95,8 @@
   color: inherit;
   text-decoration: none;
 }
-.symbiose-shell :is(a, button, input):focus-visible {
-  outline: 2px solid #d5ffb1;
+.symbiose-shell :is(a, button, input, select, summary, video):focus-visible {
+  outline: 2px solid var(--sym-focus);
   outline-offset: 5px;
 }
 .symbiose-shell button {
@@ -71,7 +112,7 @@
   background: #0a3524;
 }
 .sym-forest {
-  position: absolute;
+  position: fixed;
   inset: -5px;
   z-index: -2;
   background: url("../assets/home-forest.png") center / cover;
@@ -90,7 +131,7 @@
   );
 }
 .sym-header {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -160,7 +201,7 @@
   box-shadow: 0 0 9px rgb(168 242 81 / 40%);
 }
 .sym-wheel {
-  position: absolute;
+  position: fixed;
   inset: 0 auto 0 0;
   width: 300px;
   height: max(650px, 100svh);
@@ -180,8 +221,8 @@
   justify-content: center;
   align-items: center;
   gap: 0;
-  width: 62px;
-  height: 62px;
+  width: var(--sym-wheel-diameter);
+  height: var(--sym-wheel-diameter);
   transform: translate(-50%, -50%);
   padding: 0;
   border: 1.4px solid rgb(229 244 211 / 72%);
@@ -209,7 +250,7 @@
   box-shadow: 0 0 21px rgb(175 239 98 / 17%);
 }
 .sym-wheel-link.is-active {
-  width: 186px;
+  width: var(--sym-wheel-active-width);
   gap: 14px;
   padding: 0 18px;
   color: #fff;
@@ -239,39 +280,13 @@
   max-width: 260px;
   opacity: 1;
 }
-.sym-wheel-link.has-long-label .sym-wheel-label {
+.sym-wheel-link.has-compact-label .sym-wheel-label {
   font-size: 16px;
 }
-.sym-wheel-link.is-active:has(.sym-wheel-label) {
-  min-width: 186px;
-  width: max-content;
-  max-width: 285px;
-}
-/* Les libellés intermédiaires tiennent dans la même pilule que l’Accueil. */
-.sym-wheel-link.is-active.has-compact-label {
-  width: 186px;
-}
-.sym-wheel-link.has-compact-label .sym-wheel-label {
-  font-size: 17px;
-}
-/* Le libellé de validation reste lisible dans la pilule desktop de 186 × 62. */
-@media (min-width: 951px) {
-  .sym-wheel-link.is-active[data-section="/review"] {
-    width: 186px;
-  }
-  .sym-wheel-link.is-active[data-section="/review"] .sym-wheel-label {
-    font-size: 16px;
-    line-height: 1.15;
-    white-space: normal;
-  }
-  .sym-wheel-link.is-active[data-section="/documents"] {
-    width: 186px;
-  }
-  .sym-wheel-link.is-active[data-section="/documents"] .sym-wheel-label {
-    font-size: 14px;
-    line-height: 1.15;
-    white-space: normal;
-  }
+.sym-wheel-link.has-long-label .sym-wheel-label {
+  font-size: 14px;
+  line-height: 1.15;
+  white-space: normal;
 }
 .sym-wheel-tooltip {
   position: absolute;
@@ -294,7 +309,7 @@
   visibility: visible;
 }
 .sym-settings {
-  position: absolute;
+  position: fixed;
   width: 62px;
   height: 62px;
   left: 42px;
@@ -316,6 +331,15 @@
   box-shadow: var(--sym-shadow);
   backdrop-filter: blur(var(--sym-blur));
   -webkit-backdrop-filter: blur(var(--sym-blur));
+}
+.sym-glass-page {
+  background: var(--sym-glass-page);
+}
+.sym-glass-card {
+  background: var(--sym-glass-card);
+}
+.sym-glass-inset {
+  background: var(--sym-glass-inset);
 }
 .sym-topography {
   position: absolute;
@@ -342,8 +366,8 @@
   padding: 6px 20px;
   border: 1px solid rgb(212 251 158 / 40%);
   border-radius: 100px;
-  background: linear-gradient(105deg, #b8e982, #c7f29c);
-  color: #102a11 !important;
+  background: var(--sym-action-bg);
+  color: var(--sym-action-text) !important;
   font-size: 14px;
   line-height: 1.25;
   font-weight: 600;
@@ -685,16 +709,16 @@
   gap: 5px;
   padding: 3px 11px;
   border-radius: 100px;
-  background: #baf28a;
-  color: #18370c;
+  background: var(--sym-success-bg);
+  color: var(--sym-success-text);
   white-space: nowrap;
   font-size: 12px;
   line-height: 1.2;
   font-weight: 600;
 }
 .sym-status.is-pending {
-  background: #ffe399;
-  color: #473712;
+  background: var(--sym-pending-bg);
+  color: var(--sym-pending-text);
 }
 .sym-analysis-species,
 .sym-analysis-observations {
@@ -978,6 +1002,10 @@
   }
 }
 @media (max-width: 950px) {
+  .symbiose-shell {
+    --sym-wheel-diameter: 52px;
+    --sym-wheel-active-width: 170px;
+  }
   .sym-wheel-link.has-compact-label .sym-wheel-label {
     font-size: 14px;
   }
@@ -997,24 +1025,16 @@
     left: 0;
   }
   .sym-wheel-link.is-active {
-    min-width: 150px !important;
     padding: 0 12px;
     gap: 10px;
   }
   .sym-wheel-label {
     font-size: 15px;
   }
-  .sym-wheel-link.is-active {
-    max-width: 190px;
-  }
   .sym-wheel-link.has-long-label .sym-wheel-label {
     font-size: 13px;
     white-space: normal;
     line-height: 1.2;
-  }
-  .sym-wheel-link {
-    width: 52px;
-    height: 52px;
   }
   .sym-overview {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1086,6 +1106,10 @@
   }
 }
 @media (max-width: 620px) {
+  .symbiose-shell {
+    --sym-wheel-diameter: 44px;
+    --sym-wheel-active-width: 86px;
+  }
   .sym-wheel-link.has-compact-label .sym-wheel-label {
     font-size: 10px;
   }
@@ -1137,19 +1161,12 @@
     width: 155px;
     left: -18px;
   }
-  .sym-wheel-link {
-    width: 44px;
-    height: 44px;
-  }
   .sym-wheel-link > .sym-icon {
     width: 22px;
     height: 22px;
   }
   .sym-wheel-link.is-active {
-    width: 86px !important;
-    min-width: 86px !important;
-    height: auto;
-    min-height: 62px;
+    height: 74px;
     padding: 9px 5px;
     flex-direction: column;
     gap: 4px;

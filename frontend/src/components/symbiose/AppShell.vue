@@ -122,7 +122,7 @@ function closePanel() {
           </button>
         </div>
       </header>
-      <WheelNavigation />
+      <WheelNavigation :reduced-motion="reduceMotion" />
       <button
         ref="settingsButton"
         class="sym-circle-button sym-settings"

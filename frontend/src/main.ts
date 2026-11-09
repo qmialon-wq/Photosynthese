@@ -16,6 +16,7 @@ import { router } from "./router";
 import "primeicons/primeicons.css";
 import "./style.css";
 import "./styles/symbiose.css";
+import "./styles/symbiose-controls.css";
 
 const app = createApp(App)
   .use(router)

@@ -100,9 +100,6 @@
   height: 40px;
   font-size: 16px;
 }
-.sd-species-field .sv-select > .sym-icon {
-  top: 12px;
-}
 .sd-selection-bar {
   display: flex;
   align-items: center;
@@ -131,17 +128,7 @@
 .sd-page .sd-remove {
   min-height: 38px;
   padding: 7px 17px;
-  color: #fff;
-  border-color: rgb(224 155 134 / 70%);
-  background: linear-gradient(
-    115deg,
-    rgb(167 86 73 / 85%),
-    rgb(143 64 57 / 85%)
-  );
   font-size: 14px;
-}
-.sd-page .sd-remove:hover:not(:disabled) {
-  background: rgb(166 77 65 / 90%);
 }
 .sd-page .sd-remove:disabled {
   opacity: 0.72;

@@ -56,7 +56,11 @@ watch([objective, detail], reset);
 onBeforeUnmount(stopSimulation);
 </script>
 <template>
-  <GlassPanel class="sv-page sa-page" topography aria-labelledby="sa-title"
+  <GlassPanel
+    depth="page"
+    class="sv-page sa-page"
+    topography
+    aria-labelledby="sa-title"
     ><header class="sv-header sa-header">
       <div class="sv-heading">
         <span class="sv-heading-icon"

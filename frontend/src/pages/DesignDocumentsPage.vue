@@ -225,7 +225,12 @@ function preview(document: DemoScientificDocument) {
 onBeforeUnmount(stopTimers);
 </script>
 <template>
-  <GlassPanel class="sv-page sd-page" topography aria-labelledby="sd-title">
+  <GlassPanel
+    depth="page"
+    class="sv-page sd-page"
+    topography
+    aria-labelledby="sd-title"
+  >
     <header class="sv-header sd-header">
       <div class="sv-heading">
         <span class="sv-heading-icon"
@@ -299,7 +304,7 @@ onBeforeUnmount(stopTimers);
         ><span class="sd-selection-count" role="status"
           >{{ selection.length }} sélectionné(s)</span
         ><button
-          class="sv-button-quiet sd-remove"
+          class="sv-button-quiet sym-button-danger sd-remove"
           :disabled="!selection.length"
           @click="dialog = 'remove'"
         >
@@ -410,7 +415,10 @@ onBeforeUnmount(stopTimers);
         </p>
         <div class="sd-dialog-actions">
           <button class="sv-button-quiet" @click="closeDialog">Annuler</button
-          ><button class="sv-button-quiet sd-remove" @click="removeSelection">
+          ><button
+            class="sv-button-quiet sym-button-danger sd-remove"
+            @click="removeSelection"
+          >
             Confirmer le retrait simulé
           </button>
         </div></template

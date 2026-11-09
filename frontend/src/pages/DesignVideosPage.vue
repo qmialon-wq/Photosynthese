@@ -96,7 +96,12 @@ function finishDemo() {
 }
 </script>
 <template>
-  <GlassPanel class="sv-page" topography aria-labelledby="sv-title">
+  <GlassPanel
+    depth="page"
+    class="sv-page"
+    topography
+    aria-labelledby="sv-title"
+  >
     <header class="sv-header">
       <div class="sv-heading">
         <span class="sv-heading-icon"><SymIcon name="video" :size="41" /></span>
@@ -145,7 +150,7 @@ function finishDemo() {
         >
       </div></GlassPanel
     >
-    <GlassPanel class="sv-library" aria-label="Bibliothèque vidéo"
+    <GlassPanel depth="inset" class="sv-library" aria-label="Bibliothèque vidéo"
       ><label class="sv-select-page"
         ><input
           type="checkbox"

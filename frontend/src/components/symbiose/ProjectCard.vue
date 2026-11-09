@@ -52,7 +52,7 @@ onMounted(() => document.addEventListener("pointerdown", outside));
 onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
 </script>
 <template>
-  <GlassPanel as="article" class="sf-project-card">
+  <GlassPanel depth="card" as="article" class="sf-project-card">
     <button
       ref="openButton"
       class="sf-project-open"

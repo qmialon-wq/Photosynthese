@@ -59,9 +59,6 @@
   height: 38px;
   font-size: 13px;
 }
-.sr-assign .sv-select > .sym-icon {
-  top: 10px;
-}
 .sr-page .sr-validate,
 .sr-page .sr-remove {
   min-height: 40px;
@@ -113,11 +110,6 @@
   overflow: hidden;
   padding: 12px;
   border-radius: 19px;
-  background: linear-gradient(
-    120deg,
-    rgb(144 176 103 / 35%),
-    rgb(34 83 55 / 56%)
-  );
   transition:
     border-color 160ms,
     box-shadow 160ms;
@@ -126,10 +118,8 @@
   border-color: rgb(225 250 197 / 77%);
 }
 .sr-observation.is-selected {
-  border-color: #c1fa8d;
-  box-shadow:
-    0 0 0 1px #b8f18b,
-    inset 0 0 18px rgb(189 250 118 / 12%);
+  border-color: var(--sym-selected);
+  box-shadow: var(--sym-selected-shadow);
 }
 .sr-observation-select {
   min-height: 24px;
@@ -313,6 +303,9 @@
     font-size: 11px;
     padding-right: 5px;
     padding-left: 5px;
+  }
+  .sr-page .sr-remove {
+    white-space: normal;
   }
   .sr-information {
     align-items: flex-start;

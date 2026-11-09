@@ -109,7 +109,14 @@ test("affichage du mot de passe, aide et nouvelle tentative après une erreur", 
   await expect(page.getByRole("alert")).toHaveText("Identifiants incorrects");
   await expect(password).toHaveValue("phrase-de-passe-test");
   await page.getByRole("button", { name: "Se connecter", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
   await expect(
-    page.getByRole("heading", { name: "Vos observations, simplement." }),
+    page
+      .getByRole("navigation", { name: "Navigation principale" })
+      .getByRole("link", { name: "Accueil", exact: true }),
+  ).toHaveAttribute("aria-current", "page");
+  await page.getByRole("button", { name: "Mon profil", exact: true }).click();
+  await expect(
+    page.locator(".sym-action-panel").getByText("Camille", { exact: true }),
   ).toBeVisible();
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
   symbioseNavigation,
@@ -8,9 +8,31 @@ import {
   ACTIVE_WHEEL_SLOT,
 } from "../../symbiose-navigation";
 import SymIcon from "./SymIcon.vue";
+const props = defineProps<{ reducedMotion?: boolean }>();
 const route = useRoute();
 const links = ref<HTMLAnchorElement[]>([]);
-const animations = new Map<number, Animation>();
+const animations = new Map<
+  number,
+  { animation: Animation; from: number; to: number }
+>();
+const motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
+const systemReducedMotion = ref(motionPreference.matches);
+const reducedMotion = computed(
+  () => props.reducedMotion || systemReducedMotion.value,
+);
+function cancelAnimations() {
+  animations.forEach(({ animation }) => animation.cancel());
+  animations.clear();
+}
+function updateMotionPreference(event: MediaQueryListEvent) {
+  systemReducedMotion.value = event.matches;
+}
+onMounted(() =>
+  motionPreference.addEventListener("change", updateMotionPreference),
+);
+watch(reducedMotion, (reduced) => {
+  if (reduced) cancelAnimations();
+});
 const activeIndex = computed(() =>
   Math.max(
     0,
@@ -45,42 +67,46 @@ function pointAlongArc(position: number) {
 watch(
   activeIndex,
   (active, previous) => {
-    const reduced =
-      matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      links.value[0]?.closest(".sym-reduced-motion");
     for (let index = 0; index < 6; index++) {
       const element = links.value[index];
       const interrupted = animations.get(index);
-      const current = interrupted && getComputedStyle(element);
-      const origin = current ? { left: current.left, top: current.top } : null;
-      interrupted?.cancel();
-      if (reduced || !element) continue;
-      const from = wheelSlot(index, previous),
-        to = wheelSlot(index, active);
+      // Repartir de la position interpolée, même lors de clics très rapprochés.
+      const progress =
+        interrupted?.animation.effect?.getComputedTiming().progress ?? 1;
+      const from = interrupted
+        ? interrupted.from + (interrupted.to - interrupted.from) * progress
+        : wheelSlot(index, previous);
+      const to = wheelSlot(index, active);
+      const opacity = element ? getComputedStyle(element).opacity : "1";
+      interrupted?.animation.cancel();
+      animations.delete(index);
+      if (reducedMotion.value || !element || from === to) continue;
       const frames = Array.from({ length: 31 }, (_, frame) => {
         const fraction = frame / 30;
         const point = pointAlongArc(from + (to - from) * fraction);
         return {
           left: `${point.x / 3}%`,
           top: `${(point.y / 852) * 100}%`,
-          opacity:
-            Math.abs(to - from) > 3
-              ? 1 - 0.8 * Math.sin(Math.PI * fraction)
-              : 1,
+          opacity: Number(opacity) + (1 - Number(opacity)) * fraction,
         };
       });
-      if (origin) Object.assign(frames[0], origin);
       const animation = element.animate(frames, {
         duration: 700,
         easing: "cubic-bezier(.22,.75,.22,1)",
       });
-      animations.set(index, animation);
-      animation.onfinish = () => animations.delete(index);
+      animations.set(index, { animation, from, to });
+      animation.onfinish = () => {
+        if (animations.get(index)?.animation === animation)
+          animations.delete(index);
+      };
     }
   },
   { flush: "post" },
 );
-onBeforeUnmount(() => animations.forEach((animation) => animation.cancel()));
+onBeforeUnmount(() => {
+  cancelAnimations();
+  motionPreference.removeEventListener("change", updateMotionPreference);
+});
 function focusAdjacent(event: KeyboardEvent, index: number) {
   const step =
     event.key === "ArrowDown" || event.key === "ArrowRight"
@@ -139,7 +165,7 @@ function focusAdjacent(event: KeyboardEvent, index: number) {
         class="sym-wheel-link"
         :class="{
           'is-active': item.slot === ACTIVE_WHEEL_SLOT,
-          'has-long-label': item.label.length > 20,
+          'has-long-label': item.label.length > 12,
           'has-compact-label': item.label.length > 8 && item.label.length <= 12,
         }"
         :style="{

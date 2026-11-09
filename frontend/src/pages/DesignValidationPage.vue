@@ -107,7 +107,12 @@ function resetFilters() {
 }
 </script>
 <template>
-  <GlassPanel class="sv-page sr-page" topography aria-labelledby="sr-title">
+  <GlassPanel
+    depth="page"
+    class="sv-page sr-page"
+    topography
+    aria-labelledby="sr-title"
+  >
     <header class="sv-header sr-header">
       <div class="sv-heading">
         <span class="sv-heading-icon"

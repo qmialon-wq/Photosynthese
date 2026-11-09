@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import type { VideoStatus } from "../../data/video-preview";
 import SymIcon from "./SymIcon.vue";
-defineProps<{ status: VideoStatus; label?: string }>();
+withDefaults(
+  defineProps<{
+    status: VideoStatus;
+    label?: string;
+    placement?: "inline" | "overlay";
+  }>(),
+  { placement: "overlay" },
+);
 const labels = {
   validated: "Validée",
   pending: "En validation",
@@ -15,8 +22,9 @@ const icons = {
 </script>
 <template>
   <span
-    class="sym-status sv-status"
+    class="sym-status"
     :class="{
+      'sv-status': placement === 'overlay',
       'is-pending': status === 'pending',
       'is-unanalysed': status === 'unanalysed',
     }"
