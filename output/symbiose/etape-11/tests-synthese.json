@@ -1,0 +1,410 @@
+{
+  "total": 64,
+  "passed": 64,
+  "failed": 0,
+  "method": "Dernier résultat par scénario : série complète 63/64, puis recontrôle documentaire 7/7 après synchronisation du test sur la fermeture native du dialogue.",
+  "runs": {
+    "tests-navigateur.json": {
+      "startTime": "2026-11-09T16:35:15.074Z",
+      "duration": 662304.758,
+      "expected": 63,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "tests-documents-recontrole.json": {
+      "startTime": "2026-11-09T16:47:12.832Z",
+      "duration": 107406.283,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "cases": [
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Utilisateurs, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Vue d’ensemble, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Gestion des vidéos, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Réglages d’analyse, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Datasets, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Entraînements, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Modèles, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Évaluation, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "administration : Documents scientifiques, rendu et accessibilité",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "engrenage, navigation SPA et retour à la dernière rubrique avec la roue intacte",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "accès protégé : client, même avec un faux rôle stocké",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "accès protégé : anonyme, même avec un faux rôle stocké",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "comptes fictifs : création puis suppression locale sans requête métier",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "progression simulée et changement de mode : aucun identifiant fictif envoyé au backend",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "action réelle : annulation sans envoi, puis confirmation et CSRF sur le service existant",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "erreur du service réel : aucun modèle ni métrique fictifs en remplacement",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "navigation et formulaires à 1280px",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "navigation et formulaires à 390px",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "VideoCard partagé : sélection, filtre et aperçu fixe explicitement simulé",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "corpus commun : lecture, retrait local et résultat conservé dans l’espace observation",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "dataset local : version consultable après progression et absence de fausse archive",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "admin-design.spec.ts",
+      "title": "registre local : enregistrement distinct de l’activation et résultats d’évaluation",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "A — démonstration autonome, données cohérentes et simulations sans API",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "B — les six rubriques lisent exclusivement les réponses réelles et désactivent les écritures",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "B — états vides, source absente et erreur sans données de remplacement",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "B — l’authentification est requise avant toute lecture métier",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "C — basculement sans rotation, sélection réinitialisée et réponse tardive ignorée",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "C — changement de mode pendant une analyse et conservation des changements locaux entre rubriques",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "D — persistance du mode après navigation et rechargement, sans sélecteur sur Connexion",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "E — captures des douze vues et cadre commun à 1600 × 900",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "data-modes.spec.ts",
+      "title": "E — sélecteur mobile accessible sans déplacement des commandes du compte",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "défaut 16, 17 exemples fictifs, page partielle et préférence indépendante",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "50 documents réels, 4 par page : compteurs, sélection visible et dernière page",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "50 documents réels, 8 par page : compteurs, sélection visible et dernière page",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "50 documents réels, 12 par page : compteurs, sélection visible et dernière page",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "50 documents réels, 16 par page : compteurs, sélection visible et dernière page",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "taille et espèce réinitialisent la sélection et la page, en conservant la source et le document consulté",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "plusieurs centaines de publications : lecture paginée existante, 16 cartes montées et aucun remplissage fictif",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "grille à 1600px : 4 colonnes, cartes homogènes, 16 résultats et défilement naturel",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "grille à 1100px : 2 colonnes, cartes homogènes, 16 résultats et défilement naturel",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "grille à 768px : 2 colonnes, cartes homogènes, 16 résultats et défilement naturel",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "grille à 390px : 1 colonnes, cartes homogènes, 16 résultats et défilement naturel",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "titres longs, clavier, accessibilité et captures 1600 × 900 à 4, 8 et 16 documents",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "titre intégral non tronqué et hauteurs homogènes malgré un long texte",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "document-pagination.spec.ts",
+      "title": "administration : présentation en lignes, consultation et sélection conservées",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "six captures, états vides fidèles, roue et cinq pages sans régression",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "espèces, pagination, sélection limitée à la page et consultation fictive",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "retrait confirmé, compteurs et retour à l’état vide sans suppression réelle",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "choix multiple annulable, progression des espèces choisies et exemples explicites",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "récupération globale confirmée sans réseau ni stockage et arrêt en quittant la page",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "sélecteur local, nom du fichier sans lecture, import annulable et extensions prévues",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "documents-design.spec.ts",
+      "title": "responsive, clavier et six rubriques accessibles",
+      "status": "passed",
+      "report": "tests-documents-recontrole.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "cadre commun et six configurations à 1920 × 1080",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "cadre commun et six configurations à 1600 × 900",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "cadre commun et six configurations à 1440 × 900",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "cadre commun et six configurations à 1280 × 800",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "cadre commun et six configurations à 390 × 844",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "une animation interrompue repart de sa position courante sans clignotement",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "harmonisation-design.spec.ts",
+      "title": "les contrôles partagés conservent un focus clavier visible",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "videotheque-design.spec.ts",
+      "title": "captures jumelées Accueil et Vidéothèque, roue et absence de régression",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "videotheque-design.spec.ts",
+      "title": "sélection entre pages, compteur et préparation de démonstration",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "videotheque-design.spec.ts",
+      "title": "recherche, filtres combinés, résultat vide et 62 pages",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "videotheque-design.spec.ts",
+      "title": "menus au clavier, aperçu et import clairement simulés sans API",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    },
+    {
+      "file": "videotheque-design.spec.ts",
+      "title": "Vidéothèque utilisable sur mobile",
+      "status": "passed",
+      "report": "tests-navigateur.json"
+    }
+  ]
+}

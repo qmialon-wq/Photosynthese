@@ -12,7 +12,6 @@ import {
   corpusSpecies,
   corpusSpeciesLabel,
   currentDocumentSelection,
-  documentPageSize,
   documentSpeciesOptions,
   documentsForSpecies,
   fictitiousDocumentDate,
@@ -25,6 +24,12 @@ import {
   type DemoScientificDocument,
   type DemoRetrievalTask,
 } from "../data/document-preview";
+import {
+  documentPageSize,
+  documentPageSizes,
+  restoreDocumentPageSize,
+  persistDocumentPageSize,
+} from "../data/document-page-size";
 import "../styles/videotheque.css";
 import "../styles/scientific-documents.css";
 
@@ -34,6 +39,17 @@ const { items: documents, state: source, store } = useCollection("documents");
 const species = ref("renard"),
   page = ref(1),
   selected = ref(new Set<string>());
+const pageSize = ref(restoreDocumentPageSize());
+const pageSizeModel = computed({
+  get: () => String(pageSize.value),
+  set: (value: string) => {
+    pageSize.value = documentPageSize(value);
+  },
+});
+const pageSizeOptions = documentPageSizes.map((size) => ({
+  value: String(size),
+  label: `${size} documents`,
+}));
 const speciesOptions = computed(() =>
   store.capabilities.value.simulate
     ? documentSpeciesOptions(documents.value)
@@ -63,8 +79,8 @@ const filtered = computed(() =>
 );
 const visible = computed(() =>
   filtered.value.slice(
-    (page.value - 1) * documentPageSize,
-    page.value * documentPageSize,
+    (page.value - 1) * pageSize.value,
+    page.value * pageSize.value,
   ),
 );
 const selection = computed(() =>
@@ -125,12 +141,17 @@ watch(species, () => {
   importError.value = "";
 });
 watch(page, () => selected.value.clear());
+watch(pageSize, (value) => {
+  page.value = 1;
+  selected.value.clear();
+  persistDocumentPageSize(value);
+});
 watch(
   () => filtered.value.length,
   () => {
     page.value = Math.min(
       page.value,
-      Math.max(1, Math.ceil(filtered.value.length / documentPageSize)),
+      Math.max(1, Math.ceil(filtered.value.length / pageSize.value)),
     );
   },
 );
@@ -327,13 +348,23 @@ onBeforeUnmount(stopTimers);
           @change="chooseFile"
         />
       </header>
-      <div class="sd-species-field">
-        <span aria-hidden="true">Espèce</span
-        ><FilterSelect
-          v-model="species"
-          label="Espèce du corpus"
-          :options="speciesOptions"
-        />
+      <div class="sd-corpus-controls">
+        <div class="sd-species-field">
+          <span aria-hidden="true">Espèce</span
+          ><FilterSelect
+            v-model="species"
+            label="Espèce du corpus"
+            :options="speciesOptions"
+          />
+        </div>
+        <div class="sd-page-size-field">
+          <span aria-hidden="true">Documents par page</span
+          ><FilterSelect
+            v-model="pageSizeModel"
+            label="Documents par page"
+            :options="pageSizeOptions"
+          />
+        </div>
       </div>
       <GlassPanel class="sd-selection-bar"
         ><label class="sd-select-page"
@@ -371,9 +402,10 @@ onBeforeUnmount(stopTimers);
       <Pagination
         class="sd-pagination"
         variant="simple"
+        show-count
         :page="page"
         :total="filtered.length"
-        :page-size="documentPageSize"
+        :page-size="pageSize"
         item-label="document"
         navigation-label="Pagination du corpus"
         @change="page = $event"

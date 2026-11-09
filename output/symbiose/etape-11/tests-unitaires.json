@@ -1,0 +1,9 @@
+{
+  "kind": "Résumé de la sortie Vitest",
+  "command": "npm test -- --reporter=dot",
+  "testFilesPassed": 14,
+  "testsPassed": 71,
+  "testsFailed": 0,
+  "exitCode": 0,
+  "durationSeconds": 20.27
+}

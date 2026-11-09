@@ -1,0 +1,47 @@
+{
+  "build": {
+    "command": "npm run build",
+    "success": true
+  },
+  "unitaires": {
+    "passed": 71,
+    "failed": 0,
+    "testFilesPassed": 14
+  },
+  "navigateur": {
+    "total": 64,
+    "passed": 64,
+    "failed": 0,
+    "method": "Dernier résultat par scénario : série complète 63/64, puis recontrôle documentaire 7/7 après synchronisation du test sur la fermeture native du dialogue."
+  },
+  "performance": {
+    "fixtureDocuments": 506,
+    "documentsEspeceTestee": 501,
+    "documentsRendered": 16,
+    "requestOffsets": [
+      0,
+      200,
+      400
+    ],
+    "measurements": [
+      {
+        "type": "chargement-fixture-506-documents-ms",
+        "description": "1990"
+      }
+    ]
+  },
+  "captures": {
+    "viewport": "1600 × 900",
+    "mobile": "390 × 844",
+    "fullPage": "corpus-16-complet.png"
+  },
+  "scope": {
+    "WheelNavigation": "inchangé",
+    "data-mode et providers": "inchangés",
+    "administration": "lignes, consultation et sélection vérifiées"
+  },
+  "limits": [
+    "Mode réel vérifié avec des fixtures API ; aucun compte privé utilisé.",
+    "La pagination conserve les limites de lecture du provider existant."
+  ]
+}

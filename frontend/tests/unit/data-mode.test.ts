@@ -98,7 +98,7 @@ describe("scénario central de démonstration", () => {
       second = createDemoSnapshot();
     first.documents.data.splice(0, 1);
     first.observations.data[0].status = "review";
-    expect(second.documents.data).toHaveLength(8);
+    expect(second.documents.data).toHaveLength(24);
     expect(second.observations.data[0].status).toBe("validated");
   });
 });
