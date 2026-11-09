@@ -52,6 +52,11 @@
     rgb(30 77 56 / 44%) 52%,
     rgb(81 128 99 / 30%)
   );
+  --sym-glass-dense: linear-gradient(
+    115deg,
+    rgb(30 75 49 / 91%),
+    rgb(9 47 32 / 94%)
+  );
   --sym-border: 1px solid rgb(222 241 199 / 49%);
   --sym-shadow:
     0 8px 24px rgb(0 21 12 / 13%), inset 0 0 0 1px rgb(233 247 214 / 9%);

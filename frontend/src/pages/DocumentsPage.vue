@@ -4,6 +4,25 @@ import { apiUrl, api, date, message, post, useResource } from "../api";
 import { auth } from "../auth-state";
 const canManage = computed(() => auth.user?.role === "admin");
 import { documentStatus } from "../documents";
+import DocumentList from "../components/symbiose/DocumentList.vue";
+import { adaptDocument } from "../data/real-provider";
+import "../styles/scientific-documents.css";
+const presented = computed(() =>
+  (documents.data.value || []).map((doc) => ({
+    ...adaptDocument(doc),
+    title: title(doc),
+  })),
+);
+function toggleDocument(id: string) {
+  picked.value = picked.value.includes(id)
+    ? picked.value.filter((value) => value !== id)
+    : [...picked.value, id];
+}
+function inspectDocument(doc: { id: string }) {
+  const source = documents.data.value?.find((value) => value.id === doc.id);
+  if (source) open(source);
+}
+
 import type {
   Species,
   ScientificDocument,
@@ -50,6 +69,18 @@ const allPicked = computed(
 const tasks = useResource<DocumentTask[]>(
   () => "/documents/tasks?limit=12",
   3000,
+);
+watch(
+  () => catalog.data.value,
+  (rows) => {
+    if (rows?.length && !rows.some((row) => row.name === species.value))
+      species.value = rows[0].name;
+    if (
+      rows?.length &&
+      !targets.value.some((id) => rows.some((row) => row.name === id))
+    )
+      targets.value = [rows[0].name];
+  },
 );
 const running = computed(
   () =>
@@ -313,45 +344,13 @@ async function translate(doc: ScientificDocument) {
       empty-text="Aucun document téléchargé pour cette espèce. Lancez une récupération ou importez un fichier."
       @retry="documents.refresh"
     >
-      <div class="document-grid">
-        <article
-          :data-document-id="doc.id"
-          v-for="doc in documents.data.value"
-          :key="doc.id"
-          class="document-card"
-        >
-          <label v-if="canManage" class="check-line"
-            ><input
-              v-model="picked"
-              type="checkbox"
-              :value="doc.id"
-              :aria-label="'Sélectionner ' + title(doc)"
-            />Sélectionner</label
-          >
-          <h3>
-            <button class="document-title" @click="open(doc)">
-              {{ title(doc) }}
-            </button>
-          </h3>
-          <p class="muted">
-            {{ doc.authors.slice(0, 2).join(", ") || "Auteur non renseigné" }} ·
-            {{ doc.published_date || "Date non renseignée" }}
-          </p>
-          <p class="document-abstract">
-            {{
-              french(doc)?.abstract ||
-              "Ouvrez le document pour consulter son contenu."
-            }}
-          </p>
-          <p class="muted">{{ translationLabel(doc) }}</p>
-          <PButton
-            label="Lire le document"
-            icon="pi pi-book"
-            severity="secondary"
-            @click="open(doc)"
-          />
-        </article>
-      </div>
+      <DocumentList
+        action-label="Lire le document"
+        :documents="presented"
+        :selected="new Set(picked)"
+        @toggle="toggleDocument"
+        @preview="inspectDocument"
+      />
     </LoadState>
     <div class="actions pagination">
       <PButton
@@ -423,6 +422,7 @@ async function translate(doc: ScientificDocument) {
     >
   </section>
   <PDialog
+    append-to="self"
     v-model:visible="dialog"
     modal
     header="Lire le document"

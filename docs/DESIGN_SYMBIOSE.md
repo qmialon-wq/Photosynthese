@@ -57,3 +57,7 @@ Consigne exacte :
 
 > Create a photographic contact sheet of exactly four equally-sized rectangular photographs arranged in a seamless 2 by 2 grid, no margins or borders, total landscape aspect ratio 3:2. This is a production asset containing ONLY photographs for tiny biodiversity dashboard thumbnails. Top left: lush Norman countryside hedgerows, green rolling meadow and mature trees, warm natural daylight. Top right: a full body roe deer standing in a green European forest clearing, natural camera trap perspective. Bottom left: a full body red fox standing in green grass in a European forest, side profile looking towards camera. Bottom right: a full body European badger walking through moss and fallen leaves in a European woodland, side profile. Each photograph must be independently composed and photorealistic with rich natural greens, clearly visible subject, soft sunny light. No text, no typography, no icons, no logos, no controls, no UI, no map or graphics.
 
+
+## Administration — étape 9
+
+Les neuf pages métier sont intégrées dans un `AdminShell` forestier à navigation verticale. L’engrenage ouvre les paramètres d’affichage et l’accès administrateur vérifié par la session serveur. Le sélecteur de données reste global, les composants vidéo et documentaires sont partagés, et la roue conserve ses six rubriques. Voir [l’intégration et les limites](ADMIN_SYMBIOSE.md) et la [galerie](../output/symbiose/etape-9/index.html).

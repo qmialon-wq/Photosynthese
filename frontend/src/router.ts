@@ -78,6 +78,10 @@ export const router = createRouter({
       path: "/admin/documents",
       component: () => import("./pages/DocumentsPage.vue"),
     },
+    {
+      path: "/admin/dossiers/:id",
+      component: () => import("./pages/ParcelCorpusPage.vue"),
+    },
     ...["datasets", "training", "models", "evaluation"].map((page) => ({
       path: `/${page}`,
       redirect: (to: import("vue-router").RouteLocation) => ({
@@ -109,7 +113,7 @@ export const router = createRouter({
 
 router.beforeEach(async (to) => {
   if (to.meta.designPreview) return;
-  if (!auth.loaded) {
+  if (!auth.loaded || to.path.startsWith("/admin")) {
     try {
       acceptSession(await api<Session>("/auth/me"));
     } catch (error) {

@@ -4,6 +4,22 @@ import type { Dashboard, Task } from "../types";
 import WorkerTerminal from "../components/WorkerTerminal.vue";
 const dashboard = useResource<Dashboard>(() => "/console/dashboard", 10000);
 const tasks = useResource<Task[]>(() => "/console/tasks?limit=6", 4000);
+function taskRoute(task: Task) {
+  if (task.kind === "training")
+    return { path: "/admin/training", query: { task: task.id } };
+  if (task.kind === "evaluation")
+    return {
+      path: "/admin/evaluation",
+      query: { model: String(task.request.model_id || "") },
+    };
+  if (task.kind === "register_model") return { path: "/admin/models" };
+  if (task.kind.startsWith("document")) return { path: "/admin/documents" };
+  if (task.kind === "dataset") return { path: "/admin/datasets" };
+  return {
+    path: "/admin/analyses",
+    query: { task: task.id, video: String(task.request.video_id || "") },
+  };
+}
 const cards = [
   { key: "videos", label: "Vidéos uniques", icon: "pi-video" },
   { key: "species", label: "Espèces validées", icon: "pi-globe" },
@@ -18,7 +34,7 @@ const cards = [
       <h1>La biodiversité, en perspective.</h1>
       <p class="subtitle">Des observations de terrain aux données vérifiées.</p>
     </div>
-    <RouterLink to="/videos" class="button-link"
+    <RouterLink to="/admin/videos" class="button-link"
       ><i class="pi pi-plus" /> Importer une vidéo</RouterLink
     >
   </div>
@@ -64,7 +80,7 @@ const cards = [
         <section class="panel">
           <div class="section-head">
             <h2>Espèces confirmées</h2>
-            <RouterLink to="/datasets"
+            <RouterLink to="/admin/datasets"
               >Datasets <i class="pi pi-arrow-up-right"
             /></RouterLink>
           </div>
@@ -102,7 +118,7 @@ const cards = [
         <section class="panel">
           <div class="section-head">
             <h2>Dernier entraînement</h2>
-            <RouterLink to="/training"
+            <RouterLink to="/admin/training"
               >Consulter <i class="pi pi-arrow-up-right"
             /></RouterLink>
           </div>
@@ -163,7 +179,7 @@ const cards = [
   <section class="panel">
     <div class="section-head">
       <h2>Activité récente</h2>
-      <RouterLink to="/analyses"
+      <RouterLink to="/admin/analyses"
         >Voir les analyses <i class="pi pi-arrow-up-right"
       /></RouterLink>
     </div>
@@ -185,11 +201,7 @@ const cards = [
           <tbody>
             <tr v-for="task in tasks.data.value" :key="task.id">
               <td>
-                <RouterLink
-                  :to="{
-                    path: task.kind === 'training' ? '/training' : '/analyses',
-                    query: { task: task.id },
-                  }"
+                <RouterLink :to="taskRoute(task)"
                   >{{ taskLabel(task.kind) }}
                   <span class="muted">{{
                     task.id.slice(0, 8)

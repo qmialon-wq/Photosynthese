@@ -6,10 +6,14 @@ const corpusSpeciesLabel = (value: string) =>
   value
     ? value[0].toLocaleUpperCase("fr-FR") + value.slice(1).replaceAll("-", " ")
     : "";
-defineProps<{
-  documents: ScientificDocument[];
-  selected: ReadonlySet<string>;
-}>();
+withDefaults(
+  defineProps<{
+    documents: ScientificDocument[];
+    selected: ReadonlySet<string>;
+    actionLabel?: string;
+  }>(),
+  { actionLabel: "Consulter" },
+);
 const emit = defineEmits<{
   toggle: [id: string];
   preview: [document: ScientificDocument];
@@ -41,10 +45,10 @@ const emit = defineEmits<{
       </div>
       <button
         class="sv-button-quiet"
-        :aria-label="`Consulter ${document.title}`"
+        :aria-label="`${actionLabel} ${document.title}`"
         @click="emit('preview', document)"
       >
-        Consulter
+        {{ actionLabel }}
       </button></GlassPanel
     >
   </div>

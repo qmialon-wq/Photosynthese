@@ -62,7 +62,7 @@ Les captures `api-test-*` illustrent les adaptateurs avec des réponses API inte
 - Diagnostic écologique global et agrégation des recommandations : aucun indicateur comparable à la démonstration n’est calculé sans source raccordée ; affichage « Non disponible ».
 - Suivi des récupérations documentaires dans le panneau Avancement : explicitement non connecté dans cet écran.
 - Vignettes et paysages : aucun visuel fictif n’est utilisé pour compléter une donnée réelle absente. Une surface neutre est présentée.
-- L’espace d’administration historique garde ses services et permissions existants. En mode démonstration, ses outils métier ne sont pas montés ; l’utilisateur doit choisir le mode réel pour y accéder. Les garanties de lecture seule des nouveaux adaptateurs portent sur les six rubriques Symbiose.
+- Depuis l’étape 9, l’administration authentifiée possède un `AdminShell` et un adaptateur local de démonstration. Ses actions fictives restent en mémoire ; ses actions réelles réutilisent les services existants après confirmation. Les garanties de lecture seule des adaptateurs d’observation continuent de porter sur les six rubriques Symbiose. Voir [ADMIN_SYMBIOSE.md](ADMIN_SYMBIOSE.md).
 
 ## Vérification
 

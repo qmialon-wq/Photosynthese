@@ -80,6 +80,10 @@ const paths: Record<string, string[]> = {
   upload: ["M12 16V2 m-5 5 5-5 5 5 M3 15v6h18v-6"],
   inbox: ["M3 13 6 3h12l3 10v8H3z M3 13h5l2 4h4l2-4h5"],
   chart: ["M3 15h4v7H3z M10 8h4v14h-4z M17 2h4v20h-4z"],
+  menu: ["M3 6h18 M3 12h18 M3 18h18"],
+  box: [
+    "m12 2 10 5v10l-10 5-10-5V7l10-5Z M2 7l10 5 10-5 M12 12v10 M7 4.5l10 5",
+  ],
 };
 </script>
 <template>

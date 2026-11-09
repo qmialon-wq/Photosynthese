@@ -40,14 +40,26 @@ async function logout() {
     logoutBusy.value = false;
   }
 }
-const panel = ref<"search" | "notifications" | "profile" | "settings" | null>(
-  null,
-);
+const panel = ref<
+  "search" | "notifications" | "profile" | "settings" | "settings-menu" | null
+>(null);
 const query = ref("");
 const reduceMotion = ref(false);
 const searchField = ref<HTMLInputElement>();
 const actionButtons = ref<HTMLButtonElement[]>([]);
 const settingsButton = ref<HTMLButtonElement>();
+const verifiedAdmin = ref(false);
+async function openSettingsMenu() {
+  panel.value = panel.value === "settings-menu" ? null : "settings-menu";
+  if (!panel.value) return;
+  verifiedAdmin.value = false;
+  try {
+    acceptSession(await api<Session>("/auth/me"));
+    verifiedAdmin.value = auth.user?.role === "admin";
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) clearSession();
+  }
+}
 const actions = [
   { key: "search", label: "Rechercher", icon: "search" },
   { key: "notifications", label: "Notifications", icon: "bell" },
@@ -78,7 +90,8 @@ function closePanel() {
   const previous = panel.value;
   if (!previous) return;
   panel.value = null;
-  if (previous === "settings") settingsButton.value?.focus();
+  if (previous === "settings" || previous === "settings-menu")
+    settingsButton.value?.focus();
   else
     actionButtons.value[
       previous === "search" ? 0 : previous === "notifications" ? 1 : 2
@@ -119,7 +132,10 @@ function closePanel() {
             @click="togglePanel(action.key)"
           >
             <SymIcon :name="action.icon" :size="25" /><span
-              v-if="action.key === 'notifications' && dataMode.capabilities.value.simulate"
+              v-if="
+                action.key === 'notifications' &&
+                dataMode.capabilities.value.simulate
+              "
               class="sym-notification-dot"
               aria-hidden="true"
             />
@@ -131,9 +147,9 @@ function closePanel() {
         ref="settingsButton"
         class="sym-circle-button sym-settings"
         aria-label="Paramètres"
-        :aria-expanded="panel === 'settings'"
+        :aria-expanded="panel === 'settings' || panel === 'settings-menu'"
         aria-controls="sym-action-panel"
-        @click="togglePanel('settings')"
+        @click="openSettingsMenu"
       >
         <SymIcon name="settings" :size="29" />
       </button>
@@ -141,11 +157,14 @@ function closePanel() {
         v-if="panel"
         id="sym-action-panel"
         class="sym-glass sym-action-panel"
-        :class="{ 'sym-settings-panel': panel === 'settings' }"
+        :class="{
+          'sym-settings-panel':
+            panel === 'settings' || panel === 'settings-menu',
+        }"
         :aria-label="
           panel === 'search'
             ? 'Recherche dans les rubriques'
-            : panel === 'settings'
+            : panel === 'settings' || panel === 'settings-menu'
               ? 'Paramètres d’affichage'
               : panel === 'profile'
                 ? 'Mon profil'
@@ -175,6 +194,21 @@ function closePanel() {
           </ul>
           <p v-if="!results.length">Aucune rubrique trouvée.</p></template
         >
+        <div
+          v-else-if="panel === 'settings-menu'"
+          class="sym-settings-menu"
+          aria-label="Paramètres et administration"
+        >
+          <h2>Votre espace</h2>
+          <button @click="panel = 'settings'">
+            <SymIcon name="sliders" :size="21" />Paramètres d’affichage
+          </button>
+          <RouterLink
+            v-if="verifiedAdmin && auth.user?.role === 'admin'"
+            to="/admin"
+            ><SymIcon name="settings" :size="21" />Administration</RouterLink
+          >
+        </div>
         <template v-else-if="panel === 'settings'"
           ><h2>Paramètres d’affichage</h2>
           <label class="sym-setting-toggle"

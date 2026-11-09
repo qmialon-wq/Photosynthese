@@ -2,7 +2,13 @@ import type { Page } from "@playwright/test";
 
 // Existing feature scenarios run as an explicitly authenticated administrator.
 // Authentication scenarios use their own responses and exercise unauthenticated routes too.
-export function mockApi(page: Page, handler: Parameters<Page["route"]>[1]) {
+export async function mockApi(
+  page: Page,
+  handler: Parameters<Page["route"]>[1],
+) {
+  await page.addInitScript(() =>
+    localStorage.setItem("symbiose:data-mode:v1", "real"),
+  );
   return page.route("**/api/**", (route, request) => {
     if (new URL(request.url()).pathname === "/api/auth/me")
       return route.fulfill({

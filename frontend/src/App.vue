@@ -14,7 +14,10 @@ import { post, message } from "./api";
 import AppShell from "./components/symbiose/AppShell.vue";
 import ModeSelector from "./components/symbiose/ModeSelector.vue";
 import { useDataMode } from "./data/data-mode";
+import AdminShell from "./components/admin/AdminShell.vue";
+import { lastObservationRoute } from "./admin/navigation";
 const dataMode = useDataMode();
+const adminModeSwitching = ref(false);
 const logoutError = ref("");
 async function logout() {
   try {
@@ -32,8 +35,32 @@ onMounted(() => window.addEventListener("auth-expired", expired));
 onBeforeUnmount(() => window.removeEventListener("auth-expired", expired));
 const route = useRoute();
 watch(
-  () => !!route.meta.designPreview,
+  () => dataMode.mode.value,
+  () => {
+    if (!route.path.startsWith("/admin")) return;
+    adminModeSwitching.value = true;
+    void router
+      .replace({ path: route.path, query: {}, hash: "" })
+      .finally(() => {
+        adminModeSwitching.value = false;
+      });
+  },
+  { flush: "sync" },
+);
+watch(
+  () => !!route.meta.designPreview || route.path.startsWith("/admin"),
   (value) => dataMode.setActive(value),
+  { immediate: true },
+);
+watch(
+  () => route.fullPath,
+  (path, previous) => {
+    if (route.meta.designPreview) {
+      lastObservationRoute.value = path;
+      if (previous?.startsWith("/admin") && dataMode.isReal.value)
+        void dataMode.refresh();
+    }
+  },
   { immediate: true },
 );
 const open = ref(false);
@@ -67,6 +94,14 @@ const title = computed(
     ><RouterView
       :key="`${dataMode.mode.value}:${dataMode.revision.value}:${dataMode.sourceId.value}`"
   /></AppShell>
+  <AdminShell
+    v-else-if="route.path.startsWith('/admin') && auth.user?.role === 'admin'"
+    ><RouterView
+      v-if="!adminModeSwitching"
+      :key="`${dataMode.mode.value}:${dataMode.sourceId.value}`"
+    />
+    <p v-else role="status">Changement de source de données…</p></AdminShell
+  >
   <main v-else-if="route.meta.public" id="main-content" class="auth-shell">
     <RouterView />
   </main>

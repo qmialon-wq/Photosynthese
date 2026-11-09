@@ -19,6 +19,8 @@ import "./styles/symbiose.css";
 import "./styles/symbiose-controls.css";
 import { createDataModeStore, dataModeKey } from "./data/data-mode";
 import "./styles/data-mode.css";
+import "./styles/admin.css";
+import { installAdminServices } from "./admin/services";
 
 const app = createApp(App)
   .use(router)
@@ -44,7 +46,9 @@ const app = createApp(App)
       options: { darkModeSelector: ".dark-mode" },
     },
   });
-app.provide(dataModeKey, createDataModeStore());
+const dataMode = createDataModeStore();
+app.provide(dataModeKey, dataMode);
+installAdminServices(dataMode, router);
 for (const [name, component] of Object.entries({
   PButton: Button,
   PTag: Tag,

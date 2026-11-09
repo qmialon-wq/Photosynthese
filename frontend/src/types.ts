@@ -57,6 +57,8 @@ export interface Video {
     height?: number;
     frames?: number;
     preview_key?: string;
+    presentation_only?: boolean;
+    poster_url?: string;
   };
 }
 export interface Metrics {
@@ -84,6 +86,7 @@ export interface Task extends Operation {
   request: {
     video_id?: string;
     dataset_id?: string;
+    model_id?: string;
     model_name?: string;
     epochs_head?: number;
     epochs_finetune?: number;

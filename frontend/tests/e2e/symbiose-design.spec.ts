@@ -152,6 +152,7 @@ test("actions et navigation au clavier", async ({ page }) => {
     .click();
   await expect(page).toHaveURL(/\/videos$/);
   await page.getByRole("button", { name: "Paramètres", exact: true }).click();
+  await page.getByRole("button", { name: "Paramètres d’affichage" }).click();
   await page.getByLabel("Réduire les animations").check();
   const nav = page.getByRole("navigation", { name: "Navigation principale" });
   expect(

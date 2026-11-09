@@ -1,7 +1,7 @@
 import { mockApi } from "./mock-api";
 import { test, expect } from "@playwright/test";
 
-test("sélection directe d'un candidat sans dialogue ni validation, persistante au rechargement", async ({
+test("sélection explicite d’un candidat après confirmation, persistante au rechargement", async ({
   page,
 }) => {
   let active = "current";
@@ -50,6 +50,8 @@ test("sélection directe d'un candidat sans dialogue ni validation, persistante 
       .getByRole("button", { name: "Définir comme actif" }),
   ).toBeDisabled();
   await button.click();
+  expect(selections).toBe(0);
+  await page.getByRole("button", { name: "Confirmer l’action réelle" }).click();
   await expect(
     candidate.getByText("Modèle actif", { exact: true }),
   ).toBeVisible();
