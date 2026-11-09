@@ -65,7 +65,7 @@ def export(identifier: UUID, format: str = "json") -> Response:
         content,
         media_type=media_type,
         headers={
-            "Content-Disposition": f'attachment; filename="biosentinelle-{identifier}.{suffix}"',
+            "Content-Disposition": f'attachment; filename="symbiose-{identifier}.{suffix}"',
             "X-Content-Type-Options": "nosniff",
         },
     )

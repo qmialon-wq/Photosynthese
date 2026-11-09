@@ -1,0 +1,443 @@
+/* Étape 3 : seuls les éléments sf-* complètent le socle existant. */
+.sf-page {
+  padding-top: 23px;
+  padding-bottom: 20px;
+}
+.sf-page > .sym-topography {
+  right: 165px;
+  width: 440px;
+  height: 175px;
+}
+.sf-header {
+  padding: 0 0 22px;
+  border-bottom: 1px solid rgb(211 236 185 / 28%);
+}
+.sf-header .sv-heading {
+  gap: 21px;
+}
+.sf-header .sv-heading p {
+  font-size: 15px;
+  white-space: nowrap;
+}
+.symbiose-shell .sf-create {
+  font-size: 15px;
+  min-height: 52px;
+  padding: 12px 20px;
+}
+.sf-create::before {
+  display: none;
+}
+.sf-filters {
+  margin-top: 18px;
+  grid-template-columns: minmax(220px, 1fr) 224px 224px 48px;
+  gap: 22px;
+}
+.sf-filters .sv-search input,
+.sf-filters .sv-select select {
+  height: 49px;
+  font-size: 16px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.sf-filters .sv-refresh {
+  width: 48px;
+  height: 48px;
+}
+.sf-project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 20px;
+  margin-top: 24px;
+}
+.sf-project-card {
+  overflow: visible;
+  border-radius: 21px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.sf-project-card:hover,
+.sf-project-card:focus-within {
+  transform: translateY(-3px);
+  border-color: rgb(202 239 157 / 80%);
+  box-shadow:
+    0 9px 25px rgb(0 24 8 / 27%),
+    inset 0 0 0 1px rgb(212 246 185 / 10%);
+}
+.sf-project-card:has(details[open]) {
+  transform: none;
+  z-index: 8;
+}
+.sf-project-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  text-align: left;
+  color: var(--sym-text);
+}
+.sf-project-open:focus-visible {
+  outline-offset: 5px;
+}
+.sf-project-photo {
+  position: relative;
+  height: clamp(125px, 8.8vw, 170px);
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  background-image: url("../assets/project-landscapes.png");
+  background-size: auto 300%;
+  background-repeat: no-repeat;
+  background-position: center top;
+}
+.sf-landscape-forest {
+  background-image: url("../assets/auth-forest.png");
+  background-size: 150% auto;
+  background-position: 45% top;
+}
+.sf-landscape-valley {
+  background-position: center top;
+}
+.sf-landscape-wetland {
+  background-position: center center;
+}
+.sf-landscape-meadow {
+  background-position: center bottom;
+}
+.sf-landscape-bocage {
+  background-image: url("../assets/biodiversity-thumbnails.png");
+  background-size: 200% auto;
+  background-position: left 15%;
+}
+.sf-project-photo > .sv-status {
+  right: 13px;
+  top: 13px;
+  bottom: auto;
+  font-size: 13px;
+  padding: 7px 12px;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgb(0 20 0 / 12%);
+}
+.sf-project-photo > .sv-status .sym-icon {
+  width: 17px;
+  height: 17px;
+}
+.sf-project-info {
+  padding: 11px 42px 15px 19px;
+  min-height: 84px;
+}
+.sf-project-info h2 {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 11px;
+  white-space: nowrap;
+}
+.sf-project-info h2 .sym-icon {
+  color: #c6f380;
+}
+.sf-project-counts {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.sf-project-counts > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  white-space: nowrap;
+  color: var(--sym-text-soft);
+}
+.sf-project-menu {
+  position: absolute;
+  right: 9px;
+  bottom: 25px;
+  z-index: 6;
+}
+.sf-project-menu summary {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  list-style: none;
+  color: var(--sym-text);
+}
+.sf-project-menu summary::-webkit-details-marker {
+  display: none;
+}
+.sf-project-menu summary > .sym-icon {
+  transform: rotate(90deg);
+  stroke-width: 3;
+}
+.sf-project-menu summary:hover {
+  background: rgb(230 248 211 / 12%);
+}
+.sf-project-menu summary:focus-visible {
+  outline: 2px solid #d5ffb1;
+  outline-offset: 4px;
+}
+.sf-project-menu [role="menu"] {
+  position: absolute;
+  right: 0;
+  bottom: 39px;
+  width: 200px;
+  padding: 5px;
+  border: var(--sym-border);
+  border-radius: 12px;
+  background: var(--sym-surface-solid);
+  box-shadow: 0 10px 24px rgb(0 20 0 / 30%);
+}
+.sf-project-menu [role="menuitem"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 7px;
+  text-align: left;
+  color: var(--sym-text);
+  background: transparent;
+  font-size: 13px;
+}
+.sf-project-menu [role="menuitem"]:hover,
+.sf-project-menu [role="menuitem"]:focus-visible {
+  background: rgb(192 230 159 / 16%);
+}
+.sf-page > .sv-pagination {
+  margin-top: 25px;
+  min-height: 42px;
+}
+.sf-page > .sv-pagination > p {
+  font-size: 17px;
+}
+.sf-page > .sv-pagination button {
+  height: 42px;
+  min-width: 40px;
+  font-size: 16px;
+}
+.sf-page > .sv-pagination .sv-page-step {
+  padding: 8px 17px;
+}
+.sf-empty {
+  min-height: 450px;
+}
+.sf-demo-photo {
+  height: 205px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+.sf-demo-status {
+  position: static;
+  display: inline-flex;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.sf-demo-action {
+  margin-top: 22px;
+}
+.sym-reduced-motion .sf-project-card {
+  transition: none;
+}
+.sym-reduced-motion .sf-project-card:hover,
+.sym-reduced-motion .sf-project-card:focus-within {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf-project-card {
+    transition: none;
+  }
+  .sf-project-card:hover,
+  .sf-project-card:focus-within {
+    transform: none;
+  }
+}
+@media (min-width: 1800px) {
+  .sf-page {
+    padding: 28px 28px 22px;
+  }
+  .sf-header {
+    padding-bottom: 24px;
+  }
+  .sf-filters {
+    margin-top: 22px;
+  }
+  .sf-project-grid {
+    margin-top: 28px;
+    gap: 22px;
+  }
+  .sf-project-info {
+    padding: 15px 45px 18px 24px;
+    min-height: 100px;
+  }
+  .sf-project-info h2 {
+    font-size: 23px;
+  }
+  .sf-project-counts > span {
+    font-size: 17px;
+  }
+}
+@media (max-width: 1390px) {
+  .sf-header {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .sf-header .sv-heading p {
+    white-space: normal;
+  }
+  .sf-filters {
+    grid-template-columns: 1fr 1fr 48px;
+    gap: 14px;
+  }
+  .sf-project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sf-project-photo {
+    height: 150px;
+  }
+  .sf-project-counts {
+    gap: 20px;
+  }
+  .sf-project-counts > span {
+    font-size: 14px;
+  }
+  .sf-project-info h2 {
+    font-size: 19px;
+    gap: 10px;
+  }
+}
+@media (max-width: 950px) {
+  .sf-project-grid {
+    grid-template-columns: 1fr;
+  }
+  .sf-project-photo {
+    height: 180px;
+  }
+  .sf-project-info h2 {
+    font-size: 20px;
+  }
+  .sf-project-counts > span {
+    font-size: 15px;
+  }
+}
+@media (max-width: 620px) {
+  .sf-page > .sym-topography {
+    right: 0;
+    width: 100%;
+    height: 130px;
+  }
+  .sf-page {
+    padding: 17px 12px;
+  }
+  .sf-header {
+    gap: 18px;
+    padding-bottom: 18px;
+  }
+  .sf-header .sv-heading {
+    gap: 10px;
+  }
+  .sf-header .sv-heading p {
+    font-size: 12px;
+  }
+  .symbiose-shell .sf-create {
+    width: 100%;
+    min-height: 46px;
+    font-size: 12px;
+    padding: 10px;
+    gap: 7px;
+    white-space: normal;
+  }
+  .sf-filters {
+    margin-top: 16px;
+    grid-template-columns: 1fr 36px;
+    gap: 10px;
+  }
+  .sf-filters .sv-search input,
+  .sf-filters .sv-select select {
+    height: 42px;
+    font-size: 12px;
+  }
+  .sf-filters .sv-refresh {
+    width: 36px;
+    height: 36px;
+  }
+  .sf-project-grid {
+    margin-top: 18px;
+    gap: 16px;
+  }
+  .sf-project-photo {
+    height: 120px;
+  }
+  .sf-project-photo > .sv-status {
+    right: 8px;
+    top: 8px;
+    font-size: 10px;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .sf-project-photo > .sv-status .sym-icon {
+    width: 14px;
+    height: 14px;
+  }
+  .sf-project-info {
+    padding: 12px 30px 13px 12px;
+    min-height: 100px;
+  }
+  .sf-project-info h2 {
+    font-size: 16px;
+    gap: 7px;
+    margin-bottom: 10px;
+    white-space: normal;
+  }
+  .sf-project-info h2 .sym-icon {
+    width: 19px;
+    height: 19px;
+  }
+  .sf-project-counts {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sf-project-counts > span {
+    font-size: 11px;
+    gap: 5px;
+  }
+  .sf-project-counts .sym-icon {
+    width: 17px;
+    height: 17px;
+  }
+  .sf-project-menu {
+    right: 3px;
+    bottom: 32px;
+  }
+  .sf-project-menu summary {
+    width: 25px;
+    height: 30px;
+  }
+  .sf-project-menu summary > .sym-icon {
+    width: 21px;
+    height: 21px;
+  }
+  .sf-project-menu [role="menu"] {
+    width: 185px;
+  }
+  .sf-page > .sv-pagination > p {
+    font-size: 12px;
+  }
+  .sf-page > .sv-pagination button {
+    height: 34px;
+    min-width: 29px;
+    font-size: 12px;
+  }
+  .sf-page > .sv-pagination .sv-page-step {
+    padding: 6px 9px;
+  }
+  .sf-demo-photo {
+    height: 160px;
+  }
+}

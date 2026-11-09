@@ -23,7 +23,7 @@ def test_api_and_frontend_proxy() -> None:
         assert direct.status_code == proxied.status_code == 200
         assert direct.json() == proxied.json()
         assert direct.json()["status"] == "ok"
-        assert "BioSentinelle" in client.get(frontend).text
+        assert "Symbiose" in client.get(frontend).text
 
 
 def test_postgres_extension_and_migration() -> None:

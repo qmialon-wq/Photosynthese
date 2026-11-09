@@ -42,7 +42,7 @@ def fetch_weights(path: Path) -> dict[str, str | bool]:
         path.parent.mkdir(parents=True, exist_ok=True)
         fd, temporary = tempfile.mkstemp(prefix=f".{path.name}-", suffix=".pt", dir=path.parent)
         try:
-            request = Request(MODEL_URL, headers={"User-Agent": "BioSentinelle/0.1"})
+            request = Request(MODEL_URL, headers={"User-Agent": "Symbiose/0.1"})
             with os.fdopen(fd, "wb") as output, urlopen(request, timeout=60) as response:
                 while chunk := response.read(1024 * 1024):
                     output.write(chunk)

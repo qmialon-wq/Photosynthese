@@ -11,6 +11,13 @@ import { useRoute } from "vue-router";
 import { navigation, adminNavigation, router } from "./router";
 import { auth, clearSession } from "./auth-state";
 import { post, message } from "./api";
+import AppShell from "./components/symbiose/AppShell.vue";
+import ModeSelector from "./components/symbiose/ModeSelector.vue";
+import { useDataMode } from "./data/data-mode";
+import AdminShell from "./components/admin/AdminShell.vue";
+import { lastObservationRoute } from "./admin/navigation";
+const dataMode = useDataMode();
+const adminModeSwitching = ref(false);
 const logoutError = ref("");
 async function logout() {
   try {
@@ -27,6 +34,35 @@ const expired = () => {
 onMounted(() => window.addEventListener("auth-expired", expired));
 onBeforeUnmount(() => window.removeEventListener("auth-expired", expired));
 const route = useRoute();
+watch(
+  () => dataMode.mode.value,
+  () => {
+    if (!route.path.startsWith("/admin")) return;
+    adminModeSwitching.value = true;
+    void router
+      .replace({ path: route.path, query: {}, hash: "" })
+      .finally(() => {
+        adminModeSwitching.value = false;
+      });
+  },
+  { flush: "sync" },
+);
+watch(
+  () => !!route.meta.designPreview || route.path.startsWith("/admin"),
+  (value) => dataMode.setActive(value),
+  { immediate: true },
+);
+watch(
+  () => route.fullPath,
+  (path, previous) => {
+    if (route.meta.designPreview) {
+      lastObservationRoute.value = path;
+      if (previous?.startsWith("/admin") && dataMode.isReal.value)
+        void dataMode.refresh();
+    }
+  },
+  { immediate: true },
+);
 const open = ref(false);
 const sidebar = ref<HTMLElement | null>(null);
 const menu = ref<HTMLButtonElement | null>(null);
@@ -49,12 +85,24 @@ watch(
 const title = computed(
   () =>
     visibleNavigation.value.find((item) => item.path === route.path)?.label ??
-    "BioSentinelle",
+    "Symbiose",
 );
 </script>
 <template>
   <a href="#main-content" class="skip-link">Aller au contenu</a>
-  <main v-if="route.meta.public" id="main-content" class="auth-shell">
+  <AppShell v-if="route.meta.designPreview"
+    ><RouterView
+      :key="`${dataMode.mode.value}:${dataMode.revision.value}:${dataMode.sourceId.value}`"
+  /></AppShell>
+  <AdminShell
+    v-else-if="route.path.startsWith('/admin') && auth.user?.role === 'admin'"
+    ><RouterView
+      v-if="!adminModeSwitching"
+      :key="`${dataMode.mode.value}:${dataMode.sourceId.value}`"
+    />
+    <p v-else role="status">Changement de source de données…</p></AdminShell
+  >
+  <main v-else-if="route.meta.public" id="main-content" class="auth-shell">
     <RouterView />
   </main>
   <div v-else-if="auth.user" class="app-shell">
@@ -65,10 +113,10 @@ const title = computed(
       :class="{ 'is-open': open }"
       @keydown.esc="open = false"
     >
-      <RouterLink to="/" class="brand" aria-label="BioSentinelle — accueil"
+      <RouterLink to="/" class="brand" aria-label="Symbiose — accueil"
         ><span class="brand-mark"
           ><i class="pi pi-globe" aria-hidden="true" /></span
-        ><span>BioSentinelle<small>NORMANDIE</small></span></RouterLink
+        ><span>Symbiose<small>NORMANDIE</small></span></RouterLink
       >
       <span class="nav-label">{{
         isAdmin ? "ADMINISTRATION" : "ESPACE D’OBSERVATION"
@@ -114,6 +162,7 @@ const title = computed(
     />
     <div class="workspace">
       <header class="topbar">
+        <ModeSelector />
         <button
           class="menu-toggle"
           ref="menu"
@@ -129,9 +178,20 @@ const title = computed(
           isAdmin ? "Gestion et modèles" : "Observer · Analyser · Valider"
         }}</span>
       </header>
-      <main id="main-content" tabindex="-1"><RouterView /></main>
+      <main id="main-content" tabindex="-1">
+        <RouterView v-if="dataMode.isReal.value || route.path === '/profil'" />
+        <div v-else class="notice">
+          <h1>Espace métier</h1>
+          <p>
+            Les outils d’administration utilisent des services réels.
+            Sélectionnez « Données réelles » pour y accéder avec vos permissions
+            habituelles.
+          </p>
+          <RouterLink to="/">Revenir à la démonstration Symbiose</RouterLink>
+        </div>
+      </main>
       <footer class="app-footer">
-        BioSentinelle Normandie
+        Symbiose Normandie
         <span>Observation · Validation · Connaissance</span>
       </footer>
     </div>

@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-09",
+  "backend": {
+    "/health": 200,
+    "/auth/me": 401
+  },
+  "viewports": [
+    {
+      "width": 1600,
+      "height": 900,
+      "mode": "real",
+      "authentication": "required",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "mode": "demo",
+      "overflow": false
+    }
+  ]
+}

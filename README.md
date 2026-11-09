@@ -1,4 +1,4 @@
-# BioSentinelle Normandie
+# Symbiose Normandie
 
 Le [guide d’hébergement et de CI/CD](docs/HEBERGEMENT_CICD.md) décrit un déploiement
 entièrement distant sur CPU, sans dépendance au PC, avec conservation des modèles

@@ -1,4 +1,4 @@
-# Console web BioSentinelle
+# Console web Symbiose
 
 La page **Documents scientifiques**, accessible dans les deux espaces à
 `/documents` ou `/admin/documents`, permet aux administrateurs de rechercher et importer des documents,

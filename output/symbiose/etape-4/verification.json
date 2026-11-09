@@ -1,0 +1,446 @@
+{
+  "viewport": {
+    "width": 1600,
+    "height": 900
+  },
+  "report": [
+    {
+      "page": "/analyses",
+      "status": 200,
+      "wheel": [
+        {
+          "section": "/",
+          "slot": "1",
+          "rect": {
+            "x": 199,
+            "y": 166.53125,
+            "width": 62,
+            "height": 62,
+            "top": 166.53125,
+            "right": 261,
+            "bottom": 228.53125,
+            "left": 199
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/videos",
+          "slot": "2",
+          "rect": {
+            "x": 140,
+            "y": 246.8125,
+            "width": 62,
+            "height": 62,
+            "top": 246.8125,
+            "right": 202,
+            "bottom": 308.8125,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/parcelles",
+          "slot": "3",
+          "rect": {
+            "x": 102,
+            "y": 337.65625,
+            "width": 62,
+            "height": 62,
+            "top": 337.65625,
+            "right": 164,
+            "bottom": 399.65625,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/analyses",
+          "slot": "4",
+          "rect": {
+            "x": 68,
+            "y": 443.28125,
+            "width": 186,
+            "height": 62,
+            "top": 443.28125,
+            "right": 254,
+            "bottom": 505.28125,
+            "left": 68
+          },
+          "bg": "linear-gradient(115deg, rgba(151, 192, 69, 0.64), rgba(40, 86, 35, 0.62))",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "section": "/review",
+          "slot": "5",
+          "rect": {
+            "x": 102,
+            "y": 544.703125,
+            "width": 62,
+            "height": 62,
+            "top": 544.703125,
+            "right": 164,
+            "bottom": 606.703125,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/documents",
+          "slot": "6",
+          "rect": {
+            "x": 140,
+            "y": 632.375,
+            "width": 62,
+            "height": 62,
+            "top": 632.375,
+            "right": 202,
+            "bottom": 694.375,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        }
+      ]
+    },
+    {
+      "page": "/",
+      "status": 200,
+      "wheel": [
+        {
+          "section": "/",
+          "slot": "4",
+          "rect": {
+            "x": 68,
+            "y": 443.28125,
+            "width": 186,
+            "height": 62,
+            "top": 443.28125,
+            "right": 254,
+            "bottom": 505.28125,
+            "left": 68
+          },
+          "bg": "linear-gradient(115deg, rgba(151, 192, 69, 0.64), rgba(40, 86, 35, 0.62))",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "section": "/videos",
+          "slot": "5",
+          "rect": {
+            "x": 102,
+            "y": 544.703125,
+            "width": 62,
+            "height": 62,
+            "top": 544.703125,
+            "right": 164,
+            "bottom": 606.703125,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/parcelles",
+          "slot": "6",
+          "rect": {
+            "x": 140,
+            "y": 632.375,
+            "width": 62,
+            "height": 62,
+            "top": 632.375,
+            "right": 202,
+            "bottom": 694.375,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/analyses",
+          "slot": "1",
+          "rect": {
+            "x": 199,
+            "y": 166.53125,
+            "width": 62,
+            "height": 62,
+            "top": 166.53125,
+            "right": 261,
+            "bottom": 228.53125,
+            "left": 199
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/review",
+          "slot": "2",
+          "rect": {
+            "x": 140,
+            "y": 246.8125,
+            "width": 62,
+            "height": 62,
+            "top": 246.8125,
+            "right": 202,
+            "bottom": 308.8125,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/documents",
+          "slot": "3",
+          "rect": {
+            "x": 102,
+            "y": 337.65625,
+            "width": 62,
+            "height": 62,
+            "top": 337.65625,
+            "right": 164,
+            "bottom": 399.65625,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        }
+      ],
+      "geometryElements": 247,
+      "geometryDifferences": [],
+      "maskedPixelsIdentical": false,
+      "pixelComparisonToInitialDev": {
+        "maxChannelDelta": 2,
+        "pixelsWithChannelDeltaOver8": 0,
+        "note": "Only channel differences of at most 3/255 observed; measured geometry, fonts and gradients are identical. Minor rendering or color rounding differences between development and production are a likely explanation."
+      }
+    },
+    {
+      "page": "/videos",
+      "status": 200,
+      "wheel": [
+        {
+          "section": "/",
+          "slot": "3",
+          "rect": {
+            "x": 102,
+            "y": 337.65625,
+            "width": 62,
+            "height": 62,
+            "top": 337.65625,
+            "right": 164,
+            "bottom": 399.65625,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/videos",
+          "slot": "4",
+          "rect": {
+            "x": 68,
+            "y": 443.28125,
+            "width": 186,
+            "height": 62,
+            "top": 443.28125,
+            "right": 254,
+            "bottom": 505.28125,
+            "left": 68
+          },
+          "bg": "linear-gradient(115deg, rgba(151, 192, 69, 0.64), rgba(40, 86, 35, 0.62))",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "section": "/parcelles",
+          "slot": "5",
+          "rect": {
+            "x": 102,
+            "y": 544.703125,
+            "width": 62,
+            "height": 62,
+            "top": 544.703125,
+            "right": 164,
+            "bottom": 606.703125,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/analyses",
+          "slot": "6",
+          "rect": {
+            "x": 140,
+            "y": 632.375,
+            "width": 62,
+            "height": 62,
+            "top": 632.375,
+            "right": 202,
+            "bottom": 694.375,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/review",
+          "slot": "1",
+          "rect": {
+            "x": 199,
+            "y": 166.53125,
+            "width": 62,
+            "height": 62,
+            "top": 166.53125,
+            "right": 261,
+            "bottom": 228.53125,
+            "left": 199
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/documents",
+          "slot": "2",
+          "rect": {
+            "x": 140,
+            "y": 246.8125,
+            "width": 62,
+            "height": 62,
+            "top": 246.8125,
+            "right": 202,
+            "bottom": 308.8125,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        }
+      ],
+      "geometryElements": 245,
+      "geometryDifferences": [],
+      "maskedPixelsIdentical": false,
+      "pixelComparisonToInitialDev": {
+        "maxChannelDelta": 3,
+        "pixelsWithChannelDeltaOver8": 0,
+        "note": "Only channel differences of at most 3/255 observed; measured geometry, fonts and gradients are identical. Minor rendering or color rounding differences between development and production are a likely explanation."
+      }
+    },
+    {
+      "page": "/parcelles",
+      "status": 200,
+      "wheel": [
+        {
+          "section": "/",
+          "slot": "2",
+          "rect": {
+            "x": 140,
+            "y": 246.8125,
+            "width": 62,
+            "height": 62,
+            "top": 246.8125,
+            "right": 202,
+            "bottom": 308.8125,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/videos",
+          "slot": "3",
+          "rect": {
+            "x": 102,
+            "y": 337.65625,
+            "width": 62,
+            "height": 62,
+            "top": 337.65625,
+            "right": 164,
+            "bottom": 399.65625,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/parcelles",
+          "slot": "4",
+          "rect": {
+            "x": 68,
+            "y": 443.28125,
+            "width": 186,
+            "height": 62,
+            "top": 443.28125,
+            "right": 254,
+            "bottom": 505.28125,
+            "left": 68
+          },
+          "bg": "linear-gradient(115deg, rgba(151, 192, 69, 0.64), rgba(40, 86, 35, 0.62))",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "section": "/analyses",
+          "slot": "5",
+          "rect": {
+            "x": 102,
+            "y": 544.703125,
+            "width": 62,
+            "height": 62,
+            "top": 544.703125,
+            "right": 164,
+            "bottom": 606.703125,
+            "left": 102
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/review",
+          "slot": "6",
+          "rect": {
+            "x": 140,
+            "y": 632.375,
+            "width": 62,
+            "height": 62,
+            "top": 632.375,
+            "right": 202,
+            "bottom": 694.375,
+            "left": 140
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        },
+        {
+          "section": "/documents",
+          "slot": "1",
+          "rect": {
+            "x": 199,
+            "y": 166.53125,
+            "width": 62,
+            "height": 62,
+            "top": 166.53125,
+            "right": 261,
+            "bottom": 228.53125,
+            "left": 199
+          },
+          "bg": "linear-gradient(135deg, rgba(172, 193, 135, 0.2), rgba(21, 58, 36, 0.4))",
+          "color": "rgb(245, 248, 239)"
+        }
+      ],
+      "geometryElements": 231,
+      "geometryDifferences": [],
+      "maskedPixelsIdentical": false,
+      "pixelComparisonToInitialDev": {
+        "maxChannelDelta": 3,
+        "pixelsWithChannelDeltaOver8": 0,
+        "note": "Only channel differences of at most 3/255 observed; measured geometry, fonts and gradients are identical. Minor rendering or color rounding differences between development and production are a likely explanation."
+      }
+    }
+  ],
+  "apiCalls": [],
+  "errors": [],
+  "mobile": {
+    "noOverflow": true,
+    "labelInside": true
+  }
+}

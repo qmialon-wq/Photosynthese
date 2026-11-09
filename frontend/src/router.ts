@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { api, ApiError, message } from "./api";
 import { auth, acceptSession, clearSession, type Session } from "./auth-state";
+import { symbioseNavigation } from "./symbiose-navigation";
 
 export const navigation = [
   { path: "/", label: "Accueil", icon: "pi-th-large" },
@@ -32,6 +33,22 @@ export const adminNavigation = [
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    ...symbioseNavigation.map((section) => ({
+      path: section.path,
+      component:
+        section.path === "/"
+          ? () => import("./pages/DesignHomePage.vue")
+          : section.path === "/videos"
+            ? () => import("./pages/DesignVideosPage.vue")
+            : section.path === "/parcelles"
+              ? () => import("./pages/DesignProjectsPage.vue")
+              : section.path === "/analyses"
+                ? () => import("./pages/DesignAnalysisPage.vue")
+                : section.path === "/review"
+                  ? () => import("./pages/DesignValidationPage.vue")
+                  : () => import("./pages/DesignDocumentsPage.vue"),
+      meta: { designPreview: true, public: true },
+    })),
     ...["connexion", "inscription", "initialisation", "reinitialiser"].map(
       (page) => ({
         path: `/${page}`,
@@ -44,7 +61,6 @@ export const router = createRouter({
       path: "/admin/utilisateurs",
       component: () => import("./pages/UsersPage.vue"),
     },
-    { path: "/", component: () => import("./pages/HomePage.vue") },
     { path: "/admin", component: () => import("./pages/DashboardPage.vue") },
     {
       path: "/admin/videos",
@@ -54,24 +70,17 @@ export const router = createRouter({
       path: "/admin/analyses",
       component: () => import("./pages/AnalysisPage.vue"),
     },
-    { path: "/videos", component: () => import("./pages/VideosPage.vue") },
-    {
-      path: "/parcelles",
-      component: () => import("./pages/ParcelCorpusPage.vue"),
-    },
     {
       path: "/parcelles/:id",
       component: () => import("./pages/ParcelCorpusPage.vue"),
     },
-    { path: "/analyses", component: () => import("./pages/AnalysisPage.vue") },
-    { path: "/review", component: () => import("./pages/ReviewPage.vue") },
-    {
-      path: "/documents",
-      component: () => import("./pages/DocumentsPage.vue"),
-    },
     {
       path: "/admin/documents",
       component: () => import("./pages/DocumentsPage.vue"),
+    },
+    {
+      path: "/admin/dossiers/:id",
+      component: () => import("./pages/ParcelCorpusPage.vue"),
     },
     ...["datasets", "training", "models", "evaluation"].map((page) => ({
       path: `/${page}`,
@@ -103,7 +112,8 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  if (!auth.loaded) {
+  if (to.meta.designPreview) return;
+  if (!auth.loaded || to.path.startsWith("/admin")) {
     try {
       acceptSession(await api<Session>("/auth/me"));
     } catch (error) {

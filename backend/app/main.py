@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="BioSentinelle Normandie",
+    title="Symbiose Normandie",
     version="0.1.0",
     lifespan=lifespan,
     dependencies=[Depends(authorize_request)],

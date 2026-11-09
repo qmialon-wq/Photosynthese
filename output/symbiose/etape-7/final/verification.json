@@ -1,0 +1,1802 @@
+[
+  {
+    "name": "accueil",
+    "path": "/",
+    "width": 1920,
+    "height": 1080,
+    "filename": "accueil-1920x1080.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1722,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 976,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1930,
+        "height": 1090
+      },
+      ".sym-main": {
+        "x": 389.75,
+        "y": 0,
+        "width": 1530.25,
+        "height": 969
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 89.453125,
+        "y": 538.140625,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "videotheque",
+    "path": "/videos",
+    "width": 1920,
+    "height": 1080,
+    "filename": "videotheque-1920x1080.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1722,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 976,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1930,
+        "height": 1090
+      },
+      ".sym-main": {
+        "x": 389.75,
+        "y": 0,
+        "width": 1530.25,
+        "height": 951
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 89.453125,
+        "y": 538.140625,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "mes-dossiers",
+    "path": "/parcelles",
+    "width": 1920,
+    "height": 1080,
+    "filename": "mes-dossiers-1920x1080.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1722,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 976,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1930,
+        "height": 1090
+      },
+      ".sym-main": {
+        "x": 389.75,
+        "y": 0,
+        "width": 1530.25,
+        "height": 997.90625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 89.453125,
+        "y": 538.140625,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "analyses",
+    "path": "/analyses",
+    "width": 1920,
+    "height": 1080,
+    "filename": "analyses-1920x1080.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1722,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 976,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1930,
+        "height": 1090
+      },
+      ".sym-main": {
+        "x": 389.75,
+        "y": 0,
+        "width": 1530.25,
+        "height": 921.875
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 89.453125,
+        "y": 538.140625,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "validation-humaine",
+    "path": "/review",
+    "width": 1920,
+    "height": 1080,
+    "filename": "validation-humaine-1920x1080.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1722,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 976,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1930,
+        "height": 1090
+      },
+      ".sym-main": {
+        "x": 389.75,
+        "y": 0,
+        "width": 1530.25,
+        "height": 960.59375
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 89.453125,
+        "y": 538.140625,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "documents-scientifiques",
+    "path": "/documents",
+    "width": 1920,
+    "height": 1080,
+    "filename": "documents-scientifiques-1920x1080.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1722,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 340,
+        "height": 1080
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 976,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1930,
+        "height": 1090
+      },
+      ".sym-main": {
+        "x": 389.75,
+        "y": 0,
+        "width": 1530.25,
+        "height": 912.890625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 89.453125,
+        "y": 538.140625,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "accueil",
+    "path": "/",
+    "width": 1600,
+    "height": 900,
+    "filename": "accueil-1600x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1402,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1610,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 324.796875,
+        "y": 0,
+        "width": 1275.203125,
+        "height": 849
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "videotheque",
+    "path": "/videos",
+    "width": 1600,
+    "height": 900,
+    "filename": "videotheque-1600x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1402,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1610,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 324.796875,
+        "y": 0,
+        "width": 1275.203125,
+        "height": 860.59375
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "mes-dossiers",
+    "path": "/parcelles",
+    "width": 1600,
+    "height": 900,
+    "filename": "mes-dossiers-1600x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1402,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1610,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 324.796875,
+        "y": 0,
+        "width": 1275.203125,
+        "height": 877.59375
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "analyses",
+    "path": "/analyses",
+    "width": 1600,
+    "height": 900,
+    "filename": "analyses-1600x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1402,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1610,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 324.796875,
+        "y": 0,
+        "width": 1275.203125,
+        "height": 817.578125
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "validation-humaine",
+    "path": "/review",
+    "width": 1600,
+    "height": 900,
+    "filename": "validation-humaine-1600x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1402,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1610,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 324.796875,
+        "y": 0,
+        "width": 1275.203125,
+        "height": 892.59375
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "documents-scientifiques",
+    "path": "/documents",
+    "width": 1600,
+    "height": 900,
+    "filename": "documents-scientifiques-1600x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1402,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1610,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 324.796875,
+        "y": 0,
+        "width": 1275.203125,
+        "height": 887.890625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "accueil",
+    "path": "/",
+    "width": 1440,
+    "height": 900,
+    "filename": "accueil-1440x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1242,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1450,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 292.3125,
+        "y": 0,
+        "width": 1147.6875,
+        "height": 869.390625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "videotheque",
+    "path": "/videos",
+    "width": 1440,
+    "height": 900,
+    "filename": "videotheque-1440x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1242,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1450,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 292.3125,
+        "y": 0,
+        "width": 1147.6875,
+        "height": 846.03125
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "mes-dossiers",
+    "path": "/parcelles",
+    "width": 1440,
+    "height": 900,
+    "filename": "mes-dossiers-1440x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1242,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1450,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 292.3125,
+        "y": 0,
+        "width": 1147.6875,
+        "height": 849.4375
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "analyses",
+    "path": "/analyses",
+    "width": 1440,
+    "height": 900,
+    "filename": "analyses-1440x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1242,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1450,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 292.3125,
+        "y": 0,
+        "width": 1147.6875,
+        "height": 835.578125
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "validation-humaine",
+    "path": "/review",
+    "width": 1440,
+    "height": 900,
+    "filename": "validation-humaine-1440x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1242,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1450,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 292.3125,
+        "y": 0,
+        "width": 1147.6875,
+        "height": 1192.890625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "documents-scientifiques",
+    "path": "/documents",
+    "width": 1440,
+    "height": 900,
+    "filename": "documents-scientifiques-1440x900.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 34,
+        "y": 9,
+        "width": 245,
+        "height": 83.71875
+      },
+      ".sym-header-actions": {
+        "x": 1242,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 900
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 796,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1450,
+        "height": 910
+      },
+      ".sym-main": {
+        "x": 292.3125,
+        "y": 0,
+        "width": 1147.6875,
+        "height": 951.890625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 68,
+        "y": 443.28125,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "accueil",
+    "path": "/",
+    "width": 1280,
+    "height": 800,
+    "filename": "accueil-1280x800.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 15,
+        "y": 15,
+        "width": 220,
+        "height": 75.1875
+      },
+      ".sym-header-actions": {
+        "x": 1082,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 696,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1290,
+        "height": 810
+      },
+      ".sym-main": {
+        "x": 245,
+        "y": 0,
+        "width": 1035,
+        "height": 1046.875
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 41.15625,
+        "y": 390.59375,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "videotheque",
+    "path": "/videos",
+    "width": 1280,
+    "height": 800,
+    "filename": "videotheque-1280x800.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 15,
+        "y": 15,
+        "width": 220,
+        "height": 75.1875
+      },
+      ".sym-header-actions": {
+        "x": 1082,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 696,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1290,
+        "height": 810
+      },
+      ".sym-main": {
+        "x": 245,
+        "y": 0,
+        "width": 1035,
+        "height": 1284.34375
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 41.15625,
+        "y": 390.59375,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "mes-dossiers",
+    "path": "/parcelles",
+    "width": 1280,
+    "height": 800,
+    "filename": "mes-dossiers-1280x800.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 15,
+        "y": 15,
+        "width": 220,
+        "height": 75.1875
+      },
+      ".sym-header-actions": {
+        "x": 1082,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 696,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1290,
+        "height": 810
+      },
+      ".sym-main": {
+        "x": 245,
+        "y": 0,
+        "width": 1035,
+        "height": 1273.5625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 41.15625,
+        "y": 390.59375,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "analyses",
+    "path": "/analyses",
+    "width": 1280,
+    "height": 800,
+    "filename": "analyses-1280x800.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 15,
+        "y": 15,
+        "width": 220,
+        "height": 75.1875
+      },
+      ".sym-header-actions": {
+        "x": 1082,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 696,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1290,
+        "height": 810
+      },
+      ".sym-main": {
+        "x": 245,
+        "y": 0,
+        "width": 1035,
+        "height": 828.78125
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 41.15625,
+        "y": 390.59375,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "validation-humaine",
+    "path": "/review",
+    "width": 1280,
+    "height": 800,
+    "filename": "validation-humaine-1280x800.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 15,
+        "y": 15,
+        "width": 220,
+        "height": 75.1875
+      },
+      ".sym-header-actions": {
+        "x": 1082,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 696,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1290,
+        "height": 810
+      },
+      ".sym-main": {
+        "x": 245,
+        "y": 0,
+        "width": 1035,
+        "height": 1206.890625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 41.15625,
+        "y": 390.59375,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "documents-scientifiques",
+    "path": "/documents",
+    "width": 1280,
+    "height": 800,
+    "filename": "documents-scientifiques-1280x800.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 15,
+        "y": 15,
+        "width": 220,
+        "height": 75.1875
+      },
+      ".sym-header-actions": {
+        "x": 1082,
+        "y": 15,
+        "width": 170,
+        "height": 46
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-wheel-arc": {
+        "x": 0,
+        "y": 0,
+        "width": 250,
+        "height": 800
+      },
+      ".sym-settings": {
+        "x": 42,
+        "y": 696,
+        "width": 62,
+        "height": 62
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 1290,
+        "height": 810
+      },
+      ".sym-main": {
+        "x": 245,
+        "y": 0,
+        "width": 1035,
+        "height": 952.140625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 41.15625,
+        "y": 390.59375,
+        "width": 186,
+        "height": 62
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "accueil",
+    "path": "/",
+    "width": 390,
+    "height": 844,
+    "filename": "accueil-390x844.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 4,
+        "y": 5,
+        "width": 180,
+        "height": 61.515625
+      },
+      ".sym-header-actions": {
+        "x": 265,
+        "y": 22,
+        "width": 113,
+        "height": 33
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 70,
+        "width": 105,
+        "height": 590
+      },
+      ".sym-wheel-arc": {
+        "x": -18,
+        "y": 70,
+        "width": 155,
+        "height": 590
+      },
+      ".sym-settings": {
+        "x": 30,
+        "y": 778,
+        "width": 44,
+        "height": 44
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 400,
+        "height": 854
+      },
+      ".sym-main": {
+        "x": 105,
+        "y": 0,
+        "width": 285,
+        "height": 2161.5
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 13.34375,
+        "y": 343.921875,
+        "width": 86,
+        "height": 74
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "videotheque",
+    "path": "/videos",
+    "width": 390,
+    "height": 844,
+    "filename": "videotheque-390x844.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 4,
+        "y": 5,
+        "width": 180,
+        "height": 61.515625
+      },
+      ".sym-header-actions": {
+        "x": 265,
+        "y": 22,
+        "width": 113,
+        "height": 33
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 70,
+        "width": 105,
+        "height": 590
+      },
+      ".sym-wheel-arc": {
+        "x": -18,
+        "y": 70,
+        "width": 155,
+        "height": 590
+      },
+      ".sym-settings": {
+        "x": 30,
+        "y": 778,
+        "width": 44,
+        "height": 44
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 400,
+        "height": 854
+      },
+      ".sym-main": {
+        "x": 105,
+        "y": 0,
+        "width": 285,
+        "height": 2231.75
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 13.34375,
+        "y": 343.921875,
+        "width": 86,
+        "height": 74
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "mes-dossiers",
+    "path": "/parcelles",
+    "width": 390,
+    "height": 844,
+    "filename": "mes-dossiers-390x844.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 4,
+        "y": 5,
+        "width": 180,
+        "height": 61.515625
+      },
+      ".sym-header-actions": {
+        "x": 265,
+        "y": 22,
+        "width": 113,
+        "height": 33
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 70,
+        "width": 105,
+        "height": 590
+      },
+      ".sym-wheel-arc": {
+        "x": -18,
+        "y": 70,
+        "width": 155,
+        "height": 590
+      },
+      ".sym-settings": {
+        "x": 30,
+        "y": 778,
+        "width": 44,
+        "height": 44
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 400,
+        "height": 854
+      },
+      ".sym-main": {
+        "x": 105,
+        "y": 0,
+        "width": 285,
+        "height": 2027.78125
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 13.34375,
+        "y": 343.921875,
+        "width": 86,
+        "height": 74
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "analyses",
+    "path": "/analyses",
+    "width": 390,
+    "height": 844,
+    "filename": "analyses-390x844.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 4,
+        "y": 5,
+        "width": 180,
+        "height": 61.515625
+      },
+      ".sym-header-actions": {
+        "x": 265,
+        "y": 22,
+        "width": 113,
+        "height": 33
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 70,
+        "width": 105,
+        "height": 590
+      },
+      ".sym-wheel-arc": {
+        "x": -18,
+        "y": 70,
+        "width": 155,
+        "height": 590
+      },
+      ".sym-settings": {
+        "x": 30,
+        "y": 778,
+        "width": 44,
+        "height": 44
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 400,
+        "height": 854
+      },
+      ".sym-main": {
+        "x": 105,
+        "y": 0,
+        "width": 285,
+        "height": 1350.96875
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 13.34375,
+        "y": 343.921875,
+        "width": 86,
+        "height": 74
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "validation-humaine",
+    "path": "/review",
+    "width": 390,
+    "height": 844,
+    "filename": "validation-humaine-390x844.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 4,
+        "y": 5,
+        "width": 180,
+        "height": 61.515625
+      },
+      ".sym-header-actions": {
+        "x": 265,
+        "y": 22,
+        "width": 113,
+        "height": 33
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 70,
+        "width": 105,
+        "height": 590
+      },
+      ".sym-wheel-arc": {
+        "x": -18,
+        "y": 70,
+        "width": 155,
+        "height": 590
+      },
+      ".sym-settings": {
+        "x": 30,
+        "y": 778,
+        "width": 44,
+        "height": 44
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 400,
+        "height": 854
+      },
+      ".sym-main": {
+        "x": 105,
+        "y": 0,
+        "width": 285,
+        "height": 3008.625
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 13.34375,
+        "y": 343.921875,
+        "width": 86,
+        "height": 74
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "documents-scientifiques",
+    "path": "/documents",
+    "width": 390,
+    "height": 844,
+    "filename": "documents-scientifiques-390x844.png",
+    "horizontalOverflow": false,
+    "clipped": [],
+    "shell": {
+      ".sym-brand": {
+        "x": 4,
+        "y": 5,
+        "width": 180,
+        "height": 61.515625
+      },
+      ".sym-header-actions": {
+        "x": 265,
+        "y": 22,
+        "width": 113,
+        "height": 33
+      },
+      ".sym-wheel": {
+        "x": 0,
+        "y": 70,
+        "width": 105,
+        "height": 590
+      },
+      ".sym-wheel-arc": {
+        "x": -18,
+        "y": 70,
+        "width": 155,
+        "height": 590
+      },
+      ".sym-settings": {
+        "x": 30,
+        "y": 778,
+        "width": 44,
+        "height": 44
+      },
+      ".sym-forest": {
+        "x": -5,
+        "y": -5,
+        "width": 400,
+        "height": 854
+      },
+      ".sym-main": {
+        "x": 105,
+        "y": 0,
+        "width": 285,
+        "height": 1354.03125
+      },
+      ".sym-wheel-link.is-active": {
+        "x": 13.34375,
+        "y": 343.921875,
+        "width": 86,
+        "height": 74
+      }
+    },
+    "errors": []
+  }
+]

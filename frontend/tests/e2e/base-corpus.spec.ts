@@ -68,6 +68,7 @@ test("le corpus de base se sélectionne et soumet un véritable choix de source"
     page.getByRole("option", { name: /Export en cours/ }),
   ).toHaveJSProperty("disabled", true);
   await page.getByRole("button", { name: "Démarrer l’entraînement" }).click();
+  await page.getByRole("button", { name: "Confirmer l’action réelle" }).click();
   await expect.poll(() => submitted).toBe(true);
 });
 

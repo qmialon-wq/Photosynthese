@@ -1531,16 +1531,11 @@ details > form {
 
 .auth-shell {
   min-height: 100vh;
+  min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: 24px;
-}
-.auth-card {
-  width: min(100%, 520px);
-}
-.auth-card .brand {
-  color: #214a3a;
-  padding: 0 0 24px;
+  padding: 40px 20px;
+  background: #102b1e url("./assets/auth-forest.png") center / cover no-repeat;
 }
 .account-button {
   border: 1px solid #28614c;

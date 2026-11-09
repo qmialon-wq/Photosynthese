@@ -1,7 +1,28 @@
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { auth, clearSession } from "./auth-state";
 
-export const apiUrl = (path: string): string => `/api${path}`;
+type ApiPolicyResult =
+  | { handled: true; value: unknown }
+  | {
+      handled: false;
+      current?: () => boolean;
+      received?: (value: unknown) => void;
+    };
+export type ApiPolicy = (
+  path: string,
+  options: RequestInit,
+) => Promise<ApiPolicyResult>;
+let policy: ApiPolicy | undefined;
+let resourceUrl: ((path: string) => string | null) | undefined;
+export function configureApi(
+  policyHandler?: ApiPolicy,
+  urlHandler?: (path: string) => string | null,
+) {
+  policy = policyHandler;
+  resourceUrl = urlHandler;
+}
+export const apiUrl = (path: string): string =>
+  resourceUrl?.(path) || `/api${path}`;
 const taskLabels: Record<string, string> = {
   analysis: "Analyse vidéo",
   training: "Entraînement du classificateur",
@@ -28,6 +49,10 @@ export async function api<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const decision = await policy?.(path, options);
+  if (decision?.handled) return decision.value as T;
+  if (options.signal?.aborted || (decision?.current && !decision.current()))
+    throw new DOMException("Source changée", "AbortError");
   const headers = new Headers(options.headers);
   if (
     auth.csrf &&
@@ -41,6 +66,8 @@ export async function api<T>(
     credentials: "same-origin",
     headers,
   });
+  if (decision?.current && !decision.current())
+    throw new DOMException("Source changée", "AbortError");
   if (!response.ok) {
     if (response.status === 401 && auth.user) {
       clearSession();
@@ -57,9 +84,13 @@ export async function api<T>(
     }
     throw new ApiError(message, response.status);
   }
-  return response.status === 204
-    ? (undefined as T)
-    : ((await response.json()) as T);
+  const result = response.status === 204 ? undefined : await response.json();
+  if (decision?.current && !decision.current())
+    throw new Error(
+      "Le mode ou la session a changé. Consultez le suivi avant de relancer l’opération.",
+    );
+  decision?.received?.(result);
+  return result as T;
 }
 export const post = <T>(path: string, body: unknown = {}): Promise<T> =>
   api<T>(path, { method: "POST", body: JSON.stringify(body) });

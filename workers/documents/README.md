@@ -1,4 +1,4 @@
-# Veille scientifique BioSentinelle
+# Veille scientifique Symbiose
 
 Le service découvre des publications réelles dans OpenAlex, Crossref et Europe PMC,
 conserve leurs métadonnées et, sur demande, importe les textes accessibles dont

@@ -132,7 +132,7 @@ function prepared(task: Task) {
         Votre vidéo annotée et votre dossier biodiversité dans un même parcours.
       </p>
     </div>
-    <RouterLink class="button-link secondary" to="/videos"
+    <RouterLink class="button-link secondary" to="/admin/videos"
       >Choisir une vidéo <i class="pi pi-arrow-up-right"
     /></RouterLink>
   </div>
@@ -145,7 +145,16 @@ function prepared(task: Task) {
         @retry="video.refresh"
         ><template v-if="video.data.value"
           ><h2>{{ video.data.value.filename }}</h2>
-          <video
+          <template v-if="video.data.value.metadata.presentation_only"
+            ><img
+              v-if="video.data.value.metadata.poster_url"
+              class="sym-real-preview"
+              :src="video.data.value.metadata.poster_url"
+              :alt="video.data.value.filename"
+            />
+            <p>Image fixe · analyse et détections simulées.</p></template
+          ><video
+            v-else
             class="video-player"
             controls
             preload="metadata"

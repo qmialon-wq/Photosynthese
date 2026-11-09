@@ -1,0 +1,323 @@
+/* Contrôles partagés : chargés une seule fois, indépendamment des routes. */
+.sv-button-quiet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 9px 14px;
+  min-height: 42px;
+  border: var(--sym-border);
+  border-radius: 100px;
+  background: rgb(184 214 164 / 12%);
+  color: var(--sym-text);
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: inset 0 1px rgb(235 255 221 / 12%);
+}
+.sv-button-quiet:hover:not(:disabled) {
+  background: var(--sym-control-hover);
+}
+.sv-page button:disabled {
+  cursor: not-allowed;
+}
+.sv-page .sym-button:disabled {
+  opacity: 0.85;
+}
+.sv-button-quiet:disabled {
+  opacity: 0.55;
+}
+
+.symbiose-shell input[type="checkbox"] {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  padding: 0;
+  border: 1.5px solid #e4eddb;
+  border-radius: 3px;
+  background: rgb(228 246 219 / 5%);
+  cursor: pointer;
+}
+.symbiose-shell input[type="checkbox"]:checked {
+  border-color: #c2f68e;
+  background: #c2f68e;
+}
+.symbiose-shell input[type="checkbox"]:checked::after {
+  content: "";
+  width: 8px;
+  height: 5px;
+  margin-top: -2px;
+  border: solid #21451c;
+  border-width: 0 0 2px 2px;
+  transform: rotate(-45deg);
+}
+.symbiose-shell input[type="checkbox"]:indeterminate {
+  background: #c2f68e;
+  border-color: #c2f68e;
+}
+.symbiose-shell input[type="checkbox"]:indeterminate::after {
+  content: "";
+  width: 8px;
+  height: 2px;
+  background: #21451c;
+}
+.symbiose-shell input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.sv-search,
+.sv-select {
+  position: relative;
+  min-width: 0;
+}
+.sv-search > .sym-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.sv-search input,
+.sv-select select {
+  width: 100%;
+  height: 42px;
+  border: var(--sym-control-border);
+  background: var(--sym-control-bg);
+  color: var(--sym-text);
+  border-radius: 100px;
+  box-shadow: var(--sym-control-reflection);
+  font-size: 14px;
+  font-weight: 400;
+}
+.sv-search input {
+  padding: 9px 18px 9px 43px;
+}
+.sv-search input::placeholder {
+  color: #edf1e7;
+  opacity: 1;
+}
+.sv-select select {
+  appearance: none;
+  padding: 9px 38px 9px 15px;
+  cursor: pointer;
+}
+.sv-select option {
+  color: #f5f8ef;
+  background: var(--sym-surface-solid);
+}
+.sv-select > .sym-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  pointer-events: none;
+}
+.sv-refresh {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: var(--sym-border);
+  border-radius: 50%;
+  color: var(--sym-text);
+  background: rgb(171 202 153 / 13%);
+}
+.sv-refresh:hover {
+  background: var(--sym-control-hover);
+}
+
+.sv-status {
+  position: absolute;
+  right: 9px;
+  bottom: 12px;
+  padding: 6px 9px;
+  font-size: 11px;
+  gap: 4px;
+}
+.sv-status.is-unanalysed {
+  background: var(--sym-neutral-bg);
+  color: var(--sym-neutral-text);
+}
+
+.sv-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 22px;
+  min-height: 36px;
+}
+.sv-pagination > p {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.sv-pagination nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sv-pagination button {
+  min-width: 32px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--sym-text);
+  background: transparent;
+  padding: 5px 9px;
+  font-size: 15px;
+}
+.sv-pagination .sv-page-step {
+  border: var(--sym-border);
+  background: rgb(182 215 161 / 17%);
+  padding: 5px 16px;
+}
+.sv-pagination .sv-page-step:disabled {
+  background: rgb(150 188 139 / 16%);
+  border-color: transparent;
+  opacity: 0.55;
+}
+.sv-page-number.is-current {
+  background: #bef382;
+  color: #16320d;
+  font-weight: 650;
+}
+.sv-pagination button:hover:not(:disabled):not(.is-current) {
+  background: rgb(193 229 163 / 22%);
+}
+.sv-page-gap {
+  font-size: 16px;
+}
+.sv-empty {
+  min-height: 235px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  padding: 30px;
+  text-align: center;
+}
+.sv-empty h2 {
+  font-size: 18px;
+}
+.sv-empty p {
+  color: var(--sym-text-soft);
+  font-size: 14px;
+}
+
+.sv-demo-dialog {
+  width: min(600px, calc(100vw - 32px));
+  max-height: calc(100svh - 40px);
+  padding: 0;
+  border: var(--sym-border);
+  border-radius: 24px;
+  background: #123d2b;
+  color: var(--sym-text);
+  box-shadow: 0 20px 80px rgb(0 20 0 / 50%);
+}
+.sv-demo-dialog::backdrop {
+  background: rgb(0 20 10 / 65%);
+  backdrop-filter: blur(7px);
+}
+.sv-dialog-body {
+  padding: 30px;
+}
+.sv-dialog-close {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  color: white;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(222 247 201 / 9%);
+  z-index: 1;
+}
+.sv-demo-kicker {
+  font-size: 10px;
+  color: #c5eea2;
+  letter-spacing: 1.2px;
+}
+.sv-dialog-body h2 {
+  font-size: 24px;
+  margin: 10px 25px 18px 0;
+}
+.sv-dialog-body p {
+  font-size: 15px;
+  color: var(--sym-text-soft);
+  margin-bottom: 20px;
+}
+.sv-dialog-body button:disabled {
+  opacity: 0.5;
+}
+.sv-demo-file {
+  padding: 17px;
+  border: 1px dashed #8aaa78;
+  border-radius: 14px;
+  margin: 20px 0;
+  color: #f1f8ec;
+  font-size: 14px;
+}
+.sv-demo-file input {
+  padding: 8px 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--sym-text);
+  font-size: 12px;
+}
+.sv-demo-files {
+  max-height: 165px;
+  overflow: auto;
+  list-style: none;
+  padding: 0 12px 0 0;
+  margin-bottom: 22px !important;
+}
+.sv-demo-files li {
+  padding: 7px 0;
+  border-bottom: 1px solid #3a6449;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.sv-demo-photo {
+  width: 100%;
+  height: 250px;
+  border-radius: 15px;
+  margin-bottom: 16px;
+}
+.sv-demo-dialog dl {
+  margin: 0;
+  font-size: 14px;
+}
+.sv-demo-dialog dl > div {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  padding: 7px 0;
+  border-top: 1px solid #3d634b;
+}
+.sv-demo-dialog dt {
+  color: #bdd7ad;
+}
+.sv-demo-dialog dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Variante destructive commune aux confirmations et barres de sélection. */
+.sym-button-danger {
+  color: #fff;
+  border-color: var(--sym-danger-border);
+  background: var(--sym-danger-bg);
+}
+.sym-button-danger:hover:not(:disabled) {
+  background: rgb(166 77 65 / 90%);
+}

@@ -144,7 +144,7 @@ async function activate(model: Model) {
             severity="secondary"
             @click="activate(model)"
           /><RouterLink
-            :to="{ path: '/evaluation', query: { model: model.id } }"
+            :to="{ path: '/admin/evaluation', query: { model: model.id } }"
             >Métriques <i class="pi pi-arrow-up-right"
           /></RouterLink>
         </div>

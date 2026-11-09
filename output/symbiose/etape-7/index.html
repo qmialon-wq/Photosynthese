@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Symbiose — audit graphique, étape 7</title>
+<style>
+  body { margin: 32px auto; padding: 0 24px; max-width: 1400px; font: 16px/1.5 system-ui, sans-serif; background: #073322; color: #f5f8ef; }
+  h1 { font-size: 30px; } h2 { margin-top: 32px; } a { color: #b9ef84; }
+  nav { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; }
+  .comparison { position: relative; overflow: hidden; border: 1px solid #8ba881; border-radius: 12px; }
+  img { display: block; width: 100%; height: auto; }
+  .before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--reveal, 50%)) 0 0); }
+  .comparison::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--reveal, 50%); width: 2px; background: #d5ffb1; }
+  label { display: block; margin: 12px 0 32px; } input { display: block; width: 100%; accent-color: #b9ef84; }
+  input:focus-visible { outline: 2px solid #d5ffb1; outline-offset: 4px; }
+  small { color: #e1ebdf; }
+</style>
+<h1>Symbiose — audit graphique final</h1>
+<p>Six rubriques, un cadre commun. Faites glisser le curseur pour comparer l’état initial (à gauche) et l’état corrigé (à droite), à 1600 × 900.</p>
+<p><strong>Limite :</strong> les maquettes originales n’étaient pas disponibles dans cette session. Cette comparaison montre les corrections appliquées à l’application ; elle ne certifie pas une correspondance pixel par pixel avec les maquettes.</p>
+<p><strong>Vérification :</strong> compilation et 46 tests unitaires réussis ; 46 scénarios navigateur validés (45 lors du passage complet, puis le scénario de connexion après actualisation d’une assertion qui attendait l’ancien titre d’Accueil). Les 36 combinaisons de navigation passent. Les 30 vues mesurées ne présentent aucun débordement horizontal ni erreur navigateur.</p>
+<nav>
+  <a href="final/index.html">30 captures des six pages aux cinq résolutions</a>
+  <a href="final/connexion-1600x900.png">Connexion — desktop</a>
+  <a href="final/connexion-390x844.png">Connexion — mobile</a>
+  <a href="final/verification.json">Mesures et erreurs navigateur</a>
+  <a href="tests-interactions.json">Résultats des tests d’interaction</a>
+  <a href="tests-connexion.json">Recontrôle du scénario de connexion actualisé</a>
+  <a href="transitions.json">36 combinaisons de navigation</a>
+</nav>
+<div id="comparisons"></div>
+<script>
+  const sections = [
+    ["accueil", "Accueil"], ["videotheque", "Vidéothèque"],
+    ["mes-dossiers", "Mes dossiers"], ["analyses", "Analyses"],
+    ["validation-humaine", "Validation humaine"],
+    ["documents-scientifiques", "Documents scientifiques"],
+  ];
+  for (const [slug, name] of sections) {
+    const section = document.createElement("section");
+    section.innerHTML = `<h2>${name}</h2><div class="comparison"><img src="final/${slug}-1600x900.png" alt="${name} après correction" loading="lazy"><img class="before" src="avant/${slug}-1600x900.png" alt="${name} avant correction" loading="lazy"></div><label>Avant / après — ${name}<input type="range" min="0" max="100" value="50" aria-label="Comparaison avant et après : ${name}"></label>`;
+    section.querySelector("input").addEventListener("input", event => {
+      section.querySelector(".comparison").style.setProperty("--reveal", `${event.target.value}%`);
+    });
+    document.querySelector("#comparisons").append(section);
+  }
+</script>
+</html>

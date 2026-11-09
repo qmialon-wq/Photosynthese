@@ -3,6 +3,27 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api, apiUrl, date, message, post, useResource } from "../api";
 import type { Operation, Species, Task, Video } from "../types";
+import VideoCard from "../components/symbiose/VideoCard.vue";
+import { adaptVideo } from "../data/real-provider";
+import { useDataMode } from "../data/data-mode";
+import "../styles/videotheque.css";
+const dataMode = useDataMode();
+const present = (video: Video) => ({
+  ...adaptVideo(video),
+  thumbnail: dataMode.isDemo.value
+    ? dataMode.data.videos.data.find((item) => item.id === video.id)?.thumbnail
+    : undefined,
+});
+function toggleVideo(id: string) {
+  picked.value = picked.value.includes(id)
+    ? picked.value.filter((value) => value !== id)
+    : [...picked.value, id].slice(0, 1000);
+}
+function inspectVideo(video: { id: string }) {
+  preview.value =
+    videos.data.value?.find((item) => item.id === video.id) || null;
+}
+
 const router = useRouter();
 const route = useRoute();
 const search = ref(""),
@@ -122,7 +143,9 @@ async function createCorpus() {
     const corpus = await post<{ id: string }>("/parcels/corpora", {
       video_ids: picked.value,
     });
-    await router.push(`/parcelles/${corpus.id}`);
+    await router.push(
+      dataMode.isDemo.value ? "/parcelles" : `/admin/dossiers/${corpus.id}`,
+    );
   } catch (reason) {
     error.value = message(reason);
   } finally {
@@ -218,7 +241,7 @@ async function prepared(task: Task) {
     );
   } else if (task.result?.video_id)
     void router.push({
-      path: "/analyses",
+      path: "/admin/analyses",
       query: { video: task.result.video_id },
     });
 }
@@ -244,7 +267,10 @@ async function prepared(task: Task) {
   </div>
   <div v-if="busy" class="panel">
     <p role="status">Transfert : {{ progress }} %</p>
-    <PProgressBar :value="progress" /><PButton
+    <PProgressBar
+      :value="progress"
+      aria-label="Progression du transfert vidéo"
+    /><PButton
       label="Annuler le transfert"
       severity="secondary"
       @click="cancelUpload"
@@ -376,50 +402,15 @@ async function prepared(task: Task) {
       @retry="videos.refresh"
     >
       <div class="video-grid">
-        <article
+        <VideoCard
           v-for="video in videos.data.value"
           :key="video.id"
-          class="video-card"
-        >
-          <label class="check-line"
-            ><input
-              v-model="picked"
-              type="checkbox"
-              :value="video.id"
-              :aria-label="`Sélectionner ${video.filename}`"
-              :disabled="picked.length >= 1000 && !picked.includes(video.id)"
-            />
-            Inclure dans le dossier</label
-          >
-          <button
-            class="video-thumbnail"
-            :aria-label="`Prévisualiser ${video.filename}`"
-            @click="preview = video"
-          >
-            <i class="pi pi-play-circle" /><span>Prévisualiser</span>
-          </button>
-          <div class="video-info">
-            <div class="section-head">
-              <StatusBadge :status="video.status" /><small>{{
-                video.metadata.duration_seconds
-                  ? `${Math.round(video.metadata.duration_seconds)} s`
-                  : "Durée non mesurée"
-              }}</small>
-            </div>
-            <h3 :title="video.filename">{{ video.filename }}</h3>
-            <p>
-              <i class="pi pi-globe" />
-              {{ video.species_candidate || "Espèce non identifiée" }}
-              <span class="muted">· provisoire</span>
-            </p>
-            <small>{{ date(video.created_at) }}</small
-            ><RouterLink
-              :to="{ path: '/analyses', query: { video: video.id } }"
-              class="card-link"
-              >Ouvrir l’analyse <i class="pi pi-arrow-right"
-            /></RouterLink>
-          </div>
-        </article>
+          :video="present(video)"
+          :selected="picked.includes(video.id)"
+          @toggle="toggleVideo"
+          @preview="inspectVideo"
+          @details="inspectVideo"
+        />
       </div>
     </LoadState>
     <div class="pagination">
@@ -442,13 +433,25 @@ async function prepared(task: Task) {
     automatiquement à l’import.
   </p>
   <PDialog
+    append-to="self"
     :visible="!!preview"
     :header="preview?.filename"
     modal
     :style="{ width: 'min(960px,95vw)' }"
     @update:visible="preview = null"
+    ><template v-if="preview?.metadata.presentation_only"
+      ><img
+        v-if="preview.metadata.poster_url"
+        class="sym-real-preview"
+        :src="preview.metadata.poster_url"
+        :alt="preview.filename"
+      />
+      <p>
+        Aperçu fixe de démonstration. Aucun fichier vidéo réel n’est importé ni
+        généré.
+      </p></template
     ><video
-      v-if="preview"
+      v-else-if="preview"
       class="video-player"
       controls
       preload="metadata"
@@ -456,11 +459,17 @@ async function prepared(task: Task) {
     >
       <track kind="captions" />
     </video>
+    <RouterLink
+      v-if="preview"
+      class="button-link secondary"
+      :to="{ path: '/admin/analyses', query: { video: preview.id } }"
+      >Configurer l’analyse</RouterLink
+    >
     <p class="muted">
       Si le codec source n’est pas lisible, téléchargez le fichier original.
     </p>
     <a
-      v-if="preview"
+      v-if="preview && !preview.metadata.presentation_only"
       :href="apiUrl(`/console/videos/${preview.id}/file`)"
       download
       >Télécharger la vidéo</a
