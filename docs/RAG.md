@@ -237,8 +237,13 @@ Ces informations restent distinctes des lieux étudiés dans les publications.
 
 `PUT /rag/taxonomy/renards` accepte `cd_nom`, `taxref_version`, `scientific_name`
 et `source_url`. Les identifiants sont fournis explicitement et traçables : aucun
-CD_NOM n'est inventé. Cette étape n'inclut ni import automatique TAXREF, ni connecteur
+CD_NOM n'est inventé. Cette route TAXREF n'inclut ni import automatique TAXREF, ni connecteur
 de données territoriales, ni validation distante des identifiants fournis.
+
+L’[analyse territoriale IGN/ERC](TERRITORIAL_CONTEXT.md) constitue un parcours
+indépendant : faits cartographiques déterministes, interventions et observations
+humaines figées, puis recherche lexicale facultative dans les sources admissibles.
+Elle ne dépend ni des embeddings ni de la génération de ce rapport.
 
 ## Embeddings et recherche
 

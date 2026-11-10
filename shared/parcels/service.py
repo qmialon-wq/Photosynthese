@@ -13,9 +13,11 @@ from shared.review.database import ReviewError, jsonb, transaction
 
 
 def options() -> dict[str, Any]:
-    from .schemas import LAND_TYPES, PROJECT_TYPES
+    from .schemas import INTERVENTIONS, LAND_TYPES, PROJECT_TYPES
 
-    return {"land_types": LAND_TYPES, "project_types": PROJECT_TYPES}
+    return {
+        "land_types": LAND_TYPES, "project_types": PROJECT_TYPES, "interventions": INTERVENTIONS
+    }
 
 
 def profile(video_id: str) -> dict[str, Any] | None:
@@ -29,12 +31,12 @@ def profile(video_id: str) -> dict[str, Any] | None:
 
 def save(video_id: str, body: Profile, actor: str) -> dict[str, Any]:
     console.video(video_id)
-    data = body.model_dump(exclude={"expected_revision"})
     with transaction(write=True) as connection:
         previous = connection.execute(
             "SELECT * FROM parcel_profiles WHERE video_id=%s ORDER BY revision DESC LIMIT 1",
             (video_id,),
         ).fetchone()
+        data = body.persisted(previous["profile"] if previous else None)
         revision = previous["revision"] if previous else 0
         if previous and actor_scope() and previous["actor"] != actor_scope():
             raise ReviewError("Créez un dossier de parcelle depuis votre groupe de vidéos", 409)

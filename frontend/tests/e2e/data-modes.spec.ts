@@ -132,6 +132,12 @@ async function apiFixture(
       "/review/species": [{ name: "renard" }],
       "/parcels/corpora": options.empty ? [] : [corpus],
       "/parcels/corpora/recorded-corpus": detail,
+      "/parcels/corpora/recorded-corpus/territorial-context": {
+        location: null,
+        profile: detail.profile.profile,
+        profile_revision: 0,
+        query: null,
+      },
       "/parcels/options": { land_types: {}, project_types: {} },
       "/documents": options.empty ? [] : [document],
       "/console/tasks/recorded-analysis/artifacts/report": {

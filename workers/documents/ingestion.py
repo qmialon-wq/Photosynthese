@@ -425,6 +425,14 @@ class Ingestor:
         }
 
     def perform(self, kind: str, request: dict[str, Any], actor: str) -> dict[str, Any]:
+        if kind == "territorial_evidence":
+            from .territorial_evidence import enrich
+
+            return enrich(request["query_id"])
+        if kind == "territorial":
+            from .territorial import build
+
+            return build(request["query_id"])
         if kind == "rag":
             from .rag import perform
 

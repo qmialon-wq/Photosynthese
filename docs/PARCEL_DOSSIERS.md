@@ -10,6 +10,12 @@ existent. Les rubriques d’audit permettent de lire les éléments de preuve,
 la couverture et toutes les sorties JSON, avec export texte, HTML imprimable
 et JSON. Consulter un dossier ne relance pas sa génération.
 
+L’[analyse préliminaire du projet](TERRITORIAL_CONTEXT.md) permet au propriétaire
+d’enregistrer séparément le point et les interventions, puis de consulter IGN.
+Elle n’attend pas la génération du rapport. Le formulaire historique conserve
+son affichage en lecture seule sur cette page ; ses autres champs ne sont pas
+débloqués par les nouveaux éditeurs.
+
 Pour les anciens dossiers individuels, le lien **Lire le dossier et les
 recommandations de cette vidéo** est accessible depuis une analyse réelle
 ou la fenêtre d’informations d’une vidéo. Les dossiers de parcelle et de vidéo

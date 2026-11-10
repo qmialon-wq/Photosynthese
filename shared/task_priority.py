@@ -42,7 +42,7 @@ def priority(role: str, kind: str, request: dict[str, Any]) -> int:
         return 1 if kind in (*TRAINING_KINDS, "train_classifier", "evaluate_classifier") else 0
     if kind == "translate":
         return 3
-    if kind == "import" or (
+    if kind in ("import", "territorial") or (
         kind == "rag"
         and request.get("action")
         in (
@@ -63,7 +63,7 @@ def priority_sql(role: str, alias: str = "t") -> str:
         return f"CASE WHEN {alias}.kind IN ({kinds}) THEN 1 ELSE 0 END"
     return (
         f"CASE WHEN {alias}.kind='translate' THEN 3 "
-        f"WHEN {alias}.kind='import' OR ({alias}.kind='rag' AND "
+        f"WHEN {alias}.kind IN ('import','territorial') OR ({alias}.kind='rag' AND "
         f"{alias}.request->>'action' IN ('parcel','report','search','result')) THEN 0 ELSE 2 END"
     )
 

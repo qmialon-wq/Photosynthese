@@ -6,7 +6,9 @@ from fastapi import Request
 
 @pytest.fixture(autouse=True)
 def legacy_test_principal(request, monkeypatch):
-    if request.node.path.name == "test_authentication.py":
+    if request.node.path.name in {
+        "test_authentication.py", "test_territorial.py", "test_territorial_live.py"
+    }:
         yield
         return
     from app.main import app

@@ -104,7 +104,10 @@ def client_access(
             for identifier in body.get("task_ids", []):
                 owned(c, "console_tasks", "id::text", identifier, actor)
             return
-        if match := re.fullmatch(r"/parcels/corpora/([^/]+)(?:/(?:profile|dossiers))?", path):
+        if match := re.fullmatch(
+            r"/parcels/corpora/([^/]+)(?:/(?:profile|dossiers|location|territorial-queries|"
+            r"territorial-context(?:/export)?))?", path
+        ):
             owned(c, "parcel_corpora", "id::text", match[1], actor)
             return
         if match := re.fullmatch(r"/parcels/videos/([^/]+)(?:/dossiers)?", path):

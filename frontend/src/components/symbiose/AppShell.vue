@@ -224,7 +224,9 @@ function closePanel() {
       <span class="sym-demo-note">{{
         dataMode.isDemo.value
           ? "Mode démonstration · données fictives"
-          : "Données réelles · lecture seule"
+          : route.path.startsWith("/parcelles/")
+            ? "Données réelles · dossier territorial"
+            : "Données réelles · lecture seule"
       }}</span>
     </div>
   </div>
