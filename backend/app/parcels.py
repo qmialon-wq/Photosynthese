@@ -7,8 +7,9 @@ from pydantic import Field
 
 from app.review import Actor
 from shared.documents.schemas import Body
-from shared.parcels import corpora, service
-from shared.parcels.schemas import CorpusCreate, CorpusRequest, Profile
+from shared.parcels import corpora, service, territorial
+from shared.parcels.schemas import CorpusCreate, CorpusRequest, InterventionsUpdate, Profile
+from shared.parcels.territorial_schemas import Location, TerritorialRequest
 from shared.review.database import ReviewError, transaction
 
 router = APIRouter(prefix="/parcels", tags=["parcel-projects"])
@@ -54,7 +55,9 @@ def corpus(identifier: UUID) -> dict[str, Any]:
 
 
 @router.put("/corpora/{identifier}/profile")
-def corpus_profile(identifier: UUID, body: Profile, actor: Actor) -> dict[str, Any]:
+def corpus_profile(
+    identifier: UUID, body: Profile | InterventionsUpdate, actor: Actor
+) -> dict[str, Any]:
     return corpora.save(str(identifier), body, actor)
 
 
@@ -117,4 +120,34 @@ def export(identifier: UUID, format: str = "text") -> Response:
             "Content-Disposition": f'attachment; filename="dossier-parcelle-{identifier}.{suffix}"',
             "X-Content-Type-Options": "nosniff",
         },
+    )
+
+
+@router.put("/corpora/{identifier}/location")
+def corpus_location(identifier: UUID, body: Location, actor: Actor) -> dict[str, Any]:
+    return territorial.save_location(str(identifier), body, actor)
+
+
+@router.post("/corpora/{identifier}/territorial-queries", status_code=202)
+def territorial_query(identifier: UUID, body: TerritorialRequest, actor: Actor) -> dict[str, Any]:
+    return territorial.request(str(identifier), body, actor)
+
+
+@router.get("/corpora/{identifier}/territorial-context")
+def territorial_context(identifier: UUID, revision: int | None = None) -> dict[str, Any]:
+    return territorial.context(str(identifier), revision)
+
+
+@router.get("/corpora/{identifier}/territorial-context/export")
+def territorial_export(identifier: UUID, revision: int | None = None) -> Response:
+    import json
+
+    row = territorial.context(str(identifier), revision, include_archives=True)["query"]
+    if not row or not row["result"]:
+        raise ReviewError("Analyse territoriale encore indisponible", 409)
+    return Response(
+        json.dumps(row, ensure_ascii=False, indent=2, default=str),
+        media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="territoire-{identifier}.json"',
+                 "X-Content-Type-Options": "nosniff"},
     )

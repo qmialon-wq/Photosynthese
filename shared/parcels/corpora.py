@@ -7,7 +7,7 @@ from shared import console
 from shared.access import actor_scope
 from shared.analysis_settings import AnalysisOptions
 from shared.parcels import service
-from shared.parcels.schemas import Profile
+from shared.parcels.schemas import InterventionsUpdate, Profile
 from shared.review.database import ReviewError, jsonb, transaction
 
 
@@ -79,15 +79,15 @@ def read(identifier: str) -> dict[str, Any]:
     }
 
 
-def save(identifier: str, body: Profile, actor: str) -> dict[str, Any]:
+def save(identifier: str, body: Profile | InterventionsUpdate, actor: str) -> dict[str, Any]:
     read(identifier)
-    data = body.model_dump(exclude={"expected_revision"})
     with transaction(write=True) as connection:
         current = connection.execute(
             """SELECT * FROM parcel_corpus_profiles
             WHERE corpus_id=%s ORDER BY revision DESC LIMIT 1""",
             (identifier,),
         ).fetchone()
+        data = body.persisted(current["profile"] if current else None)
         revision = current["revision"] if current else 0
         if revision != body.expected_revision:
             raise ReviewError("La parcelle a été modifiée ailleurs. Rechargez le formulaire.", 409)
@@ -127,13 +127,21 @@ def _analysis(connection: Any, video_id: str, actor: str) -> str:
 
 def request(identifier: str, revision: int, actor: str) -> dict[str, Any]:
     corpus = read(identifier)
+    from pydantic import ValidationError
+
     with transaction(write=True) as connection:
-        if not connection.execute(
-            """SELECT 1 FROM parcel_corpus_profiles
-            WHERE corpus_id=%s AND revision=%s""",
+        selected_profile = connection.execute(
+            "SELECT profile FROM parcel_corpus_profiles WHERE corpus_id=%s AND revision=%s",
             (identifier, revision),
-        ).fetchone():
+        ).fetchone()
+        if not selected_profile:
             raise ReviewError("Version du formulaire inconnue", 422)
+        try:
+            Profile.model_validate(selected_profile["profile"])
+        except ValidationError as exc:
+            raise ReviewError(
+                "Complétez le formulaire historique avant le dossier scientifique", 422
+            ) from exc
         existing = connection.execute(
             """SELECT id FROM parcel_dossiers d WHERE corpus_id=%s
             AND profile_revision=%s AND status IN ('waiting_analysis','queued')

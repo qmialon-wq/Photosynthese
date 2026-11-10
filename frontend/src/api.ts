@@ -104,7 +104,11 @@ export const date = (value: string): string =>
     timeStyle: "short",
   }).format(new Date(value));
 
-export function useResource<T>(url: () => string | null, interval = 0) {
+export function useResource<T>(
+  url: () => string | null,
+  interval = 0,
+  scope: () => string = () => "",
+) {
   const data = ref<T | null>(null);
   const loading = ref(false);
   const error = ref("");
@@ -112,6 +116,7 @@ export function useResource<T>(url: () => string | null, interval = 0) {
   let timer: ReturnType<typeof setInterval> | undefined;
   let disposed = false;
   async function refresh(): Promise<void> {
+    if (disposed) return;
     const path = url();
     if (!path || loading.value) return;
     const current = new AbortController();
@@ -128,7 +133,13 @@ export function useResource<T>(url: () => string | null, interval = 0) {
       if (!disposed && controller === current) loading.value = false;
     }
   }
-  watch(url, () => {
+  async function reload(): Promise<void> {
+    controller?.abort();
+    controller = null;
+    loading.value = false;
+    await refresh();
+  }
+  watch([url, scope], () => {
     controller?.abort();
     loading.value = false;
     data.value = null;
@@ -146,5 +157,5 @@ export function useResource<T>(url: () => string | null, interval = 0) {
     controller?.abort();
     if (timer) clearInterval(timer);
   });
-  return { data, loading, error, refresh };
+  return { data, loading, error, refresh, reload };
 }

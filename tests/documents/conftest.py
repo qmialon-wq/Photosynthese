@@ -16,6 +16,7 @@ def document_db(monkeypatch, tmp_path):
     schema = "test_documents_" + uuid4().hex
     kwargs = {
         "host": os.getenv("POSTGRES_HOST", "postgres"),
+        "port": int(os.getenv("POSTGRES_PORT", "5432")),
         "dbname": os.getenv("POSTGRES_DB", "biosentinelle"),
         "user": os.getenv("POSTGRES_USER", "biosentinelle"),
         "password": os.getenv("POSTGRES_PASSWORD", "biosentinelle_local"),

@@ -50,7 +50,9 @@ def read(connection, task_id):
         "chunks_read": sum(documents.values()),
         "pages_done": pages,
         "pages_total": 4,
-        "current_document": state.get("current_document") or (current["title"] if current else None),
+        "current_document": state.get("current_document") or (
+            current["title"] if current else None
+        ),
         "detailed_tracking": bool(state.get("detailed_tracking")),
         "current_document_chunks_read": documents.get(last_document, 0),
         "started_at": task["started_at"],

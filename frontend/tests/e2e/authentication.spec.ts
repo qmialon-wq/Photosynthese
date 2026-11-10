@@ -64,14 +64,14 @@ test("inscription client, profil, navigation protégée et déconnexion", async 
   ).toEqual([]);
   await page.getByRole("button", { name: "Créer un compte client" }).click();
   await expect(
-    page.getByRole("heading", { name: "Vos observations, simplement." }),
+    page.getByRole("heading", { name: "Accueil Symbiose" }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Administration", exact: true }),
   ).toHaveCount(0);
   await page.goto("/admin/utilisateurs");
   await expect(page).toHaveURL(/\/$/);
-  await page.getByRole("link", { name: "Mon profil" }).click();
+  await page.goto("/profil");
   await expect(page.getByLabel("Nom du profil")).toHaveValue("Camille");
   await expect(
     page.getByRole("link", { name: "Télécharger mes données (JSON)" }),
@@ -134,7 +134,7 @@ test("initialisation et confirmation de suppression du profil", async ({
     .getByLabel("Confirmer le mot de passe")
     .fill("phrase-de-passe-test");
   await page.getByRole("button", { name: "Premier administrateur" }).click();
-  await page.getByRole("link", { name: "Mon profil" }).click();
+  await page.goto("/profil");
   await page
     .getByLabel("Mot de passe actuel", { exact: true })
     .last()

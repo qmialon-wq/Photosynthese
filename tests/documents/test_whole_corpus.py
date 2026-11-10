@@ -54,7 +54,9 @@ def test_dossiers_have_priority_over_queued_translations(document_db, monkeypatc
     assert runtime.execute_priority_report(document_db)
     assert executed == [report["id"]]
     with service.transaction() as connection:
-        connection.execute("UPDATE document_tasks SET status='running' WHERE id=%s", (report["id"],))
+        connection.execute(
+            "UPDATE document_tasks SET status='running' WHERE id=%s", (report["id"],)
+        )
     assert runtime.execute_priority_report(document_db)
     assert executed == [report["id"], report["id"]]
 
@@ -152,7 +154,18 @@ def test_dossier_generation_and_four_page_export_use_whole_linked_corpus(
         ],
     )
     monkeypatch.setenv("BIOSENTINELLE_RAG_GENERATION_ENABLED", "true")
-    monkeypatch.setattr(synthesis, "Generator", lambda settings: FakeGenerator())
+    class FixtureGenerator(FakeGenerator):
+        def __init__(self, settings, log=None):
+            super().__init__()
+            self.settings = settings
+            self.log = log
+
+        def session(self):
+            from contextlib import nullcontext
+
+            return nullcontext()
+
+    monkeypatch.setattr(synthesis, "Generator", FixtureGenerator)
     with TestClient(app) as client:
         save_profile(client, video)
         job = client.post(

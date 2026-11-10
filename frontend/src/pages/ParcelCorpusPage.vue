@@ -9,6 +9,9 @@ import DossierProgressView from "../components/DossierProgress.vue";
 import type { DossierProgress } from "../dossier-progress";
 import type { TerritorialReport } from "../territorial";
 import VideoThumbnail from "../components/VideoThumbnail.vue";
+import TerritorialContextView from "../components/TerritorialContext.vue";
+import { useDataMode } from "../data/data-mode";
+import { auth } from "../auth-state";
 import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import "../styles/dossier-reader.css";
 
@@ -55,6 +58,7 @@ interface Result {
   videos: Array<Video & { annotated_video_url: string }>;
 }
 interface Corpus {
+  actor: string;
   id: string;
   videos: Video[];
   profile: { revision: number; profile: Profile } | null;
@@ -71,18 +75,31 @@ interface Corpus {
   } | null;
 }
 const route = useRoute();
+const dataMode = useDataMode();
+const source = computed(() => dataMode.sourceId.value);
+const canLoad = computed(
+  () =>
+    !!auth.user &&
+    (dataMode.isReal.value ||
+      (auth.user.role === "admin" && route.path.startsWith("/admin/"))),
+);
 const id = computed(() => String(route.params.id || ""));
 const corpora = useResource<
   Array<{ id: string; video_count: number; created_at: string }>
->(() => (!id.value ? "/parcels/corpora" : null), 6000);
+>(
+  () => (canLoad.value && !id.value ? "/parcels/corpora" : null),
+  6000,
+  () => source.value,
+);
 const corpus = useResource<Corpus>(
-  () => (id.value ? `/parcels/corpora/${id.value}` : null),
+  () => (canLoad.value && id.value ? `/parcels/corpora/${id.value}` : null),
   4000,
+  () => source.value,
 );
 const options = useResource<{
   land_types: Record<string, string>;
   project_types: Record<string, string>;
-}>(() => "/parcels/options");
+}>(() => (canLoad.value ? "/parcels/options" : null));
 const blank = (): Profile => ({
   area_m2: null,
   land_type: "",
@@ -100,7 +117,7 @@ const dossier = computed(() => corpus.data.value?.dossier);
 const sourceArticles = computed(() =>
   sourceIndex(dossier.value?.result?.sources ?? []),
 );
-watch(id, () => {
+watch([id, source], () => {
   initialized.value = false;
   dirty.value = false;
   revision.value = 0;
@@ -125,11 +142,13 @@ const pending = computed(() =>
   ),
 );
 async function prepare() {
+  const capturedId = id.value,
+    capturedSource = source.value;
   busy.value = true;
   error.value = "";
   try {
     const saved = await api<{ revision: number }>(
-      `/parcels/corpora/${id.value}/profile`,
+      `/parcels/corpora/${capturedId}/profile`,
       {
         method: "PUT",
         body: JSON.stringify({
@@ -138,14 +157,16 @@ async function prepare() {
         }),
       },
     );
+    if (id.value !== capturedId || source.value !== capturedSource) return;
     revision.value = saved.revision;
     dirty.value = false;
-    await post(`/parcels/corpora/${id.value}/dossiers`, {
+    await post(`/parcels/corpora/${capturedId}/dossiers`, {
       profile_revision: saved.revision,
     });
     await corpus.refresh();
   } catch (reason) {
-    error.value = message(reason);
+    if (id.value === capturedId && source.value === capturedSource)
+      error.value = message(reason);
   } finally {
     busy.value = false;
   }
@@ -181,7 +202,12 @@ const labels: Record<string, string> = {
         >Choisir ou importer des vidéos</RouterLink
       >
     </div>
-    <template v-if="!id"
+    <p v-if="!canLoad" class="notice">
+      Mode démonstration : ouvrez un dossier en données réelles pour consulter
+      IGN. Aucune requête territoriale n’est envoyée avec un identifiant de
+      démonstration.
+    </p>
+    <template v-else-if="!id"
       ><LoadState
         :loading="corpora.loading.value && !corpora.data.value"
         :error="corpora.error.value"
@@ -207,6 +233,11 @@ const labels: Record<string, string> = {
       @retry="corpus.refresh"
     >
       <template v-if="corpus.data.value">
+        <TerritorialContextView
+          :key="source + ':' + id"
+          :corpus-id="id"
+          :owner="corpus.data.value.actor"
+        />
         <section class="panel">
           <h2>1. Vos {{ corpus.data.value.videos.length }} vidéos</h2>
           <p>
