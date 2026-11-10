@@ -226,7 +226,7 @@ test("B — les six rubriques lisent exclusivement les réponses réelles et dé
   await expect(page.locator(".sv-video-card")).toContainText(video.filename);
   await expect(
     page.getByRole("button", { name: "Importer des vidéos", exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(page.locator(".sv-thumbnail")).toHaveClass(
     /sym-thumbnail-empty/,
   );

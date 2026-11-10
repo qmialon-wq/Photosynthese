@@ -11,10 +11,35 @@ from tests.test_territorial_contracts import PROFILE
 pytestmark = pytest.mark.integration
 
 
+def test_client_can_save_a_draft_complete_it_and_keep_ownership(parcel):
+    alice, bob, path = parcel
+    draft = {
+        "area_m2": None,
+        "land_type": "",
+        "project_type": "",
+        "locality": "Saisie manuelle",
+        "interventions": ["fencing"],
+        "expected_revision": 0,
+    }
+    saved = alice.put(path + "/profile", json=draft)
+    assert saved.status_code == 200, saved.text
+    assert saved.json()["revision"] == 1
+    assert alice.post(path + "/dossiers", json={"profile_revision": 1}).status_code == 422
+    complete = {**draft, **PROFILE, "expected_revision": 1}
+    assert bob.put(path + "/profile", json=complete).status_code == 404
+    saved = alice.put(path + "/profile", json=complete)
+    assert saved.status_code == 200, saved.text
+    assert saved.json()["revision"] == 2
+    restored = alice.get(path).json()["profile"]["profile"]
+    assert restored["area_m2"] == 1000 and restored["interventions"] == ["fencing"]
+
+
 @pytest.fixture(autouse=True)
 def mock_dreal(monkeypatch):
     """Integration tests never contact external services."""
-    from workers.documents import dreal
+    from workers.documents import dreal, parcel_prefill
+
+    monkeypatch.setattr(parcel_prefill, "collect", lambda _: {"values": {}, "sources": {}})
 
     monkeypatch.setattr(
         dreal,
@@ -90,8 +115,14 @@ def test_persistence_conflicts_and_real_session_permissions(parcel):
 
 def test_queries_export_obsolescence_and_worker_resume(parcel, document_db, monkeypatch):
     alice, bob, path = parcel
-    from workers.documents import ign
+    from workers.documents import ign, parcel_prefill
     from workers.documents.runtime import execute
+
+    monkeypatch.setattr(
+        parcel_prefill,
+        "collect",
+        lambda _: {"values": {"locality": "Commune proposée", "area_m2": 1500}, "sources": {}},
+    )
 
     alice.put(path + "/profile", json={**PROFILE, "interventions": ["earthworks"]})
     alice.put(
@@ -136,6 +167,10 @@ def test_queries_export_obsolescence_and_worker_resume(parcel, document_db, monk
     assert execute(task, document_db)  # Idempotent completion.
     result = alice.get(path + "/territorial-context").json()["query"]
     assert result["status"] == "complete" and not result["obsolete"]
+    assert result["prefill"]["values"]["area_m2"] == 1500
+    assert "_prefill" not in result["layers"]
+    # Suggestions are available but the declaration is never overwritten by the worker.
+    assert alice.get(path).json()["profile"]["profile"]["area_m2"] == PROFILE["area_m2"]
     exported = alice.get(path + "/territorial-context/export").json()
     assert exported["inputs"]["profile"]["interventions"] == ["earthworks"]
     (design,) = exported["result"]["design_proposals"]
@@ -177,7 +212,9 @@ def test_dreal_checkpoint_resume_export_and_permissions(parcel, document_db, mon
     query_id = created.json()["id"]
     layers = {
         name: {
-            "status": "empty", "features": [], "source_url": ign.BASE + name,
+            "status": "empty",
+            "features": [],
+            "source_url": ign.BASE + name,
             "retrieved_at": "2026-11-10T12:00:00Z",
         }
         for name in ign.LAYERS
@@ -185,11 +222,15 @@ def test_dreal_checkpoint_resume_export_and_permissions(parcel, document_db, mon
     monkeypatch.setattr(ign, "collect", lambda location, completed, persist: layers)
     archive = '{"type":"FeatureCollection","features":[{"id":"wetland-1"}]}'
     wetland = {
-        "status": "success", "nature": "inventoried",
+        "status": "success",
+        "nature": "inventoried",
         "features": [{"source_id": "wetland-1", "properties": {"qualite": "fixture"}}],
-        "source_url": "https://example.test/dreal", "retrieved_at": "2026-11-10T12:00:00Z",
-        "projection": "EPSG:4326", "parameters": {"latitude": 49.18},
-        "sha256": "a" * 64, "raw_response": archive,
+        "source_url": "https://example.test/dreal",
+        "retrieved_at": "2026-11-10T12:00:00Z",
+        "projection": "EPSG:4326",
+        "parameters": {"latitude": 49.18},
+        "sha256": "a" * 64,
+        "raw_response": archive,
     }
     calls = []
 
@@ -200,6 +241,7 @@ def test_dreal_checkpoint_resume_export_and_permissions(parcel, document_db, mon
     monkeypatch.setattr(dreal, "collect", collect)
     # An interruption after the checkpoint must not repeat the DREAL consultation.
     with monkeypatch.context() as interrupted:
+
         def fail(*args, **kwargs):
             raise RuntimeError("interruption after checkpoint")
 

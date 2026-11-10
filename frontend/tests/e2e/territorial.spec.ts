@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 import { readFileSync } from "node:fs";
+import { openDisplaySettings } from "./display-settings";
 
 // Real deterministic engine output with synthetic project inputs and empty map fixtures.
 const designFixture = JSON.parse(
@@ -61,10 +62,8 @@ async function fixture(page: Page, mode = "real") {
     if (path === base + "/profile" && route.request().method() === "PUT") {
       expect(route.request().headers()["x-csrf-token"]).toBe("test");
       const body = route.request().postDataJSON();
-      expect(Object.keys(body).sort()).toEqual([
-        "expected_revision",
-        "interventions",
-      ]);
+      expect(body.area_m2).toBe(saved.area_m2);
+      expect(body.project_type).toBe(saved.project_type);
       expect(body.expected_revision).toBe(revision);
       saved.interventions = body.interventions;
       revision++;
@@ -157,7 +156,7 @@ async function fixture(page: Page, mode = "real") {
   return calls;
 }
 
-test("propriétaire : point, interventions, analyse, export et formulaire historique verrouillé", async ({
+test("propriétaire : point, interventions, analyse, export et formulaire modifiable", async ({
   page,
 }) => {
   await fixture(page);
@@ -165,8 +164,9 @@ test("propriétaire : point, interventions, analyse, export et formulaire histor
   await expect(
     page.getByRole("heading", { name: "Analyse préliminaire du projet" }),
   ).toBeVisible();
-  await expect(page.getByLabel("Surface de la parcelle (m²)")).toHaveCount(0);
-  await expect(page.getByText("2500 m²", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Surface de la parcelle (m²)")).toHaveValue(
+    "2500",
+  );
   await page
     .locator(".territorial-point-map")
     .click({ position: { x: 100, y: 100 } });
@@ -177,11 +177,14 @@ test("propriétaire : point, interventions, analyse, export et formulaire histor
   await page.getByLabel("Latitude WGS84").fill("49.316");
   await page.getByLabel("Longitude WGS84").fill("-1.235");
   await page
-    .getByRole("button", { name: "Enregistrer le point", exact: true })
+    .getByRole("button", {
+      name: "Enregistrer le point et préremplir",
+      exact: true,
+    })
     .click();
   await page.getByLabel("Clôture", { exact: true }).check();
   await page
-    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .getByRole("button", { name: "Enregistrer mes modifications", exact: true })
     .click();
   await page
     .getByRole("button", {
@@ -224,11 +227,10 @@ test("propriétaire : point, interventions, analyse, export et formulaire histor
   });
   await page.reload();
   await expect(page.getByLabel("Clôture", { exact: true })).toBeChecked();
-  await page
-    .getByLabel("Mode de données", { exact: true })
-    .selectOption("demo");
+  // Switching a private dossier back to demo navigates away and removes this panel.
+  await (await openDisplaySettings(page)).selectOption("demo");
   await expect(
-    page.getByText(/Aucune requête territoriale n’est envoyée/),
+    page.getByRole("heading", { name: "Mes dossiers", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText("VÉRIFICATION GÉNÉRALE", { exact: true }),
@@ -254,11 +256,14 @@ test("A/B : adapter les interventions change les alternatives et leur export", a
   await page.getByLabel("Latitude WGS84").fill("49.316");
   await page.getByLabel("Longitude WGS84").fill("-1.235");
   await page
-    .getByRole("button", { name: "Enregistrer le point", exact: true })
+    .getByRole("button", {
+      name: "Enregistrer le point et préremplir",
+      exact: true,
+    })
     .click();
   await page.getByLabel("Éclairage extérieur", { exact: true }).check();
   await page
-    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .getByRole("button", { name: "Enregistrer mes modifications", exact: true })
     .click();
   await page
     .getByRole("button", {
@@ -281,7 +286,7 @@ test("A/B : adapter les interventions change les alternatives et leur export", a
   await expect(options.locator(".design-option")).toHaveCount(3);
   await page.getByLabel("Clôture", { exact: true }).check();
   await page
-    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .getByRole("button", { name: "Enregistrer mes modifications", exact: true })
     .click();
   await expect(
     page.getByRole("alert").filter({ hasText: "Analyse obsolète" }),
@@ -354,7 +359,7 @@ test("A/B : adapter les interventions change les alternatives et leur export", a
   // Removing the initial intervention must remove its alternatives from the new analysis.
   await page.getByLabel("Éclairage extérieur", { exact: true }).uncheck();
   await page
-    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .getByRole("button", { name: "Enregistrer mes modifications", exact: true })
     .click();
   await page
     .getByRole("button", {

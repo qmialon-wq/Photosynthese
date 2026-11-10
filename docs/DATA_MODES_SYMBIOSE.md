@@ -2,7 +2,7 @@
 
 ## Utilisation
 
-Le sélecteur « Mode de données » se trouve dans l’en-tête, avant les commandes du compte. Il propose « Mode démonstration » et « Données réelles ». La première visite démarre en démonstration. Le choix est conservé dans `localStorage`, sous `symbiose:data-mode:v1` ; aucune donnée métier ni aucun jeton n’est enregistré avec cette préférence.
+Le choix de la source se trouve dans **Paramètres → Paramètres d’affichage → Source de données**. La première visite anonyme démarre en démonstration ; une connexion ou inscription réussie active les données réelles. Le choix est conservé dans `localStorage`, sous `symbiose:data-mode:v1` ; aucune donnée métier ni aucun jeton n’est enregistré avec cette préférence.
 
 Le changement de mode conserve l’URL et la rubrique active. Il remplace l’état de la page : sélections, filtres, pagination, modales et simulations en cours sont réinitialisés. La roue reste montée et ne tourne pas lors du basculement. Son composant n’est pas modifié.
 
@@ -26,6 +26,8 @@ La page Connexion conserve son interface et son authentification. Elle n’affic
 Chaque collection expose `loading`, `success`, `empty`, `error` ou `unconnected`. Les valeurs absentes restent nulles ou non renseignées et sont présentées comme « — », « Non disponible » ou un état explicite. `SourceState` est le composant commun d’affichage et de nouvelle tentative.
 
 `DemoDataProvider` construit le scénario local. `RealDataProvider` effectue uniquement des requêtes **GET** à travers le client API existant, avec les cookies et permissions habituels. Il vérifie d’abord `/auth/me`. Une session absente ou un accès refusé ne provoque aucun repli vers des exemples fictifs.
+
+La lecture seule de cet adaptateur n’interdit pas les actions métier : la vidéothèque cliente envoie les imports réels et crée les dossiers avec le même client API, puis les formulaires enregistrent profils et coordonnées. `capabilities.write` est disponible pour tout compte connecté en mode réel, administrateur ou client. Les contrôles de propriété et CSRF restent appliqués par le serveur.
 
 Les snapshots sont remplacés au changement de mode et de compte. Les requêtes et rapports en cours sont annulés via `AbortController` ; une génération protège aussi contre les réponses tardives, même si un transport ne respecte pas l’annulation. Il n’y a pas de cache persistant de données métier. Les mutations locales sont refusées par le contexte hors démonstration.
 
@@ -58,11 +60,11 @@ Les captures `api-test-*` illustrent les adaptateurs avec des réponses API inte
 
 ## Fonctionnalités restant hors connexion dans les six écrans
 
-- Lancement d’une analyse, import, création de dossier, validation, suppression et collecte documentaire : les services existent dans le dépôt, mais **aucune écriture réelle n’est branchée dans ces six pages**. Les boutons correspondants sont désactivés en mode réel.
-- Diagnostic écologique global et agrégation des recommandations : aucun indicateur comparable à la démonstration n’est calculé sans source raccordée ; affichage « Non disponible ».
+- L’import de vidéos, la création de dossiers, l’enregistrement de brouillons et la modification du formulaire sont raccordés dans l’espace client. La génération du dossier réutilise les analyses réussies et programme celles qui manquent. Les autres commandes de simulation (analyse isolée depuis l’écran de présentation, validation en lot et collecte documentaire) conservent leurs limitations propres.
+- Le diagnostic écologique global n’est pas calculé ; il est masqué en mode réel. L’accueil reprend les recommandations des dossiers terminés avec leurs liens.
 - Suivi des récupérations documentaires dans le panneau Avancement : explicitement non connecté dans cet écran.
-- Vignettes et paysages : aucun visuel fictif n’est utilisé pour compléter une donnée réelle absente. Une surface neutre est présentée.
-- Depuis l’étape 9, l’administration authentifiée possède un `AdminShell` et un adaptateur local de démonstration. Ses actions fictives restent en mémoire ; ses actions réelles réutilisent les services existants après confirmation. Les garanties de lecture seule des adaptateurs d’observation continuent de porter sur les six rubriques Symbiose. Voir [ADMIN_SYMBIOSE.md](ADMIN_SYMBIOSE.md).
+- Les vignettes réelles utilisent le poster disponible ou une image extraite à mi-durée ; un média illisible conserve un état neutre. Les paysages de démonstration ne remplacent pas des données réelles.
+- L’administration authentifiée possède un `AdminShell` et un adaptateur local de démonstration. Ses actions fictives restent en mémoire ; ses actions réelles réutilisent les services existants après confirmation. Le parcours client reste directement accessible sans passer par l’administration. Voir [ADMIN_SYMBIOSE.md](ADMIN_SYMBIOSE.md).
 
 ## Vérification
 

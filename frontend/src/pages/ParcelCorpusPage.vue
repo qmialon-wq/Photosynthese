@@ -14,6 +14,11 @@ import { useDataMode } from "../data/data-mode";
 import { auth } from "../auth-state";
 import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import "../styles/dossier-reader.css";
+import {
+  interventionLabels,
+  type Intervention,
+  type ParcelPrefill,
+} from "../territorial-context";
 
 defineProps<{ readOnly?: boolean }>();
 
@@ -23,6 +28,7 @@ interface Profile {
   project_type: string;
   locality: string;
   details: string;
+  interventions: Intervention[];
 }
 interface Video {
   video_id: string;
@@ -106,8 +112,31 @@ const blank = (): Profile => ({
   project_type: "",
   locality: "",
   details: "",
+  interventions: [],
 });
 const form = ref<Profile>(blank());
+const territory = ref<InstanceType<typeof TerritorialContextView>>();
+const touched = new Set<string>();
+const automatic = new Map<string, string | number>();
+const prefill = ref<ParcelPrefill | null>(null);
+const savedNotice = ref("");
+function applyPrefill(value: ParcelPrefill) {
+  prefill.value = value;
+  for (const key of ["area_m2", "land_type", "locality"] as const) {
+    const suggestion = value.values[key];
+    if (
+      !touched.has(key) &&
+      (form.value[key] == null ||
+        form.value[key] === "" ||
+        (automatic.has(key) && form.value[key] === automatic.get(key)))
+    ) {
+      Object.assign(form.value, { [key]: suggestion ?? blank()[key] });
+      if (suggestion == null) automatic.delete(key);
+      else automatic.set(key, suggestion);
+      dirty.value = true;
+    }
+  }
+}
 const revision = ref(0),
   initialized = ref(false),
   dirty = ref(false),
@@ -123,13 +152,17 @@ watch([id, source], () => {
   revision.value = 0;
   form.value = blank();
   error.value = "";
+  touched.clear();
+  automatic.clear();
+  prefill.value = null;
+  savedNotice.value = "";
 });
 watch(
   () => corpus.data.value,
   (value) => {
     if (!initialized.value && value) {
       if (value.profile && !dirty.value) {
-        form.value = { ...value.profile.profile };
+        form.value = { ...blank(), ...value.profile.profile };
         revision.value = value.profile.revision;
       }
       initialized.value = true;
@@ -141,7 +174,8 @@ const pending = computed(() =>
     dossier.value?.status || "",
   ),
 );
-async function prepare() {
+async function prepare(generate = true) {
+  if (busy.value || !canLoad.value || (generate && pending.value)) return;
   const capturedId = id.value,
     capturedSource = source.value;
   busy.value = true;
@@ -160,6 +194,13 @@ async function prepare() {
     if (id.value !== capturedId || source.value !== capturedSource) return;
     revision.value = saved.revision;
     dirty.value = false;
+    savedNotice.value = "Modifications enregistrées.";
+    await territory.value?.reload();
+    if (id.value !== capturedId || source.value !== capturedSource) return;
+    if (!generate) {
+      await corpus.reload();
+      return;
+    }
     await post(`/parcels/corpora/${capturedId}/dossiers`, {
       profile_revision: saved.revision,
     });
@@ -234,9 +275,12 @@ const labels: Record<string, string> = {
     >
       <template v-if="corpus.data.value">
         <TerritorialContextView
+          ref="territory"
           :key="source + ':' + id"
           :corpus-id="id"
           :owner="corpus.data.value.actor"
+          :project-controls="false"
+          @prefill="applyPrefill"
         />
         <section class="panel">
           <h2>1. Vos {{ corpus.data.value.videos.length }} vidéos</h2>
@@ -279,6 +323,22 @@ const labels: Record<string, string> = {
         </section>
         <section class="panel">
           <h2>2. Votre parcelle et votre projet</h2>
+          <p>
+            La carte propose les informations disponibles en open data.
+            Vérifiez-les et corrigez librement chaque champ, même si une valeur
+            a déjà été récupérée.
+          </p>
+          <p v-if="prefill" class="notice">
+            {{
+              Object.keys(prefill.values).length
+                ? "Informations disponibles proposées ci-dessous."
+                : "Préremplissage indisponible ou incomplet : saisissez les informations manuellement."
+            }}
+            {{ prefill.notice }}
+            <span v-if="prefill.retrieved_at"
+              >Consultation : {{ date(prefill.retrieved_at) }}.</span
+            >
+          </p>
           <dl v-if="readOnly">
             <dt>Surface</dt>
             <dd>
@@ -310,13 +370,15 @@ const labels: Record<string, string> = {
           <form
             v-else
             class="form-grid"
-            @submit.prevent="prepare"
+            @submit.prevent="prepare(true)"
             @input="dirty = true"
             @change="dirty = true"
           >
             <label
               >Surface de la parcelle (m²)<input
                 v-model.number="form.area_m2"
+                :disabled="busy"
+                @input="touched.add('area_m2')"
                 type="number"
                 min="0.01"
                 max="1000000000"
@@ -324,7 +386,13 @@ const labels: Record<string, string> = {
                 required
             /></label>
             <label
-              >Type de parcelle<select v-model="form.land_type" required>
+              >Type de parcelle<select
+                aria-label="Type de parcelle"
+                v-model="form.land_type"
+                :disabled="busy"
+                required
+                @change="touched.add('land_type')"
+              >
                 <option disabled value="">Choisir le terrain</option>
                 <option
                   v-for="(label, key) in options.data.value?.land_types"
@@ -336,7 +404,12 @@ const labels: Record<string, string> = {
               </select></label
             >
             <label
-              >Projet souhaité<select v-model="form.project_type" required>
+              >Projet souhaité<select
+                v-model="form.project_type"
+                :disabled="busy"
+                aria-label="Projet souhaité"
+                required
+              >
                 <option disabled value="">Choisir votre projet</option>
                 <option
                   v-for="(label, key) in options.data.value?.project_types"
@@ -348,16 +421,32 @@ const labels: Record<string, string> = {
               </select></label
             >
             <label
-              >Commune ou secteur (facultatif)<input
+              >Commune ou secteur (modifiable)<input
                 v-model="form.locality"
+                :disabled="busy"
+                @input="touched.add('locality')"
                 maxlength="200"
                 autocomplete="address-level2"
             /></label>
+            <fieldset :disabled="busy">
+              <legend>Interventions envisagées</legend>
+              <label
+                v-for="(label, code) in interventionLabels"
+                :key="code"
+                class="parcel-intervention"
+                ><input
+                  v-model="form.interventions"
+                  type="checkbox"
+                  :value="code"
+                />{{ label }}</label
+              >
+            </fieldset>
             <details>
               <summary>Préciser le projet (facultatif)</summary>
               <label
                 >Vos précisions<textarea
                   v-model="form.details"
+                  :disabled="busy"
                   maxlength="1000"
                   rows="3"
                 />
@@ -389,6 +478,14 @@ const labels: Record<string, string> = {
                 busy || pending || !initialized || !!options.error.value
               "
             />
+            <PButton
+              type="button"
+              label="Enregistrer mes modifications"
+              :disabled="busy || !initialized"
+              :loading="busy"
+              @click="prepare(false)"
+            />
+            <p v-if="savedNotice" role="status">{{ savedNotice }}</p>
           </form>
         </section>
         <section

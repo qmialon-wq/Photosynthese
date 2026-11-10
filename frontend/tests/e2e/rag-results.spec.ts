@@ -236,7 +236,7 @@ test("ouvre les vrais dossiers et toutes les sorties RAG sans écrire", async ({
   );
   await expect(
     page.getByRole("button", { name: "Actualiser mon dossier" }),
-  ).toHaveCount(0);
+  ).toBeEnabled();
   await page.screenshot({
     path: "test-results/rag-reader.png",
     fullPage: true,

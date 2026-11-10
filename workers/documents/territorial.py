@@ -5,7 +5,7 @@ import logging
 from shared.documents import service as documents
 from shared.parcels.territorial_schemas import Analysis
 from shared.review.database import jsonb, transaction
-from workers.documents import dreal, ign
+from workers.documents import dreal, ign, parcel_prefill
 
 
 def build(identifier: str) -> dict:
@@ -14,7 +14,10 @@ def build(identifier: str) -> dict:
     if not row:
         raise ValueError("Consultation territoriale inconnue")
     if row["result"]:
-        return {"query_id": identifier, "status": ign.status(row["layers"])}
+        return {
+            "query_id": identifier,
+            "status": ign.status({k: v for k, v in row["layers"].items() if k in ign.LAYERS}),
+        }
 
     def persist(layers):
         with transaction() as c:
@@ -23,20 +26,24 @@ def build(identifier: str) -> dict:
             )
 
     completed = row["layers"]
+    if "_prefill" not in completed:
+        completed = {**completed, "_prefill": parcel_prefill.collect(row["inputs"]["location"])}
+        persist(completed)
+
     def persist_ign(current):
-        checkpoint = {"_dreal": completed["_dreal"]} if "_dreal" in completed else {}
+        checkpoint = {k: v for k, v in completed.items() if k.startswith("_")}
         persist({**current, **checkpoint})
 
     layers = ign.collect(
         row["inputs"]["location"],
-        {k: v for k, v in completed.items() if k != "_dreal"},
+        {k: v for k, v in completed.items() if k in ign.LAYERS},
         persist_ign,
     )
     # Checkpoint independently: an interrupted worker must not repeat a completed consultation.
     wetland = completed.get("_dreal")
     if wetland is None:
         wetland = dreal.collect(row["inputs"]["location"])
-        persist({**layers, "_dreal": wetland})
+        persist({**layers, "_dreal": wetland, "_prefill": completed["_prefill"]})
     from shared.parcels.territorial_rules import analyze
 
     result = Analysis.model_validate(
@@ -45,7 +52,11 @@ def build(identifier: str) -> dict:
     with transaction() as c:
         c.execute(
             "UPDATE territorial_queries SET layers=%s,result=%s,finished_at=now() WHERE id=%s",
-            (jsonb({**layers, "_dreal": wetland}), jsonb(result), identifier),
+            (
+                jsonb({**layers, "_dreal": wetland, "_prefill": completed["_prefill"]}),
+                jsonb(result),
+                identifier,
+            ),
         )
     # Publish the deterministic result first; documentary scheduling cannot invalidate IGN.
     try:

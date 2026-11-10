@@ -8,7 +8,13 @@ from pydantic import Field
 from app.review import Actor
 from shared.documents.schemas import Body
 from shared.parcels import corpora, service, territorial
-from shared.parcels.schemas import CorpusCreate, CorpusRequest, InterventionsUpdate, Profile
+from shared.parcels.schemas import (
+    CorpusCreate,
+    CorpusRequest,
+    InterventionsUpdate,
+    Profile,
+    ProfileDraft,
+)
 from shared.parcels.territorial_schemas import Location, TerritorialRequest
 from shared.review.database import ReviewError, transaction
 
@@ -56,7 +62,7 @@ def corpus(identifier: UUID) -> dict[str, Any]:
 
 @router.put("/corpora/{identifier}/profile")
 def corpus_profile(
-    identifier: UUID, body: Profile | InterventionsUpdate, actor: Actor
+    identifier: UUID, body: Profile | InterventionsUpdate | ProfileDraft, actor: Actor
 ) -> dict[str, Any]:
     return corpora.save(str(identifier), body, actor)
 
@@ -72,7 +78,7 @@ def state(video_id: str, analysis_id: UUID | None = None) -> dict[str, Any]:
 
 
 @router.put("/videos/{video_id}")
-def save(video_id: str, body: Profile, actor: Actor) -> dict[str, Any]:
+def save(video_id: str, body: Profile | ProfileDraft, actor: Actor) -> dict[str, Any]:
     return service.save(video_id, body, actor)
 
 
@@ -148,6 +154,8 @@ def territorial_export(identifier: UUID, revision: int | None = None) -> Respons
     return Response(
         json.dumps(row, ensure_ascii=False, indent=2, default=str),
         media_type="application/json",
-        headers={"Content-Disposition": f'attachment; filename="territoire-{identifier}.json"',
-                 "X-Content-Type-Options": "nosniff"},
+        headers={
+            "Content-Disposition": f'attachment; filename="territoire-{identifier}.json"',
+            "X-Content-Type-Options": "nosniff",
+        },
     )

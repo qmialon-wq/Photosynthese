@@ -24,6 +24,7 @@ interface Source {
   text: string;
 }
 interface Dossier {
+  analysis_id?: string;
   progress?: DossierProgress;
   id: string;
   status: string;
@@ -84,6 +85,9 @@ const state = useResource<State>(
   4000,
 );
 const dossier = computed(() => state.data.value?.dossier);
+const analysis = computed(
+  () => props.analysisId || dossier.value?.analysis_id || "",
+);
 const sourceArticles = computed(() =>
   sourceIndex(dossier.value?.result?.sources ?? []),
 );
@@ -146,9 +150,20 @@ async function refreshDossier() {
     if (saved === null) return;
     await post(
       `/parcels/videos/${encodeURIComponent(props.videoId)}/dossiers`,
-      { analysis_id: props.analysisId, profile_revision: saved },
+      { analysis_id: analysis.value, profile_revision: saved },
     );
     await state.refresh();
+  } catch (reason) {
+    error.value = message(reason);
+  } finally {
+    busy.value = false;
+  }
+}
+async function saveDraft() {
+  busy.value = true;
+  error.value = "";
+  try {
+    await save();
   } catch (reason) {
     error.value = message(reason);
   } finally {
@@ -378,7 +393,12 @@ defineExpose({ save });
     </p>
     <PButton
       type="button"
-      v-if="completed && enabled && !readOnly"
+      v-if="
+        (completed || dossier?.status === 'completed') &&
+        analysis &&
+        enabled &&
+        !readOnly
+      "
       :label="dossier ? 'Actualiser mon dossier' : 'Préparer mon dossier'"
       severity="secondary"
       :loading="busy"
@@ -389,6 +409,14 @@ defineExpose({ save });
         )
       "
       @click="refreshDossier"
+    />
+    <PButton
+      v-if="!readOnly && initialized"
+      type="button"
+      label="Enregistrer mes modifications"
+      :disabled="busy"
+      :loading="busy"
+      @click="saveDraft"
     />
     <p class="muted" v-if="completed">
       Après une validation d’espèce, actualisez le dossier pour intégrer la

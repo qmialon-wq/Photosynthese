@@ -58,10 +58,10 @@ export function createDataModeStore(
     reportController?.abort();
     generation++;
   }
-  async function refresh() {
+  async function load(resetView: boolean) {
     cancel();
     Object.assign(data, emptySnapshot());
-    revision.value++;
+    if (resetView) revision.value++;
     if (!active.value) return;
     const current = new AbortController();
     controller = current;
@@ -71,6 +71,8 @@ export function createDataModeStore(
         Object.assign(data, { [key]: value });
     });
   }
+  const refresh = () => load(true);
+  const refreshInPlace = () => load(false);
   function setMode(value: DataMode) {
     if (!["demo", "real"].includes(value) || value === mode.value) return;
     mode.value = value;
@@ -138,7 +140,7 @@ export function createDataModeStore(
   }
   const capabilities = computed(() => ({
     simulate: isDemo.value,
-    write: false,
+    write: isReal.value && !!auth.user,
     readOnly: isReal.value,
   }));
   const summary = computed(() => summarize(data, isDemo.value));
@@ -158,6 +160,7 @@ export function createDataModeStore(
     setMode,
     setActive,
     refresh,
+    refreshInPlace,
     replace,
     simulate,
     report,

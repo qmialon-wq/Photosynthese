@@ -20,7 +20,6 @@ const analysisId = computed(() =>
       :video-id="videoId"
       :analysis-id="analysisId"
       :completed="false"
-      read-only
     />
   </GlassPanel>
 </template>

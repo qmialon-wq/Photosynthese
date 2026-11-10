@@ -1,6 +1,8 @@
 # Contexte territorial et aide à l’aménagement — MVP V2
 
-Le dossier de parcelle possède une **Analyse préliminaire du projet**, indépendante de la génération scientifique. Un propriétaire peut enregistrer un point et des interventions, lancer IGN puis consulter les faits, les vérifications par intervention et l’export JSON. Le formulaire historique reste en lecture seule sur `/parcelles/:id`.
+Le dossier de parcelle possède une **Analyse préliminaire du projet**, indépendante de la génération scientifique. Un propriétaire peut enregistrer un point et des interventions, lancer IGN puis consulter les faits, les vérifications par intervention et l’export JSON. Le formulaire est modifiable sur `/parcelles/:id`, pour un client comme pour un administrateur, avec sauvegarde de brouillon même incomplet.
+
+La sélection du point déclenche aussi un préremplissage asynchrone de la commune et, si possible, de la surface et du type de parcelle. Ces suggestions ne modifient jamais le profil en base à la place de l’utilisateur. Les champs restent corrigeables et un service indisponible ne bloque pas la saisie manuelle. Le projet est toujours déclaré par l’utilisateur. Voir [le parcours client](PARCEL_DOSSIERS.md).
 
 La couche [Adapter mon projet](PROJECT_DESIGN.md) ajoute douze alternatives concrètes pour les cinq interventions, avec effets sur le projet, conditions, références et niveaux de justification. Elle complète les vérifications et les propositions écologiques qualifiées décrites ci-dessous.
 

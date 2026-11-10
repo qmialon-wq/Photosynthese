@@ -16,6 +16,9 @@ import {
 import "../styles/videotheque.css";
 import { useCollection } from "../data/data-mode";
 import SourceState from "../components/symbiose/SourceState.vue";
+import { useRouter } from "vue-router";
+import { post, message } from "../api";
+import { useClientVideoImport } from "../client-video-import";
 const { items: videos, state: source, store } = useCollection("videos");
 const videoOverview = computed(() => store.summary.value.videoOverview);
 const videoSpeciesOptions = computed(() => [
@@ -29,6 +32,38 @@ const query = ref(""),
   status = ref(""),
   page = ref(1);
 const selected = ref(new Set<string>());
+const router = useRouter();
+const files = ref<File[]>([]);
+const creating = ref(false),
+  actionError = ref("");
+const imports = useClientVideoImport((ids) =>
+  ids.forEach((id) => selected.value.add(id)),
+);
+async function createCorpus() {
+  if (!store.capabilities.value.write || creating.value || !selected.value.size)
+    return;
+  creating.value = true;
+  actionError.value = "";
+  try {
+    const source = store.sourceId.value;
+    const corpus = await post<{ id: string }>("/parcels/corpora", {
+      video_ids: [...selected.value],
+    });
+    if (source === store.sourceId.value)
+      await router.push(`/parcelles/${encodeURIComponent(corpus.id)}`);
+  } catch (error) {
+    actionError.value = message(error);
+  } finally {
+    creating.value = false;
+  }
+}
+async function uploadSelected() {
+  await imports.upload(files.value);
+  if (!imports.error.value) {
+    files.value = [];
+    importNames.value = [];
+  }
+}
 const feedback = ref("");
 const filtered = computed(() =>
   filterDemoVideos(videos.value, query.value, species.value, status.value),
@@ -92,11 +127,11 @@ function open(kind: DialogKind, video?: DemoVideo) {
   dialog.value = kind;
   currentVideo.value = video || null;
   importNames.value = [];
+  files.value = [];
 }
 function chooseFiles(event: Event) {
-  importNames.value = Array.from(
-    (event.target as HTMLInputElement).files || [],
-  ).map((file) => file.name);
+  files.value = Array.from((event.target as HTMLInputElement).files || []);
+  importNames.value = files.value.map((file) => file.name);
 }
 function finishDemo() {
   if (!store.capabilities.value.simulate) return;
@@ -124,7 +159,9 @@ function finishDemo() {
       </div>
       <button
         class="sym-button sv-import"
-        :disabled="!store.capabilities.value.simulate"
+        :disabled="
+          !store.capabilities.value.simulate && !store.capabilities.value.write
+        "
         @click="open('import')"
       >
         <SymIcon name="plus" :size="27" />Importer des vidéos
@@ -136,8 +173,8 @@ function finishDemo() {
       @retry="store.refresh"
     />
     <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
-      Consultation en lecture seule. Import et création de dossier indisponibles
-      dans cet écran.
+      Importez vos vidéos, sélectionnez-les puis préparez votre dossier de
+      parcelle.
     </p>
     <div class="sv-stats" aria-label="Indicateurs de la vidéothèque">
       <StatCard v-for="stat in videoOverview" :key="stat.label" v-bind="stat" />
@@ -156,8 +193,15 @@ function finishDemo() {
       <div class="sv-prepare-actions">
         <button
           class="sym-button sv-prepare-button"
-          :disabled="!store.capabilities.value.simulate || !selected.size"
-          @click="open('prepare')"
+          :disabled="
+            (!store.capabilities.value.simulate &&
+              !store.capabilities.value.write) ||
+            !selected.size ||
+            creating ||
+            imports.busy.value ||
+            imports.pending.value
+          "
+          @click="store.isReal.value ? createCorpus() : open('prepare')"
         >
           <SymIcon name="folder" :size="20" />Préparer un dossier ({{
             selected.size
@@ -228,21 +272,46 @@ function finishDemo() {
         @change="page = $event"
     /></GlassPanel>
     <p v-if="feedback" class="sv-feedback" role="status">{{ feedback }}</p>
+    <p
+      v-if="actionError || imports.error.value"
+      class="notice error"
+      role="alert"
+    >
+      {{ actionError || imports.error.value }}
+    </p>
+    <section v-if="imports.tasks.value.length" aria-label="Suivi des imports">
+      <h2>Vos imports</h2>
+      <ul>
+        <li v-for="task in imports.tasks.value" :key="task.id">
+          {{ task.filename }} ·
+          {{
+            task.status === "completed"
+              ? "Import terminé, vidéo sélectionnée"
+              : task.status === "error"
+                ? "Échec de l’import"
+                : "Préparation en cours"
+          }}
+          {{ task.error || "" }}
+        </li>
+      </ul>
+    </section>
     <DemoDialog
       :notice="
-        store.capabilities.value.readOnly
-          ? 'DONNÉES RÉELLES · CONSULTATION'
-          : undefined
+        store.capabilities.value.readOnly ? 'DONNÉES RÉELLES' : undefined
       "
       :open="!!dialog"
       :title="dialogTitle"
       @close="dialog = null"
     >
       <template v-if="dialog === 'import'"
-        ><p>
+        ><p v-if="store.isDemo.value">
           Choisissez des fichiers pour essayer l’interface. Il s’agit d’une
           simulation : aucun fichier n’est envoyé et aucune vidéo n’est ajoutée
           à la bibliothèque.
+        </p>
+        <p v-else>
+          Les vidéos seront envoyées puis préparées en arrière-plan. Après
+          l’import, elles seront sélectionnées pour votre dossier.
         </p>
         <label class="sv-demo-file"
           >Sélectionner des fichiers vidéo<input
@@ -250,16 +319,21 @@ function finishDemo() {
             multiple
             accept="video/*,.mkv,.avi,.m4v"
             @change="chooseFiles"
+            :disabled="imports.busy.value"
         /></label>
         <ul v-if="importNames.length" class="sv-demo-files">
           <li v-for="(name, i) in importNames" :key="i">{{ name }}</li>
         </ul>
         <button
           class="sym-button"
-          :disabled="!importNames.length"
-          @click="finishDemo"
+          :disabled="!importNames.length || imports.busy.value"
+          @click="store.isReal.value ? uploadSelected() : finishDemo()"
         >
-          Confirmer la simulation
+          {{
+            store.isReal.value
+              ? "Envoyer les vidéos"
+              : "Confirmer la simulation"
+          }}
         </button></template
       >
       <template v-else-if="dialog === 'prepare'"
@@ -336,6 +410,29 @@ function finishDemo() {
           </div>
         </dl></template
       >
+      <p v-if="dialog === 'import' && imports.busy.value" role="status">
+        Transfert : {{ imports.progress.value }} %
+      </p>
+      <button
+        v-if="dialog === 'import' && imports.busy.value"
+        class="sv-button-quiet"
+        @click="imports.cancel"
+      >
+        Annuler le transfert
+      </button>
+      <p v-if="dialog === 'import' && imports.pending.value" role="status">
+        Préparation des vidéos en arrière-plan. Vous pouvez fermer cette
+        fenêtre.
+      </p>
+      <p v-if="dialog === 'import' && imports.error.value" role="alert">
+        {{ imports.error.value }}
+      </p>
     </DemoDialog>
+    <p v-if="imports.busy.value" role="status">
+      Transfert : {{ imports.progress.value }} %
+      <button class="sv-button-quiet" @click="imports.cancel">
+        Annuler le transfert
+      </button>
+    </p>
   </GlassPanel>
 </template>

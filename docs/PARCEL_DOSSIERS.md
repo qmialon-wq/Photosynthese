@@ -32,7 +32,46 @@ fichier vidéo déjà protégé par l’API, sans lancer d’analyse IA ou modif
 vidéo. Un format illisible dans le navigateur affiche « Aperçu indisponible ».
 La miniature extraite reste dans la page ; elle n’est pas écrite sur le serveur.
 
-## Préparer un dossier depuis l’administration
+## Créer et modifier un dossier depuis l’espace client
+
+Après connexion ou inscription, l’interface passe en **Données réelles**. Les
+comptes client et administrateur peuvent importer des vidéos, créer un dossier
+depuis leur sélection et modifier les informations de parcelle directement dans
+l’espace client. L’API conserve ses contrôles de propriété : un client ne peut
+pas modifier les vidéos ou dossiers d’un autre compte.
+
+L’import envoie les fichiers par fragments, puis suit leur préparation par le
+worker. Les vidéos terminées sont sélectionnées automatiquement. **Préparer un
+dossier** crée le groupe et ouvre son formulaire, avec une ou plusieurs vidéos.
+
+Le point choisi sur la carte est enregistré et déclenche une consultation en
+arrière-plan. La commune est recherchée via
+[l’API géographique publique](https://geo.api.gouv.fr/decoupage-administratif/communes),
+la parcelle via [API Carto Cadastre](https://apicarto.ign.fr/api/doc/cadastre).
+La surface est une contenance lorsqu’elle est fournie ou une **estimation
+cartographique** calculée sur le contour cadastral ; un point sur une limite
+ne sélectionne pas arbitrairement l’une des parcelles. Une prairie déclarée
+dans le [RPG 2024](https://apicarto.ign.fr/api/doc/rpg) peut proposer le type
+« Pâturage », à vérifier. Les autres types restent à renseigner si aucune
+correspondance fiable n’est disponible ; un zonage ne prouve pas la constructibilité.
+
+Toutes ces suggestions restent modifiables. Les corrections manuelles sont
+conservées pendant les réponses asynchrones et les nouvelles consultations.
+Lorsqu’un nouveau point est sélectionné, seuls les champs encore automatiques
+peuvent être actualisés. Le **projet envisagé** reste choisi par l’utilisateur
+dans la liste déroulante, avec les interventions cochées : il n’est pas déduit
+des données cartographiques.
+
+**Enregistrer mes modifications** conserve aussi un brouillon incomplet et reste
+disponible pendant une génération en cours. La génération scientifique exige
+ensuite une surface, un type de parcelle et un projet valides. Les dossiers déjà
+produits restent des instantanés ; actualiser produit une version correspondant
+au formulaire enregistré. Une indisponibilité de l’open data ne bloque pas la
+saisie manuelle ni la sauvegarde du brouillon.
+
+La consultation territoriale utilise le worker documentaire existant. Après
+mise à jour, reconstruire le frontend, le backend et le worker documentaire ;
+aucune nouvelle migration SQL n’est nécessaire pour ces suggestions et brouillons.
 
 Le parcours client part de la vidéothèque : importer plusieurs vidéos ou sélectionner
 les vidéos déjà présentes d'une même parcelle, puis cliquer sur **Préparer un dossier**.

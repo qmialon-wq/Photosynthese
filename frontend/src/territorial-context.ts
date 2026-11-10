@@ -6,6 +6,15 @@ export const interventionLabels = {
   soil_sealing: "Imperméabilisation",
 } as const;
 export type Intervention = keyof typeof interventionLabels;
+export interface ParcelPrefill {
+  values: { locality?: string; area_m2?: number; land_type?: string };
+  notice?: string;
+  retrieved_at?: string;
+  sources?: Record<
+    string,
+    { status: string; source_url: string; retrieved_at: string }
+  >;
+}
 export interface ProjectProfile {
   area_m2?: number | null;
   land_type?: string;
@@ -107,6 +116,7 @@ export interface TerritorialAnalysis {
   };
 }
 export interface TerritorialQuery {
+  prefill?: ParcelPrefill | null;
   id: string;
   revision: number;
   status: "pending" | "complete" | "partial" | "failed";

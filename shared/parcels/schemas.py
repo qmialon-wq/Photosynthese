@@ -55,6 +55,14 @@ class Profile(Body):
         return data
 
 
+class ProfileDraft(Profile):
+    """Persist unfinished client forms; scientific generation still requires Profile."""
+
+    area_m2: float | None = Field(default=None, gt=0, le=1_000_000_000)
+    land_type: Literal["", "woodland", "pasture", "fallow", "buildable", "artificial"] = ""
+    project_type: Literal["", "housing", "crops", "livestock", "park", "other"] = ""
+
+
 class InterventionsUpdate(Body):
     interventions: list[Intervention] = Field(max_length=5)
     expected_revision: int = Field(ge=0)

@@ -95,7 +95,7 @@ def enrich(identifier: str) -> dict:
         revision = latest["revision"] + 1
         result = analyze(
             row["inputs"],
-            {k: v for k, v in row["layers"].items() if k != "_dreal"},
+            {k: v for k, v in row["layers"].items() if not k.startswith("_")},
             revision,
             documents=sources,
             dreal=row["layers"].get("_dreal"),

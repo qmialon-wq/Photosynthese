@@ -145,7 +145,7 @@ def context(
         row["obsolete"] = row["input_sha256"] != snapshot_sha(current)
         ok = sum(
             r["status"] in ("success", "empty")
-            for name, r in row["layers"].items() if name != "_dreal"
+            for name, r in row["layers"].items() if not name.startswith("_")
         )
         row["status"] = (
             ("complete" if ok == 4 else "partial" if ok else "failed")
@@ -155,6 +155,7 @@ def context(
     if row:
         # The checkpoint is not an IGN layer; the complete copy is in result.dreal.
         row["layers"].pop("_dreal", None)
+        row["prefill"] = row["layers"].pop("_prefill", None)
     if row and not include_archives:
         if row["result"] and row["result"].get("dreal"):
             wetland = row["result"]["dreal"]

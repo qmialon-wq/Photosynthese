@@ -1,10 +1,19 @@
 import pytest
 from pydantic import ValidationError
 
-from shared.parcels.schemas import Profile
+from shared.parcels.schemas import Profile, ProfileDraft
 from shared.parcels.territorial_schemas import Location
 
 PROFILE = {"area_m2": 1000, "land_type": "pasture", "project_type": "housing"}
+
+
+def test_draft_can_be_saved_but_cannot_generate_a_scientific_dossier():
+    draft = ProfileDraft(area_m2=None, land_type="", project_type="", interventions=["fencing"])
+    data = draft.persisted()
+    assert data["area_m2"] is None and data["interventions"] == ["fencing"]
+    with pytest.raises(ValidationError):
+        Profile.model_validate(data)
+    assert Profile.model_validate({**data, **PROFILE}).area_m2 == 1000
 
 
 def test_interventions_missing_empty_and_preserved():

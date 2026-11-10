@@ -7,11 +7,16 @@ import {
   interventionLabels,
   type Intervention,
   type TerritorialContext,
+  type ParcelPrefill,
 } from "../territorial-context";
 import ProjectAlternatives from "./ProjectAlternatives.vue";
 import TerritorialPointMap from "./TerritorialPointMap.vue";
 
-const props = defineProps<{ corpusId: string; owner: string }>();
+const props = withDefaults(
+  defineProps<{ corpusId: string; owner: string; projectControls?: boolean }>(),
+  { projectControls: true },
+);
+const emit = defineEmits<{ prefill: [value: ParcelPrefill] }>();
 const store = useDataMode();
 const real = computed(() => store.isReal.value && !!auth.user);
 const writable = computed(
@@ -101,7 +106,21 @@ function selectPoint(lat: number, lon: number) {
   longitude.value = lon;
   provenance.value = "map";
   locationDirty.value = true;
+  void saveLocation();
 }
+watch(
+  () => JSON.stringify(context.value?.query?.prefill),
+  () => {
+    const value = context.value;
+    if (
+      value?.query?.prefill &&
+      !locationDirty.value &&
+      value.query.inputs.location.revision === value.location?.revision
+    )
+      emit("prefill", value.query.prefill);
+  },
+);
+defineExpose({ reload: () => state.reload() });
 async function perform(operation: () => Promise<void>) {
   if (!writable.value || busy.value) return;
   const source = store.sourceId.value,
@@ -136,6 +155,15 @@ function saveLocation() {
       }),
     });
     locationDirty.value = false;
+    await state.reload();
+    if (!context.value) return;
+    await api(base.value + "/territorial-queries", {
+      method: "POST",
+      body: JSON.stringify({
+        expected_location_revision: context.value.location?.revision,
+        expected_profile_revision: context.value.profile_revision,
+      }),
+    });
     await state.reload();
   });
 }
@@ -244,7 +272,7 @@ function consult() {
             :disabled="busy"
             type="submit"
           >
-            Enregistrer le point
+            Enregistrer le point et préremplir
           </button>
         </form>
         <p v-if="context.location" class="muted">
@@ -254,52 +282,54 @@ function consult() {
             context.location.provenance === "map" ? "sur la carte" : "numérique"
           }}
         </p>
-        <h3>2. Mon projet et les interventions prévues</h3>
-        <p>
-          {{ context.profile.locality || "Secteur non renseigné" }} ·
-          {{
-            context.profile.details ||
-            "Aucune autre intervention décrite dans les précisions existantes."
-          }}
-        </p>
-        <p v-if="!('interventions' in context.profile)" class="notice">
-          Interventions non renseignées dans le profil historique.
-        </p>
-        <p v-else-if="!context.profile.interventions?.length" class="notice">
-          Liste explicitement vide. Cela ne prouve pas l’absence de travaux.
-        </p>
-        <form @submit.prevent="saveProject">
-          <fieldset :disabled="!writable || busy">
-            <legend>Interventions facultatives</legend>
-            <label
-              v-for="(label, code) in interventionLabels"
-              :key="code"
-              class="intervention-choice"
-            >
-              <input
-                v-model="interventions"
-                type="checkbox"
-                :value="code"
-                @change="projectDirty = true"
-              />
-              {{ label }}
-            </label>
-          </fieldset>
+        <template v-if="projectControls !== false">
+          <h3>2. Mon projet et les interventions prévues</h3>
           <p>
-            Une case non cochée ne prouve pas l’absence de cette intervention.
-            Enregistrer une liste vide efface explicitement les choix
-            précédents.
+            {{ context.profile.locality || "Secteur non renseigné" }} ·
+            {{
+              context.profile.details ||
+              "Aucune autre intervention décrite dans les précisions existantes."
+            }}
           </p>
-          <button
-            class="button-link"
-            v-if="writable"
-            type="submit"
-            :disabled="busy"
-          >
-            Enregistrer les interventions
-          </button>
-        </form>
-        <h3>3. Observations humaines et données environnementales</h3>
+          <p v-if="!('interventions' in context.profile)" class="notice">
+            Interventions non renseignées dans le profil historique.
+          </p>
+          <p v-else-if="!context.profile.interventions?.length" class="notice">
+            Liste explicitement vide. Cela ne prouve pas l’absence de travaux.
+          </p>
+          <form @submit.prevent="saveProject">
+            <fieldset :disabled="!writable || busy">
+              <legend>Interventions facultatives</legend>
+              <label
+                v-for="(label, code) in interventionLabels"
+                :key="code"
+                class="intervention-choice"
+              >
+                <input
+                  v-model="interventions"
+                  type="checkbox"
+                  :value="code"
+                  @change="projectDirty = true"
+                />
+                {{ label }}
+              </label>
+            </fieldset>
+            <p>
+              Une case non cochée ne prouve pas l’absence de cette intervention.
+              Enregistrer une liste vide efface explicitement les choix
+              précédents.
+            </p>
+            <button
+              class="button-link"
+              v-if="writable"
+              type="submit"
+              :disabled="busy"
+            >
+              Enregistrer les interventions
+            </button>
+          </form>
+        </template>
+        <h3>Observations humaines et données environnementales</h3>
         <p>
           Seules les observations validées ou corrigées humainement liées à ce
           dossier sont retenues. Les prédictions automatiques sont exclues.

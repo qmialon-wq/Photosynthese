@@ -316,6 +316,7 @@ describe("contexte global et séparation des modes", () => {
     const store = createDataModeStore(undefined, { demo: real, real });
     stores.push(store);
     store.setMode("real");
+    expect(store.capabilities.value.write).toBe(true);
     expect(loads).toBe(0);
     store.setActive(true);
     const revision = store.revision.value;
@@ -323,5 +324,7 @@ describe("contexte global et séparation des modes", () => {
     expect(store.revision.value).toBeGreaterThan(revision);
     expect(store.sourceId.value).toContain("account-b");
     expect(loads).toBe(2);
+    clearSession();
+    expect(store.capabilities.value.write).toBe(false);
   });
 });

@@ -78,7 +78,6 @@ export const router = createRouter({
     {
       path: "/parcelles/:id",
       component: () => import("./pages/ParcelCorpusPage.vue"),
-      props: { readOnly: true },
       meta: { designPreview: true },
     },
     {

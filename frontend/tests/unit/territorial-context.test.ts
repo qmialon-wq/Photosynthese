@@ -157,7 +157,7 @@ it("présente le résultat DREAL et ses limites séparément des couches IGN", a
   expect(section.get("a").attributes("href")).toBe(dreal.source_url);
   expect(wrapper.get("a[download]").attributes("href")).toContain("revision=2");
 });
-it("garde les formulaires historiques en lecture seule pour le propriétaire", async () => {
+it("permet au propriétaire client de compléter les champs historiques et les interventions", async () => {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: "/parcelles/:id", component: ParcelCorpusPage }],
@@ -186,7 +186,7 @@ it("garde les formulaires historiques en lecture seule pour le propriétaire", a
     ),
   );
   const wrapper = mount(ParcelCorpusPage, {
-    props: { readOnly: true },
+    props: { readOnly: false },
     global: {
       plugins: [router],
       components: { LoadState },
@@ -197,8 +197,10 @@ it("garde les formulaires historiques en lecture seule pour le propriétaire", a
   disposals.push(() => wrapper.unmount());
   await flushPromises();
   expect(wrapper.find('input[value="fencing"]').exists()).toBe(true);
-  expect(wrapper.find('input[max="1000000000"]').exists()).toBe(false);
-  expect(wrapper.text()).toContain("2500 m²");
+  expect(wrapper.find('input[max="1000000000"]').exists()).toBe(true);
+  expect(
+    (wrapper.get('input[max="1000000000"]').element as HTMLInputElement).value,
+  ).toBe("2500");
 });
 it("invalide une réponse tardive après un changement de compte ou de mode", async () => {
   const router = {

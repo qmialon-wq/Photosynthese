@@ -105,7 +105,8 @@ const projectLabel = computed(
       @retry="store.refresh"
     />
     <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
-      Consultation des dossiers enregistrés, sans création ni modification.
+      Ouvrez votre dossier pour compléter le projet, modifier la parcelle ou
+      actualiser les recommandations.
     </p>
     <div class="sv-filters sf-filters">
       <SearchField

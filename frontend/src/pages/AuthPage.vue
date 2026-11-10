@@ -3,9 +3,11 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { message, post, api } from "../api";
 import { auth, acceptSession, type Session } from "../auth-state";
+import { useDataMode } from "../data/data-mode";
 import symbioseLogo from "../assets/symbiose-logo.png";
 const route = useRoute(),
   router = useRouter();
+const dataMode = useDataMode();
 const mode = computed(() => route.path.slice(1));
 const title = computed(
   () =>
@@ -86,6 +88,7 @@ async function submit() {
             ? "setup"
             : "register";
       acceptSession(await post<Session>(`/auth/${endpoint}`, body));
+      dataMode.setMode("real");
       password.value = "";
       token.value = "";
       await router.push("/");
@@ -109,9 +112,7 @@ async function submit() {
           height="1242"
         />
       </RouterLink>
-      <p class="auth-tagline">
-        L’humain en symbiose avec la nature
-      </p>
+      <p class="auth-tagline">L’humain en symbiose avec la nature</p>
     </header>
     <h1 id="auth-title">{{ title }}</h1>
     <p v-if="mode === 'inscription'" class="muted">
