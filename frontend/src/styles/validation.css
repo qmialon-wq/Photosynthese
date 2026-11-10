@@ -90,10 +90,10 @@
   min-height: 46px;
   margin: 0 2px 10px;
   padding: 11px 0;
-  border-bottom: 1px solid rgb(203 229 161 / 18%);
+  border-bottom: 1px solid rgb(from var(--sym-shade-border-cbe5a1) r g b / 18%);
 }
 .sr-information .sym-icon {
-  color: #d4f66b;
+  color: var(--sym-shade-accent-d4f66b);
 }
 .sr-information p {
   margin: 0;
@@ -115,7 +115,7 @@
     box-shadow 160ms;
 }
 .sr-observation:hover {
-  border-color: rgb(225 250 197 / 77%);
+  border-color: rgb(from var(--sym-shade-border-e1fac5) r g b / 77%);
 }
 .sr-observation.is-selected {
   border-color: var(--sym-selected);
@@ -136,9 +136,9 @@
   width: 100%;
   height: clamp(110px, 7.25vw, 132px);
   padding: 0;
-  border: 1px solid rgb(217 239 173 / 45%);
+  border: 1px solid rgb(from var(--sym-shade-border-d9efad) r g b / 45%);
   border-radius: 14px;
-  background: #193f29;
+  background: var(--sym-shade-surface-193f29);
   color: white;
   cursor: pointer;
 }
@@ -185,7 +185,7 @@
   font-size: 11px;
 }
 .sr-review-status .sym-icon {
-  color: #d4f66b;
+  color: var(--sym-shade-accent-d4f66b);
 }
 .sr-observation-meta .sv-status {
   position: static;
@@ -196,10 +196,10 @@
 .sr-page .sr-feedback {
   margin: 0 0 12px;
   padding: 9px 12px;
-  border: 1px solid rgb(195 240 151 / 50%);
+  border: 1px solid rgb(from var(--sym-shade-border-c3f097) r g b / 50%);
   border-radius: 12px;
-  background: rgb(70 110 48 / 45%);
-  color: #ecffdc;
+  background: rgb(from var(--sym-shade-surface-466e30) r g b / 45%);
+  color: var(--sym-shade-text-ecffdc);
   font-size: 13px;
 }
 .sr-empty {

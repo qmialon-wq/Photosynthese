@@ -106,7 +106,7 @@
 }
 .symbiose-shell .dossier-reader pre {
   color: var(--sym-text-soft);
-  background: rgb(5 33 23 / 55%);
+  background: rgb(from var(--sym-shade-surface-052117) r g b / 55%);
   border: var(--sym-border);
   padding: 1rem;
   border-radius: 8px;
@@ -118,7 +118,7 @@
 }
 .symbiose-shell .dossier-reader fieldset {
   min-width: 0;
-  border-color: rgb(222 241 199 / 49%);
+  border-color: rgb(from var(--sym-shade-border-def1c7) r g b / 49%);
 }
 .symbiose-shell .dossier-reader .notice {
   color: var(--sym-text);

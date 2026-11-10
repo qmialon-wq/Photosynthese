@@ -204,10 +204,10 @@ function focusAdjacent(event: KeyboardEvent, index: number) {
           y2="710"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#e4f5cc" stop-opacity="0" />
-          <stop offset=".28" stop-color="#e8f5da" stop-opacity=".9" />
-          <stop offset=".65" stop-color="#e8f5da" />
-          <stop offset="1" stop-color="#e4f5cc" stop-opacity="0" />
+          <stop stop-color="var(--sym-shade-accent-e4f5cc)" stop-opacity="0" />
+          <stop offset=".28" stop-color="var(--sym-shade-accent-e8f5da)" stop-opacity=".9" />
+          <stop offset=".65" stop-color="var(--sym-shade-accent-e8f5da)" />
+          <stop offset="1" stop-color="var(--sym-shade-accent-e4f5cc)" stop-opacity="0" />
         </linearGradient>
       </defs>
       <path

@@ -165,7 +165,7 @@ function duration(seconds: number) {
 <style scoped>
 .rag-progress {
   padding: 1rem;
-  border: 1px solid var(--border, #ccd7d1);
+  border: 1px solid var(--border, var(--sym-shade-border-ccd7d1));
   border-radius: 0.75rem;
   margin: 1rem 0;
 }
@@ -176,7 +176,7 @@ function duration(seconds: number) {
   padding: 0.4rem;
 }
 .rag-steps li[aria-current="step"] {
-  background: #edf5ee;
+  background: var(--sym-shade-surface-edf5ee);
   border-radius: 0.4rem;
 }
 .rag-steps span {

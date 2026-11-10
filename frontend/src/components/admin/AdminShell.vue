@@ -8,7 +8,10 @@ import { adminSections } from "../../admin/navigation";
 import { closeAdminConfirmation } from "../../admin/confirmation";
 import AdminNavigation from "./AdminNavigation.vue";
 import AdminConfirmation from "./AdminConfirmation.vue";
-import ModeSelector from "../symbiose/ModeSelector.vue";
+import WallpaperBackground from "../symbiose/WallpaperBackground.vue";
+import AppearanceMenu from "../symbiose/AppearanceMenu.vue";
+import { useWallpaper } from "../../composables/useWallpaper";
+const wallpaper = useWallpaper();
 import SymIcon from "../symbiose/SymIcon.vue";
 import logo from "../../assets/symbiose-logo.png";
 const store = useDataMode(),
@@ -79,8 +82,11 @@ async function logout() {
 }
 </script>
 <template>
-  <div class="symbiose-shell adm-shell">
-    <div class="sym-forest" aria-hidden="true" />
+  <div
+    class="symbiose-shell adm-shell"
+    :class="{ 'sym-reduced-motion': wallpaper.reduceMotion.value }"
+  >
+    <WallpaperBackground />
     <aside
       ref="aside"
       id="admin-navigation"
@@ -143,7 +149,7 @@ async function logout() {
           ><SymIcon name="chevron" :size="14" /><strong>{{ title }}</strong>
         </div>
         <div class="adm-header-actions">
-          <ModeSelector /><RouterLink
+          <RouterLink
             class="sym-circle-button"
             to="/profil"
             aria-label="Mon profil"
@@ -164,6 +170,7 @@ async function logout() {
         ><span>Administration · Données · Modèles</span>
       </footer>
     </div>
+    <AppearanceMenu class="adm-appearance-menu" @open="open = false" />
     <AdminConfirmation />
   </div>
 </template>

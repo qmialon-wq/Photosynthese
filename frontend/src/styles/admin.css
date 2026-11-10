@@ -2,10 +2,10 @@
 .adm-shell {
   --ink: var(--sym-text);
   --muted: var(--sym-text-soft);
-  --line: rgb(222 241 199 / 24%);
+  --line: rgb(from var(--sym-shade-accent-def1c7) r g b / 24%);
   --surface: transparent;
   --p-primary-color: var(--sym-lime);
-  --p-primary-contrast-color: #102a11;
+  --p-primary-contrast-color: var(--sym-shade-ink-102a11);
   --p-inputtext-background: var(--sym-control-bg);
   --p-inputtext-color: var(--sym-text);
   position: relative;
@@ -69,7 +69,7 @@
   text-decoration: none;
 }
 .adm-sidebar nav a .sym-icon {
-  color: #d8f8bf;
+  color: var(--sym-shade-accent-d8f8bf);
 }
 .adm-sidebar nav .is-active {
   border: var(--sym-border);
@@ -171,7 +171,7 @@
   flex: 1;
   min-height: 0;
   padding: 21px 12px 24px 4px;
-  scrollbar-color: #8aaa70 transparent;
+  scrollbar-color: var(--sym-shade-text-8aaa70) transparent;
   scrollbar-width: thin;
 }
 .adm-content > h1 {
@@ -194,7 +194,7 @@
   font-size: 15px;
 }
 .adm-content .eyebrow {
-  color: #d2efb5;
+  color: var(--sym-shade-accent-d2efb5);
   margin-bottom: 9px;
 }
 .adm-content .subtitle,
@@ -242,7 +242,7 @@
 .adm-content .stat-top i,
 .adm-content .model-icon {
   color: var(--sym-lime);
-  background: rgb(151 192 69 / 18%);
+  background: rgb(from var(--sym-shade-surface-97c045) r g b / 18%);
 }
 .adm-content .two-columns {
   gap: 20px;
@@ -263,7 +263,7 @@
 }
 .adm-content input::placeholder,
 .adm-content textarea::placeholder {
-  color: #c8d9c3;
+  color: var(--sym-shade-text-c8d9c3);
   opacity: 0.85;
 }
 .adm-content select option {
@@ -272,7 +272,7 @@
 }
 .adm-content :is(input, select, textarea):disabled {
   opacity: 0.6;
-  background: rgb(20 50 34 / 45%);
+  background: rgb(from var(--sym-shade-surface-143222) r g b / 45%);
 }
 .adm-content input[type="checkbox"] {
   accent-color: var(--sym-lime);
@@ -291,7 +291,7 @@
   color: var(--sym-lime);
 }
 .adm-content thead {
-  background: rgb(78 115 66 / 50%);
+  background: rgb(from var(--sym-shade-surface-4e7342) r g b / 50%);
 }
 .adm-content :is(thead tr, th) {
   background: transparent;
@@ -336,12 +336,12 @@
   background: rgb(106 44 37 / 62%);
 }
 .adm-content .hero-symbol {
-  color: #c1ec8c;
+  color: var(--sym-shade-accent-c1ec8c);
 }
 .adm-content :is(.p-button, .button-link, .account-button) {
   background: var(--sym-action-bg);
   color: var(--sym-action-text);
-  border: 1px solid rgb(212 251 158 / 40%);
+  border: 1px solid rgb(from var(--sym-shade-border-d4fb9e) r g b / 40%);
   border-radius: 100px;
   font-weight: 600;
   box-shadow: var(--sym-shadow);
@@ -380,8 +380,8 @@
   border-radius: 100px;
   font-size: 11px;
   padding: 4px 10px;
-  background: #dce8d7;
-  color: #26382d;
+  background: var(--sym-shade-surface-dce8d7);
+  color: var(--sym-shade-ink-26382d);
 }
 .adm-content .p-tag-success {
   background: var(--sym-success-bg);
@@ -403,8 +403,8 @@
   background: transparent;
 }
 .adm-content .empty > i {
-  color: #d0edac;
-  background: rgb(170 208 122 / 17%);
+  color: var(--sym-shade-accent-d0edac);
+  background: rgb(from var(--sym-shade-surface-aad07a) r g b / 17%);
   border: var(--sym-border);
 }
 .adm-content :is(.table-wrap, .table-scroll) {
@@ -419,8 +419,8 @@
   min-width: 540px;
 }
 .adm-content th {
-  background: rgb(148 184 111 / 17%);
-  color: #eaf7dc;
+  background: rgb(from var(--sym-shade-surface-94b86f) r g b / 17%);
+  color: var(--sym-shade-accent-eaf7dc);
   border-color: var(--line);
 }
 .adm-content td {
@@ -445,27 +445,27 @@
   color: var(--sym-text);
 }
 .adm-content .worker-terminal {
-  background: rgb(7 31 22 / 91%);
+  background: rgb(from var(--sym-shade-surface-071f16) r g b / 91%);
   border: var(--sym-border);
   border-radius: var(--sym-radius);
   box-shadow: var(--sym-shadow);
   margin-bottom: 20px;
 }
 .adm-content .worker-terminal > header {
-  background: rgb(124 167 80 / 12%);
+  background: rgb(from var(--sym-shade-surface-7ca750) r g b / 12%);
 }
 .adm-content .terminal-output {
   height: 140px;
 }
 .adm-content .worker-grid article {
-  background: rgb(146 180 108 / 9%);
+  background: rgb(from var(--sym-shade-surface-92b46c) r g b / 9%);
 }
 .adm-content .worker-terminal h2 {
   font-size: 15px;
 }
 .adm-content .logs {
-  background: rgb(4 28 18 / 70%);
-  color: #e0efdc;
+  background: rgb(from var(--sym-shade-surface-041c12) r g b / 70%);
+  color: var(--sym-shade-text-e0efdc);
   border: 1px solid var(--line);
 }
 .adm-content .video-grid {
@@ -605,7 +605,7 @@
     z-index: 60;
     inset: 0;
     border: 0;
-    background: rgb(0 19 10 / 65%);
+    background: rgb(from var(--sym-shade-surface-00130a) r g b / 65%);
     backdrop-filter: blur(5px);
   }
   .adm-content .two-columns {

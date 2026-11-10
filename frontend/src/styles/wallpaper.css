@@ -1,0 +1,207 @@
+/* Shared appearance controls: the existing glass surfaces and palette are kept. */
+.sym-appearance-menu.symbiose-shell {
+  min-height: 0;
+  background: transparent;
+}
+.sym-appearance-menu .sym-settings-panel {
+  position: fixed;
+  z-index: 90;
+}
+.sym-display-settings-panel.sym-action-panel {
+  position: fixed;
+  width: min(460px, calc(100vw - 40px));
+  max-height: calc(100svh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+.sym-display-settings-panel > h2 {
+  flex-shrink: 0;
+}
+.sym-display-settings-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sym-scrollbar) transparent;
+  padding: 5px 8px 8px 5px;
+  margin: -5px -8px -8px -5px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.sym-wallpaper-picker {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.sym-wallpaper-picker legend {
+  padding: 0;
+  color: var(--sym-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+.sym-wallpaper-picker > p {
+  margin: 7px 0 14px;
+  font-size: 13px;
+}
+.sym-wallpaper-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.sym-wallpaper-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  border: var(--sym-border);
+  border-radius: 12px;
+  background: var(--sym-control-bg);
+  cursor: pointer;
+}
+.sym-wallpaper-card:hover {
+  background: var(--sym-control-hover);
+}
+.sym-wallpaper-card.is-selected {
+  border-color: var(--sym-lime-bright);
+  box-shadow:
+    0 0 0 1px var(--sym-lime-bright),
+    0 0 12px rgb(from var(--sym-lime-bright) r g b / 16%);
+}
+.sym-wallpaper-card:has(input:focus-visible) {
+  outline: 2px solid var(--sym-focus);
+  outline-offset: 3px;
+}
+.sym-wallpaper-card input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+}
+.sym-wallpaper-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 11px 11px 0 0;
+}
+.sym-wallpaper-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 8px 9px;
+  min-height: 36px;
+  line-height: 1.3;
+  font-size: 12px;
+}
+.sym-wallpaper-check {
+  color: var(--sym-lime-bright);
+  font-size: 16px;
+}
+.sym-action-panel .sym-wallpaper-status,
+.sym-action-panel .sym-wallpaper-credit {
+  font-size: 12px;
+  margin: 0;
+}
+.sym-wallpaper-credit a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sym-wallpaper-reset {
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: var(--sym-border);
+  border-radius: 100px;
+  color: var(--sym-text);
+  background: var(--sym-control-bg);
+}
+.sym-wallpaper-reset:hover {
+  background: var(--sym-control-hover);
+}
+.adm-appearance-menu .sym-settings {
+  left: 42px;
+  bottom: 36px;
+  width: 40px;
+  height: 40px;
+  z-index: 85;
+}
+.adm-shell .adm-account > button {
+  margin-left: 52px;
+}
+.adm-shell.sym-reduced-motion .adm-sidebar {
+  transition: none;
+}
+.app-wallpaper-shell {
+  position: relative;
+  isolation: isolate;
+}
+.app-wallpaper-shell .workspace > main > h1 {
+  width: fit-content;
+  max-width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 96%);
+}
+.app-wallpaper-shell .app-footer {
+  padding-inline: 16px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 96%);
+}
+.legacy-appearance-menu .sym-settings {
+  z-index: 40;
+  left: 20px;
+  bottom: 20px;
+  width: 40px;
+  height: 40px;
+}
+.app-wallpaper-shell .sidebar-footer {
+  padding-bottom: 50px;
+}
+@media (max-width: 1000px) {
+  .adm-appearance-menu .sym-settings {
+    left: 20px;
+    bottom: 22px;
+  }
+  .adm-shell .adm-footer {
+    min-height: 62px;
+    padding-left: 60px;
+  }
+  .adm-shell .adm-account > button {
+    margin-left: 0;
+  }
+}
+@media (max-width: 620px) {
+  .sym-display-settings-panel.sym-action-panel {
+    left: 20px;
+    right: auto;
+    bottom: 80px;
+    top: auto;
+    padding: 20px;
+  }
+  .sym-display-settings-body .sym-mode-selector select {
+    height: 40px;
+    font-size: 13px;
+  }
+  .sym-wallpaper-grid {
+    gap: 10px;
+  }
+  .sym-wallpaper-name {
+    padding: 7px;
+    font-size: 11px;
+  }
+  .adm-shell .adm-header-actions {
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 320px) {
+  .sym-wallpaper-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
