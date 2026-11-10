@@ -2,7 +2,7 @@
 
 from shared.parcels.schemas import INTERVENTIONS
 
-RULES_VERSION = "territorial-erc-v1"
+RULES_VERSION = "territorial-erc-v2-design"
 TERRESTRIAL = {"chevreuil", "sanglier", "martres", "renards", "blaireaux"}
 LIMITATIONS = [
     "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
@@ -50,6 +50,7 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
                 "id": ref,
                 "title": f"Observation humaine — {row['species']}",
                 "sample_id": row["sample_id"],
+                "species": row["species"],
                 "revision": row["revision"],
                 "validator": row.get("validator"),
                 "retrieved_at": row.get("validated_at"),
@@ -206,6 +207,25 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
                     "evidence_status": "conditional_proposal",
                 }
             )
+    # General references and lexical candidates remain distinct from qualified measures.
+    for doc in documents or []:
+        if (
+            doc.get("project_action") in interventions
+            and doc.get("id")
+            and not any(source["id"] == doc["id"] for source in sources)
+        ):
+            sources.append(doc)
+    sources.append(
+        {
+            "id": "erc-framework",
+            "title": "Cadre officiel ERC",
+            "url": ERC_URL,
+            "role": "general_design_reference",
+        }
+    )
+    from shared.parcels.design import propose
+
+    design_proposals = propose(profile, facts, sources)
     return {
         "rules_version": RULES_VERSION,
         "analysis_revision": revision,
@@ -213,8 +233,8 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
         "project_concerns": concerns,
         "actions": actions,
         "unknowns": unknowns,
-        "sources": sources
-        + [{"id": "erc-framework", "title": "Cadre officiel ERC", "url": ERC_URL}],
+        "sources": sources,
+        "design_proposals": design_proposals,
         "limitations": LIMITATIONS,
         "compensation": {"status": "not_assessed"},
     }

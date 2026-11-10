@@ -35,6 +35,44 @@ export interface TerritorialAction {
   limitations: string[];
   evidence_status: "general_verification" | "conditional_proposal";
 }
+export interface TerritorialSource {
+  id: string;
+  title: string;
+  url?: string;
+  retrieved_at?: string;
+  sha256?: string;
+  text?: string;
+  quote?: string;
+  page?: number;
+  relevance_reason?: string;
+  limitation?: string;
+  original_url?: string;
+  role?: string;
+  applicability?: string;
+  design_alternative_ids?: string[];
+}
+export interface DesignAlternative {
+  id: string;
+  category: "avoid" | "reduce";
+  title: string;
+  proposal: string;
+  project_change: string;
+  conditions: string[];
+  evidence_refs: string[];
+  source_refs: string[];
+  justification: {
+    level: "exploratory" | "contextualized" | "scientifically_qualified";
+    reason: string;
+  };
+  status: "conditional_design_option";
+  limitations: string[];
+}
+export interface DesignProposal {
+  project_action: Intervention;
+  initial_intervention: string;
+  issue: string;
+  alternatives: DesignAlternative[];
+}
 export interface TerritorialAnalysis {
   rules_version: string;
   analysis_revision: number;
@@ -45,20 +83,10 @@ export interface TerritorialAnalysis {
     evidence_refs: string[];
   }[];
   actions: TerritorialAction[];
+  design_proposals?: DesignProposal[];
   unknowns: string[];
   limitations: string[];
-  sources: {
-    id: string;
-    title: string;
-    url?: string;
-    retrieved_at?: string;
-    sha256?: string;
-    text?: string;
-    page?: number;
-    relevance_reason?: string;
-    limitation?: string;
-    original_url?: string;
-  }[];
+  sources: TerritorialSource[];
   compensation: { status: "not_assessed" };
   documentary?: {
     status: string;

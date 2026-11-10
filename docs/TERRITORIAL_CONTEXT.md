@@ -2,6 +2,8 @@
 
 Le dossier de parcelle possède une **Analyse préliminaire du projet**, indépendante de la génération scientifique. Un propriétaire peut enregistrer un point et des interventions, lancer IGN puis consulter les faits, les vérifications par intervention et l’export JSON. Le formulaire historique reste en lecture seule sur `/parcelles/:id`.
 
+La couche [Adapter mon projet](PROJECT_DESIGN.md) ajoute douze alternatives concrètes pour les cinq interventions, avec effets sur le projet, conditions, références et niveaux de justification. Elle complète les vérifications et les propositions écologiques qualifiées décrites ci-dessous.
+
 ## Parcours et preuve
 
 ```mermaid
@@ -85,7 +87,7 @@ Les actions exposent `category`, `project_action`, `issue`, `action`, `rationale
 
 `investigate` désigne une **vérification générale**, transverse à ERC. `avoid` et `reduce` désignent exclusivement des **propositions conditionnelles**. Le moteur exige une source citée avec extrait, page, empreinte et examen explicite d’applicabilité avant de produire ces catégories ; une intersection ou une observation isolée ne peut pas suffire. Le contrat de sortie refuse une proposition ERC qui ne remplit pas cette condition.
 
-Dans le parcours livré, la recherche lexicale automatique ne réalise pas cet examen d’applicabilité : ses résultats restent des candidats. Aucun flux de revue scientifique d’applicabilité supplémentaire n’est créé dans ce MVP. En l’absence de cette qualification, les sections Éviter/Réduire affichent leur insuffisance documentaire et les actions restent À approfondir. Les tests de propositions conditionnelles utilisent des sources synthétiques explicitement examinées dans leurs fixtures ; ils ne prouvent aucune efficacité écologique réelle.
+Pour les propositions écologiques du champ `actions`, la recherche lexicale automatique ne réalise pas cet examen d’applicabilité : ses résultats restent des candidats. Aucun flux de revue scientifique d’applicabilité supplémentaire n’est créé dans ce MVP. En l’absence de cette qualification, les catégories Éviter/Réduire de ces actions affichent leur insuffisance documentaire et les vérifications restent À approfondir. Les alternatives de conception du nouveau champ `design_proposals` restent disponibles sous leurs niveaux exploratoire ou contextualisé ; elles ne sont pas des recommandations écologiques validées. Les tests de propositions conditionnelles utilisent des sources synthétiques explicitement examinées dans leurs fixtures ; ils ne prouvent aucune efficacité écologique réelle.
 
 `compensation.status` vaut toujours `not_assessed`. La présentation suit **Éviter → Réduire → Compenser** ; « À approfondir » n’est pas une troisième étape ERC. Aucun score, pourcentage, reproduction, abondance, habitat précis ou obligation réglementaire n’est inféré.
 

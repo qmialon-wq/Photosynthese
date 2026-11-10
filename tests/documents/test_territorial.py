@@ -119,6 +119,12 @@ def test_queries_export_obsolescence_and_worker_resume(parcel, document_db, monk
     assert result["status"] == "complete" and not result["obsolete"]
     exported = alice.get(path + "/territorial-context/export").json()
     assert exported["inputs"]["profile"]["interventions"] == ["earthworks"]
+    (design,) = exported["result"]["design_proposals"]
+    assert design["project_action"] == "earthworks" and len(design["alternatives"]) == 2
+    assert all(
+        option["justification"]["level"] == "exploratory" for option in design["alternatives"]
+    )
+    frozen_design = exported["result"]["design_proposals"]
     alice.put(
         path + "/profile", json={**PROFILE, "interventions": ["fencing"], "expected_revision": 1}
     )
@@ -129,6 +135,7 @@ def test_queries_export_obsolescence_and_worker_resume(parcel, document_db, monk
     assert alice.post(path + "/territorial-queries", json=body).status_code == 202
     archived = alice.get(path + "/territorial-context?revision=1").json()["query"]
     assert archived["id"] == created.json()["id"] and archived["obsolete"]
+    assert archived["result"]["design_proposals"] == frozen_design
 
 
 def test_limited_intervention_editor_preserves_profile_and_absent_fields(parcel):
@@ -248,6 +255,15 @@ def test_ab_through_redis_worker_and_observation_revision(parcel, document_db, m
             assert [o["sample_id"] for o in current["inputs"]["observations"]] == ["human"]
             results.append(current)
         a, b = results
+        assert a["result"]["design_proposals"][0] == b["result"]["design_proposals"][0]
+        fence_design = b["result"]["design_proposals"][1]
+        assert fence_design["project_action"] == "fencing"
+        assert all(
+            option["justification"]["level"] == "contextualized"
+            for option in fence_design["alternatives"]
+        )
+        exported = alice.get(path + "/territorial-context/export").json()
+        assert exported["result"]["design_proposals"] == b["result"]["design_proposals"]
         assert [x for x in a["result"]["actions"] if x["project_action"] == "outdoor_lighting"] == [
             x for x in b["result"]["actions"] if x["project_action"] == "outdoor_lighting"
         ]
@@ -354,6 +370,14 @@ def test_documentary_optional_independent_and_revisioned(
         assert candidates[0]["applicability"] == "not_assessed"
         assert candidates[0]["page"] == 3 and candidates[0]["text_sha256"]
         assert candidates[0]["relevance_reason"]
+        assert all(
+            candidates[0]["id"] in option["source_refs"]
+            for option in current["result"]["design_proposals"][0]["alternatives"]
+        )
+        assert all(
+            option["justification"]["level"] != "scientifically_qualified"
+            for option in current["result"]["design_proposals"][0]["alternatives"]
+        )
         # Replay is idempotent and the first deterministic result stays unchanged.
         assert territorial_evidence.enrich(query_id)["query_id"] == current["id"]
         first = alice.get(path + "/territorial-context?revision=1").json()["query"]

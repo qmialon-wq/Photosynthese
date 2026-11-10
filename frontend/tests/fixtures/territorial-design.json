@@ -1,0 +1,665 @@
+{
+  "rules_version": "territorial-erc-v2-design",
+  "analysis_revision": 1,
+  "facts": [
+    {
+      "id": "project:fencing",
+      "kind": "user_declaration",
+      "text": "Intervention déclarée : Clôture.",
+      "source_refs": []
+    },
+    {
+      "id": "project:outdoor_lighting",
+      "kind": "user_declaration",
+      "text": "Intervention déclarée : Éclairage extérieur.",
+      "source_refs": []
+    },
+    {
+      "id": "project:vegetation_removal",
+      "kind": "user_declaration",
+      "text": "Intervention déclarée : Suppression de végétation.",
+      "source_refs": []
+    },
+    {
+      "id": "project:earthworks",
+      "kind": "user_declaration",
+      "text": "Intervention déclarée : Terrassement.",
+      "source_refs": []
+    },
+    {
+      "id": "project:soil_sealing",
+      "kind": "user_declaration",
+      "text": "Intervention déclarée : Imperméabilisation.",
+      "source_refs": []
+    },
+    {
+      "id": "ign:znieff1:empty",
+      "kind": "map_result",
+      "text": "Aucun zonage renvoyé pour ce point par la couche znieff1.",
+      "source_refs": [
+        "ign:znieff1"
+      ]
+    },
+    {
+      "id": "ign:znieff2:empty",
+      "kind": "map_result",
+      "text": "Aucun zonage renvoyé pour ce point par la couche znieff2.",
+      "source_refs": [
+        "ign:znieff2"
+      ]
+    },
+    {
+      "id": "ign:natura-habitat:empty",
+      "kind": "map_result",
+      "text": "Aucun zonage renvoyé pour ce point par la couche natura-habitat.",
+      "source_refs": [
+        "ign:natura-habitat"
+      ]
+    },
+    {
+      "id": "ign:natura-oiseaux:empty",
+      "kind": "map_result",
+      "text": "Aucun zonage renvoyé pour ce point par la couche natura-oiseaux.",
+      "source_refs": [
+        "ign:natura-oiseaux"
+      ]
+    }
+  ],
+  "project_concerns": [
+    {
+      "project_action": "fencing",
+      "issue": "Conception et usages de la clôture",
+      "evidence_refs": [
+        "project:fencing"
+      ]
+    },
+    {
+      "project_action": "outdoor_lighting",
+      "issue": "Nécessité, emplacement et fonctionnement de l’éclairage",
+      "evidence_refs": [
+        "project:outdoor_lighting"
+      ]
+    },
+    {
+      "project_action": "vegetation_removal",
+      "issue": "Éléments de végétation réellement concernés",
+      "evidence_refs": [
+        "project:vegetation_removal"
+      ]
+    },
+    {
+      "project_action": "earthworks",
+      "issue": "Emprise des terrassements ou des surfaces imperméabilisées",
+      "evidence_refs": [
+        "project:earthworks"
+      ]
+    },
+    {
+      "project_action": "soil_sealing",
+      "issue": "Emprise des terrassements ou des surfaces imperméabilisées",
+      "evidence_refs": [
+        "project:soil_sealing"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "category": "investigate",
+      "project_action": "fencing",
+      "issue": "Conception et usages de la clôture",
+      "action": "Préciser le tracé, les usages et la conception de la clôture ; vérifier sur le terrain si des déplacements de faune sont concernés.",
+      "rationale": "Vérification générale déclenchée par les entrées citées ; leur enregistrement ne démontre pas un impact écologique.",
+      "evidence_refs": [
+        "project:fencing"
+      ],
+      "source_refs": [],
+      "preconditions": [
+        "Vérification sur site et examen des usages du projet."
+      ],
+      "missing_information": [
+        "Emprise réelle, calendrier, usages et contraintes du projet à préciser.",
+        "Déplacements effectifs sur l’emprise et source applicable à une adaptation."
+      ],
+      "limitations": [
+        "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
+        "Une intersection IGN ne démontre ni habitat précis ni impact du projet.",
+        "Une observation isolée ne démontre ni reproduction, ni abondance, ni corridor écologique."
+      ],
+      "evidence_status": "general_verification"
+    },
+    {
+      "category": "investigate",
+      "project_action": "outdoor_lighting",
+      "issue": "Nécessité, emplacement et fonctionnement de l’éclairage",
+      "action": "Examiner la nécessité d’éclairer, les emplacements et les horaires. Documenter les sensibilités réellement présentes avant de proposer une alternative sans éclairage ou une réduction de son fonctionnement.",
+      "rationale": "Vérification générale déclenchée par les entrées citées ; leur enregistrement ne démontre pas un impact écologique.",
+      "evidence_refs": [
+        "project:outdoor_lighting"
+      ],
+      "source_refs": [],
+      "preconditions": [
+        "Vérification sur site et examen des usages du projet."
+      ],
+      "missing_information": [
+        "Emprise réelle, calendrier, usages et contraintes du projet à préciser.",
+        "Besoin d’éclairage, sensibilités locales et sources applicables."
+      ],
+      "limitations": [
+        "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
+        "Une intersection IGN ne démontre ni habitat précis ni impact du projet.",
+        "Une observation isolée ne démontre ni reproduction, ni abondance, ni corridor écologique."
+      ],
+      "evidence_status": "general_verification"
+    },
+    {
+      "category": "investigate",
+      "project_action": "vegetation_removal",
+      "issue": "Éléments de végétation réellement concernés",
+      "action": "Inventorier les éléments effectivement présents et l’emprise de suppression. Si des enjeux sont documentés, étudier leur conservation dans le projet.",
+      "rationale": "Vérification générale déclenchée par les entrées citées ; leur enregistrement ne démontre pas un impact écologique.",
+      "evidence_refs": [
+        "project:vegetation_removal"
+      ],
+      "source_refs": [],
+      "preconditions": [
+        "Vérification sur site et examen des usages du projet."
+      ],
+      "missing_information": [
+        "Emprise réelle, calendrier, usages et contraintes du projet à préciser.",
+        "Inventaire de la végétation et enjeux étayés sur les éléments concernés."
+      ],
+      "limitations": [
+        "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
+        "Une intersection IGN ne démontre ni habitat précis ni impact du projet.",
+        "Une observation isolée ne démontre ni reproduction, ni abondance, ni corridor écologique."
+      ],
+      "evidence_status": "general_verification"
+    },
+    {
+      "category": "investigate",
+      "project_action": "earthworks",
+      "issue": "Emprise des terrassements ou des surfaces imperméabilisées",
+      "action": "Délimiter l’emprise réelle et examiner les habitats sur le terrain avant de qualifier les effets des travaux ; les couches ne suffisent pas à les exclure.",
+      "rationale": "Vérification générale déclenchée par les entrées citées ; leur enregistrement ne démontre pas un impact écologique.",
+      "evidence_refs": [
+        "project:earthworks"
+      ],
+      "source_refs": [],
+      "preconditions": [
+        "Vérification sur site et examen des usages du projet."
+      ],
+      "missing_information": [
+        "Emprise réelle, calendrier, usages et contraintes du projet à préciser.",
+        "Plan d’emprise et constat des habitats réellement présents."
+      ],
+      "limitations": [
+        "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
+        "Une intersection IGN ne démontre ni habitat précis ni impact du projet.",
+        "Une observation isolée ne démontre ni reproduction, ni abondance, ni corridor écologique."
+      ],
+      "evidence_status": "general_verification"
+    },
+    {
+      "category": "investigate",
+      "project_action": "soil_sealing",
+      "issue": "Emprise des terrassements ou des surfaces imperméabilisées",
+      "action": "Délimiter l’emprise réelle et examiner les habitats sur le terrain avant de qualifier les effets des travaux ; les couches ne suffisent pas à les exclure.",
+      "rationale": "Vérification générale déclenchée par les entrées citées ; leur enregistrement ne démontre pas un impact écologique.",
+      "evidence_refs": [
+        "project:soil_sealing"
+      ],
+      "source_refs": [],
+      "preconditions": [
+        "Vérification sur site et examen des usages du projet."
+      ],
+      "missing_information": [
+        "Emprise réelle, calendrier, usages et contraintes du projet à préciser.",
+        "Plan d’emprise et constat des habitats réellement présents."
+      ],
+      "limitations": [
+        "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
+        "Une intersection IGN ne démontre ni habitat précis ni impact du projet.",
+        "Une observation isolée ne démontre ni reproduction, ni abondance, ni corridor écologique."
+      ],
+      "evidence_status": "general_verification"
+    }
+  ],
+  "unknowns": [
+    "Aucune espèce validée humainement dans ce dossier ; présence non établie."
+  ],
+  "limitations": [
+    "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
+    "Une intersection IGN ne démontre ni habitat précis ni impact du projet.",
+    "Une observation isolée ne démontre ni reproduction, ni abondance, ni corridor écologique.",
+    "Un résultat vide ne démontre aucune absence de biodiversité ou d’enjeu.",
+    "Qualification réglementaire non réalisée : aucun zonage ne vaut ici décision juridique.",
+    "Les choix enregistrés sont des déclarations du projet, pas des constats écologiques."
+  ],
+  "sources": [
+    {
+      "id": "ign:znieff1",
+      "title": "IGN Nature — znieff1",
+      "url": "https://apicarto.ign.fr/api/nature/znieff1",
+      "retrieved_at": "2026-11-10T12:00:00Z",
+      "sha256": null,
+      "status": "empty"
+    },
+    {
+      "id": "ign:znieff2",
+      "title": "IGN Nature — znieff2",
+      "url": "https://apicarto.ign.fr/api/nature/znieff2",
+      "retrieved_at": "2026-11-10T12:00:00Z",
+      "sha256": null,
+      "status": "empty"
+    },
+    {
+      "id": "ign:natura-habitat",
+      "title": "IGN Nature — natura-habitat",
+      "url": "https://apicarto.ign.fr/api/nature/natura-habitat",
+      "retrieved_at": "2026-11-10T12:00:00Z",
+      "sha256": null,
+      "status": "empty"
+    },
+    {
+      "id": "ign:natura-oiseaux",
+      "title": "IGN Nature — natura-oiseaux",
+      "url": "https://apicarto.ign.fr/api/nature/natura-oiseaux",
+      "retrieved_at": "2026-11-10T12:00:00Z",
+      "sha256": null,
+      "status": "empty"
+    },
+    {
+      "id": "erc-framework",
+      "title": "Cadre officiel ERC",
+      "url": "https://www.ecologie.gouv.fr/politiques-publiques/eviter-reduire-compenser-impacts-lenvironnement",
+      "role": "general_design_reference"
+    },
+    {
+      "id": "design:fencing",
+      "title": "OFB — Clôtures : impacts sur la faune",
+      "url": "https://patbiodiv.ofb.fr/index.php/fiche-methodologique/amenagements-terrestres/clotures-impacts-faune-887",
+      "role": "general_design_reference",
+      "accessed_at": "2026-11-10",
+      "scope": "Référence générale ; applicabilité au site non évaluée."
+    },
+    {
+      "id": "design:lighting",
+      "title": "Ministère — Trame noire et éclairage",
+      "url": "https://www.ecologie.gouv.fr/politiques-publiques/trame-verte-bleue",
+      "role": "general_design_reference",
+      "accessed_at": "2026-11-10",
+      "scope": "Référence générale ; applicabilité au site non évaluée."
+    },
+    {
+      "id": "design:soil",
+      "title": "Cerema — Désimperméabilisation des sols",
+      "url": "https://www.cerema.fr/system/files/documents/2022/11/2022_plaquette_desimpermeabilisation.pdf",
+      "role": "general_design_reference",
+      "accessed_at": "2026-11-10",
+      "scope": "Référence générale ; applicabilité au site non évaluée."
+    }
+  ],
+  "compensation": {
+    "status": "not_assessed"
+  },
+  "documentary": {},
+  "design_proposals": [
+    {
+      "project_action": "fencing",
+      "initial_intervention": "Clôture",
+      "issue": "Fermeture, usages et déplacements de faune à examiner.",
+      "alternatives": [
+        {
+          "id": "fencing:reroute",
+          "category": "avoid",
+          "title": "Modifier le tracé de la clôture",
+          "proposal": "Si des secteurs à préserver sont identifiés, comparer un tracé qui les contourne.",
+          "project_change": "Le tracé et les accès seraient déplacés par rapport au plan initial à définir.",
+          "conditions": [
+            "Disposer du tracé initial et repérer les éléments réellement présents.",
+            "Vérifier limites foncières, accès, usages et sécurité."
+          ],
+          "evidence_refs": [
+            "project:fencing"
+          ],
+          "source_refs": [
+            "design:fencing",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "fencing:smaller_perimeter",
+          "category": "reduce",
+          "title": "Limiter le périmètre clôturé",
+          "proposal": "Si la fermeture intégrale n’est pas nécessaire aux usages, étudier la clôture des seuls secteurs qui l’exigent.",
+          "project_change": "Le linéaire serait réduit et certains secteurs resteraient ouverts, selon les besoins.",
+          "conditions": [
+            "Identifier les zones nécessitant effectivement une fermeture.",
+            "Vérifier sécurité, surveillance et éventuelle contention d’animaux."
+          ],
+          "evidence_refs": [
+            "project:fencing"
+          ],
+          "source_refs": [
+            "design:fencing",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "fencing:wildlife_design",
+          "category": "reduce",
+          "title": "Examiner une conception adaptée à la faune",
+          "proposal": "Si des déplacements de faune sur l’emprise sont confirmés et les usages compatibles, étudier avec un spécialiste une conception permettant les passages pertinents.",
+          "project_change": "Le type de clôture ou certains segments seraient adaptés après étude des usages et des espèces concernées.",
+          "conditions": [
+            "Observer les déplacements effectifs et préciser les espèces concernées.",
+            "Évaluer sécurité, risques de piégeage et compatibilité avec les usages.",
+            "Faire définir la conception adaptée ; aucune dimension n’est prescrite ici."
+          ],
+          "evidence_refs": [
+            "project:fencing"
+          ],
+          "source_refs": [
+            "design:fencing",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        }
+      ]
+    },
+    {
+      "project_action": "outdoor_lighting",
+      "initial_intervention": "Éclairage extérieur",
+      "issue": "Besoins d’éclairage et exposition des éléments voisins à examiner.",
+      "alternatives": [
+        {
+          "id": "outdoor_lighting:omit_points",
+          "category": "avoid",
+          "title": "Éviter certains points lumineux",
+          "proposal": "Si certains usages peuvent fonctionner sans éclairage, comparer une variante supprimant les points lumineux correspondants.",
+          "project_change": "Le nombre ou l’implantation des points lumineux serait revu ; certains secteurs ne seraient pas éclairés.",
+          "conditions": [
+            "Localiser les points envisagés et justifier le besoin de chacun.",
+            "Vérifier les conditions de déplacement, d’accessibilité et de sécurité."
+          ],
+          "evidence_refs": [
+            "project:outdoor_lighting"
+          ],
+          "source_refs": [
+            "design:lighting",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "outdoor_lighting:shorter_operation",
+          "category": "reduce",
+          "title": "Réduire la durée de fonctionnement",
+          "proposal": "Si les besoins ne couvrent pas toute la nuit, comparer des horaires plus courts ou un fonctionnement déclenché par l’usage.",
+          "project_change": "Le programme de fonctionnement serait limité aux périodes nécessaires plutôt qu’aux plages initialement envisagées.",
+          "conditions": [
+            "Connaître les horaires réels d’usage et les contraintes de sécurité.",
+            "Examiner la compatibilité d’une programmation ou d’une détection de présence."
+          ],
+          "evidence_refs": [
+            "project:outdoor_lighting"
+          ],
+          "source_refs": [
+            "design:lighting",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "outdoor_lighting:orientation",
+          "category": "reduce",
+          "title": "Adapter l’orientation de l’éclairage",
+          "proposal": "Si l’éclairage reste nécessaire, étudier une orientation ciblée sur les surfaces utiles, en évitant d’éclairer les éléments voisins à préserver s’ils sont identifiés.",
+          "project_change": "La position ou l’orientation des luminaires serait modifiée ; le flux serait ciblé sur les usages retenus.",
+          "conditions": [
+            "Réaliser un plan d’éclairage et identifier les éléments voisins réellement présents.",
+            "Faire vérifier visibilité, sécurité et choix techniques par une personne compétente."
+          ],
+          "evidence_refs": [
+            "project:outdoor_lighting"
+          ],
+          "source_refs": [
+            "design:lighting",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        }
+      ]
+    },
+    {
+      "project_action": "vegetation_removal",
+      "initial_intervention": "Suppression de végétation",
+      "issue": "Végétation effectivement présente et emprise de suppression à examiner.",
+      "alternatives": [
+        {
+          "id": "vegetation_removal:retain_layout",
+          "category": "avoid",
+          "title": "Implanter le projet en préservant la végétation présente",
+          "proposal": "Si des arbres ou des haies sont effectivement présents, comparer une implantation qui les conserve avec leurs espaces de fonctionnement à déterminer.",
+          "project_change": "La position des constructions, cheminements ou accès serait ajustée pour conserver les éléments identifiés.",
+          "conditions": [
+            "Inventorier la végétation et la reporter sur le plan du projet.",
+            "Faire examiner état des arbres, espace racinaire, usages et sécurité."
+          ],
+          "evidence_refs": [
+            "project:vegetation_removal"
+          ],
+          "source_refs": [
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "vegetation_removal:selective_removal",
+          "category": "reduce",
+          "title": "Réduire l’emprise de suppression de végétation",
+          "proposal": "Si une suppression reste nécessaire, comparer une emprise limitée aux éléments strictement incompatibles avec les usages après examen sur site.",
+          "project_change": "L’emprise de suppression serait réduite ; les éléments conservables seraient identifiés et intégrés à l’organisation du chantier.",
+          "conditions": [
+            "Délimiter l’emprise initiale et les éléments à conserver ou à examiner.",
+            "Vérifier les enjeux écologiques et les contraintes techniques avant toute intervention."
+          ],
+          "evidence_refs": [
+            "project:vegetation_removal"
+          ],
+          "source_refs": [
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        }
+      ]
+    },
+    {
+      "project_action": "earthworks",
+      "initial_intervention": "Terrassement",
+      "issue": "Emprise réelle, sols et habitats concernés à examiner.",
+      "alternatives": [
+        {
+          "id": "earthworks:different_layout",
+          "category": "avoid",
+          "title": "Comparer une implantation différente",
+          "proposal": "Si des enjeux sont confirmés sur l’emprise initiale, comparer sur plan une implantation qui évite les secteurs concernés.",
+          "project_change": "L’implantation et éventuellement les accès seraient déplacés ; le plan de terrassement devrait être recalculé.",
+          "conditions": [
+            "Disposer du plan initial, de la topographie et des enjeux réellement localisés.",
+            "Vérifier faisabilité géotechnique, accès et contraintes du projet."
+          ],
+          "evidence_refs": [
+            "project:earthworks"
+          ],
+          "source_refs": [
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "earthworks:smaller_footprint",
+          "category": "reduce",
+          "title": "Réduire l’emprise des terrassements",
+          "proposal": "Si les besoins techniques le permettent, comparer une organisation limitant les surfaces remaniées et les emprises temporaires de chantier.",
+          "project_change": "La zone de travaux, les circulations ou les stockages temporaires seraient resserrés ; les volumes resteraient à calculer.",
+          "conditions": [
+            "Distinguer emprises définitives, circulations et stockages temporaires.",
+            "Faire vérifier stabilité, gestion des terres et faisabilité du chantier."
+          ],
+          "evidence_refs": [
+            "project:earthworks"
+          ],
+          "source_refs": [
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        }
+      ]
+    },
+    {
+      "project_action": "soil_sealing",
+      "initial_intervention": "Imperméabilisation",
+      "issue": "Surfaces nécessaires, usages du sol et gestion de l’eau à examiner.",
+      "alternatives": [
+        {
+          "id": "soil_sealing:smaller_sealed_area",
+          "category": "avoid",
+          "title": "Éviter des surfaces imperméabilisées non indispensables",
+          "proposal": "Si les usages le permettent, comparer un plan réduisant les surfaces revêtues et regroupant certains accès ou espaces de circulation.",
+          "project_change": "La surface à imperméabiliser serait réduite ; les espaces laissés non revêtus et les usages associés seraient redéfinis.",
+          "conditions": [
+            "Mesurer les surfaces prévues et préciser les usages, charges et accès requis.",
+            "Vérifier circulation, accessibilité, sécurité et entretien."
+          ],
+          "evidence_refs": [
+            "project:soil_sealing"
+          ],
+          "source_refs": [
+            "design:soil",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        },
+        {
+          "id": "soil_sealing:permeable_surfaces",
+          "category": "reduce",
+          "title": "Examiner des revêtements perméables compatibles avec les usages",
+          "proposal": "Si le sol, la gestion de l’eau et les usages sont compatibles, comparer certains revêtements prévus avec des solutions perméables.",
+          "project_change": "La structure de certaines surfaces, leur drainage et leur entretien seraient modifiés après étude technique.",
+          "conditions": [
+            "Étudier sol, sous-sol, infiltration et éventuelles pollutions.",
+            "Vérifier charges, accessibilité, gestion de l’eau et entretien.",
+            "Faire examiner la solution technique ; sa pertinence sur site n’est pas établie."
+          ],
+          "evidence_refs": [
+            "project:soil_sealing"
+          ],
+          "source_refs": [
+            "design:soil",
+            "erc-framework"
+          ],
+          "justification": {
+            "level": "exploratory",
+            "reason": "Option issue de l’intervention déclarée et du répertoire de conception ; aucun enjeu local n’est établi par ces références générales."
+          },
+          "status": "conditional_design_option",
+          "limitations": [
+            "Option de conception à comparer au projet initial ; efficacité locale non présumée.",
+            "Les dimensions, coûts et gains éventuels ne sont pas évalués."
+          ]
+        }
+      ]
+    }
+  ]
+}

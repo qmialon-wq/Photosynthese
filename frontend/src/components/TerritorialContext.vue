@@ -8,6 +8,7 @@ import {
   type Intervention,
   type TerritorialContext,
 } from "../territorial-context";
+import ProjectAlternatives from "./ProjectAlternatives.vue";
 import TerritorialPointMap from "./TerritorialPointMap.vue";
 
 const props = defineProps<{ corpusId: string; owner: string }>();
@@ -319,7 +320,8 @@ function consult() {
           Consulter IGN et analyser le projet
         </button>
         <p v-if="locationDirty || projectDirty" class="notice">
-          Enregistrez vos modifications avant de lancer une consultation.
+          Enregistrez vos modifications avant de lancer une consultation. Les
+          résultats ci-dessous concernent la dernière version analysée.
         </p>
         <template v-if="query">
           <p role="status">
@@ -383,60 +385,79 @@ function consult() {
               {{ concern.issue }}
             </li>
           </ul>
-          <h3>4. Éviter → Réduire → Compenser</h3>
-          <div v-for="group in groups" :key="group.code" class="erc-group">
-            <h4>{{ group.label }}</h4>
-            <p
-              v-if="
-                !result.actions.some((action) => action.category === group.code)
-              "
-            >
-              Aucune piste suffisamment documentée à ce stade. Consultez les
-              vérifications à approfondir.
+          <h3>4. Adapter mon projet</h3>
+          <ProjectAlternatives
+            :proposals="result.design_proposals"
+            :facts="result.facts"
+            :sources="result.sources"
+            :obsolete="query?.obsolete"
+          />
+          <details class="complementary-checks">
+            <summary>
+              Vérifications complémentaires et propositions issues des preuves
+            </summary>
+            <p>
+              Ces éléments complètent les alternatives de conception. Une
+              proposition écologique qualifiée exige un appui documentaire
+              examiné.
             </p>
-            <article
-              v-for="(action, index) in result.actions.filter(
-                (action) => action.category === group.code,
-              )"
-              :key="index"
-              class="erc-action"
-            >
-              <h5>{{ action.issue }}</h5>
-              <p class="eyebrow">
-                {{
-                  action.evidence_status === "conditional_proposal"
-                    ? "PROPOSITION CONDITIONNELLE"
-                    : "VÉRIFICATION GÉNÉRALE"
-                }}
+            <div v-for="group in groups" :key="group.code" class="erc-group">
+              <h4>{{ group.label }}</h4>
+              <p
+                v-if="
+                  !result.actions.some(
+                    (action) => action.category === group.code,
+                  )
+                "
+              >
+                Aucune proposition écologique qualifiée dans cette catégorie.
+                Les alternatives de conception restent à étudier sous leurs
+                conditions.
               </p>
-              <p>{{ action.action }}</p>
-              <p>{{ action.rationale }}</p>
-              <details>
-                <summary>Justification et vérifications nécessaires</summary>
-                <p>
-                  Déclencheurs :
-                  {{ action.evidence_refs.join(", ") || "Projet à préciser" }}
-                </p>
-                <p>
-                  Sources :
+              <article
+                v-for="(action, index) in result.actions.filter(
+                  (action) => action.category === group.code,
+                )"
+                :key="index"
+                class="erc-action"
+              >
+                <h5>{{ action.issue }}</h5>
+                <p class="eyebrow">
                   {{
-                    action.source_refs.join(", ") ||
-                    "Aucune source suffisante pour justifier une mesure"
+                    action.evidence_status === "conditional_proposal"
+                      ? "PROPOSITION CONDITIONNELLE"
+                      : "VÉRIFICATION GÉNÉRALE"
                   }}
                 </p>
-                <p
-                  v-for="item in [
-                    ...action.preconditions,
-                    ...action.missing_information,
-                    ...action.limitations,
-                  ]"
-                  :key="item"
-                >
-                  {{ item }}
-                </p>
-              </details>
-            </article>
-          </div>
+                <p>{{ action.action }}</p>
+                <p>{{ action.rationale }}</p>
+                <details>
+                  <summary>Justification et vérifications nécessaires</summary>
+                  <p>
+                    Déclencheurs :
+                    {{ action.evidence_refs.join(", ") || "Projet à préciser" }}
+                  </p>
+                  <p>
+                    Sources :
+                    {{
+                      action.source_refs.join(", ") ||
+                      "Aucune source suffisante pour justifier une mesure"
+                    }}
+                  </p>
+                  <p
+                    v-for="item in [
+                      ...action.preconditions,
+                      ...action.missing_information,
+                      ...action.limitations,
+                    ]"
+                    :key="item"
+                  >
+                    {{ item }}
+                  </p>
+                </details>
+              </article>
+            </div>
+          </details>
           <p>
             <strong>Compenser : non évalué.</strong> Les impacts résiduels et
             leur éventuelle compensation nécessitent une étude adaptée.

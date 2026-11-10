@@ -93,8 +93,7 @@ def enrich(identifier: str) -> dict:
         if str(latest["id"]) != identifier:
             return {"status": "superseded", "message": "Une consultation plus récente existe."}
         revision = latest["revision"] + 1
-        result = analyze(row["inputs"], row["layers"], revision)
-        result["sources"].extend(sources)
+        result = analyze(row["inputs"], row["layers"], revision, documents=sources)
         result["documentary"] = {
             "status": "candidates_only",
             "base_query_id": identifier,

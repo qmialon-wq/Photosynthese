@@ -1,6 +1,15 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
+import { readFileSync } from "node:fs";
+
+// Real deterministic engine output with synthetic project inputs and empty map fixtures.
+const designFixture = JSON.parse(
+  readFileSync(
+    new URL("../fixtures/territorial-design.json", import.meta.url),
+    "utf8",
+  ),
+);
 
 const corpus = "22222222-2222-4222-8222-222222222222";
 const base = `/parcels/corpora/${corpus}`;
@@ -28,7 +37,7 @@ async function fixture(page: Page, mode = "real") {
   let saved = structuredClone(profile),
     revision = 1,
     point: typeof location | null = null;
-  let query: unknown = null;
+  let query: Record<string, unknown> | null = null;
   const calls: string[] = [];
   await page.route("https://tile.openstreetmap.org/**", (route) =>
     route.abort(),
@@ -59,6 +68,7 @@ async function fixture(page: Page, mode = "real") {
       expect(body.expected_revision).toBe(revision);
       saved.interventions = body.interventions;
       revision++;
+      if (query) query.obsolete = true;
       return route.fulfill({ json: { revision, profile: saved } });
     }
     if (path === base + "/location") {
@@ -83,44 +93,25 @@ async function fixture(page: Page, mode = "real") {
           observations: [],
         },
         result: {
-          rules_version: "territorial-erc-v1",
+          ...structuredClone(designFixture),
           analysis_revision: revision,
-          facts: [
-            {
-              id: "project:fencing",
-              kind: "user_declaration",
-              text: "Intervention déclarée : Clôture.",
-              source_refs: [],
-            },
-          ],
-          project_concerns: [
-            {
-              project_action: "fencing",
-              issue: "Conception et usages de la clôture",
-              evidence_refs: ["project:fencing"],
-            },
-          ],
-          actions: [
-            {
-              category: "investigate",
-              project_action: "fencing",
-              issue: "Conception et usages de la clôture",
-              action: "Préciser le tracé et vérifier les déplacements réels.",
-              rationale: "Vérification générale du projet de test.",
-              evidence_refs: ["project:fencing"],
-              source_refs: [],
-              preconditions: ["Vérification sur site"],
-              missing_information: ["Usages du projet"],
-              limitations: ["Un point ne représente pas une parcelle"],
-              evidence_status: "general_verification",
-            },
-          ],
-          unknowns: ["Aucune espèce validée humainement."],
-          limitations: [
-            "Un résultat vide ne démontre aucune absence de biodiversité.",
-          ],
-          sources: [],
-          compensation: { status: "not_assessed" },
+          facts: designFixture.facts.filter(
+            (fact: { id: string }) =>
+              !fact.id.startsWith("project:") ||
+              saved.interventions.some((code) => fact.id === "project:" + code),
+          ),
+          actions: designFixture.actions.filter(
+            (action: { project_action: string }) =>
+              saved.interventions.includes(action.project_action),
+          ),
+          project_concerns: designFixture.project_concerns.filter(
+            (item: { project_action: string }) =>
+              saved.interventions.includes(item.project_action),
+          ),
+          design_proposals: designFixture.design_proposals.filter(
+            (item: { project_action: string }) =>
+              saved.interventions.includes(item.project_action),
+          ),
         },
       };
       return route.fulfill({
@@ -128,6 +119,13 @@ async function fixture(page: Page, mode = "real") {
         json: { id: "q-test", status: "pending" },
       });
     }
+    if (path === base + "/territorial-context/export")
+      return route.fulfill({
+        json: query,
+        headers: {
+          "Content-Disposition": 'attachment; filename="project-test.json"',
+        },
+      });
     if (path === base + "/territorial-context")
       return route.fulfill({
         json: {
@@ -188,6 +186,12 @@ test("propriétaire : point, interventions, analyse, export et formulaire histor
   await page
     .getByRole("button", { name: "Consulter IGN et analyser le projet" })
     .click();
+  await page
+    .getByText(
+      "Vérifications complémentaires et propositions issues des preuves",
+      { exact: true },
+    )
+    .click();
   await expect(
     page.getByText("VÉRIFICATION GÉNÉRALE", { exact: true }),
   ).toBeVisible();
@@ -213,7 +217,7 @@ test("propriétaire : point, interventions, analyse, export et formulaire histor
   ).toEqual([]);
   await mkdir("../output/playwright", { recursive: true });
   await page.screenshot({
-    path: "../output/playwright/territorial-owner-test-fixture.png",
+    path: "../output/playwright/territorial-owner-design-test-fixture.png",
     fullPage: true,
   });
   await page.reload();
@@ -238,4 +242,119 @@ test("démonstration : aucune requête territoriale avec un identifiant fictif",
     page.getByText(/Aucune requête territoriale n’est envoyée/),
   ).toBeVisible();
   expect(calls.some((path) => path.startsWith("/parcels/"))).toBe(false);
+});
+
+test("A/B : adapter les interventions change les alternatives et leur export", async ({
+  page,
+}) => {
+  await fixture(page);
+  await page.goto(`/parcelles/${corpus}`);
+  await page.getByLabel("Latitude WGS84").fill("49.316");
+  await page.getByLabel("Longitude WGS84").fill("-1.235");
+  await page
+    .getByRole("button", { name: "Enregistrer le point", exact: true })
+    .click();
+  await page.getByLabel("Éclairage extérieur", { exact: true }).check();
+  await page
+    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .click();
+  const options = page.getByRole("region", {
+    name: "Adapter mon projet",
+    exact: true,
+  });
+  await expect(
+    options.locator('[data-intervention="outdoor_lighting"]'),
+  ).toBeVisible();
+  await expect(options.locator('[data-intervention="fencing"]')).toHaveCount(0);
+  await expect(
+    options.getByRole("heading", {
+      name: "Réduire la durée de fonctionnement",
+    }),
+  ).toBeVisible();
+  await expect(options.locator(".design-option")).toHaveCount(3);
+  await page.getByLabel("Clôture", { exact: true }).check();
+  await page
+    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Analyse obsolète" }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .click();
+  await expect(options.locator('[data-intervention="fencing"]')).toBeVisible();
+  await expect(options.locator(".design-option")).toHaveCount(6);
+  await expect(
+    options.getByRole("heading", { name: "Limiter le périmètre clôturé" }),
+  ).toBeVisible();
+  const first = options.locator('[data-alternative="fencing:reroute"]');
+  await expect(first).toContainText("Niveau de justification : Exploratoire");
+  await expect(first).toContainText("Ce que cela changerait au projet");
+  await first
+    .getByText("Observations, sources mobilisées et limites", { exact: true })
+    .click();
+  await expect(first).toContainText("Référence générale de conception");
+  await expect(first).toContainText("Intervention déclarée : Clôture");
+  const exportLink = page.getByRole("link", {
+    name: "Exporter l’analyse et ses preuves (JSON)",
+  });
+  const href = await exportLink.getAttribute("href");
+  expect(href).toMatch(/territorial-context\/export\?revision=3$/);
+  const exported = await page.evaluate(async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Échec export");
+    return response.json();
+  }, href!);
+  expect(exported.inputs.profile.interventions).toEqual([
+    "outdoor_lighting",
+    "fencing",
+  ]);
+  expect(
+    exported.result.design_proposals
+      .map((p: { project_action: string }) => p.project_action)
+      .sort(),
+  ).toEqual(["fencing", "outdoor_lighting"]);
+  expect(
+    exported.result.design_proposals[0].alternatives[0].project_change,
+  ).toBeTruthy();
+  const scan = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa"])
+    .analyze();
+  expect(
+    scan.violations.map((v) => ({
+      id: v.id,
+      targets: v.nodes.map((n) => n.target),
+    })),
+  ).toEqual([]);
+  await mkdir("../output/playwright", { recursive: true });
+  await page.screenshot({
+    path: "../output/playwright/project-adaptation-test-fixture.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await options.scrollIntoViewIfNeeded();
+  expect(
+    await options.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth + 1,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: "../output/playwright/project-adaptation-mobile-test-fixture.png",
+    fullPage: true,
+  });
+  // Removing the initial intervention must remove its alternatives from the new analysis.
+  await page.getByLabel("Éclairage extérieur", { exact: true }).uncheck();
+  await page
+    .getByRole("button", { name: "Enregistrer les interventions", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .click();
+  await expect(
+    options.locator('[data-intervention="outdoor_lighting"]'),
+  ).toHaveCount(0);
+  await expect(options.locator(".design-option")).toHaveCount(3);
 });

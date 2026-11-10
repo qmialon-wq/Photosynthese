@@ -23,7 +23,9 @@ terrain vert n'est inventé.
 L’[analyse préliminaire territoriale](docs/TERRITORIAL_CONTEXT.md) relie les
 interventions du projet, un point WGS84, les quatre couches IGN et les observations
 humaines. Elle fournit des vérifications déterministes sourcées et un export
-révisé, indépendamment du rapport scientifique. Voir la [recette et les preuves
+révisé, indépendamment du rapport scientifique. La couche [Adapter mon projet](docs/PROJECT_DESIGN.md)
+ajoute des alternatives de conception pour les cinq interventions, avec leurs changements
+concrets, leurs conditions et leur niveau de justification. Voir la [recette et les preuves
 IGN](docs/TERRITORIAL_VALIDATION.md).
 
 Le [module RAG local](docs/RAG.md) propose une recherche documentaire hybride et
