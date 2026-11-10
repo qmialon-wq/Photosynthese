@@ -8,11 +8,11 @@
   min-height: 42px;
   border: var(--sym-border);
   border-radius: 100px;
-  background: rgb(184 214 164 / 12%);
+  background: rgb(from var(--sym-shade-surface-b8d6a4) r g b / 12%);
   color: var(--sym-text);
   font-size: 12px;
   white-space: nowrap;
-  box-shadow: inset 0 1px rgb(235 255 221 / 12%);
+  box-shadow: inset 0 1px rgb(from var(--sym-shade-border-ebffdd) r g b / 12%);
 }
 .sv-button-quiet:hover:not(:disabled) {
   background: var(--sym-control-hover);
@@ -37,33 +37,33 @@
   height: 16px;
   min-height: 0;
   padding: 0;
-  border: 1.5px solid #e4eddb;
+  border: 1.5px solid var(--sym-shade-border-e4eddb);
   border-radius: 3px;
-  background: rgb(228 246 219 / 5%);
+  background: rgb(from var(--sym-shade-surface-e4f6db) r g b / 5%);
   cursor: pointer;
 }
 .symbiose-shell input[type="checkbox"]:checked {
-  border-color: #c2f68e;
-  background: #c2f68e;
+  border-color: var(--sym-shade-border-c2f68e);
+  background: var(--sym-shade-surface-c2f68e);
 }
 .symbiose-shell input[type="checkbox"]:checked::after {
   content: "";
   width: 8px;
   height: 5px;
   margin-top: -2px;
-  border: solid #21451c;
+  border: solid var(--sym-shade-border-21451c);
   border-width: 0 0 2px 2px;
   transform: rotate(-45deg);
 }
 .symbiose-shell input[type="checkbox"]:indeterminate {
-  background: #c2f68e;
-  border-color: #c2f68e;
+  background: var(--sym-shade-surface-c2f68e);
+  border-color: var(--sym-shade-border-c2f68e);
 }
 .symbiose-shell input[type="checkbox"]:indeterminate::after {
   content: "";
   width: 8px;
   height: 2px;
-  background: #21451c;
+  background: var(--sym-shade-surface-21451c);
 }
 .symbiose-shell input[type="checkbox"]:disabled {
   cursor: not-allowed;
@@ -98,7 +98,7 @@
   padding: 9px 18px 9px 43px;
 }
 .sv-search input::placeholder {
-  color: #edf1e7;
+  color: var(--sym-shade-text-edf1e7);
   opacity: 1;
 }
 .sv-select select {
@@ -107,7 +107,7 @@
   cursor: pointer;
 }
 .sv-select option {
-  color: #f5f8ef;
+  color: var(--sym-shade-text-f5f8ef);
   background: var(--sym-surface-solid);
 }
 .sv-select > .sym-icon {
@@ -126,7 +126,7 @@
   border: var(--sym-border);
   border-radius: 50%;
   color: var(--sym-text);
-  background: rgb(171 202 153 / 13%);
+  background: rgb(from var(--sym-shade-surface-abca99) r g b / 13%);
 }
 .sv-refresh:hover {
   background: var(--sym-control-hover);
@@ -174,21 +174,21 @@
 }
 .sv-pagination .sv-page-step {
   border: var(--sym-border);
-  background: rgb(182 215 161 / 17%);
+  background: rgb(from var(--sym-shade-surface-b6d7a1) r g b / 17%);
   padding: 5px 16px;
 }
 .sv-pagination .sv-page-step:disabled {
-  background: rgb(150 188 139 / 16%);
+  background: rgb(from var(--sym-shade-surface-96bc8b) r g b / 16%);
   border-color: transparent;
   opacity: 0.55;
 }
 .sv-page-number.is-current {
-  background: #bef382;
-  color: #16320d;
+  background: var(--sym-shade-surface-bef382);
+  color: var(--sym-shade-ink-16320d);
   font-weight: 650;
 }
 .sv-pagination button:hover:not(:disabled):not(.is-current) {
-  background: rgb(193 229 163 / 22%);
+  background: rgb(from var(--sym-shade-surface-c1e5a3) r g b / 22%);
 }
 .sv-page-gap {
   font-size: 16px;
@@ -217,12 +217,12 @@
   padding: 0;
   border: var(--sym-border);
   border-radius: 24px;
-  background: #123d2b;
+  background: var(--sym-shade-surface-123d2b);
   color: var(--sym-text);
-  box-shadow: 0 20px 80px rgb(0 20 0 / 50%);
+  box-shadow: 0 20px 80px rgb(from var(--sym-shade-border-001400) r g b / 50%);
 }
 .sv-demo-dialog::backdrop {
-  background: rgb(0 20 10 / 65%);
+  background: rgb(from var(--sym-shade-surface-00140a) r g b / 65%);
   backdrop-filter: blur(7px);
 }
 .sv-dialog-body {
@@ -239,12 +239,12 @@
   color: white;
   border: 0;
   border-radius: 50%;
-  background: rgb(222 247 201 / 9%);
+  background: rgb(from var(--sym-shade-surface-def7c9) r g b / 9%);
   z-index: 1;
 }
 .sv-demo-kicker {
   font-size: 10px;
-  color: #c5eea2;
+  color: var(--sym-shade-accent-c5eea2);
   letter-spacing: 1.2px;
 }
 .sv-dialog-body h2 {
@@ -261,10 +261,10 @@
 }
 .sv-demo-file {
   padding: 17px;
-  border: 1px dashed #8aaa78;
+  border: 1px dashed var(--sym-shade-border-8aaa78);
   border-radius: 14px;
   margin: 20px 0;
-  color: #f1f8ec;
+  color: var(--sym-shade-text-f1f8ec);
   font-size: 14px;
 }
 .sv-demo-file input {
@@ -284,7 +284,7 @@
 }
 .sv-demo-files li {
   padding: 7px 0;
-  border-bottom: 1px solid #3a6449;
+  border-bottom: 1px solid var(--sym-shade-border-3a6449);
   font-size: 13px;
   overflow-wrap: anywhere;
 }
@@ -302,10 +302,10 @@
   display: grid;
   grid-template-columns: 90px 1fr;
   padding: 7px 0;
-  border-top: 1px solid #3d634b;
+  border-top: 1px solid var(--sym-shade-border-3d634b);
 }
 .sv-demo-dialog dt {
-  color: #bdd7ad;
+  color: var(--sym-shade-text-bdd7ad);
 }
 .sv-demo-dialog dd {
   margin: 0;

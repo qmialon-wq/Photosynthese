@@ -3,7 +3,7 @@
   align-items: flex-start;
   gap: 26px;
   padding-bottom: 18px;
-  border-bottom: 1px solid rgb(211 236 185 / 28%);
+  border-bottom: 1px solid rgb(from var(--sym-shade-border-d3ecb9) r g b / 28%);
 }
 .sd-header .sv-heading {
   min-width: 0;
@@ -28,7 +28,7 @@
   flex-shrink: 0;
   gap: 12px;
   padding-left: 26px;
-  border-left: 1px solid rgb(218 242 202 / 50%);
+  border-left: 1px solid rgb(from var(--sym-shade-border-daf2ca) r g b / 50%);
 }
 .sd-page .sd-header-actions .sym-button {
   min-height: 42px;
@@ -69,7 +69,7 @@
   font-weight: 650;
 }
 .sd-section-title > .sym-icon {
-  color: #c6ee6f;
+  color: var(--sym-shade-accent-c6ee6f);
 }
 .sd-corpus-heading p {
   margin: 4px 0 0;
@@ -133,7 +133,7 @@
 }
 .sd-selection-count {
   padding-left: 20px;
-  border-left: 1px solid rgb(222 241 199 / 40%);
+  border-left: 1px solid rgb(from var(--sym-shade-border-def1c7) r g b / 40%);
   font-size: 14px;
   white-space: nowrap;
 }
@@ -161,15 +161,15 @@
   flex-shrink: 0;
   width: 70px;
   height: 70px;
-  border: 1px solid #b2dc76;
+  border: 1px solid var(--sym-shade-border-b2dc76);
   border-radius: 50%;
   background: radial-gradient(
     circle at 35% 20%,
-    rgb(152 185 64 / 35%),
-    rgb(28 85 40 / 45%)
+    rgb(from var(--sym-shade-surface-98b940) r g b / 35%),
+    rgb(from var(--sym-shade-surface-1c5528) r g b / 45%)
   );
-  box-shadow: inset 0 1px 10px rgb(187 225 105 / 15%);
-  color: #d2f776;
+  box-shadow: inset 0 1px 10px rgb(from var(--sym-shade-border-bbe169) r g b / 15%);
+  color: var(--sym-shade-accent-d2f776);
 }
 .sd-empty-state p {
   font-size: 16px;
@@ -226,8 +226,8 @@
   border-radius: 14px;
 }
 .sd-document-card.is-selected {
-  border-color: #c1fa8d;
-  box-shadow: 0 0 0 1px #b8f18b;
+  border-color: var(--sym-shade-border-c1fa8d);
+  box-shadow: 0 0 0 1px var(--sym-shade-border-b8f18b);
 }
 .sd-file-icon {
   color: var(--sym-lime);
@@ -327,7 +327,7 @@
   flex: 1;
   width: 100%;
   height: 9px;
-  accent-color: #bff586;
+  accent-color: var(--sym-shade-accent-bff586);
 }
 .sd-task .sd-task-note {
   margin-bottom: 0;
@@ -337,7 +337,7 @@
   margin: 10px 3px 0;
   font-size: 12px;
   line-height: 1.4;
-  color: #e8fcd8;
+  color: var(--sym-shade-accent-e8fcd8);
 }
 .sd-error {
   color: #ffe2d4 !important;
@@ -366,7 +366,7 @@
   font-weight: 400;
 }
 .sd-choice-hint {
-  color: #d4f3b9;
+  color: var(--sym-shade-accent-d4f3b9);
 }
 .sd-page .sd-preview-title {
   margin-bottom: 15px;

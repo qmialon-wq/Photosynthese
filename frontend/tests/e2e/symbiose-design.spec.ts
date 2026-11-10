@@ -137,13 +137,11 @@ test("les six rubriques tournent vers l’emplacement quatre et les icônes rest
 
 test("actions et navigation au clavier", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Rechercher", exact: true }).click();
-  await expect(page.getByRole("searchbox")).toBeFocused();
-  await page.getByRole("searchbox").fill("vidéo");
-  await page
-    .locator(".sym-action-panel")
-    .getByRole("link", { name: "Vidéothèque" })
-    .click();
+  await expect(
+    page.getByRole("button", { name: "Rechercher", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator(".sym-header-actions select")).toHaveCount(0);
+  await page.locator('.sym-wheel-link[data-section="/videos"]').click();
   await expect(page).toHaveURL(/\/videos$/);
   await page.getByRole("button", { name: "Paramètres", exact: true }).click();
   await page.getByRole("button", { name: "Paramètres d’affichage" }).click();

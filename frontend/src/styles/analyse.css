@@ -1,6 +1,6 @@
 .sa-header {
   padding-bottom: 20px;
-  border-bottom: 1px solid rgb(198 226 168 / 30%);
+  border-bottom: 1px solid rgb(from var(--sym-shade-border-c6e2a8) r g b / 30%);
 }
 .sa-choose::before {
   display: none;
@@ -45,9 +45,9 @@
   aspect-ratio: 3 / 2;
   overflow: hidden;
   width: 100%;
-  border: 1px solid rgb(225 244 211 / 60%);
+  border: 1px solid rgb(from var(--sym-shade-border-e1f4d3) r g b / 60%);
   border-radius: 15px;
-  background: #071109;
+  background: var(--sym-shade-surface-071109);
 }
 .sa-media-surface {
   position: absolute;
@@ -96,7 +96,7 @@
   left: 10px;
   padding: 4px 7px;
   border-radius: 5px;
-  background: rgb(0 20 9 / 72%);
+  background: rgb(from var(--sym-shade-surface-001409) r g b / 72%);
   font-size: 9px;
   letter-spacing: 0.04em;
   color: white;
@@ -126,7 +126,7 @@
   cursor: pointer;
 }
 .sa-player-button:hover {
-  background: rgb(230 255 220 / 20%);
+  background: rgb(from var(--sym-shade-surface-e6ffdc) r g b / 20%);
 }
 .sa-play-symbol {
   fill: currentColor;
@@ -144,7 +144,7 @@
   padding: 0;
   border: 0;
   border-radius: 8px;
-  accent-color: #c0ff81;
+  accent-color: var(--sym-shade-accent-c0ff81);
   cursor: pointer;
 }
 .sa-seek {
@@ -153,7 +153,7 @@
   appearance: none;
   background: linear-gradient(
     to right,
-    #c0ff81 var(--sa-progress),
+    var(--sym-shade-surface-c0ff81) var(--sa-progress),
     #ddd var(--sa-progress)
   );
 }
@@ -162,14 +162,14 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #c0ff81;
+  background: var(--sym-shade-surface-c0ff81);
 }
 .sa-seek::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border: 0;
   border-radius: 50%;
-  background: #c0ff81;
+  background: var(--sym-shade-surface-c0ff81);
 }
 .sa-volume {
   position: relative;
@@ -184,9 +184,9 @@
   gap: 9px;
   width: 170px;
   padding: 10px;
-  border: 1px solid #a5c7a0;
+  border: 1px solid var(--sym-shade-border-a5c7a0);
   border-radius: 10px;
-  background: #143421;
+  background: var(--sym-shade-surface-143421);
   font-size: 12px;
 }
 .sa-volume-popup label {
@@ -222,7 +222,7 @@
   margin-top: 18px;
   padding: 12px 16px;
   border-radius: 18px;
-  background: rgb(161 202 124 / 18%);
+  background: rgb(from var(--sym-shade-surface-a1ca7c) r g b / 18%);
 }
 .sa-species-info .sym-icon {
   color: var(--sym-lime);
@@ -237,7 +237,7 @@
   margin-bottom: 14px;
   padding: 12px 16px;
   border-radius: 18px;
-  background: rgb(26 71 47 / 30%);
+  background: rgb(from var(--sym-shade-surface-1a472f) r g b / 30%);
 }
 .sa-setting-block fieldset {
   min-width: 0;
@@ -285,7 +285,7 @@
   width: 100%;
   height: 5px;
   margin: 5px 0;
-  accent-color: #baff80;
+  accent-color: var(--sym-shade-accent-baff80);
 }
 .sa-analysis-completed {
   color: #cdff9c;
@@ -309,7 +309,7 @@
   cursor: pointer;
 }
 .sa-prepare-crops:hover {
-  color: #c7ff92;
+  color: var(--sym-shade-accent-c7ff92);
 }
 .sa-settings-info {
   display: flex;
@@ -317,7 +317,7 @@
   gap: 17px;
   margin-top: 5px;
   padding: 14px 8px 0;
-  border-top: 1px solid rgb(196 227 156 / 40%);
+  border-top: 1px solid rgb(from var(--sym-shade-border-c4e39c) r g b / 40%);
 }
 .sa-settings-info .sym-icon {
   flex-shrink: 0;
@@ -339,17 +339,17 @@
   width: 100%;
   min-width: 0;
   padding: 10px;
-  border: 1px solid #88aa88;
+  border: 1px solid var(--sym-shade-border-88aa88);
   border-radius: 14px;
-  background: rgb(56 91 58 / 35%);
+  background: rgb(from var(--sym-shade-surface-385b3a) r g b / 35%);
   color: white;
   text-align: left;
   cursor: pointer;
 }
 .sa-video-options button:hover,
 .sa-video-options button[aria-pressed="true"] {
-  background: rgb(114 156 65 / 40%);
-  border-color: #c3ee93;
+  background: rgb(from var(--sym-shade-surface-729c41) r g b / 40%);
+  border-color: var(--sym-shade-border-c3ee93);
 }
 .sa-option-poster {
   flex-shrink: 0;

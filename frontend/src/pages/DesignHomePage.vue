@@ -88,9 +88,9 @@ import VideoThumbnail from "../components/VideoThumbnail.vue";
                   y2="30"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop stop-color="#9ff63b" />
-                  <stop offset=".65" stop-color="#bafa77" />
-                  <stop offset="1" stop-color="#d6ffd2" />
+                  <stop stop-color="var(--sym-shade-accent-9ff63b)" />
+                  <stop offset=".65" stop-color="var(--sym-shade-accent-bafa77)" />
+                  <stop offset="1" stop-color="var(--sym-shade-accent-d6ffd2)" />
                 </linearGradient>
               </defs>
               <path

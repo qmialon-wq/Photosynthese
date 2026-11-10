@@ -33,14 +33,14 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: #c2f76e;
+  color: var(--sym-shade-accent-c2f76e);
   background: linear-gradient(
     125deg,
-    rgb(173 200 55 / 63%),
-    rgb(63 114 50 / 60%)
+    rgb(from var(--sym-shade-surface-adc837) r g b / 63%),
+    rgb(from var(--sym-shade-surface-3f7232) r g b / 60%)
   );
   border-radius: 18px;
-  box-shadow: inset 0 1px rgb(230 250 150 / 34%);
+  box-shadow: inset 0 1px rgb(from var(--sym-shade-border-e6fa96) r g b / 34%);
 }
 .sv-heading h1 {
   font-size: 35px;
@@ -69,7 +69,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgb(218 242 202 / 55%);
+  background: rgb(from var(--sym-shade-surface-daf2ca) r g b / 55%);
 }
 .sv-stats {
   max-width: 960px;
@@ -87,7 +87,7 @@
 .sv-stats .sym-stat-icon {
   width: 55px;
   height: 55px;
-  color: #c6fa73;
+  color: var(--sym-shade-accent-c6fa73);
 }
 .sv-stats .sym-stat strong {
   font-size: 26px;
@@ -119,7 +119,7 @@
   min-width: 0;
 }
 .sv-prepare-copy > .sym-icon {
-  color: #c4f56c;
+  color: var(--sym-shade-accent-c4f56c);
 }
 .sv-prepare-copy h2 {
   font-size: 18px;
@@ -136,7 +136,7 @@
   align-items: center;
   gap: 14px;
   flex-shrink: 0;
-  border-left: 1px solid rgb(218 242 202 / 50%);
+  border-left: 1px solid rgb(from var(--sym-shade-border-daf2ca) r g b / 50%);
   padding-left: 20px;
   position: relative;
 }
@@ -240,11 +240,11 @@
   padding: 0;
 }
 .sv-card-checkbox input {
-  background: rgb(13 42 23 / 30%) !important;
+  background: rgb(from var(--sym-shade-surface-0d2a17) r g b / 30%) !important;
   box-shadow: 0 1px 6px rgb(0 0 0 / 30%);
 }
 .sv-card-checkbox input:checked {
-  background: #c2f68e !important;
+  background: var(--sym-shade-surface-c2f68e) !important;
 }
 .sv-duration {
   position: absolute;
@@ -255,7 +255,7 @@
   gap: 5px;
   border-radius: 100px;
   padding: 3px 7px;
-  background: rgb(0 15 0 / 75%);
+  background: rgb(from var(--sym-shade-surface-000f00) r g b / 75%);
   font-size: 10px;
   line-height: 1.3;
 }
@@ -321,7 +321,7 @@
   border: var(--sym-border);
   border-radius: 12px;
   background: var(--sym-surface-solid);
-  box-shadow: 0 10px 24px rgb(0 20 0 / 30%);
+  box-shadow: 0 10px 24px rgb(from var(--sym-shade-border-001400) r g b / 30%);
 }
 .sv-card-menu button {
   display: block;
@@ -336,12 +336,12 @@
 }
 .sv-card-menu button:hover,
 .sv-card-menu button:focus-visible {
-  background: rgb(192 230 159 / 16%);
+  background: rgb(from var(--sym-shade-surface-c0e69f) r g b / 16%);
 }
 .sv-feedback {
   margin: 12px 0 0 !important;
   font-size: 12px;
-  color: #e5f8d1;
+  color: var(--sym-shade-accent-e5f8d1);
 }
 @media (min-width: 1800px) {
   .sv-page {

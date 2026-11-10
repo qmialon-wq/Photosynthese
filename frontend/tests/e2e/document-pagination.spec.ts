@@ -1,3 +1,9 @@
+import {
+  openDisplaySettings,
+  closeDisplaySettings,
+  selectSource,
+  expectSource,
+} from "./display-settings";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
@@ -225,14 +231,10 @@ test("taille et espèce réinitialisent la sélection et la page, en conservant 
   await page.keyboard.press("Escape");
   await page.reload();
   await expect(size(page)).toHaveValue("4");
-  await page
-    .getByLabel("Mode de données", { exact: true })
-    .selectOption("demo");
+  await selectSource(page, "demo");
   await expect(size(page)).toHaveValue("4");
   await expect(count(page)).toHaveText("0 document");
-  await page
-    .getByLabel("Mode de données", { exact: true })
-    .selectOption("real");
+  await selectSource(page, "real");
   await expect(size(page)).toHaveValue("4");
   expect(calls.every((c) => c.method === "GET")).toBe(true);
 });
