@@ -186,7 +186,7 @@ test("A — démonstration autonome, données cohérentes et simulations sans AP
   await page
     .getByLabel("Espèce du corpus", { exact: true })
     .selectOption("chevreuil");
-  await expect(page.locator(".sd-document-card")).toHaveCount(2);
+  await expect(page.locator(".sd-document-card")).toHaveCount(5);
   expect(calls).toEqual([]);
 });
 
@@ -373,6 +373,9 @@ test("C — changement de mode pendant une analyse et conservation des changemen
     .getByLabel("Espèce du corpus", { exact: true })
     .selectOption("chevreuil");
   await page
+    .getByLabel("Documents par page", { exact: true })
+    .selectOption("4");
+  await page
     .getByRole("checkbox", {
       name: "Tout sélectionner sur cette page",
       exact: true,
@@ -390,7 +393,7 @@ test("C — changement de mode pendant une analyse et conservation des changemen
     .getByLabel("Espèce du corpus", { exact: true })
     .selectOption("chevreuil");
   await expect(page.getByLabel("Espèce du corpus")).toContainText(
-    "Chevreuil · 3 documents",
+    "Chevreuil · 1 document",
   );
 });
 
@@ -422,13 +425,11 @@ test("E — captures des douze vues et cadre commun à 1600 × 900", async ({
   await mkdir(directory, { recursive: true });
   await page.goto("/");
   const wheel = () =>
-    page
-      .locator(".sym-wheel")
-      .evaluate((el) => ({
-        html: el.querySelector("svg")!.outerHTML,
-        width: el.getBoundingClientRect().width,
-        height: el.getBoundingClientRect().height,
-      }));
+    page.locator(".sym-wheel").evaluate((el) => ({
+      html: el.querySelector("svg")!.outerHTML,
+      width: el.getBoundingClientRect().width,
+      height: el.getBoundingClientRect().height,
+    }));
   const baseline = await wheel();
   for (const mode of ["demo", "real"] as const) {
     await picker(page).selectOption(mode);

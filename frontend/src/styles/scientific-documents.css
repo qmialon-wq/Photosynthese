@@ -87,16 +87,28 @@
   padding: 8px 19px;
   font-size: 16px;
 }
-.sd-species-field {
-  max-width: 455px;
+.sd-corpus-controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
   margin-top: 17px;
 }
-.sd-species-field > span {
+.sd-species-field {
+  flex: 1;
+  max-width: 455px;
+  min-width: 0;
+}
+.sd-page-size-field {
+  width: 210px;
+  min-width: 0;
+}
+.sd-corpus-controls > div > span {
   display: block;
   margin-bottom: 6px;
   font-size: 16px;
 }
-.sd-species-field .sv-select select {
+.sd-corpus-controls .sv-select select {
   height: 40px;
   font-size: 16px;
 }
@@ -164,8 +176,9 @@
   line-height: 1.45;
 }
 .sd-pagination {
-  justify-content: flex-end;
-  margin-top: 6px;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
 }
 .sd-pagination nav {
   gap: 14px;
@@ -237,6 +250,49 @@
 .sd-page .sd-document-card button {
   min-height: 34px;
   font-size: 13px;
+}
+/* La grille concerne le corpus d’observation ; les lignes administratives sont conservées. */
+.sd-page .sd-document-list {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+  margin-top: 18px;
+}
+.sd-page .sd-document-card {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 265px;
+  padding: 18px;
+  gap: 14px;
+}
+.sd-page .sd-document-card > input {
+  align-self: flex-start;
+}
+.sd-page .sd-file-icon {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+.sd-page .sd-document-copy {
+  flex: 1;
+  flex-basis: auto;
+}
+.sd-page .sd-document-copy h3 {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.sd-page .sd-document-copy p {
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+}
+.sd-page .sd-document-card button {
+  align-self: flex-start;
+  margin-top: auto;
 }
 .sd-task {
   padding: 14px 0 0;
@@ -352,7 +408,28 @@
     display: none;
   }
 }
+@media (max-width: 1390px) {
+  .sd-page .sd-document-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 @media (max-width: 650px) {
+  .sd-corpus-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .sd-corpus-controls > div {
+    max-width: none;
+    width: 100%;
+  }
+  .sd-page .sd-document-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sd-page .sd-document-card {
+    min-height: 240px;
+    padding: 16px;
+  }
   .sd-header .sv-heading {
     gap: 12px;
   }
@@ -414,8 +491,8 @@
     padding: 8px 12px;
     font-size: 12px;
   }
-  .sd-species-field > span,
-  .sd-species-field .sv-select select {
+  .sd-corpus-controls > div > span,
+  .sd-corpus-controls .sv-select select {
     font-size: 13px;
   }
   .sd-selection-bar {

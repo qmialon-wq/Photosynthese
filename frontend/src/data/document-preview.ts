@@ -21,7 +21,6 @@ export const retrievalLabels = {
 export const retrievalQueueDelay = 700;
 export const retrievalTickDuration = 350;
 export const retrievalSteps = [18, 38, 59, 78, 94, 100];
-export const documentPageSize = 2;
 export const fictitiousDocumentDate = "12 mars 2025";
 export function corpusSpeciesLabel(species: string) {
   return (
@@ -55,6 +54,14 @@ export const demoScientificDocuments: DemoScientificDocument[] = [
     date: fictitiousDocumentDate,
     origin: "example",
   },
+  ...Array.from({ length: 16 }, (_, index) => ({
+    id: `example-blaireau-${index + 2}`,
+    species: "blaireau",
+    title: `Exemple fictif ${String(index + 2).padStart(2, "0")} — Blaireau`,
+    kind: (["PDF", "DOCX", "TXT"] as const)[index % 3],
+    date: fictitiousDocumentDate,
+    origin: "example" as const,
+  })),
 ];
 export function documentsForSpecies(
   documents: DemoScientificDocument[],

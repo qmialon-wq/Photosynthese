@@ -1,5 +1,11 @@
 # Documents scientifiques — étape 6
 
+> La pagination et la présentation ont évolué à l’étape 11 : grille responsive,
+> choix de 4/8/12/16 documents, défaut de 16 et préférence locale indépendante.
+> Voir [la pagination du corpus scientifique](PAGINATION_CORPUS_SYMBIOSE.md)
+> pour le comportement actuel. La description de l’étape 6 ci-dessous conserve
+> la trace de la maquette initiale.
+
 La page graphique `/documents` complète les six rubriques de Symbiose, avec la stack Vue 3, TypeScript et Vue Router existante. Elle reprend la structure de la maquette : en-tête et actions, panneau Mon corpus avec sélection d’espèce et pagination, puis panneau Avancement distinct.
 
 ## Fichiers créés

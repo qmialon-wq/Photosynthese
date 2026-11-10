@@ -8,6 +8,7 @@ const props = withDefaults(
     itemLabel?: string;
     navigationLabel?: string;
     variant?: "numbered" | "simple";
+    showCount?: boolean;
   }>(),
   {
     itemLabel: "vidéo",
@@ -42,9 +43,12 @@ const buttons = computed(() => {
 </script>
 <template>
   <div class="sv-pagination">
-    <p v-if="variant === 'numbered'" role="status">
-      {{ start }} – {{ end }} sur {{ total }} {{ itemLabel
-      }}{{ total === 1 ? "" : "s" }}
+    <p v-if="variant === 'numbered' || showCount" role="status">
+      <template v-if="showCount && !total">0 {{ itemLabel }}</template
+      ><template v-else>
+        {{ start }} – {{ end }} sur {{ total }} {{ itemLabel
+        }}{{ total === 1 ? "" : "s" }}</template
+      >
     </p>
     <nav :aria-label="navigationLabel">
       <button
@@ -54,7 +58,8 @@ const buttons = computed(() => {
       >
         {{ variant === "simple" ? "Page précédente" : "Précédent" }}</button
       ><span v-if="variant === 'simple'" class="sv-page-current" role="status"
-        >Page {{ page }}</span
+        >Page {{ page
+        }}<template v-if="showCount"> sur {{ pageCount }}</template></span
       ><template
         v-for="button in variant === 'numbered' ? buttons : []"
         :key="button"

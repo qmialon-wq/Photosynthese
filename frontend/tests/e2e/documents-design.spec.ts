@@ -242,7 +242,10 @@ test("espèces, pagination, sélection limitée à la page et consultation ficti
   await expect(corpusSpecies(page).locator("option:checked")).toHaveText(
     "Chevreuil · 5 documents",
   );
-  await expect(page.locator(".sd-document-card")).toHaveCount(2);
+  await page
+    .getByLabel("Documents par page", { exact: true })
+    .selectOption("4");
+  await expect(page.locator(".sd-document-card")).toHaveCount(4);
   await page.locator(".sd-document-card input").first().check();
   expect(
     await all(page).evaluate(
@@ -251,18 +254,15 @@ test("espèces, pagination, sélection limitée à la page et consultation ficti
   ).toBe(true);
   await all(page).check();
   await expect(page.locator(".sd-selection-count")).toHaveText(
-    "2 sélectionné(s)",
+    "4 sélectionné(s)",
   );
   await page
     .getByRole("button", { name: "Page suivante", exact: true })
     .click();
-  await expect(page.locator(".sv-page-current")).toHaveText("Page 2");
+  await expect(page.locator(".sv-page-current")).toHaveText("Page 2 sur 2");
   await expect(page.locator(".sd-selection-count")).toHaveText(
     "0 sélectionné(s)",
   );
-  await page
-    .getByRole("button", { name: "Page suivante", exact: true })
-    .click();
   await expect(page.locator(".sd-document-card")).toHaveCount(1);
   await expect(
     page.getByRole("button", { name: "Page suivante", exact: true }),
@@ -277,7 +277,7 @@ test("espèces, pagination, sélection limitée à la page et consultation ficti
     .click();
   await all(page).check();
   await corpusSpecies(page).selectOption("sanglier");
-  await expect(page.locator(".sv-page-current")).toHaveText("Page 1");
+  await expect(page.locator(".sv-page-current")).toHaveText("Page 1 sur 1");
   await expect(page.locator(".sd-selection-count")).toHaveText(
     "0 sélectionné(s)",
   );
@@ -314,8 +314,8 @@ test("retrait confirmé, compteurs et retour à l’état vide sans suppression 
   );
   await corpusSpecies(page).selectOption("chevreuil");
   await page
-    .getByRole("button", { name: "Page suivante", exact: true })
-    .click();
+    .getByLabel("Documents par page", { exact: true })
+    .selectOption("4");
   await page
     .getByRole("button", { name: "Page suivante", exact: true })
     .click();
@@ -324,8 +324,8 @@ test("retrait confirmé, compteurs et retour à l’état vide sans suppression 
   await page
     .getByRole("button", { name: "Confirmer le retrait simulé", exact: true })
     .click();
-  await expect(page.locator(".sv-page-current")).toHaveText("Page 2");
-  await expect(page.locator(".sd-document-card")).toHaveCount(2);
+  await expect(page.locator(".sv-page-current")).toHaveText("Page 1 sur 1");
+  await expect(page.locator(".sd-document-card")).toHaveCount(4);
   await page.reload();
   await corpusSpecies(page).selectOption("sanglier");
   await expect(page.locator(".sd-document-card")).toHaveCount(2);
@@ -469,7 +469,16 @@ test("sélecteur local, nom du fichier sans lecture, import annulable et extensi
   });
   await expect(page.getByRole("dialog")).toContainText("Étude locale.PDF");
   await expect(page.locator(".sd-document-card")).toHaveCount(0);
+  const closed = page
+    .getByRole("dialog")
+    .evaluate(
+      (dialog) =>
+        new Promise<void>((resolve) =>
+          dialog.addEventListener("close", () => resolve(), { once: true }),
+        ),
+    );
   await page.getByRole("button", { name: "Annuler", exact: true }).click();
+  await closed;
   const input = page.locator('input[type="file"]');
   await input.setInputFiles({
     name: "article.pdf.exe",

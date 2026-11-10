@@ -36,7 +36,9 @@ const emit = defineEmits<{
         @change="emit('toggle', document.id)"
       /><span class="sd-file-icon"><SymIcon name="file" :size="28" /></span>
       <div class="sd-document-copy">
-        <h3 :id="`${document.id}-title`">{{ document.title }}</h3>
+        <h3 :id="`${document.id}-title`" :title="document.title">
+          {{ document.title }}
+        </h3>
         <p>
           {{ corpusSpeciesLabel(document.species) || "Espèce non renseignée" }}
           · {{ document.kind || "—" }} · {{ document.date || "—" }}
