@@ -1,0 +1,152 @@
+.symbiose-shell .dossier-reader {
+  --muted: var(--sym-text-soft);
+  color: var(--sym-text);
+  background: var(--sym-glass-page);
+  border: var(--sym-border);
+  border-radius: var(--sym-radius);
+  box-shadow: var(--sym-shadow);
+  backdrop-filter: blur(var(--sym-blur));
+  -webkit-backdrop-filter: blur(var(--sym-blur));
+  padding: clamp(16px, 3vw, 32px);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+}
+.symbiose-shell .dossier-reader :is(h1, h2, h3, h4) {
+  color: var(--sym-text);
+  margin: 1.2rem 0 0.75rem;
+}
+.symbiose-shell .dossier-reader h1 {
+  margin-top: 0;
+}
+.symbiose-shell .dossier-reader p {
+  margin: 0.6rem 0;
+}
+.symbiose-shell .dossier-reader ul {
+  margin: 0.75rem 0;
+  padding-left: 1.4rem;
+}
+.symbiose-shell .dossier-reader .panel {
+  background: var(--sym-glass-card);
+  color: var(--sym-text);
+  border: var(--sym-border);
+  border-radius: var(--sym-radius);
+  box-shadow: var(--sym-shadow);
+  margin-top: 1rem;
+}
+.symbiose-shell .dossier-reader a {
+  color: var(--sym-lime);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.symbiose-shell .dossier-reader .button-link {
+  color: var(--sym-action-text);
+  text-decoration: none;
+  background: var(--sym-action-bg);
+  border: 1px solid var(--sym-lime);
+  border-radius: 100px;
+  box-shadow: var(--sym-shadow);
+  padding: 10px 18px;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.45;
+}
+.symbiose-shell .dossier-reader :is(.eyebrow, .subtitle) {
+  color: var(--sym-text-soft);
+}
+.symbiose-shell .dossier-reader .plain-list {
+  padding: 0;
+  list-style: none;
+}
+.symbiose-shell .dossier-reader .plain-list li {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.symbiose-shell .dossier-reader dl {
+  display: grid;
+  grid-template-columns: minmax(100px, 160px) minmax(0, 1fr);
+  gap: 0.6rem 1rem;
+}
+.symbiose-shell .dossier-reader dt {
+  font-weight: 650;
+}
+.symbiose-shell .dossier-reader dd {
+  margin: 0;
+}
+.symbiose-shell .dossier-reader details {
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background: var(--sym-glass-inset);
+  border: var(--sym-border);
+  box-shadow: var(--sym-control-reflection);
+  border-radius: 12px;
+}
+.symbiose-shell .dossier-reader summary {
+  color: var(--sym-text);
+  font-weight: 650;
+  cursor: pointer;
+}
+.symbiose-shell .dossier-reader .territorial-page {
+  margin: 1.5rem 0;
+  padding: clamp(14px, 2vw, 24px);
+  background: var(--sym-glass-inset);
+  border: var(--sym-border);
+  border-radius: 16px;
+  box-shadow: var(--sym-control-reflection);
+}
+.symbiose-shell .dossier-reader blockquote {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid var(--sym-lime);
+  background: var(--sym-control-bg);
+  border-radius: 0 10px 10px 0;
+}
+.symbiose-shell .dossier-reader pre {
+  color: var(--sym-text-soft);
+  background: rgb(5 33 23 / 55%);
+  border: var(--sym-border);
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.symbiose-shell .dossier-reader .actions {
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.symbiose-shell .dossier-reader fieldset {
+  min-width: 0;
+  border-color: rgb(222 241 199 / 49%);
+}
+.symbiose-shell .dossier-reader .notice {
+  color: var(--sym-text);
+  background: var(--sym-glass-inset);
+  border: var(--sym-border);
+}
+.symbiose-shell .dossier-reader .notice.error {
+  background: var(--sym-danger-bg);
+  border-color: var(--sym-danger-border);
+}
+.symbiose-shell .dossier-reader :is(input, select, textarea) {
+  color: var(--sym-text);
+  background: var(--sym-control-bg);
+  border: var(--sym-control-border);
+}
+.symbiose-shell .dossier-reader option {
+  color: var(--sym-text);
+  background: var(--sym-surface-solid);
+}
+@media (max-width: 600px) {
+  .symbiose-shell .dossier-reader .page-heading {
+    display: block;
+  }
+  .symbiose-shell .dossier-reader dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+  .symbiose-shell .dossier-reader dd {
+    margin-bottom: 0.6rem;
+  }
+}

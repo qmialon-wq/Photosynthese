@@ -307,6 +307,12 @@ function finishDemo() {
                 : "Les informations ci-dessous sont fictives."
           }}
         </p>
+        <RouterLink
+          v-if="store.isReal.value"
+          class="sym-button"
+          :to="`/videos/${encodeURIComponent(currentVideo.id)}/dossier`"
+          >Lire le dossier et les recommandations</RouterLink
+        >
         <dl>
           <div>
             <dt>Fichier</dt>

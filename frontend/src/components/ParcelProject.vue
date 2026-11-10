@@ -62,6 +62,7 @@ const props = defineProps<{
   videoId: string;
   analysisId: string;
   completed: boolean;
+  readOnly?: boolean;
 }>();
 const enabled = ref(true),
   revision = ref(0),
@@ -160,11 +161,11 @@ defineExpose({ save });
 <template>
   <fieldset class="parcel-questionnaire">
     <legend>Votre parcelle et votre projet</legend>
-    <label class="inline-check"
+    <label v-if="!readOnly" class="inline-check"
       ><input type="checkbox" v-model="enabled" /> Recevoir mon dossier
       biodiversité</label
     >
-    <p class="muted">
+    <p v-if="!readOnly" class="muted">
       Trois informations pour préparer des pistes d’aménagement avec la vidéo
       annotée.
     </p>
@@ -174,7 +175,7 @@ defineExpose({ save });
       @retry="state.refresh"
     />
     <div
-      v-if="enabled"
+      v-if="enabled && !readOnly"
       class="form-grid"
       @input="dirty = true"
       @change="dirty = true"
@@ -306,9 +307,7 @@ defineExpose({ save });
           compléter.
         </p>
         <details
-          v-for="item in dossier.result.territorial_report
-            ? []
-            : dossier.result.recommendations"
+          v-for="item in dossier.result.recommendations"
           :key="item.theme"
         >
           <summary>
@@ -347,11 +346,39 @@ defineExpose({ save });
             </li>
           </ul>
         </details>
+        <section v-if="dossier.result.next_steps?.length">
+          <h4>Prochaines étapes</h4>
+          <ul>
+            <li v-for="step in dossier.result.next_steps" :key="step">
+              {{ step }}
+            </li>
+          </ul>
+        </section>
+        <section v-if="dossier.result.limitations?.length">
+          <h4>Limites du dossier</h4>
+          <ul>
+            <li v-for="limit in dossier.result.limitations" :key="limit">
+              {{ limit }}
+            </li>
+          </ul>
+        </section>
+        <details class="dossier-audit">
+          <summary>Toutes les sorties du dossier (JSON)</summary>
+          <pre>{{ JSON.stringify(dossier.result, null, 2) }}</pre>
+          <a
+            :href="apiUrl(`/parcels/dossiers/${dossier.id}/export?format=json`)"
+            download
+            >Télécharger toutes les sorties</a
+          >
+        </details>
       </template>
     </section>
+    <p v-else-if="initialized && readOnly && !state.error.value" class="notice">
+      Aucun dossier n’a encore été généré pour cette vidéo.
+    </p>
     <PButton
       type="button"
-      v-if="completed && enabled"
+      v-if="completed && enabled && !readOnly"
       :label="dossier ? 'Actualiser mon dossier' : 'Préparer mon dossier'"
       severity="secondary"
       :loading="busy"

@@ -37,6 +37,15 @@ const route = useRoute();
 watch(
   () => dataMode.mode.value,
   () => {
+    if (
+      dataMode.isDemo.value &&
+      /^\/(parcelles\/|videos\/[^/]+\/dossier)/.test(route.path)
+    ) {
+      void router.replace(
+        route.path.startsWith("/parcelles/") ? "/parcelles" : "/videos",
+      );
+      return;
+    }
     if (!route.path.startsWith("/admin")) return;
     adminModeSwitching.value = true;
     void router

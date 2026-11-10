@@ -3,7 +3,13 @@ import type { CitationSource } from "./source-links";
 export interface TerritorialReport {
   status: string;
   corpus_snapshot_at?: string;
-  ledger?: CitationSource[];
+  ledger?: Array<
+    CitationSource & {
+      status?: string;
+      chunks_read?: number;
+      relevance?: string;
+    }
+  >;
   coverage: {
     documents_total: number;
     documents_read: number;

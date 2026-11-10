@@ -126,6 +126,7 @@ async function apiFixture(
       "/review/species": [{ name: "renard" }],
       "/parcels/corpora": options.empty ? [] : [corpus],
       "/parcels/corpora/recorded-corpus": detail,
+      "/parcels/options": { land_types: {}, project_types: {} },
       "/documents": options.empty ? [] : [document],
       "/console/tasks/recorded-analysis/artifacts/report": {
         frames: [
@@ -200,9 +201,9 @@ test("B — les six rubriques lisent exclusivement les réponses réelles et dé
     "1",
     "1",
     "1",
-    "—",
+    "0",
   ]);
-  await expect(page.locator(".sym-gauge strong")).toHaveText("—");
+  await expect(page.locator(".sym-diagnostic")).toHaveCount(0);
   await expect(page.locator(".sym-recommendation")).not.toContainText(
     "Maintenir et renforcer",
   );
@@ -226,8 +227,10 @@ test("B — les six rubriques lisent exclusivement les réponses réelles et dé
       exact: true,
     })
     .click();
-  await expect(page.getByRole("dialog")).not.toContainText("données fictives");
-  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(/\/parcelles\/recorded-corpus$/);
+  await expect(
+    page.getByText("Aucun dossier n’a encore été généré pour cette parcelle."),
+  ).toBeVisible();
   await navigate(page, "/analyses");
   await expect(page.locator("#sa-filename")).toHaveText(video.filename);
   await expect(

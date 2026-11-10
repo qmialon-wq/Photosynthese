@@ -38,7 +38,8 @@ describe("sources du dossier", () => {
         },
       },
     });
-    const links = wrapper.findAll('a[href="https://doi.org/10.1234/hedges"]');
+    const page = wrapper.get(".territorial-page");
+    const links = page.findAll('a[href="https://doi.org/10.1234/hedges"]');
     expect(links).toHaveLength(1);
     expect(links[0].text()).toBe("Haies <et> biodiversité");
     expect(links[0].attributes("target")).toBe("_blank");
@@ -46,7 +47,8 @@ describe("sources du dossier", () => {
     expect(
       wrapper.find('a[href="https://example.org/article.pdf"]').text(),
     ).toBe("Vie urbaine");
-    expect(wrapper.text()).not.toContain("D319");
+    expect(page.text()).not.toContain("D319");
+    expect(wrapper.get(".rag-audit-json").text()).toContain("D319");
     expect(wrapper.find("et").exists()).toBe(false);
     wrapper.unmount();
   });

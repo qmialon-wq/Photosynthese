@@ -31,6 +31,7 @@ export interface Video {
   durationSeconds?: number;
   status: VideoStatus;
   thumbnail?: "deer" | "fox" | "badger" | "boar";
+  poster?: string;
   projectId?: string;
   source?: string;
   sourceStatus?: string;
@@ -44,6 +45,8 @@ export interface Project {
   project: string;
   landscape?: "forest" | "valley" | "wetland" | "meadow" | "bocage";
   videoIds?: string[];
+  dossierStatus?: string;
+  recommendations?: Recommendation[];
 }
 export interface Detection {
   id: string;
@@ -121,6 +124,8 @@ export interface Recommendation {
   id: string;
   title: string;
   description: string;
+  projectId?: string;
+  priority?: string;
 }
 export interface HomeSummary {
   overview: Statistic[];
@@ -137,6 +142,8 @@ export interface HomeSummary {
     species: number | null;
     observations: number | null;
     thumbnail?: string;
+    source?: string;
+    poster?: string;
   }[];
 }
 export interface Collections {

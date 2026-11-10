@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import SymIcon from "../components/symbiose/SymIcon.vue";
 import DemoDialog from "../components/symbiose/DemoDialog.vue";
@@ -19,6 +20,7 @@ const {
   state: source,
   store,
 } = useCollection("analyses");
+const route = useRoute();
 const selectedId = ref(analysisVideos.value[0]?.id || ""),
   objective = ref("species"),
   detail = ref("fast");
@@ -28,10 +30,21 @@ const selected = computed(
     analysisVideos.value[0],
 );
 const report = ref<Resource<Detection>>(resource([]));
-watch(analysisVideos, (list) => {
-  if (!list.some((video) => video.id === selectedId.value))
-    selectedId.value = list[0]?.id || "";
-});
+watch(
+  [analysisVideos, () => route.query.task, () => route.query.video],
+  ([list, task, video]) => {
+    const requested = list.find((item) =>
+      task ? item.id === task : video && item.videoId === video,
+    );
+    if (requested) {
+      selectedId.value = requested.id;
+      return;
+    }
+    if (!list.some((video) => video.id === selectedId.value))
+      selectedId.value = list[0]?.id || "";
+  },
+  { immediate: true },
+);
 watch(
   () => selected.value?.id,
   async (id) => {
@@ -174,6 +187,15 @@ onBeforeUnmount(stopSimulation);
         </li>
       </ul>
     </GlassPanel>
+    <RouterLink
+      v-if="store.isReal.value && selected?.videoId"
+      class="sym-button"
+      :to="{
+        path: `/videos/${encodeURIComponent(selected.videoId)}/dossier`,
+        query: { analysis: selected.id },
+      }"
+      >Lire le dossier et les recommandations de cette vidéo</RouterLink
+    >
     <DemoDialog
       :notice="
         store.capabilities.value.readOnly

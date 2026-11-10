@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import SymIcon from "../components/symbiose/SymIcon.vue";
 import SearchField from "../components/symbiose/SearchField.vue";
@@ -20,6 +21,12 @@ import "../styles/dossiers.css";
 import { useCollection } from "../data/data-mode";
 import SourceState from "../components/symbiose/SourceState.vue";
 const { items: projects, state: source, store } = useCollection("projects");
+const router = useRouter();
+function openProject(project: DemoProject) {
+  if (store.isReal.value) {
+    void router.push(`/parcelles/${encodeURIComponent(project.id)}`);
+  } else current.value = project;
+}
 const projectTypeOptions = computed(() => [
   { value: "", label: "Tous les projets" },
   ...[
@@ -126,7 +133,7 @@ const projectLabel = computed(
         v-for="project in visible"
         :key="project.id"
         :project="project"
-        @open="current = $event"
+        @open="openProject"
       />
     </div>
     <div v-else-if="source.state === 'success'" class="sv-empty sf-empty">

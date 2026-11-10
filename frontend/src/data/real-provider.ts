@@ -3,6 +3,7 @@ import { acceptSession, type Session } from "../auth-state";
 import type { Video as ApiVideo, Sample, Task, Report } from "../types";
 import type { ScientificDocument as ApiDocument } from "../documents";
 import { externalUrl } from "../documents";
+import type { TerritorialReport } from "../territorial";
 import {
   resource,
   type DataProvider,
@@ -28,7 +29,15 @@ type CorpusDetail = {
   profile: { profile: { locality?: string; project_type?: string } } | null;
   dossier: {
     status: string;
-    result?: { confirmed_species?: { name: string }[] } | null;
+    result?: {
+      confirmed_species?: { name: string }[];
+      territorial_report?: TerritorialReport;
+      recommendations?: {
+        title: string;
+        action: string;
+        citation?: string | null;
+      }[];
+    } | null;
   } | null;
 };
 const encoded = encodeURIComponent;
@@ -93,6 +102,7 @@ export function adaptVideo(row: ApiVideo): Video {
       : "unknown",
     sourceStatus: row.status,
     source: apiUrl(`/console/videos/${encoded(row.id)}/file`),
+    poster: row.metadata?.poster_url,
   };
 }
 function media(row: ApiVideo): AnalysisVideo {
@@ -103,6 +113,7 @@ function media(row: ApiVideo): AnalysisVideo {
     species: row.species_candidate || "",
     kind: "video",
     source: apiUrl(`/console/videos/${encoded(row.id)}/file`),
+    poster: row.metadata?.poster_url,
     duration: row.metadata?.duration_seconds ?? null,
     width: row.metadata?.width ?? null,
     height: row.metadata?.height ?? null,
@@ -279,6 +290,29 @@ export class RealDataProvider implements DataProvider {
           );
           if (!Array.isArray(detail.videos))
             throw new Error("Dossier invalide");
+          const result =
+            detail.dossier?.status === "completed"
+              ? detail.dossier.result
+              : null;
+          const actions =
+            result?.territorial_report?.status === "generated"
+              ? (result.territorial_report.actions ?? []).map(
+                  (action, index) => ({
+                    id: `${row.id}-action-${index}`,
+                    title: action.title,
+                    description: action.action,
+                    projectId: row.id,
+                    priority: action.priority,
+                  }),
+                )
+              : (result?.recommendations ?? [])
+                  .filter((card) => card.citation)
+                  .map((card, index) => ({
+                    id: `${row.id}-recommendation-${index}`,
+                    title: card.title,
+                    description: card.action,
+                    projectId: row.id,
+                  }));
           projects.push({
             id: row.id,
             name: detail.profile?.profile.locality || `Dossier ${row.id}`,
@@ -287,6 +321,8 @@ export class RealDataProvider implements DataProvider {
             species: detail.dossier?.result?.confirmed_species?.length ?? null,
             status: "unknown",
             project: detail.profile?.profile.project_type || "",
+            dossierStatus: detail.dossier?.status,
+            recommendations: actions,
           });
         }
         return resource(

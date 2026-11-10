@@ -162,7 +162,9 @@ export function summarize(snapshot: Snapshot, simulated: boolean): HomeSummary {
           description: "Favoriser les continuités boisées.",
         },
       ]
-    : [];
+    : snapshot.projects.data.flatMap(
+        (project) => project.recommendations ?? [],
+      );
   return {
     overview: [
       {
@@ -185,9 +187,9 @@ export function summarize(snapshot: Snapshot, simulated: boolean): HomeSummary {
       },
       {
         icon: "leaf",
-        value: count(simulated ? recommendations.length : null),
+        value: count(known("projects") ? recommendations.length : null),
         label: "Recommandations",
-        detail: simulated ? "à consulter" : "Non disponible",
+        detail: simulated ? "à consulter" : "dans les dossiers consultés",
       },
     ],
     videoOverview: [
@@ -235,6 +237,8 @@ export function summarize(snapshot: Snapshot, simulated: boolean): HomeSummary {
           : null,
         observations: known("observations") ? items.length : null,
         thumbnail: video?.thumbnail,
+        source: video?.source,
+        poster: video?.poster,
       };
     }),
   };

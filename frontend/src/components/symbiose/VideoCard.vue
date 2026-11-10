@@ -4,6 +4,7 @@ import type { Video } from "../../data/contracts";
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
 import StatusBadge from "./StatusBadge.vue";
+import VideoThumbnail from "../VideoThumbnail.vue";
 const props = defineProps<{ video: Video; selected: boolean }>();
 const emit = defineEmits<{
   toggle: [id: string];
@@ -67,6 +68,13 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
             : 'sym-thumbnail-empty'
         "
       >
+        <VideoThumbnail
+          v-if="video.source || video.poster"
+          class="sv-real-thumbnail"
+          :source="video.source"
+          :poster="video.poster"
+          :label="`Miniature de ${video.filename}`"
+        />
         <button
           class="sv-play-button"
           :aria-label="`Prévisualiser ${video.filename}`"

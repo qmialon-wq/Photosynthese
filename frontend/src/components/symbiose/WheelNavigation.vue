@@ -36,7 +36,11 @@ watch(reducedMotion, (reduced) => {
 const activeIndex = computed(() =>
   Math.max(
     0,
-    symbioseNavigation.findIndex((item) => item.path === route.path),
+    symbioseNavigation.findIndex(
+      (item) =>
+        item.path === route.path ||
+        (item.path !== "/" && route.path.startsWith(`${item.path}/`)),
+    ),
   ),
 );
 const items = computed(() =>

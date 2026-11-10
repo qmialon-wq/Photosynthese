@@ -104,6 +104,52 @@ describe("scénario central de démonstration", () => {
 });
 
 describe("source réelle en lecture seule", () => {
+  it("affiche uniquement les actions des dossiers terminés et conserve le lien vers leur parcelle", async () => {
+    const action = {
+      title: "Conserver la haie existante",
+      action: "Maintenir la continuité de la haie.",
+      priority: "design",
+    };
+    const data = await read(
+      new RealDataProvider(
+        transport({
+          "/parcels/corpora": [{ id: "completed" }, { id: "running" }],
+          "/parcels/corpora/completed": {
+            videos: [],
+            profile: null,
+            dossier: {
+              status: "completed",
+              result: {
+                territorial_report: { status: "generated", actions: [action] },
+              },
+            },
+          },
+          "/parcels/corpora/running": {
+            videos: [],
+            profile: null,
+            dossier: {
+              status: "running",
+              result: {
+                territorial_report: { status: "generated", actions: [action] },
+              },
+            },
+          },
+        }),
+      ),
+    );
+    const summary = summarize(data, false);
+    expect(summary.score).toBeNull();
+    expect(summary.recommendations).toEqual([
+      {
+        id: "completed-action-0",
+        title: action.title,
+        description: action.action,
+        priority: "design",
+        projectId: "completed",
+      },
+    ]);
+    expect(summary.overview[3].value).toBe("1");
+  });
   it("relie les dossiers aux vidéos et conserve les durées courtes réelles", async () => {
     const data = await read(
       new RealDataProvider(

@@ -5,7 +5,15 @@ export interface CitationSource {
   doi?: string | null;
   source_url?: string | null;
   original_url?: string | null;
-  findings?: Array<{ source_url?: string | null; asset_id?: string }>;
+  findings?: Array<{
+    source_url?: string | null;
+    asset_id?: string;
+    quote?: string;
+    finding?: string;
+    limits?: string;
+    page?: number;
+    role?: string;
+  }>;
 }
 
 export interface ArticleLink {

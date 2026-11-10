@@ -58,6 +58,11 @@ export const router = createRouter({
     ),
     { path: "/profil", component: () => import("./pages/ProfilePage.vue") },
     {
+      path: "/videos/:id/dossier",
+      component: () => import("./pages/VideoDossierPage.vue"),
+      meta: { designPreview: true },
+    },
+    {
       path: "/admin/utilisateurs",
       component: () => import("./pages/UsersPage.vue"),
     },
@@ -73,6 +78,8 @@ export const router = createRouter({
     {
       path: "/parcelles/:id",
       component: () => import("./pages/ParcelCorpusPage.vue"),
+      props: { readOnly: true },
+      meta: { designPreview: true },
     },
     {
       path: "/admin/documents",
@@ -112,7 +119,7 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  if (to.meta.designPreview) return;
+  if (to.meta.designPreview && to.meta.public) return;
   if (!auth.loaded || to.path.startsWith("/admin")) {
     try {
       acceptSession(await api<Session>("/auth/me"));

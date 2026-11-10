@@ -640,6 +640,29 @@ td .muted {
   border-radius: 10px;
   overflow: hidden;
 }
+.sv-real-thumbnail,
+.sym-real-thumbnail {
+  position: absolute !important;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.dossier-video-thumbnail {
+  width: 140px;
+  height: 90px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.dossier-audit pre,
+.rag-audit-json {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 28rem;
+  overflow: auto;
+}
+.sym-insights:has(> :only-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
 .video-thumbnail {
   display: flex;
   flex-direction: column;

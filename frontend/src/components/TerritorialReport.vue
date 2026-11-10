@@ -57,6 +57,13 @@ const priorities: Record<string, string> = {
       {{ report.coverage.new_documents_since_snapshot }} document(s) ont été
       ajoutés pendant l’analyse. Actualisez le dossier pour les intégrer.
     </p>
+    <div class="actions">
+      <a
+        :href="apiUrl(`/parcels/dossiers/${dossierId}/export?format=json`)"
+        download
+        >Télécharger les références et l’audit complet</a
+      >
+    </div>
     <template v-if="report.status === 'generated'">
       <div class="actions">
         <a
@@ -66,13 +73,12 @@ const priorities: Record<string, string> = {
           rel="noopener"
           >Ouvrir les 4 pages pour imprimer ou enregistrer en PDF</a
         >
-        <a
-          :href="apiUrl(`/parcels/dossiers/${dossierId}/export?format=json`)"
-          download
-          >Télécharger les références et l’audit complet</a
-        >
       </div>
-      <article v-for="(page, index) in report.pages" :key="index">
+      <article
+        v-for="(page, index) in report.pages"
+        :key="index"
+        class="territorial-page"
+      >
         <h4>{{ index + 1 }}. {{ page.title }}</h4>
         <p v-for="(paragraph, p) in page.paragraphs" :key="p">
           <SourceText :text="paragraph.text" :sources="articles" />
@@ -125,5 +131,34 @@ const priorities: Record<string, string> = {
       Le corpus examiné ne fournit pas assez d’éléments pertinents pour rédiger
       des recommandations spécifiques au projet.
     </p>
+    <details v-if="report.ledger?.length">
+      <summary>
+        Documents examinés et éléments de preuve ({{ report.ledger.length }})
+      </summary>
+      <article v-for="entry in report.ledger" :key="entry.citation">
+        <h4>
+          <SourceText :text="`[${entry.citation}]`" :sources="articles" />
+        </h4>
+        <p v-if="entry.chunks_read != null">
+          {{ entry.chunks_read }} passages examinés.
+        </p>
+        <div v-for="(finding, index) in entry.findings" :key="index">
+          <blockquote v-if="finding.quote">{{ finding.quote }}</blockquote>
+          <p v-if="finding.page != null">Page {{ finding.page }}</p>
+          <p v-if="finding.finding">{{ finding.finding }}</p>
+          <p v-if="finding.limits">
+            <strong>Limites :</strong> {{ finding.limits }}
+          </p>
+        </div>
+        <details>
+          <summary>Métadonnées du document</summary>
+          <pre class="rag-audit-json">{{ JSON.stringify(entry, null, 2) }}</pre>
+        </details>
+      </article>
+    </details>
+    <details>
+      <summary>Couverture et audit de la génération</summary>
+      <pre class="rag-audit-json">{{ JSON.stringify(report, null, 2) }}</pre>
+    </details>
   </section>
 </template>

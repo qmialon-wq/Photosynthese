@@ -1,5 +1,33 @@
 # Parcelle, vidéo et dossier biodiversité
 
+## Consulter les résultats depuis l’interface actuelle
+
+En mode **Données réelles**, ouvrir **Mes dossiers**, puis la carte d’une
+parcelle : elle mène à la lecture du dossier enregistré (`/parcelles/:id`).
+Les quatre pages territoriales, fiches de mise en œuvre, recommandations
+documentaires, sources, prochaines étapes et limites sont affichées lorsqu’elles
+existent. Les rubriques d’audit permettent de lire les éléments de preuve,
+la couverture et toutes les sorties JSON, avec export texte, HTML imprimable
+et JSON. Consulter un dossier ne relance pas sa génération.
+
+Pour les anciens dossiers individuels, le lien **Lire le dossier et les
+recommandations de cette vidéo** est accessible depuis une analyse réelle
+ou la fenêtre d’informations d’une vidéo. Les dossiers de parcelle et de vidéo
+restent distincts et aucun résultat n’est fabriqué si la source est absente.
+
+L’accueil réel reprend les actions des dossiers terminés avec un lien vers leur
+parcelle. Il n’affiche pas le score écologique de démonstration, qui n’est pas
+calculé par le backend.
+
+Les cartes des vidéos réelles affichent le poster enregistré lorsqu’il est
+disponible. Sinon le navigateur extrait une miniature JPEG à **50 % de la durée**
+de la vidéo, uniquement lorsque la carte approche de l’écran. Cela utilise le
+fichier vidéo déjà protégé par l’API, sans lancer d’analyse IA ou modifier la
+vidéo. Un format illisible dans le navigateur affiche « Aperçu indisponible ».
+La miniature extraite reste dans la page ; elle n’est pas écrite sur le serveur.
+
+## Préparer un dossier depuis l’administration
+
 Le parcours client part de la vidéothèque : importer plusieurs vidéos ou sélectionner
 les vidéos déjà présentes d'une même parcelle, puis cliquer sur **Préparer un dossier**.
 Le groupe accepte de 1 à 1 000 fichiers, dont le corpus de base de 342 vidéos.

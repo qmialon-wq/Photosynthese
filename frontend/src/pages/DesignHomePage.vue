@@ -22,6 +22,7 @@ import GlassPanel from "../components/symbiose/GlassPanel.vue";
 import PillButton from "../components/symbiose/PillButton.vue";
 import SymIcon from "../components/symbiose/SymIcon.vue";
 import StatusBadge from "../components/symbiose/StatusBadge.vue";
+import VideoThumbnail from "../components/VideoThumbnail.vue";
 </script>
 <template>
   <div class="sym-home">
@@ -59,7 +60,11 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
       >
     </div>
     <div class="sym-insights">
-      <GlassPanel class="sym-diagnostic" aria-labelledby="diagnostic-heading">
+      <GlassPanel
+        v-if="store.isDemo.value"
+        class="sym-diagnostic"
+        aria-labelledby="diagnostic-heading"
+      >
         <h2 id="diagnostic-heading" class="sym-panel-title">
           <span><SymIcon name="leaf" :size="25" /></span>Diagnostic écologique
         </h2>
@@ -146,7 +151,7 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
         aria-labelledby="recommendation-heading"
         ><h2 id="recommendation-heading" class="sym-panel-title">
           <span><SymIcon name="sprout" :size="25" /></span>Recommandation
-          prioritaire
+          {{ store.isDemo.value ? "prioritaire" : "issue de vos dossiers" }}
         </h2>
         <div v-if="recommendation" class="sym-recommendation-body">
           <div
@@ -159,16 +164,25 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
             <p>{{ recommendation.description }}</p>
           </div>
           <RouterLink
-            to="/parcelles"
+            :to="
+              recommendation.projectId
+                ? `/parcelles/${encodeURIComponent(recommendation.projectId)}`
+                : '/parcelles'
+            "
             class="sym-recommendation-next"
-            aria-label="Consulter la recommandation sur les haies"
+            :aria-label="`Lire le dossier : ${recommendation.title}`"
             ><SymIcon name="arrow" :size="23"
           /></RouterLink>
         </div>
         <div v-else class="sym-data-unavailable">
-          Recommandations non connectées.
+          Aucune recommandation disponible dans les dossiers consultés.
+          <RouterLink to="/parcelles">Consulter mes dossiers</RouterLink>
         </div>
-        <div v-if="recommendation" class="sym-carousel-dots" aria-hidden="true">
+        <div
+          v-if="recommendation && store.isDemo.value"
+          class="sym-carousel-dots"
+          aria-hidden="true"
+        >
           <span class="is-active" /><span /><span /></div
       ></GlassPanel>
     </div>
@@ -186,7 +200,7 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
       <ul v-if="latestAnalyses.length" class="sym-analysis-list">
         <li v-for="analysis in latestAnalyses" :key="analysis.name">
           <RouterLink
-            to="/analyses"
+            :to="{ path: '/analyses', query: { task: analysis.id } }"
             class="sym-analysis-row"
             :aria-label="`Ouvrir l’analyse ${analysis.name}`"
             ><div
@@ -197,6 +211,13 @@ import StatusBadge from "../components/symbiose/StatusBadge.vue";
                   : 'sym-thumbnail-empty'
               "
             >
+              <VideoThumbnail
+                v-if="analysis.source || analysis.poster"
+                class="sym-real-thumbnail"
+                :source="analysis.source"
+                :poster="analysis.poster"
+                :label="`Miniature de ${analysis.name}`"
+              />
               <span class="sym-play" aria-hidden="true"
                 ><svg viewBox="0 0 16 16"><path d="m6 3 7 5-7 5Z" /></svg
               ></span>
