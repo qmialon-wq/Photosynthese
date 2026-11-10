@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Symbiose — Étape 12 · Molette de navigation</title>
+  <style>
+    body { margin: 0 auto; padding: 32px 24px; max-width: 1280px; background: #102c21; color: #edf5e6; font: 16px/1.6 system-ui, sans-serif; }
+    h1, h2 { line-height: 1.2; }
+    h2 { margin-top: 40px; }
+    a { color: #c5ee8b; }
+    video, .desktop { display: block; width: 100%; border-radius: 16px; }
+    figure { margin: 24px 0; }
+    figcaption { margin: 8px 0; color: #cad9c5; }
+    .strip { overflow-x: auto; }
+    .strip img { display: block; max-width: none; height: 560px; }
+    .mobile { width: min(100%, 390px); border-radius: 16px; }
+    code { color: #d4edbe; }
+  </style>
+  <h1>Symbiose — Molette de navigation</h1>
+  <p>Étape 12 · 10 novembre 2026 · Vue 3, TypeScript, sans nouvelle dépendance.</p>
+  <p>Progression commune aux six rubriques, chemin cyclique le plus court, sortie masquée aux extrémités, accélération et freinage, dépassement de 2,2 % d’un cran au maximum, puis retour précis et confirmation lumineuse de 170 ms. Un cran dure 520 ms ; trois crans durent 660 ms.</p>
+
+  <h2>Démonstration à 1600 × 900</h2>
+  <video controls muted playsinline preload="metadata" poster="accueil-1600x900.png" src="molette-1600x900.webm"></video>
+  <p><a href="molette-1600x900.webm">Ouvrir la vidéo</a> · Capture Playwright à 25 images/s, environ 14 secondes. La vidéo montre les six rubriques, les passages entre extrémités, les deux sens, une sélection éloignée et des clics rapprochés. Cette cadence d’enregistrement ne mesure pas la cadence de rendu de l’interface.</p>
+
+  <h2>Progression d’un cran</h2>
+  <figure>
+    <div class="strip"><img src="progression-molette.png" alt="Sept phases de la transition Accueil vers Vidéothèque, de 16 à 704 millisecondes" /></div>
+    <figcaption>Captures à horloge contrôlée, recadrées sur la navigation : départ, accélération, raccord invisible, approche, dépassement, verrouillage et extinction de l’impulsion. Faire défiler horizontalement.</figcaption>
+  </figure>
+  <figure>
+    <a href="progression-video.png"><img class="desktop" src="progression-video.png" alt="Seize images extraites de la vidéo réelle entre 0,5 et 2 secondes" /></a>
+    <figcaption>Contrôle complémentaire de la progression réelle, extrait de la vidéo toutes les 100 ms.</figcaption>
+  </figure>
+
+  <h2>États finaux</h2>
+  <figure><a href="accueil-1600x900.png"><img class="desktop" src="accueil-1600x900.png" alt="Accueil à 1600 par 900 pixels" /></a><figcaption>Accueil, emplacement actif inchangé.</figcaption></figure>
+  <figure><a href="documents-1600x900.png"><img class="desktop" src="documents-1600x900.png" alt="Documents scientifiques à 1600 par 900 pixels" /></a><figcaption>Documents scientifiques, même pilule et même emplacement.</figcaption></figure>
+  <figure><a href="documents-mobile.png"><img class="mobile" src="documents-mobile.png" alt="Documents scientifiques sur mobile à 390 par 844 pixels" /></a><figcaption>Mobile après redimensionnement pendant une rotation ; libellé long conservé.</figcaption></figure>
+
+  <h2>Vérifications</h2>
+  <p>Compilation de production réussie. 84 tests unitaires passent. Les 16 scénarios navigateur distincts passent sur les trois suites concernées, avec contrôle du focus, audit axe de l’accueil, navigation clavier, historique, six positions finales, arc et repère fixes, cycles dans les deux sens, chemins courts, interruptions, absence de chevauchement du texte et de l’icône, réduction des animations système et application, et redimensionnement pendant le mouvement.</p>
+  <p>Les contrôles de géométrie couvrent 1920 × 1080, 1600 × 900, 1440 × 900, 1280 × 800 et 390 × 844. Validation navigateur sous Chromium ; les autres moteurs et la cadence sur matériel physique ne sont pas mesurés ici.</p>
+  <p>Le glissement facultatif et les graduations supplémentaires sont laissés de côté pour préserver les interactions et le dessin existants. La largeur de la pilule reste une interpolation CSS légère ; les déplacements utilisent <code>translate3d</code> et une seule boucle <code>requestAnimationFrame</code>.</p>
+  <p>Depuis <code>frontend/</code> : <code>npm run dev</code> pour ouvrir l’application ; <code>npm test</code> pour les tests unitaires ; <code>npx playwright test tests/e2e/symbiose-design.spec.ts tests/e2e/harmonisation-design.spec.ts tests/e2e/wheel-motion.spec.ts</code> pour reproduire les contrôles navigateur et l’enregistrement.</p>
+</html>

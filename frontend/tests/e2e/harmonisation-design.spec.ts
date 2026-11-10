@@ -102,74 +102,45 @@ test("une animation interrompue repart de sa position courante sans clignotement
   page,
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
+  await page.clock.install();
+  await page.clock.pauseAt(new Date());
   await page.goto("/");
-  // Charger les écrans avant de mesurer la continuité des animations.
-  for (const path of routes.slice(1)) {
-    await page.locator(`.sym-wheel-link[data-section="${path}"]`).click();
-    await expect(page.locator(".sym-wheel-link.is-active")).toHaveAttribute(
-      "data-section",
-      path,
-    );
-  }
-  await page.evaluate(async () => {
-    await Promise.all(
-      document.getAnimations().map((a) => a.finished.catch(() => {})),
-    );
-  });
-  await page.locator('.sym-wheel-link[data-section="/"]').click();
-  const before = await page.locator(".sym-wheel-link").evaluateAll((elements) =>
-    elements.map((el) => {
-      const animation = el
-        .getAnimations()
-        .find(
-          (a) =>
-            (a.effect as KeyframeEffect).getKeyframes()[0].left !== undefined,
-        )!;
-      animation.pause();
-      animation.currentTime = 240;
-      const style = getComputedStyle(el);
-      return { left: parseFloat(style.left), top: parseFloat(style.top) };
-    }),
-  );
+  const wheel = page.locator(".sym-wheel");
   await page
-    .locator('.sym-wheel-link[data-section="/analyses"]')
+    .locator('.sym-wheel-link[data-section="/videos"]')
+    .dispatchEvent("click");
+  await expect(wheel).toHaveAttribute("data-motion", "rotating");
+  await page.clock.runFor(200);
+  const centers = () =>
+    page.locator(".sym-wheel-link").evaluateAll((elements) =>
+      elements.map((el) => {
+        const rect = el.getBoundingClientRect();
+        return {
+          x: rect.x + rect.width / 2,
+          y: rect.y + rect.height / 2,
+          opacity: getComputedStyle(el).opacity,
+        };
+      }),
+    );
+  const before = await centers();
+  await page
+    .locator('.sym-wheel-link[data-section="/documents"]')
     .dispatchEvent("click");
   await expect(page.locator(".sym-wheel-link.is-active")).toHaveAttribute(
     "data-section",
-    "/analyses",
+    "/documents",
   );
-  const starts = await page.locator(".sym-wheel-link").evaluateAll((elements) =>
-    elements.map((el) => {
-      const animation = el
-        .getAnimations()
-        .find(
-          (a) =>
-            (a.effect as KeyframeEffect).getKeyframes()[0].left !== undefined,
-        )!;
-      const first = (animation.effect as KeyframeEffect).getKeyframes()[0];
-      const parent = el.parentElement!.getBoundingClientRect();
-      return {
-        left: (parseFloat(String(first.left)) * parent.width) / 100,
-        top: (parseFloat(String(first.top)) * parent.height) / 100,
-        opacity: Number(first.opacity),
-      };
-    }),
-  );
-  starts.forEach((point, index) => {
-    expect(Math.abs(point.left - before[index].left)).toBeLessThan(0.2);
-    expect(Math.abs(point.top - before[index].top)).toBeLessThan(0.2);
-    expect(point.opacity).toBe(1);
+  const after = await centers();
+  after.forEach((point, index) => {
+    expect(Math.abs(point.x - before[index].x)).toBeLessThan(0.2);
+    expect(Math.abs(point.y - before[index].y)).toBeLessThan(0.2);
+    expect(point.opacity).toBe(before[index].opacity);
   });
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect
-    .poll(() =>
-      page
-        .locator(".sym-wheel-link")
-        .evaluateAll(
-          (elements) => elements.flatMap((el) => el.getAnimations()).length,
-        ),
-    )
-    .toBe(0);
+  await expect(wheel).toHaveAttribute("data-motion", "idle");
+  const settled = await centers();
+  await page.clock.runFor(1000);
+  expect(await centers()).toEqual(settled);
 });
 
 test("les contrôles partagés conservent un focus clavier visible", async ({

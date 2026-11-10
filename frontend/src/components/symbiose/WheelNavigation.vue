@@ -4,35 +4,26 @@ import { useRoute } from "vue-router";
 import {
   symbioseNavigation,
   wheelSlot,
-  wheelSlots,
   ACTIVE_WHEEL_SLOT,
 } from "../../symbiose-navigation";
+import {
+  createWheelMotion,
+  nearestWheelTarget,
+  sampleWheelMotion,
+  wheelPose,
+} from "./wheel-motion";
 import SymIcon from "./SymIcon.vue";
+
 const props = defineProps<{ reducedMotion?: boolean }>();
 const route = useRoute();
+const wheel = ref<HTMLElement>();
 const links = ref<HTMLAnchorElement[]>([]);
-const animations = new Map<
-  number,
-  { animation: Animation; from: number; to: number }
->();
+const phase = ref<"idle" | "rotating" | "locking">("idle");
 const motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
 const systemReducedMotion = ref(motionPreference.matches);
 const reducedMotion = computed(
   () => props.reducedMotion || systemReducedMotion.value,
 );
-function cancelAnimations() {
-  animations.forEach(({ animation }) => animation.cancel());
-  animations.clear();
-}
-function updateMotionPreference(event: MediaQueryListEvent) {
-  systemReducedMotion.value = event.matches;
-}
-onMounted(() =>
-  motionPreference.addEventListener("change", updateMotionPreference),
-);
-watch(reducedMotion, (reduced) => {
-  if (reduced) cancelAnimations();
-});
 const activeIndex = computed(() =>
   Math.max(
     0,
@@ -44,71 +35,138 @@ const activeIndex = computed(() =>
   ),
 );
 const items = computed(() =>
-  symbioseNavigation.map((item, index) => {
-    const slot = wheelSlot(index, activeIndex.value);
-    return { ...item, index, slot, position: wheelSlots[slot] };
-  }),
+  symbioseNavigation.map((item, index) => ({
+    ...item,
+    index,
+    slot: wheelSlot(index, activeIndex.value),
+  })),
 );
-// Interpolation de la trajectoire : les liens suivent l’arc, sans rotation des SVG.
-function pointAlongArc(position: number) {
-  const segment = Math.min(4, Math.floor(position));
-  const t = position - segment;
-  const points = [-1, 0, 1, 2].map(
-    (offset) => wheelSlots[Math.max(0, Math.min(5, segment + offset))],
-  );
-  const interpolate = (key: "x" | "y") => {
-    const [a, b, c, d] = points.map((point) => point[key]);
-    return (
-      0.5 *
-      (2 * b +
-        (-a + c) * t +
-        (2 * a - 5 * b + 4 * c - d) * t * t +
-        (-a + 3 * b - 3 * c + d) * t * t * t)
+
+// Une seule horloge et une seule progression pour les six liens.
+// Les dimensions sont mises en cache par ResizeObserver, jamais lues par frame.
+let progression = activeIndex.value;
+let velocity = 0;
+let width = 300;
+let height = 852;
+let frame = 0;
+let started = 0;
+let lockStarted: number | undefined;
+let motion: ReturnType<typeof createWheelMotion> | undefined;
+let observer: ResizeObserver | undefined;
+
+function paint(lock = 0) {
+  wheel.value?.style.setProperty("--wheel-lock", String(lock));
+  for (let index = 0; index < symbioseNavigation.length; index++) {
+    const link = links.value[index];
+    if (!link) continue;
+    const pose = wheelPose(index, progression);
+    link.style.transform = `translate3d(${(pose.x / 300) * width}px, ${(pose.y / 852) * height}px, 0) translate(-50%, -50%)`;
+    link.style.opacity = String(pose.opacity);
+    link.style.setProperty("--wheel-engagement", String(pose.engagement));
+    link.style.setProperty(
+      "--wheel-label-opacity",
+      String(Math.max(0, (pose.engagement - 0.35) / 0.65)),
     );
-  };
-  return { x: interpolate("x"), y: interpolate("y") };
+    // Le raccord invisible ne doit pas intercepter un clic sur le contenu.
+    link.style.pointerEvents = pose.opacity < 0.08 ? "none" : "";
+  }
 }
-watch(
-  activeIndex,
-  (active, previous) => {
-    for (let index = 0; index < 6; index++) {
-      const element = links.value[index];
-      const interrupted = animations.get(index);
-      // Repartir de la position interpolée, même lors de clics très rapprochés.
-      const progress =
-        interrupted?.animation.effect?.getComputedTiming().progress ?? 1;
-      const from = interrupted
-        ? interrupted.from + (interrupted.to - interrupted.from) * progress
-        : wheelSlot(index, previous);
-      const to = wheelSlot(index, active);
-      const opacity = element ? getComputedStyle(element).opacity : "1";
-      interrupted?.animation.cancel();
-      animations.delete(index);
-      if (reducedMotion.value || !element || from === to) continue;
-      const frames = Array.from({ length: 31 }, (_, frame) => {
-        const fraction = frame / 30;
-        const point = pointAlongArc(from + (to - from) * fraction);
-        return {
-          left: `${point.x / 3}%`,
-          top: `${(point.y / 852) * 100}%`,
-          opacity: Number(opacity) + (1 - Number(opacity)) * fraction,
-        };
-      });
-      const animation = element.animate(frames, {
-        duration: 700,
-        easing: "cubic-bezier(.22,.75,.22,1)",
-      });
-      animations.set(index, { animation, from, to });
-      animation.onfinish = () => {
-        if (animations.get(index)?.animation === animation)
-          animations.delete(index);
-      };
+
+function stop() {
+  cancelAnimationFrame(frame);
+  frame = 0;
+  motion = undefined;
+  lockStarted = undefined;
+  velocity = 0;
+}
+function settleImmediately() {
+  stop();
+  progression = activeIndex.value;
+  phase.value = "idle";
+  paint();
+}
+function tick(now: number) {
+  frame = 0;
+  if (motion) {
+    const sample = sampleWheelMotion(motion, now - started);
+    progression = sample.position;
+    velocity = sample.velocity;
+    if (sample.done) {
+      motion = undefined;
+      lockStarted = now;
+      phase.value = "locking";
     }
+  }
+  const lockElapsed = lockStarted === undefined ? undefined : now - lockStarted;
+  // Confirmation lumineuse de 170 ms, après le retour exact au cran.
+  const lock =
+    lockElapsed === undefined
+      ? 0
+      : Math.sin(Math.PI * Math.min(1, lockElapsed / 170)) * 0.7;
+  paint(lock);
+  if (motion || (lockElapsed !== undefined && lockElapsed < 170)) {
+    frame = requestAnimationFrame(tick);
+  } else {
+    lockStarted = undefined;
+    phase.value = "idle";
+    paint();
+  }
+}
+function rotateToSelection() {
+  if (reducedMotion.value) return settleImmediately();
+  cancelAnimationFrame(frame);
+  const target = nearestWheelTarget(progression, activeIndex.value);
+  motion = createWheelMotion(progression, velocity, target);
+  lockStarted = undefined;
+  started = performance.now();
+  phase.value = "rotating";
+  frame = requestAnimationFrame(tick);
+}
+function updateMotionPreference(event: MediaQueryListEvent) {
+  systemReducedMotion.value = event.matches;
+}
+function measureLabels() {
+  // Composition naturelle identique au bouton d'origine, mesurée seulement
+  // au montage, au chargement des polices et au changement de breakpoint.
+  const widths = links.value.map(
+    (link) =>
+      link.querySelector(".sym-wheel-label")?.getBoundingClientRect().width ??
+      0,
+  );
+  links.value.forEach((link, index) =>
+    link.style.setProperty("--wheel-label-width", `${widths[index]}px`),
+  );
+}
+watch(activeIndex, rotateToSelection, { flush: "post" });
+watch(
+  reducedMotion,
+  (reduced) => {
+    if (reduced) settleImmediately();
   },
   { flush: "post" },
 );
+onMounted(() => {
+  motionPreference.addEventListener("change", updateMotionPreference);
+  observer = new ResizeObserver(([entry]) => {
+    width = entry.contentRect.width;
+    height = entry.contentRect.height;
+    measureLabels();
+    paint();
+  });
+  if (wheel.value) {
+    width = wheel.value.clientWidth;
+    height = wheel.value.clientHeight;
+    observer.observe(wheel.value);
+  }
+  measureLabels();
+  void document.fonts.ready.then(() => {
+    if (wheel.value) measureLabels();
+  });
+  paint();
+});
 onBeforeUnmount(() => {
-  cancelAnimations();
+  stop();
+  observer?.disconnect();
   motionPreference.removeEventListener("change", updateMotionPreference);
 });
 function focusAdjacent(event: KeyboardEvent, index: number) {
@@ -124,7 +182,12 @@ function focusAdjacent(event: KeyboardEvent, index: number) {
 }
 </script>
 <template>
-  <nav class="sym-wheel" aria-label="Navigation principale">
+  <nav
+    ref="wheel"
+    class="sym-wheel"
+    :data-motion="phase"
+    aria-label="Navigation principale"
+  >
     <svg
       class="sym-wheel-arc"
       viewBox="0 0 300 852"
@@ -153,6 +216,7 @@ function focusAdjacent(event: KeyboardEvent, index: number) {
         stroke-width="1.5"
       />
     </svg>
+    <span class="sym-wheel-detent" aria-hidden="true" />
     <RouterLink
       v-for="item in items"
       :key="item.path"
@@ -171,10 +235,6 @@ function focusAdjacent(event: KeyboardEvent, index: number) {
           'is-active': item.slot === ACTIVE_WHEEL_SLOT,
           'has-long-label': item.label.length > 12,
           'has-compact-label': item.label.length > 8 && item.label.length <= 12,
-        }"
-        :style="{
-          left: `${item.position.x / 3}%`,
-          top: `${(item.position.y / 852) * 100}%`,
         }"
         :data-slot="item.slot + 1"
         :data-section="item.path"
