@@ -18,6 +18,7 @@ import { useDataMode } from "./data/data-mode";
 import AdminShell from "./components/admin/AdminShell.vue";
 import { lastObservationRoute } from "./admin/navigation";
 import { useEnvironmentTheme } from "./composables/useEnvironmentTheme";
+import LoginTransition from "./components/symbiose/LoginTransition.vue";
 useEnvironmentTheme();
 const dataMode = useDataMode();
 const adminModeSwitching = ref(false);
@@ -101,6 +102,7 @@ const title = computed(
 );
 </script>
 <template>
+  <LoginTransition />
   <a href="#main-content" class="skip-link">Aller au contenu</a>
   <AppShell v-if="route.meta.designPreview"
     ><RouterView
