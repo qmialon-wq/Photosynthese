@@ -2,7 +2,7 @@
 
 from shared.parcels.schemas import INTERVENTIONS
 
-RULES_VERSION = "territorial-erc-v2-design"
+RULES_VERSION = "territorial-erc-v3-dreal"
 TERRESTRIAL = {"chevreuil", "sanglier", "martres", "renards", "blaireaux"}
 LIMITATIONS = [
     "Le point interrogé ne représente ni le contour de la parcelle ni l’emprise des travaux.",
@@ -11,6 +11,9 @@ LIMITATIONS = [
     "Un résultat vide ne démontre aucune absence de biodiversité ou d’enjeu.",
     "Qualification réglementaire non réalisée : aucun zonage ne vaut ici décision juridique.",
     "Les choix enregistrés sont des déclarations du projet, pas des constats écologiques.",
+    "Une prédisposition ne confirme pas la présence d’une zone humide ; un inventaire au point "
+    "ne démontre ni intersection avec l’emprise des travaux ni destruction.",
+    "Un résultat DREAL vide ne démontre pas l’absence de zone humide.",
 ]
 ERC_URL = (
     "https://www.ecologie.gouv.fr/politiques-publiques/"
@@ -18,7 +21,10 @@ ERC_URL = (
 )
 
 
-def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = None) -> dict:
+def analyze(
+    inputs: dict, layers: dict, revision: int, documents: list | None = None,
+    dreal: dict | None = None,
+) -> dict:
     facts, sources, actions, concerns, unknowns = [], [], [], [], []
     profile = inputs.get("profile", {})
     interventions = profile.get("interventions", [])
@@ -94,6 +100,51 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
                 f"Couche {layer} {row['status']} : résultat territorial inconnu. "
                 f"{row.get('error', '')}"
             )
+    wetland_refs = []
+    if dreal is not None:
+        nature = dreal.get("nature", "inventoried")
+        source_id = f"dreal:{nature}"
+        sources.append({
+            "id": source_id,
+            "title": "DREAL Normandie — " + (
+                "zones humides inventoriées" if nature == "inventoried"
+                else "prédisposition aux zones humides"
+            ),
+            "provider": "dreal",
+            "nature": nature,
+            "url": dreal.get("source_url"),
+            "retrieved_at": dreal.get("retrieved_at"),
+            "sha256": dreal.get("sha256"),
+            "status": dreal["status"],
+        })
+        if dreal["status"] == "success":
+            for feature in dreal["features"]:
+                ref = f"{source_id}:{feature['source_id']}"
+                label = (
+                    "une zone humide inventoriée" if nature == "inventoried"
+                    else "une zone de prédisposition aux zones humides"
+                )
+                facts.append({
+                    "id": ref,
+                    "kind": "map_result",
+                    "text": f"Le point interrogé intersecte {label} "
+                    f"(objet {feature['source_id']}).",
+                    "source_refs": [source_id],
+                })
+                wetland_refs.append(ref)
+        elif dreal["status"] == "empty":
+            facts.append({
+                "id": f"{source_id}:empty",
+                "kind": "map_result",
+                "text": "Aucun objet DREAL renvoyé pour ce point ; cela ne prouve pas "
+                "l’absence de zone humide.",
+                "source_refs": [source_id],
+            })
+        else:
+            unknowns.append(
+                f"Donnée DREAL {nature} {dreal['status']} : résultat inconnu. "
+                f"{dreal.get('error', '')}"
+            )
     if "interventions" not in profile:
         unknowns.append("Interventions non renseignées dans ce profil historique.")
     elif not interventions:
@@ -143,13 +194,14 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
         elif code in ("earthworks", "soil_sealing"):
             issue = "Emprise des terrassements ou des surfaces imperméabilisées"
             text = (
-                "Le point intersecte un zonage IGN : examiner l’emprise réelle et les habitats "
-                "sur le terrain avant de qualifier les effets des travaux."
-                if intersections
+                "Le point intersecte une donnée DREAL relative aux zones humides : examiner "
+                "l’emprise réelle et les habitats sur le terrain avant de qualifier les effets "
+                "des travaux."
+                if wetland_refs
                 else "Délimiter l’emprise réelle et examiner les habitats sur le terrain avant "
                 "de qualifier les effets des travaux ; les couches ne suffisent pas à les exclure."
             )
-            refs += intersections
+            refs += wetland_refs
             missing += ["Plan d’emprise et constat des habitats réellement présents."]
         else:
             issue = "Interventions du projet à préciser"
@@ -226,7 +278,7 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
     from shared.parcels.design import propose
 
     design_proposals = propose(profile, facts, sources)
-    return {
+    result = {
         "rules_version": RULES_VERSION,
         "analysis_revision": revision,
         "facts": facts,
@@ -238,3 +290,6 @@ def analyze(inputs: dict, layers: dict, revision: int, documents: list | None = 
         "limitations": LIMITATIONS,
         "compensation": {"status": "not_assessed"},
     }
+    if dreal is not None:
+        result["dreal"] = dreal
+    return result

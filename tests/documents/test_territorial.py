@@ -11,6 +11,25 @@ from tests.test_territorial_contracts import PROFILE
 pytestmark = pytest.mark.integration
 
 
+@pytest.fixture(autouse=True)
+def mock_dreal(monkeypatch):
+    """Integration tests never contact external services."""
+    from workers.documents import dreal
+
+    monkeypatch.setattr(
+        dreal,
+        "collect",
+        lambda location: {
+            "status": "empty",
+            "nature": "inventoried",
+            "features": [],
+            "source_url": "https://example.test/dreal",
+            "retrieved_at": "2026-11-10T12:00:00Z",
+            "raw_response": '{"type":"FeatureCollection","features":[]}',
+        },
+    )
+
+
 @pytest.fixture
 def parcel(clients, monkeypatch):  # noqa: F811
     admin, alice, bob = clients
@@ -136,6 +155,84 @@ def test_queries_export_obsolescence_and_worker_resume(parcel, document_db, monk
     archived = alice.get(path + "/territorial-context?revision=1").json()["query"]
     assert archived["id"] == created.json()["id"] and archived["obsolete"]
     assert archived["result"]["design_proposals"] == frozen_design
+
+
+def test_dreal_checkpoint_resume_export_and_permissions(parcel, document_db, monkeypatch):
+    from shared.parcels import territorial_rules
+    from workers.documents import dreal, ign, territorial
+
+    alice, bob, path = parcel
+    saved = alice.put(
+        path + "/profile", json={"interventions": ["earthworks"], "expected_revision": 0}
+    )
+    assert saved.status_code == 200, saved.text
+    alice.put(
+        path + "/location", json={"latitude": 49.18, "longitude": -0.36, "expected_revision": 0}
+    )
+    created = alice.post(
+        path + "/territorial-queries",
+        json={"expected_location_revision": 1, "expected_profile_revision": 1},
+    )
+    assert created.status_code == 202, created.text
+    query_id = created.json()["id"]
+    layers = {
+        name: {
+            "status": "empty", "features": [], "source_url": ign.BASE + name,
+            "retrieved_at": "2026-11-10T12:00:00Z",
+        }
+        for name in ign.LAYERS
+    }
+    monkeypatch.setattr(ign, "collect", lambda location, completed, persist: layers)
+    archive = '{"type":"FeatureCollection","features":[{"id":"wetland-1"}]}'
+    wetland = {
+        "status": "success", "nature": "inventoried",
+        "features": [{"source_id": "wetland-1", "properties": {"qualite": "fixture"}}],
+        "source_url": "https://example.test/dreal", "retrieved_at": "2026-11-10T12:00:00Z",
+        "projection": "EPSG:4326", "parameters": {"latitude": 49.18},
+        "sha256": "a" * 64, "raw_response": archive,
+    }
+    calls = []
+
+    def collect(location):
+        calls.append(location)
+        return wetland
+
+    monkeypatch.setattr(dreal, "collect", collect)
+    # An interruption after the checkpoint must not repeat the DREAL consultation.
+    with monkeypatch.context() as interrupted:
+        def fail(*args, **kwargs):
+            raise RuntimeError("interruption after checkpoint")
+
+        interrupted.setattr(territorial_rules, "analyze", fail)
+        with pytest.raises(RuntimeError, match="interruption after checkpoint"):
+            territorial.build(query_id)
+    with transaction() as c:
+        checkpoint = c.execute(
+            "SELECT layers, result FROM territorial_queries WHERE id=%s", (query_id,)
+        ).fetchone()
+    assert checkpoint["result"] is None and checkpoint["layers"]["_dreal"] == wetland
+    territorial.build(query_id)
+    assert len(calls) == 1
+
+    current = alice.get(path + "/territorial-context").json()["query"]
+    assert current["status"] == "complete" and "_dreal" not in current["layers"]
+    assert current["result"]["dreal"]["archive_available"]
+    assert "raw_response" not in current["result"]["dreal"]
+    alternatives = current["result"]["design_proposals"][0]["alternatives"]
+    assert all(option["justification"]["level"] == "contextualized" for option in alternatives)
+    assert all("dreal:inventoried:wetland-1" in option["evidence_refs"] for option in alternatives)
+    exported = alice.get(path + "/territorial-context/export?revision=1").json()
+    assert exported["result"]["dreal"]["raw_response"] == archive
+    assert bob.get(path + "/territorial-context?revision=1").status_code == 404
+    assert bob.get(path + "/territorial-context/export?revision=1").status_code == 404
+    alice.put(path + "/profile", json={"interventions": ["fencing"], "expected_revision": 1})
+    historical = alice.get(path + "/territorial-context?revision=1").json()["query"]
+    assert historical["obsolete"]
+    assert historical["result"]["design_proposals"] == current["result"]["design_proposals"]
+    later_export = alice.get(path + "/territorial-context/export?revision=1").json()
+    assert later_export["obsolete"]
+    assert later_export["result"] == exported["result"]
+    assert later_export["inputs"] == exported["inputs"]
 
 
 def test_limited_intervention_editor_preserves_profile_and_absent_fields(parcel):

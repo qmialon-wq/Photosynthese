@@ -99,6 +99,64 @@ it("refuse l’édition d’un autre propriétaire et ne consulte rien en démon
   expect(fetch).not.toHaveBeenCalled();
   expect(demo.text()).toContain("aucune consultation territoriale réelle");
 });
+it("présente le résultat DREAL et ses limites séparément des couches IGN", async () => {
+  const dreal = {
+    status: "success",
+    nature: "inventoried",
+    retrieved_at: "2026-11-10T12:00:00Z",
+    source_url: "https://example.org/dreal",
+    projection: "EPSG:4326",
+    sha256: "abc123",
+    parameters: { latitude: 49.2 },
+    features: [{ id: "wetland-1" }],
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            ...state(),
+            query: {
+              revision: 2,
+              status: "complete",
+              obsolete: false,
+              created_at: "2026-11-10T12:00:00Z",
+              input_sha256: "input",
+              inputs: {
+                location: { latitude: 49.2, longitude: -0.3, revision: 1 },
+                profile,
+                profile_revision: 4,
+                observations: [],
+              },
+              layers: {},
+              result: {
+                dreal,
+                facts: [],
+                project_concerns: [],
+                actions: [],
+                unknowns: [],
+                limitations: [],
+                sources: [],
+                compensation: { status: "not_assessed" },
+              },
+            },
+          }),
+        ),
+    ),
+  );
+  const wrapper = render();
+  await flushPromises();
+  const section = wrapper.get('[aria-label="Zones humides DREAL"]');
+  expect(section.text()).toContain("Inventaire : Intersection au point");
+  expect(section.text()).toContain("ne représente pas l’emprise des travaux");
+  expect(section.text()).toContain("un résultat vide ne prouve pas");
+  expect(section.text()).toContain("EPSG:4326");
+  expect(section.text()).toContain("abc123");
+  expect(section.text()).toContain("wetland-1");
+  expect(section.get("a").attributes("href")).toBe(dreal.source_url);
+  expect(wrapper.get("a[download]").attributes("href")).toContain("revision=2");
+});
 it("garde les formulaires historiques en lecture seule pour le propriétaire", async () => {
   const router = createRouter({
     history: createMemoryHistory(),

@@ -244,12 +244,14 @@ def contextual_fact_ids(code: str, facts: list[dict], sources: list[dict]) -> li
                 s.get("species") in {"chevreuil", "sanglier", "martres", "renards", "blaireaux"}
                 for s in refs
             )
-        elif code == "outdoor_lighting":
-            relevant = fact["kind"] == "human_observation"
-        else:
+        elif code in ("earthworks", "soil_sealing"):
             relevant = fact["kind"] == "map_result" and any(
-                s.get("status") == "success" for s in refs
+                s.get("status") == "success" and s.get("nature") in ("inventoried", "predisposed")
+                and s.get("provider") == "dreal"
+                for s in refs
             )
+        else:
+            relevant = False
         if relevant:
             selected.append(fact["id"])
     return selected

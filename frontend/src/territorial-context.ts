@@ -73,6 +73,17 @@ export interface DesignProposal {
   issue: string;
   alternatives: DesignAlternative[];
 }
+export interface DrealWetlandsResult {
+  status: "success" | "empty" | "unavailable" | "error";
+  nature: "inventoried" | "predisposed";
+  features: unknown[];
+  source_url: string;
+  retrieved_at: string;
+  sha256?: string | null;
+  projection?: string | null;
+  parameters?: Record<string, unknown> | null;
+  error?: string | null;
+}
 export interface TerritorialAnalysis {
   rules_version: string;
   analysis_revision: number;
@@ -88,6 +99,7 @@ export interface TerritorialAnalysis {
   limitations: string[];
   sources: TerritorialSource[];
   compensation: { status: "not_assessed" };
+  dreal?: DrealWetlandsResult | null;
   documentary?: {
     status: string;
     base_query_id?: string;

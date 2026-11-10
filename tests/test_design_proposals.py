@@ -73,9 +73,12 @@ def test_contextualization_uses_relevant_verified_records_only():
     assert fence["evidence_refs"] == ["project:fencing", "human:s1:2"]
     assert not any(ref.startswith("ign:") for ref in fence["evidence_refs"])
     soil = validate(["soil_sealing"], "success")["design_proposals"][0]["alternatives"][0]
-    assert soil["justification"]["level"] == "contextualized"
-    assert len(soil["evidence_refs"]) == 5
-    assert "ne démontrent ni son efficacité locale" in soil["justification"]["reason"]
+    assert soil["justification"]["level"] == "exploratory"
+    assert soil["evidence_refs"] == ["project:soil_sealing"]
+    lighting = validate(["outdoor_lighting"], "success", True)["design_proposals"][0][
+        "alternatives"
+    ][0]
+    assert lighting["justification"]["level"] == "exploratory"
     predicted = inputs(["fencing"], False)
     predicted["observations"] = [
         {"sample_id": "prediction", "revision": 1, "species": "blaireaux", "state": "pending"}

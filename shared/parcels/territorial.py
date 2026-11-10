@@ -143,13 +143,29 @@ def context(
             ).fetchone()
         row["documentary_task"] = documentary
         row["obsolete"] = row["input_sha256"] != snapshot_sha(current)
-        ok = sum(r["status"] in ("success", "empty") for r in row["layers"].values())
+        ok = sum(
+            r["status"] in ("success", "empty")
+            for name, r in row["layers"].items() if name != "_dreal"
+        )
         row["status"] = (
             ("complete" if ok == 4 else "partial" if ok else "failed")
             if row["result"]
             else ("failed" if row["task_status"] == "error" else "pending")
         )
+    if row:
+        # The checkpoint is not an IGN layer; the complete copy is in result.dreal.
+        row["layers"].pop("_dreal", None)
     if row and not include_archives:
+        if row["result"] and row["result"].get("dreal"):
+            wetland = row["result"]["dreal"]
+            row["result"]["dreal"] = {
+                **{k: v for k, v in wetland.items() if k not in ("raw_response", "features")},
+                "archive_available": "raw_response" in wetland,
+                "features": [
+                    {k: v for k, v in feature.items() if k != "geometry"}
+                    for feature in wetland.get("features", [])
+                ],
+            }
         # The UI polls a compact view. Exact responses remain in SQL and in the export.
         row["layers"] = {
             name: {

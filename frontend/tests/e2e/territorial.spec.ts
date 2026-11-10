@@ -184,7 +184,9 @@ test("propriétaire : point, interventions, analyse, export et formulaire histor
     .getByRole("button", { name: "Enregistrer les interventions", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .getByRole("button", {
+      name: "Consulter les données territoriales et analyser le projet",
+    })
     .click();
   await page
     .getByText(
@@ -259,7 +261,9 @@ test("A/B : adapter les interventions change les alternatives et leur export", a
     .getByRole("button", { name: "Enregistrer les interventions", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .getByRole("button", {
+      name: "Consulter les données territoriales et analyser le projet",
+    })
     .click();
   const options = page.getByRole("region", {
     name: "Adapter mon projet",
@@ -283,7 +287,9 @@ test("A/B : adapter les interventions change les alternatives et leur export", a
     page.getByRole("alert").filter({ hasText: "Analyse obsolète" }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .getByRole("button", {
+      name: "Consulter les données territoriales et analyser le projet",
+    })
     .click();
   await expect(options.locator('[data-intervention="fencing"]')).toBeVisible();
   await expect(options.locator(".design-option")).toHaveCount(6);
@@ -351,7 +357,9 @@ test("A/B : adapter les interventions change les alternatives et leur export", a
     .getByRole("button", { name: "Enregistrer les interventions", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Consulter IGN et analyser le projet" })
+    .getByRole("button", {
+      name: "Consulter les données territoriales et analyser le projet",
+    })
     .click();
   await expect(
     options.locator('[data-intervention="outdoor_lighting"]'),

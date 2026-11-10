@@ -76,6 +76,7 @@ class Analysis(Body):
     compensation: Compensation
     documentary: dict[str, Any] = Field(default_factory=dict)
     design_proposals: list[DesignProposal] = Field(default_factory=list)
+    dreal: dict[str, Any] | None = None
 
     @model_validator(mode="after")
     def check_action_evidence(self) -> "Analysis":
@@ -129,9 +130,18 @@ class Analysis(Body):
                         "Sources des faits de conception explicitement citées requises"
                     )
                 level = option.justification.level
-                if level == "contextualized" and not contextual_fact_ids(
-                    code, cited_facts, [by_source[ref] for ref in option.source_refs]
-                ):
+                cited_sources = [by_source[ref] for ref in option.source_refs]
+                context = contextual_fact_ids(code, cited_facts, cited_sources)
+                # Preserve validation of archived v2 analyses under their original rules.
+                if self.rules_version == "territorial-erc-v2-design" and not context:
+                    for fact in cited_facts:
+                        refs = [by_source.get(ref, {}) for ref in fact.get("source_refs", [])]
+                        if ((code == "outdoor_lighting" and fact["kind"] == "human_observation")
+                            or (code not in ("fencing", "outdoor_lighting")
+                                and fact["kind"] == "map_result"
+                                and any(s.get("status") == "success" for s in refs))):
+                            context.append(fact["id"])
+                if level == "contextualized" and not context:
                     raise ValueError("Contexte vérifié pertinent requis pour cette alternative")
                 if level == "scientifically_qualified":
                     human_sources = {

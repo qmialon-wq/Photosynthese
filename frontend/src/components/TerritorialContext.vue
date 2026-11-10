@@ -317,7 +317,7 @@ function consult() {
           "
           @click="consult"
         >
-          Consulter IGN et analyser le projet
+          Consulter les données territoriales et analyser le projet
         </button>
         <p v-if="locationDirty || projectDirty" class="notice">
           Enregistrez vos modifications avant de lancer une consultation. Les
@@ -369,6 +369,53 @@ function consult() {
           </ul>
         </template>
         <template v-if="result">
+          <section v-if="result.dreal" aria-label="Zones humides DREAL">
+            <h4>Zones humides DREAL Normandie</h4>
+            <p>
+              {{
+                result.dreal.nature === "inventoried"
+                  ? "Inventaire"
+                  : "Prédisposition"
+              }}
+              : {{ statusLabels[result.dreal.status] }} ·
+              {{ date(result.dreal.retrieved_at) }}
+            </p>
+            <p v-if="result.dreal.error" class="notice">
+              {{ result.dreal.error }}
+            </p>
+            <p>
+              Le point interrogé ne représente pas l’emprise des travaux. Une
+              intersection justifie un examen, sans démontrer un impact. Une
+              prédisposition n’est pas une zone humide confirmée ; un résultat
+              vide ne prouve pas l’absence de zone humide.
+            </p>
+            <details>
+              <summary>Provenance et objets retournés</summary>
+              <p>
+                Source :
+                <a
+                  v-if="result.dreal.source_url?.startsWith('https://')"
+                  :href="result.dreal.source_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >DREAL Normandie</a
+                >
+                <span v-else>{{ result.dreal.source_url }}</span>
+              </p>
+              <p v-if="result.dreal.projection">
+                Projection : {{ result.dreal.projection }}
+              </p>
+              <p v-if="result.dreal.sha256">
+                SHA-256 : {{ result.dreal.sha256 }}
+              </p>
+              <p v-if="result.dreal.parameters">
+                Paramètres : {{ JSON.stringify(result.dreal.parameters) }}
+              </p>
+              <pre v-if="result.dreal.features?.length">{{
+                JSON.stringify(result.dreal.features, null, 2)
+              }}</pre>
+            </details>
+          </section>
           <h4>Ce que nous savons</h4>
           <ul>
             <li v-for="fact in result.facts" :key="fact.id">

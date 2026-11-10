@@ -68,9 +68,46 @@ def test_e_no_valid_species_and_predictions_excluded():
 def test_f_earthworks_intersection_only_triggers_examination():
     result = analyze(inputs(["earthworks"]), layers(), 1)
     assert result["actions"][0]["category"] == "investigate"
-    assert len(result["actions"][0]["evidence_refs"]) == 5
+    assert result["actions"][0]["evidence_refs"] == ["project:earthworks"]
     assert "avant de qualifier" in result["actions"][0]["action"]
     assert result["compensation"] == {"status": "not_assessed"}
+
+def test_dreal_context_is_specific_to_declared_soil_interventions():
+    from shared.parcels.territorial_schemas import Analysis
+
+    dreal = {
+        "status": "success", "nature": "inventoried",
+        "features": [{"source_id": "zone-1", "properties": {"qualite": "test"}}],
+        "source_url": "https://example.test/wfs", "retrieved_at": "2026-11-10T12:00:00Z",
+        "sha256": "a" * 64,
+    }
+    result = analyze(
+        inputs(["earthworks", "soil_sealing", "outdoor_lighting"]), layers(), 1, dreal=dreal
+    )
+    assert result["dreal"] == dreal
+    for proposal in result["design_proposals"]:
+        for option in proposal["alternatives"]:
+            if proposal["project_action"] in ("earthworks", "soil_sealing"):
+                assert option["justification"]["level"] == "contextualized"
+                assert "dreal:inventoried:zone-1" in option["evidence_refs"]
+                assert "dreal:inventoried" in option["source_refs"]
+            else:
+                assert option["justification"]["level"] == "exploratory"
+    assert "ne démontre" in " ".join(result["limitations"])
+    Analysis.model_validate(result)
+
+def test_dreal_empty_and_failure_do_not_contextualize():
+    for state in ("empty", "unavailable", "error"):
+        dreal = {"status": state, "nature": "inventoried", "features": [],
+                 "source_url": "https://example.test/wfs", "retrieved_at": "2026-11-10T12:00:00Z"}
+        result = analyze(inputs(["earthworks"]), layers(), 1, dreal=dreal)
+        assert all(o["justification"]["level"] == "exploratory"
+                   for o in result["design_proposals"][0]["alternatives"])
+        assert len([s for s in result["sources"] if s["id"].startswith("ign:")]) == 4
+        if state == "empty":
+            assert "ne prouve pas" in result["facts"][-1]["text"]
+        else:
+            assert any("DREAL" in unknown for unknown in result["unknowns"])
 
 
 def test_old_profile_differs_from_explicit_empty_and_documents_need_review():
