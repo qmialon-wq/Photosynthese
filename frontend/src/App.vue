@@ -12,10 +12,13 @@ import { navigation, adminNavigation, router } from "./router";
 import { auth, clearSession } from "./auth-state";
 import { post, message } from "./api";
 import AppShell from "./components/symbiose/AppShell.vue";
-import ModeSelector from "./components/symbiose/ModeSelector.vue";
+import WallpaperBackground from "./components/symbiose/WallpaperBackground.vue";
+import AppearanceMenu from "./components/symbiose/AppearanceMenu.vue";
 import { useDataMode } from "./data/data-mode";
 import AdminShell from "./components/admin/AdminShell.vue";
 import { lastObservationRoute } from "./admin/navigation";
+import { useEnvironmentTheme } from "./composables/useEnvironmentTheme";
+useEnvironmentTheme();
 const dataMode = useDataMode();
 const adminModeSwitching = ref(false);
 const logoutError = ref("");
@@ -114,7 +117,9 @@ const title = computed(
   <main v-else-if="route.meta.public" id="main-content" class="auth-shell">
     <RouterView />
   </main>
-  <div v-else-if="auth.user" class="app-shell">
+  <div v-else-if="auth.user" class="app-shell app-wallpaper-shell">
+    <WallpaperBackground />
+    <AppearanceMenu class="legacy-appearance-menu" @open="open = false" />
     <aside
       ref="sidebar"
       id="primary-navigation"
@@ -171,7 +176,6 @@ const title = computed(
     />
     <div class="workspace">
       <header class="topbar">
-        <ModeSelector />
         <button
           class="menu-toggle"
           ref="menu"

@@ -10,7 +10,7 @@
 }
 .sf-header {
   padding: 0 0 22px;
-  border-bottom: 1px solid rgb(211 236 185 / 28%);
+  border-bottom: 1px solid rgb(from var(--sym-shade-border-d3ecb9) r g b / 28%);
 }
 .sf-header .sv-heading {
   gap: 21px;
@@ -60,10 +60,10 @@
 .sf-project-card:hover,
 .sf-project-card:focus-within {
   transform: translateY(-3px);
-  border-color: rgb(202 239 157 / 80%);
+  border-color: rgb(from var(--sym-shade-border-caef9d) r g b / 80%);
   box-shadow:
-    0 9px 25px rgb(0 24 8 / 27%),
-    inset 0 0 0 1px rgb(212 246 185 / 10%);
+    0 9px 25px rgb(from var(--sym-shade-border-001808) r g b / 27%),
+    inset 0 0 0 1px rgb(from var(--sym-shade-border-d4f6b9) r g b / 10%);
 }
 .sf-project-card:has(details[open]) {
   transform: none;
@@ -118,7 +118,7 @@
   font-size: 13px;
   padding: 7px 12px;
   gap: 6px;
-  box-shadow: 0 2px 8px rgb(0 20 0 / 12%);
+  box-shadow: 0 2px 8px rgb(from var(--sym-shade-border-001400) r g b / 12%);
 }
 .sf-project-photo > .sv-status .sym-icon {
   width: 17px;
@@ -139,7 +139,7 @@
   white-space: nowrap;
 }
 .sf-project-info h2 .sym-icon {
-  color: #c6f380;
+  color: var(--sym-shade-accent-c6f380);
 }
 .sf-project-counts {
   display: flex;
@@ -178,10 +178,10 @@
   stroke-width: 3;
 }
 .sf-project-menu summary:hover {
-  background: rgb(230 248 211 / 12%);
+  background: rgb(from var(--sym-shade-surface-e6f8d3) r g b / 12%);
 }
 .sf-project-menu summary:focus-visible {
-  outline: 2px solid #d5ffb1;
+  outline: 2px solid var(--sym-shade-border-d5ffb1);
   outline-offset: 4px;
 }
 .sf-project-menu [role="menu"] {
@@ -193,7 +193,7 @@
   border: var(--sym-border);
   border-radius: 12px;
   background: var(--sym-surface-solid);
-  box-shadow: 0 10px 24px rgb(0 20 0 / 30%);
+  box-shadow: 0 10px 24px rgb(from var(--sym-shade-border-001400) r g b / 30%);
 }
 .sf-project-menu [role="menuitem"] {
   display: block;
@@ -208,7 +208,7 @@
 }
 .sf-project-menu [role="menuitem"]:hover,
 .sf-project-menu [role="menuitem"]:focus-visible {
-  background: rgb(192 230 159 / 16%);
+  background: rgb(from var(--sym-shade-surface-c0e69f) r g b / 16%);
 }
 .sf-page > .sv-pagination {
   margin-top: 25px;

@@ -193,10 +193,10 @@ watch(lines, async () => {
 .worker-terminal {
   margin: 0 0 24px;
   overflow: hidden;
-  border: 1px solid #29463c;
+  border: 1px solid var(--sym-shade-border-29463c);
   border-radius: 14px;
-  background: #101f1b;
-  color: #dfede5;
+  background: var(--sym-shade-surface-101f1b);
+  color: var(--sym-shade-text-dfede5);
 }
 header,
 header > div,
@@ -210,7 +210,7 @@ header > div,
 }
 header {
   padding: 16px 20px;
-  border-bottom: 1px solid #2b4138;
+  border-bottom: 1px solid var(--sym-shade-border-2b4138);
   flex-wrap: wrap;
 }
 header > div {
@@ -218,7 +218,7 @@ header > div {
 }
 h2 {
   margin: 0;
-  color: #f0f8f2;
+  color: var(--sym-shade-text-f0f8f2);
   font-size: 16px;
 }
 .terminal-dot {
@@ -233,17 +233,17 @@ small,
 .worker-idle,
 .worker-next,
 footer {
-  color: #afc7b9;
+  color: var(--sym-shade-text-afc7b9);
   font-size: 12px;
 }
 .worker-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  background: #2b4138;
+  background: var(--sym-shade-surface-2b4138);
 }
 article {
-  background: #172922;
+  background: var(--sym-shade-surface-172922);
   padding: 16px 20px;
   min-width: 0;
 }
@@ -269,7 +269,7 @@ article {
   margin: 5px 0;
 }
 code {
-  color: #afc7b9;
+  color: var(--sym-shade-text-afc7b9);
   font-size: 11px;
 }
 progress {
@@ -277,7 +277,7 @@ progress {
   width: 100%;
   height: 6px;
   margin: 10px 0 5px;
-  accent-color: #a0dbb4;
+  accent-color: var(--sym-shade-accent-a0dbb4);
 }
 .worker-next {
   margin-bottom: 0;
@@ -287,7 +287,7 @@ progress {
   padding: 10px 20px;
   font-size: 12px;
   flex-wrap: wrap;
-  border-bottom: 1px solid #2b4138;
+  border-bottom: 1px solid var(--sym-shade-border-2b4138);
 }
 .terminal-toolbar label {
   display: flex;
@@ -311,10 +311,10 @@ progress {
   overflow-wrap: anywhere;
 }
 time {
-  color: #a0b4a8;
+  color: var(--sym-shade-text-a0b4a8);
 }
 .terminal-role {
-  color: #a5dbb7;
+  color: var(--sym-shade-accent-a5dbb7);
 }
 .terminal-wait,
 .terminal-error {
@@ -325,10 +325,10 @@ time {
 }
 footer {
   padding: 10px 20px;
-  border-top: 1px solid #2b4138;
+  border-top: 1px solid var(--sym-shade-border-2b4138);
 }
 footer a {
-  color: #c0e6cc;
+  color: var(--sym-shade-accent-c0e6cc);
 }
 button {
   color: inherit;

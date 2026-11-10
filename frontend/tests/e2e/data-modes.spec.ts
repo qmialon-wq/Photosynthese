@@ -1,3 +1,9 @@
+import {
+  openDisplaySettings,
+  closeDisplaySettings,
+  selectSource,
+  expectSource,
+} from "./display-settings";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
@@ -71,7 +77,7 @@ const detail = {
   dossier: null,
 };
 const picker = (page: Page) =>
-  page.getByLabel("Mode de données", { exact: true });
+  page.getByLabel("Source de données", { exact: true });
 async function navigate(page: Page, path: string) {
   await page.locator(`.sym-wheel-link[data-section="${path}"]`).click();
   await expect(page.locator(".sym-wheel-link.is-active")).toHaveAttribute(
@@ -165,7 +171,9 @@ test("A — démonstration autonome, données cohérentes et simulations sans AP
       calls.push(request.url());
   });
   await page.goto("/");
-  await expect(picker(page)).toHaveValue("demo");
+  await expect(page.locator(".sym-demo-note")).toHaveText(
+    "Mode démonstration · données fictives",
+  );
   await expect(page.locator(".sym-stat strong")).toHaveText([
     "12",
     "8",
@@ -202,7 +210,7 @@ test("B — les six rubriques lisent exclusivement les réponses réelles et dé
 }) => {
   const api = await apiFixture(page);
   await page.goto("/");
-  await picker(page).selectOption("real");
+  await selectSource(page, "real");
   await expect(page.locator(".sym-stat strong")).toHaveText([
     "1",
     "1",
@@ -290,7 +298,7 @@ test("B — états vides, source absente et erreur sans données de remplacement
     overrides: { "/review/samples": 403, "/documents": 503 },
   });
   await page.goto("/videos");
-  await picker(page).selectOption("real");
+  await selectSource(page, "real");
   await expect(
     page.getByText("Aucune vidéo disponible.", { exact: true }),
   ).toBeVisible();
@@ -321,10 +329,12 @@ test("B — l’authentification est requise avant toute lecture métier", async
 }) => {
   const api = await apiFixture(page, { overrides: { "/auth/me": 401 } });
   await page.goto("/videos");
-  await picker(page).selectOption("real");
+  await selectSource(page, "real");
   await expect(page.getByRole("alert")).toContainText("Connexion requise");
   await expect(page.locator(".sv-video-card")).toHaveCount(0);
-  expect(api.paths).toEqual(["/auth/me"]);
+  // The gear verifies the administrative link; switching to real data verifies
+  // authentication independently before any business endpoint can be read.
+  expect(api.paths).toEqual(["/auth/me", "/auth/me"]);
 });
 
 test("C — basculement sans rotation, sélection réinitialisée et réponse tardive ignorée", async ({
@@ -338,10 +348,10 @@ test("C — basculement sans rotation, sélection réinitialisée et réponse ta
     .evaluate((el) => el.setAttribute("data-instance", "original"));
   const arc = await page.locator(".sym-wheel-arc path").getAttribute("d");
   for (let i = 0; i < 3; i++) {
-    await picker(page).selectOption("real");
+    await selectSource(page, "real");
     await expect(page).toHaveURL(/\/videos$/);
     await expect(page.locator(".sv-video-card")).toHaveCount(0);
-    await picker(page).selectOption("demo");
+    await selectSource(page, "demo");
     await expect(page.locator(".sv-video-card")).toHaveCount(4);
     await expect(
       page.locator(".sv-video-card input[type=checkbox]").first(),
@@ -370,12 +380,12 @@ test("C — changement de mode pendant une analyse et conservation des changemen
   await page
     .getByRole("button", { name: "Lancer l’analyse", exact: true })
     .click();
-  await picker(page).selectOption("real");
+  await selectSource(page, "real");
   await expect(page.locator(".sa-analysis-status progress")).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Lancer l’analyse", exact: true }),
   ).toBeDisabled();
-  await picker(page).selectOption("demo");
+  await selectSource(page, "demo");
   await expect(page.locator(".sa-analysis-completed")).toHaveCount(0);
   await navigate(page, "/documents");
   await page
@@ -411,11 +421,11 @@ test("D — persistance du mode après navigation et rechargement, sans sélecte
 }) => {
   await apiFixture(page);
   await page.goto("/videos");
-  await picker(page).selectOption("real");
+  await selectSource(page, "real");
   await expect(page.locator(".sv-video-card")).toHaveCount(1);
   await navigate(page, "/documents");
   await page.reload();
-  await expect(picker(page)).toHaveValue("real");
+  await expectSource(page, "real");
   await expect(page.locator(".sd-document-card")).toHaveCount(1);
   await page.goto("/connexion");
   await expect(
@@ -441,7 +451,7 @@ test("E — captures des douze vues et cadre commun à 1600 × 900", async ({
     }));
   const baseline = await wheel();
   for (const mode of ["demo", "real"] as const) {
-    await picker(page).selectOption(mode);
+    await selectSource(page, mode);
     for (let index = 0; index < routes.length; index++) {
       await navigate(page, routes[index]);
       await expect(
@@ -493,13 +503,15 @@ test("E — sélecteur mobile accessible sans déplacement des commandes du comp
   await apiFixture(page, { empty: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/videos");
+  await openDisplaySettings(page);
   await expect(picker(page)).toBeInViewport();
+  await closeDisplaySettings(page);
   const actions = await page
     .locator(".sym-header-actions button")
     .evaluateAll((elements) =>
       elements.map((el) => el.getBoundingClientRect().toJSON()),
     );
-  await picker(page).selectOption("real");
+  await selectSource(page, "real");
   await expect(
     page.getByText("Aucune vidéo disponible.", { exact: true }),
   ).toBeVisible();
@@ -515,6 +527,7 @@ test("E — sélecteur mobile accessible sans déplacement des commandes du comp
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await openDisplaySettings(page);
   await picker(page).focus();
   await page.keyboard.press("ArrowUp");
   await expect(picker(page)).toBeFocused();

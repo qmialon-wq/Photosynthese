@@ -90,14 +90,7 @@ test("les six rubriques tournent vers l’emplacement quatre et les icônes rest
     expect(canvas?.y).toBe(0);
     expect(canvas?.width).toBe(1600);
     expect(canvas?.height).toBeGreaterThanOrEqual(900);
-    // Attendre la fin effective des transitions pour comparer les positions finales.
-    await page.evaluate(async () => {
-      await Promise.all(
-        document
-          .getAnimations()
-          .map((animation) => animation.finished.catch(() => {})),
-      );
-    });
+    await expect(nav).toHaveAttribute("data-motion", "idle");
     for (let index = 0; index < sections.length; index++) {
       const link = nav.getByRole("link", {
         name: sections[index].label,
@@ -106,10 +99,11 @@ test("les six rubriques tournent vers l’emplacement quatre et les icônes rest
       const slot = ((index - active + 9) % 6) + 1;
       await expect(link).toHaveAttribute("data-slot", String(slot));
       const values = await link.evaluate((element) => {
-        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        const parent = element.parentElement!.getBoundingClientRect();
         return {
-          left: parseFloat(style.left),
-          top: parseFloat(style.top),
+          left: rect.x + rect.width / 2 - parent.x,
+          top: rect.y + rect.height / 2 - parent.y,
           transform: getComputedStyle(element.querySelector("svg")!).transform,
         };
       });
@@ -143,13 +137,11 @@ test("les six rubriques tournent vers l’emplacement quatre et les icônes rest
 
 test("actions et navigation au clavier", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Rechercher", exact: true }).click();
-  await expect(page.getByRole("searchbox")).toBeFocused();
-  await page.getByRole("searchbox").fill("vidéo");
-  await page
-    .locator(".sym-action-panel")
-    .getByRole("link", { name: "Vidéothèque" })
-    .click();
+  await expect(
+    page.getByRole("button", { name: "Rechercher", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator(".sym-header-actions select")).toHaveCount(0);
+  await page.locator('.sym-wheel-link[data-section="/videos"]').click();
   await expect(page).toHaveURL(/\/videos$/);
   await page.getByRole("button", { name: "Paramètres", exact: true }).click();
   await page.getByRole("button", { name: "Paramètres d’affichage" }).click();

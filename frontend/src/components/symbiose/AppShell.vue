@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import { nextTick, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api, ApiError, message, post } from "../../api";
 import {
@@ -9,14 +9,22 @@ import {
   type Session,
 } from "../../auth-state";
 import logo from "../../assets/symbiose-logo.png";
-import { symbioseNavigation } from "../../symbiose-navigation";
 import WheelNavigation from "./WheelNavigation.vue";
 import SymIcon from "./SymIcon.vue";
-import ModeSelector from "./ModeSelector.vue";
+import DisplaySettings from "./DisplaySettings.vue";
+import WallpaperBackground from "./WallpaperBackground.vue";
+import { useWallpaper } from "../../composables/useWallpaper";
 import { useDataMode } from "../../data/data-mode";
 const dataMode = useDataMode();
 const route = useRoute();
 const router = useRouter();
+const scrolled = ref(false);
+const updateScroll = () => { scrolled.value = window.scrollY > 0; };
+onMounted(() => {
+  updateScroll();
+  window.addEventListener("scroll", updateScroll, { passive: true });
+});
+onBeforeUnmount(() => window.removeEventListener("scroll", updateScroll));
 const logoutBusy = ref(false);
 const logoutError = ref("");
 async function logout() {
@@ -41,11 +49,10 @@ async function logout() {
   }
 }
 const panel = ref<
-  "search" | "notifications" | "profile" | "settings" | "settings-menu" | null
+  "notifications" | "profile" | "settings" | "settings-menu" | null
 >(null);
-const query = ref("");
-const reduceMotion = ref(false);
-const searchField = ref<HTMLInputElement>();
+const wallpaper = useWallpaper();
+const reduceMotion = wallpaper.reduceMotion;
 const actionButtons = ref<HTMLButtonElement[]>([]);
 const settingsButton = ref<HTMLButtonElement>();
 const verifiedAdmin = ref(false);
@@ -61,41 +68,32 @@ async function openSettingsMenu() {
   }
 }
 const actions = [
-  { key: "search", label: "Rechercher", icon: "search" },
   { key: "notifications", label: "Notifications", icon: "bell" },
   { key: "profile", label: "Mon profil", icon: "user" },
 ] as const;
-const results = computed(() =>
-  symbioseNavigation.filter((item) =>
-    item.label
-      .toLocaleLowerCase("fr")
-      .includes(query.value.toLocaleLowerCase("fr")),
-  ),
-);
 watch(
   () => route.path,
   () => {
     panel.value = null;
-    query.value = "";
   },
 );
-async function togglePanel(value: NonNullable<typeof panel.value>) {
+function togglePanel(value: NonNullable<typeof panel.value>) {
   panel.value = panel.value === value ? null : value;
-  if (value === "search" && panel.value) {
-    await nextTick();
-    searchField.value?.focus();
-  }
 }
+watch(panel, async (value) => {
+  if (value !== "settings") return;
+  await nextTick();
+  document
+    .querySelector<HTMLSelectElement>("#sym-action-panel select")
+    ?.focus();
+});
 function closePanel() {
   const previous = panel.value;
   if (!previous) return;
   panel.value = null;
   if (previous === "settings" || previous === "settings-menu")
     settingsButton.value?.focus();
-  else
-    actionButtons.value[
-      previous === "search" ? 0 : previous === "notifications" ? 1 : 2
-    ]?.focus();
+  else actionButtons.value[previous === "notifications" ? 0 : 1]?.focus();
 }
 </script>
 <template>
@@ -105,7 +103,7 @@ function closePanel() {
     @keydown.esc="closePanel"
   >
     <div class="sym-canvas">
-      <div class="sym-forest" aria-hidden="true" />
+      <WallpaperBackground />
       <header class="sym-header">
         <RouterLink
           to="/"
@@ -115,8 +113,7 @@ function closePanel() {
             >NORMANDIE</span
           ></RouterLink
         >
-        <div class="sym-header-actions" aria-label="Actions du compte">
-          <ModeSelector />
+        <div class="sym-header-actions" :class="{ 'is-scrolled': scrolled }" aria-label="Actions du compte">
           <button
             v-for="(action, i) in actions"
             :key="action.key"
@@ -158,44 +155,23 @@ function closePanel() {
         id="sym-action-panel"
         class="sym-glass sym-action-panel"
         :class="{
+          'sym-display-settings-panel': panel === 'settings',
           'sym-settings-panel':
             panel === 'settings' || panel === 'settings-menu',
         }"
         :aria-label="
-          panel === 'search'
-            ? 'Recherche dans les rubriques'
-            : panel === 'settings' || panel === 'settings-menu'
-              ? 'Paramètres d’affichage'
-              : panel === 'profile'
-                ? 'Mon profil'
-                : 'Notifications'
+          panel === 'settings' || panel === 'settings-menu'
+            ? 'Paramètres d’affichage'
+            : panel === 'profile'
+              ? 'Mon profil'
+              : 'Notifications'
         "
       >
         <button class="sym-close" aria-label="Fermer" @click="closePanel">
           <SymIcon name="close" :size="20" />
         </button>
-        <template v-if="panel === 'search'"
-          ><h2>Rechercher une rubrique</h2>
-          <label for="sym-search">Nom de la rubrique</label
-          ><input
-            id="sym-search"
-            ref="searchField"
-            v-model="query"
-            type="search"
-            autocomplete="off"
-            placeholder="Vidéothèque, analyses…"
-          />
-          <ul>
-            <li v-for="item in results" :key="item.path">
-              <RouterLink :to="item.path"
-                >{{ item.label }}<SymIcon name="arrow" :size="18"
-              /></RouterLink>
-            </li>
-          </ul>
-          <p v-if="!results.length">Aucune rubrique trouvée.</p></template
-        >
         <div
-          v-else-if="panel === 'settings-menu'"
+          v-if="panel === 'settings-menu'"
           class="sym-settings-menu"
           aria-label="Paramètres et administration"
         >
@@ -209,14 +185,7 @@ function closePanel() {
             ><SymIcon name="settings" :size="21" />Administration</RouterLink
           >
         </div>
-        <template v-else-if="panel === 'settings'"
-          ><h2>Paramètres d’affichage</h2>
-          <label class="sym-setting-toggle"
-            ><input v-model="reduceMotion" type="checkbox" />Réduire les
-            animations</label
-          >
-          <p>Les préférences s’appliquent à cet aperçu.</p></template
-        >
+        <DisplaySettings v-else-if="panel === 'settings'" />
         <template v-else-if="panel === 'profile'"
           ><h2>Votre espace Symbiose</h2>
           <p>

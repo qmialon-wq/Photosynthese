@@ -9,10 +9,10 @@
   min-width: 0;
   height: 44px;
   padding: 8px 12px;
-  border: var(--sym-border, 1px solid #8fa88a);
+  border: var(--sym-border, 1px solid var(--sym-shade-border-8fa88a));
   border-radius: 100px;
-  color: var(--sym-text, #f5f8ef);
-  background: rgb(31 76 50 / 65%);
+  color: var(--sym-text, var(--sym-shade-text-f5f8ef));
+  background: rgb(from var(--sym-shade-surface-1f4c32) r g b / 65%);
   backdrop-filter: blur(18px);
   box-shadow: var(--sym-shadow);
   font: inherit;
@@ -20,11 +20,17 @@
   cursor: pointer;
 }
 .sym-mode-selector option {
-  color: #f5f8ef;
-  background: #204b36;
+  color: var(--sym-shade-text-f5f8ef);
+  background: var(--sym-shade-surface-204b36);
+}
+.sym-mode-selector-labeled {
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 .sym-mode-selector select:focus-visible {
-  outline: 2px solid #d5ffb1;
+  outline: 2px solid var(--sym-shade-border-d5ffb1);
   outline-offset: 4px;
 }
 .sym-source-state {
@@ -50,7 +56,7 @@
 }
 .sym-thumbnail-empty {
   background-image: none !important;
-  background-color: #193f29;
+  background-color: var(--sym-shade-surface-193f29);
 }
 .sym-data-unavailable {
   display: grid;
@@ -79,12 +85,6 @@
   border-radius: 14px;
 }
 @media (max-width: 620px) {
-  .sym-header-actions .sym-mode-selector {
-    position: fixed;
-    top: 66px;
-    right: 12px;
-    width: 172px;
-  }
   .sym-mode-selector select {
     height: 31px;
     font-size: 11px;

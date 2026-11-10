@@ -1,3 +1,9 @@
+import {
+  openDisplaySettings,
+  closeDisplaySettings,
+  selectSource,
+  expectSource,
+} from "./display-settings";
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 const sections = [
@@ -83,7 +89,7 @@ for (const [path, label, heading, file] of sections) {
       nav.getByRole("link", { name: label, exact: true }),
     ).toHaveAttribute("aria-current", "page");
     await expect(page.locator(".sym-wheel")).toHaveCount(0);
-    await expect(page.getByLabel("Mode de données")).toHaveValue("demo");
+    await expectSource(page, "demo");
     if (path === "/admin/documents")
       await page
         .getByLabel("Espèce", { exact: true })
@@ -151,7 +157,7 @@ test("engrenage, navigation SPA et retour à la dernière rubrique avec la roue 
       .getByRole("navigation", { name: "Navigation principale" })
       .getByRole("link"),
   ).toHaveCount(6);
-  await expect(page.getByLabel("Mode de données")).toHaveValue("demo");
+  await expectSource(page, "demo");
   expect(await page.locator("body").getAttribute("data-spa")).toBe("conserve");
 });
 for (const role of ["client", null] as const)
@@ -217,7 +223,7 @@ test("progression simulée et changement de mode : aucun identifiant fictif envo
   await expect(
     page.getByText("Progression simulée · aucun worker réel"),
   ).toBeVisible({ timeout: 8000 });
-  await page.getByLabel("Mode de données").selectOption("real");
+  await selectSource(page, "real");
   await expect(page).toHaveURL(/\/admin\/training$/);
   await expect(
     page.getByLabel("Dataset d’entraînement").locator("option"),
@@ -231,7 +237,7 @@ test("progression simulée et changement de mode : aucun identifiant fictif envo
   await page
     .getByRole("link", { name: "Retour à l’espace observation" })
     .click();
-  await expect(page.getByLabel("Mode de données")).toHaveValue("real");
+  await expectSource(page, "real");
 });
 test("action réelle : annulation sans envoi, puis confirmation et CSRF sur le service existant", async ({
   page,
@@ -260,7 +266,7 @@ test("action réelle : annulation sans envoi, puis confirmation et CSRF sur le s
   });
   await authenticate(page);
   await page.goto("/admin/training");
-  await page.getByLabel("Mode de données").selectOption("real");
+  await selectSource(page, "real");
   await page
     .getByLabel("Dataset d’entraînement")
     .selectOption("server-dataset");
@@ -289,7 +295,7 @@ test("erreur du service réel : aucun modèle ni métrique fictifs en remplaceme
   );
   await authenticate(page);
   await page.goto("/admin/models");
-  await page.getByLabel("Mode de données").selectOption("real");
+  await selectSource(page, "real");
   await expect(page.getByRole("alert")).toContainText("Service non disponible");
   await expect(page.locator(".model-card")).toHaveCount(0);
   await ready(page);
