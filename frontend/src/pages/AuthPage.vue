@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { isNavigationFailure, useRoute, useRouter } from "vue-router";
 import { message, post, api } from "../api";
 import { auth, acceptSession, type Session } from "../auth-state";
 import { useDataMode } from "../data/data-mode";
 import symbioseLogo from "../assets/symbiose-logo.png";
+import { useLoginTransition } from "../composables/useLoginTransition";
+import { useWallpaper } from "../composables/useWallpaper";
+const loginTransition = useLoginTransition();
+const wallpaper = useWallpaper();
 const route = useRoute(),
   router = useRouter();
 const dataMode = useDataMode();
@@ -24,6 +28,7 @@ const email = ref(""),
   confirmation = ref(""),
   token = ref("");
 const error = ref(auth.error),
+  navigationError = ref(false),
   notice = ref(""),
   busy = ref(false),
   setupRequired = ref(false),
@@ -31,6 +36,7 @@ const error = ref(auth.error),
   resetHelpVisible = ref(false);
 watch(mode, () => {
   error.value = "";
+  navigationError.value = false;
   notice.value = "";
   password.value = "";
   confirmation.value = "";
@@ -57,7 +63,10 @@ onMounted(async () => {
   }
 });
 async function submit() {
+  if (busy.value) return;
+  let transition: ReturnType<typeof loginTransition.start> | undefined;
   error.value = "";
+  navigationError.value = false;
   notice.value = "";
   if (mode.value !== "connexion" && password.value !== confirmation.value) {
     error.value = "Les mots de passe ne correspondent pas.";
@@ -91,9 +100,20 @@ async function submit() {
       dataMode.setMode("real");
       password.value = "";
       token.value = "";
-      await router.push("/");
+      if (endpoint === "login") {
+        transition = loginTransition.start(wallpaper.reduced.value);
+        // Mount above App before the route replaces this form; never await the animation.
+        await nextTick();
+      }
+      const failure = await router.push("/");
+      if (isNavigationFailure(failure))
+        throw new Error(
+          "L’Accueil n’a pas pu être ouvert. Vous pouvez réessayer ou rejoindre l’Accueil.",
+        );
     }
   } catch (reason) {
+    transition?.finish("cancelled");
+    navigationError.value = !!transition;
     error.value = message(reason);
   } finally {
     busy.value = false;
@@ -134,7 +154,10 @@ async function submit() {
       Le lien fourni par un administrateur est valable 30 minutes et utilisable
       une seule fois.
     </p>
-    <p v-if="error" role="alert" class="notice error">{{ error }}</p>
+    <p v-if="error" role="alert" class="notice error">
+      {{ error }}
+      <RouterLink v-if="navigationError" to="/">Ouvrir l’Accueil</RouterLink>
+    </p>
     <p v-if="notice" role="status" class="notice">{{ notice }}</p>
     <form v-if="!notice" class="account-form" @submit.prevent="submit">
       <label v-if="['inscription', 'initialisation'].includes(mode)"

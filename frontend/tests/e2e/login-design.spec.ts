@@ -72,19 +72,23 @@ test("affichage du mot de passe, aide et nouvelle tentative après une erreur", 
         status: 401,
         json: { detail: "Identifiants incorrects" },
       });
-    return route.fulfill({
-      json: {
-        user: {
-          id: "client-test",
-          email: "camille@example.test",
-          display_name: "Camille",
-          role: "client",
-          created_at: "2026-11-05T10:00:00Z",
-          deleted_at: null,
-        },
-        csrf_token: "test-csrf",
+    const session = {
+      user: {
+        id: "client-test",
+        email: "camille@example.test",
+        display_name: "Camille",
+        role: "client",
+        created_at: "2026-11-05T10:00:00Z",
+        deleted_at: null,
       },
-    });
+      csrf_token: "test-csrf",
+    };
+    // The real-data provider verifies /auth/me after opening the home page.
+    // Keep this fixture authenticated after the successful retry, like the server.
+    await page.route("**/api/auth/me", (request) =>
+      request.fulfill({ json: session }),
+    );
+    return route.fulfill({ json: session });
   });
   await page.goto("/connexion");
   await page.getByLabel("Adresse e-mail").fill("camille@example.test");
