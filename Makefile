@@ -1,5 +1,22 @@
 .PHONY: up gpu down logs test integration lint gpu-check nvidia-smi config
 
+# La plateforme doit déjà tourner (make up ou make inference-up DEVICE=cuda).
+# --no-deps préserve les workers existants et leur configuration CPU/GPU.
+NGROK_COMPOSE = docker compose -f docker-compose.yml -f docker-compose.ngrok.yml
+.PHONY: ngrok-up ngrok-down ngrok-logs ngrok-config
+ngrok-up:
+	$(NGROK_COMPOSE) up -d --no-deps --wait backend frontend
+	$(NGROK_COMPOSE) up -d --no-deps ngrok
+
+ngrok-down:
+	$(NGROK_COMPOSE) stop ngrok
+
+ngrok-logs:
+	$(NGROK_COMPOSE) logs -f --tail=100 ngrok
+
+ngrok-config:
+	$(NGROK_COMPOSE) config --quiet
+
 # RTX 50 : make train-benchmark DEVICE=cuda BLACKWELL=1 BENCHMARK_WEAK_LABELS=1
 BLACKWELL ?= 0
 ifeq ($(BLACKWELL),1)

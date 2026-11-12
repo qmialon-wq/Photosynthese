@@ -1,5 +1,9 @@
 # Symbiose Normandie
 
+Un [accès HTTPS via ngrok avec une URL stable](docs/NGROK.md) est disponible
+pour partager la plateforme exécutée sur le PC : configurer `NGROK_URL` et
+`NGROK_AUTHTOKEN` dans `.env`, puis lancer `make ngrok-up` après le démarrage local.
+
 Le [guide d’hébergement et de CI/CD](docs/HEBERGEMENT_CICD.md) décrit un déploiement
 entièrement distant sur CPU, sans dépendance au PC, avec conservation des modèles
 entraînés, migration vérifiée et sauvegardes distantes. Le budget cible est de

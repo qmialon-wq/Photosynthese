@@ -1,0 +1,23 @@
+# Accès HTTPS optionnel : voir docs/NGROK.md.
+# À superposer à une plateforme locale déjà démarrée.
+services:
+  backend:
+    environment:
+      AUTH_COOKIE_SECURE: "true"
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-https://photosynthese.local,http://localhost:8080,http://127.0.0.1:8080,http://localhost:8000,http://127.0.0.1:8000},${NGROK_URL:?Définir NGROK_URL avec le domaine HTTPS attribué par ngrok}
+
+  ngrok:
+    image: ngrok/ngrok:3.39.13-alpine@sha256:a51a7637a70be573615b01852af0419c4ab9dc857601b3d61ea2a082be3ec0d3
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN:?Définir NGROK_AUTHTOKEN dans .env}
+    command:
+      - http
+      - http://photosynthese:80
+      - --url=${NGROK_URL:?Définir NGROK_URL avec le domaine HTTPS attribué par ngrok}
+      - --inspect=false
+      - --log=stdout
+    networks: [web]
+    depends_on:
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped

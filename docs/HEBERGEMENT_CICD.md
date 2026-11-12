@@ -1,5 +1,9 @@
 # Héberger toute la plateforme et conserver les modèles — budget cible 10 €/mois
 
+Pour un accès public à la plateforme qui continue de tourner sur le PC, voir
+le [guide ngrok avec URL stable](NGROK.md). Ce mode optionnel dépend du PC allumé
+et de sa connexion Internet ; le déploiement VPS décrit ci-dessous reste distinct.
+
 Révision du **29 octobre 2026**. Ce guide remplace la proposition initiale de
 calcul sur PC : **après migration, aucune brique, donnée nécessaire, sauvegarde
 ou runner ne dépend du PC personnel**. Le PC ne sert qu'au transfert initial et
