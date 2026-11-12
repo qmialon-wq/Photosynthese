@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import {
   computed,
   nextTick,
@@ -19,9 +19,10 @@ import AdminShell from "./components/admin/AdminShell.vue";
 import { lastObservationRoute } from "./admin/navigation";
 import { useEnvironmentTheme } from "./composables/useEnvironmentTheme";
 import LoginTransition from "./components/symbiose/LoginTransition.vue";
+import LandingPage from "./pages/LandingPage.vue";
 useEnvironmentTheme();
 const dataMode = useDataMode();
-const adminModeSwitching = ref(false);
+
 const logoutError = ref("");
 async function logout() {
   try {
@@ -38,40 +39,20 @@ const expired = () => {
 onMounted(() => window.addEventListener("auth-expired", expired));
 onBeforeUnmount(() => window.removeEventListener("auth-expired", expired));
 const route = useRoute();
-watch(
-  () => dataMode.mode.value,
-  () => {
-    if (
-      dataMode.isDemo.value &&
-      /^\/(parcelles\/|videos\/[^/]+\/dossier)/.test(route.path)
-    ) {
-      void router.replace(
-        route.path.startsWith("/parcelles/") ? "/parcelles" : "/videos",
-      );
-      return;
-    }
-    if (!route.path.startsWith("/admin")) return;
-    adminModeSwitching.value = true;
-    void router
-      .replace({ path: route.path, query: {}, hash: "" })
-      .finally(() => {
-        adminModeSwitching.value = false;
-      });
-  },
-  { flush: "sync" },
+const observation = computed(
+  () => route.meta.observation || (route.meta.home && !!auth.user),
 );
 watch(
-  () => !!route.meta.designPreview || route.path.startsWith("/admin"),
+  () => ["/videos", "/parcelles"].includes(route.path),
   (value) => dataMode.setActive(value),
   { immediate: true },
 );
 watch(
   () => route.fullPath,
   (path, previous) => {
-    if (route.meta.designPreview) {
+    if (observation.value) {
       lastObservationRoute.value = path;
-      if (previous?.startsWith("/admin") && dataMode.isReal.value)
-        void dataMode.refresh();
+      if (previous?.startsWith("/admin")) void dataMode.refresh();
     }
   },
   { immediate: true },
@@ -104,18 +85,26 @@ const title = computed(
 <template>
   <LoginTransition />
   <a href="#main-content" class="skip-link">Aller au contenu</a>
-  <AppShell v-if="route.meta.designPreview"
-    ><RouterView
-      :key="`${dataMode.mode.value}:${dataMode.revision.value}:${dataMode.sourceId.value}`"
-  /></AppShell>
+  <LandingPage v-if="route.meta.home && !auth.user" />
+  <AppShell v-else-if="observation && auth.user"
+    ><div
+      :class="{
+        'adm-content sym-operational-page': [
+          '/',
+          '/analyses',
+          '/review',
+          '/documents',
+        ].includes(route.path),
+      }"
+    >
+      <RouterView
+        :key="`${dataMode.revision.value}:${dataMode.sourceId.value}`"
+      /></div
+  ></AppShell>
   <AdminShell
     v-else-if="route.path.startsWith('/admin') && auth.user?.role === 'admin'"
-    ><RouterView
-      v-if="!adminModeSwitching"
-      :key="`${dataMode.mode.value}:${dataMode.sourceId.value}`"
-    />
-    <p v-else role="status">Changement de source de données…</p></AdminShell
-  >
+    ><RouterView :key="`${dataMode.sourceId.value}`" />
+  </AdminShell>
   <main v-else-if="route.meta.public" id="main-content" class="auth-shell">
     <RouterView />
   </main>
@@ -194,16 +183,7 @@ const title = computed(
         }}</span>
       </header>
       <main id="main-content" tabindex="-1">
-        <RouterView v-if="dataMode.isReal.value || route.path === '/profil'" />
-        <div v-else class="notice">
-          <h1>Espace métier</h1>
-          <p>
-            Les outils d’administration utilisent des services réels.
-            Sélectionnez « Données réelles » pour y accéder avec vos permissions
-            habituelles.
-          </p>
-          <RouterLink to="/">Revenir à la démonstration Symbiose</RouterLink>
-        </div>
+        <RouterView />
       </main>
       <footer class="app-footer">
         Symbiose Normandie

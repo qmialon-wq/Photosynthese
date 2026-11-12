@@ -92,6 +92,13 @@
   background-repeat: no-repeat;
   background-position: center top;
 }
+.sf-project-photo > .sf-project-thumbnail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .sf-landscape-forest {
   background-image: url("../assets/auth-forest.png");
   background-size: 150% auto;

@@ -5,15 +5,8 @@ import { api, apiUrl, date, message, post, useResource } from "../api";
 import type { Operation, Species, Task, Video } from "../types";
 import VideoCard from "../components/symbiose/VideoCard.vue";
 import { adaptVideo } from "../data/real-provider";
-import { useDataMode } from "../data/data-mode";
 import "../styles/videotheque.css";
-const dataMode = useDataMode();
-const present = (video: Video) => ({
-  ...adaptVideo(video),
-  thumbnail: dataMode.isDemo.value
-    ? dataMode.data.videos.data.find((item) => item.id === video.id)?.thumbnail
-    : undefined,
-});
+const present = adaptVideo;
 function toggleVideo(id: string) {
   picked.value = picked.value.includes(id)
     ? picked.value.filter((value) => value !== id)
@@ -143,9 +136,7 @@ async function createCorpus() {
     const corpus = await post<{ id: string }>("/parcels/corpora", {
       video_ids: picked.value,
     });
-    await router.push(
-      dataMode.isDemo.value ? "/parcelles" : `/admin/dossiers/${corpus.id}`,
-    );
+    await router.push(`/admin/dossiers/${corpus.id}`);
   } catch (reason) {
     error.value = message(reason);
   } finally {
@@ -439,19 +430,8 @@ async function prepared(task: Task) {
     modal
     :style="{ width: 'min(960px,95vw)' }"
     @update:visible="preview = null"
-    ><template v-if="preview?.metadata.presentation_only"
-      ><img
-        v-if="preview.metadata.poster_url"
-        class="sym-real-preview"
-        :src="preview.metadata.poster_url"
-        :alt="preview.filename"
-      />
-      <p>
-        Aperçu fixe de démonstration. Aucun fichier vidéo réel n’est importé ni
-        généré.
-      </p></template
     ><video
-      v-else-if="preview"
+      v-if="preview"
       class="video-player"
       controls
       preload="metadata"
@@ -469,7 +449,7 @@ async function prepared(task: Task) {
       Si le codec source n’est pas lisible, téléchargez le fichier original.
     </p>
     <a
-      v-if="preview && !preview.metadata.presentation_only"
+      v-if="preview"
       :href="apiUrl(`/console/videos/${preview.id}/file`)"
       download
       >Télécharger la vidéo</a

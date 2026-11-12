@@ -3,7 +3,6 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { auth, clearSession } from "../../auth-state";
 import { message, post } from "../../api";
-import { useDataMode } from "../../data/data-mode";
 import { adminSections } from "../../admin/navigation";
 import { closeAdminConfirmation } from "../../admin/confirmation";
 import AdminNavigation from "./AdminNavigation.vue";
@@ -14,8 +13,7 @@ import { useWallpaper } from "../../composables/useWallpaper";
 const wallpaper = useWallpaper();
 import SymIcon from "../symbiose/SymIcon.vue";
 import logo from "../../assets/symbiose-logo.png";
-const store = useDataMode(),
-  route = useRoute(),
+const route = useRoute(),
   router = useRouter();
 const open = ref(false),
   menu = ref<HTMLButtonElement>(),
@@ -60,7 +58,6 @@ watch(
     closeAdminConfirmation();
   },
 );
-watch(() => store.mode.value, closeAdminConfirmation);
 watch(open, async (value) => {
   await nextTick();
   if (value) aside.value?.querySelector<HTMLAnchorElement>("nav a")?.focus();
@@ -105,9 +102,9 @@ async function logout() {
         <SymIcon name="close" :size="18" />
       </button>
       <RouterLink
-        to="/admin"
+        to="/"
         class="adm-brand"
-        aria-label="Symbiose — administration"
+        aria-label="Symbiose — accueil"
         ><img :src="logo" alt="Symbiose" width="3634" height="1242" /><span
           >NORMANDIE</span
         ></RouterLink
@@ -158,11 +155,8 @@ async function logout() {
         </div>
       </header>
       <p class="adm-mode-note" role="status">
-        {{
-          store.isDemo.value
-            ? "Mode démonstration · données fictives et actions locales. Aucun compte ni worker réel n’est modifié."
-            : "Données réelles · services authentifiés. Les modifications sensibles demandent une confirmation."
-        }}
+        Services authentifiés. Les modifications sensibles demandent une
+        confirmation.
       </p>
       <main id="main-content" class="adm-content" tabindex="-1"><slot /></main>
       <footer class="adm-footer">

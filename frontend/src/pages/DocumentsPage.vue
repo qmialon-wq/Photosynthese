@@ -7,10 +7,16 @@ import { documentStatus } from "../documents";
 import DocumentList from "../components/symbiose/DocumentList.vue";
 import { adaptDocument } from "../data/real-provider";
 import "../styles/scientific-documents.css";
+import {
+  documentPageSizes,
+  restoreDocumentPageSize,
+  persistDocumentPageSize,
+} from "../data/document-page-size";
 const presented = computed(() =>
   (documents.data.value || []).map((doc) => ({
     ...adaptDocument(doc),
     title: title(doc),
+    dateNote: translationLabel(doc),
   })),
 );
 function toggleDocument(id: string) {
@@ -33,7 +39,7 @@ import type {
 const catalog = useResource<Species[]>(() => "/documents/species", 5000);
 const species = ref("renards");
 const offset = ref(0),
-  limit = 12;
+  limit = ref(restoreDocumentPageSize());
 const picked = ref<string[]>([]),
   targets = ref<string[]>(["renards"]);
 const chooseSpecies = ref(false),
@@ -43,7 +49,7 @@ const busy = ref(false),
   notice = ref("");
 const documents = useResource<ScientificDocument[]>(
   () =>
-    `/documents?stored_only=true&species=${encodeURIComponent(species.value)}&limit=${limit}&offset=${offset.value}`,
+    `/documents?stored_only=true&species=${encodeURIComponent(species.value)}&limit=${limit.value}&offset=${offset.value}`,
   5000,
 );
 watch(species, () => {
@@ -52,6 +58,11 @@ watch(species, () => {
 });
 watch(offset, () => {
   picked.value = [];
+});
+watch(limit, (value) => {
+  offset.value = 0;
+  picked.value = [];
+  persistDocumentPageSize(value);
 });
 watch(
   () => documents.data.value,
@@ -346,6 +357,7 @@ async function translate(doc: ScientificDocument) {
     >
       <DocumentList
         action-label="Lire le document"
+        :selectable="canManage"
         :documents="presented"
         :selected="new Set(picked)"
         @toggle="toggleDocument"
@@ -353,6 +365,13 @@ async function translate(doc: ScientificDocument) {
       />
     </LoadState>
     <div class="actions pagination">
+      <label
+        >Documents par page<select v-model="limit">
+          <option v-for="size in documentPageSizes" :key="size" :value="size">
+            {{ size }}
+          </option>
+        </select></label
+      >
       <PButton
         label="Page précédente"
         severity="secondary"

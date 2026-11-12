@@ -18,7 +18,7 @@ const props = withDefaults(
 );
 const emit = defineEmits<{ prefill: [value: ParcelPrefill] }>();
 const store = useDataMode();
-const real = computed(() => store.isReal.value && !!auth.user);
+const real = computed(() => !!auth.user);
 const writable = computed(
   () =>
     real.value &&
@@ -206,8 +206,7 @@ function consult() {
       nécessaires sont présentés séparément.
     </p>
     <p v-if="!real" class="notice">
-      Mode démonstration : aucune consultation territoriale réelle n’est
-      envoyée. Passez aux données réelles pour localiser votre dossier.
+      Connectez-vous pour consulter et localiser votre dossier.
     </p>
     <template v-else>
       <p v-if="state.error.value" class="notice error" role="alert">

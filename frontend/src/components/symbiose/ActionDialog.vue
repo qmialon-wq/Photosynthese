@@ -3,7 +3,7 @@ import { nextTick, ref, watch } from "vue";
 import SymIcon from "./SymIcon.vue";
 const props = withDefaults(
   defineProps<{ open: boolean; title: string; notice?: string }>(),
-  { notice: "DÉMONSTRATION · DONNÉES FICTIVES" },
+  { notice: "SYMBIOSE NORMANDIE" },
 );
 const emit = defineEmits<{ close: [] }>();
 const dialog = ref<HTMLDialogElement>();

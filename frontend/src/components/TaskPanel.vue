@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, watch } from "vue";
-import { dataModeKey } from "../data/data-mode";
-const dataMode = inject(dataModeKey, null);
+import { computed, watch } from "vue";
 import { apiUrl, message, post, taskLabel, useResource } from "../api";
 import type { Task } from "../types";
 import { ref } from "vue";
@@ -46,9 +44,7 @@ async function cancel() {
       <template v-if="task.data.value">
         <div class="section-head">
           <div>
-            <span class="eyebrow">{{
-              dataMode?.isDemo.value ? "SIMULATION LOCALE" : "TRAITEMENT LOCAL"
-            }}</span>
+            <span class="eyebrow">TRAITEMENT LOCAL</span>
             <h3>
               {{ taskLabel(task.data.value.kind) }}
               <StatusBadge :status="task.data.value.status" />
@@ -78,11 +74,7 @@ async function cancel() {
         <div v-if="progress !== null">
           <PProgressBar
             :value="Math.round(progress)"
-            :aria-label="
-              dataMode?.isDemo.value
-                ? 'Progression de la simulation'
-                : 'Progression du traitement'
-            "
+            aria-label="Progression du traitement"
           /><small
             >{{ task.data.value.progress.current }} /
             {{ task.data.value.progress.total }}</small
@@ -104,8 +96,7 @@ async function cancel() {
         <div
           v-if="
             task.data.value.kind === 'analysis' &&
-            task.data.value.status === 'completed' &&
-            !dataMode?.isDemo.value
+            task.data.value.status === 'completed'
           "
           class="actions"
         >

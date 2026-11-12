@@ -1,5 +1,4 @@
-/** Contrats de présentation communs aux deux sources. Une absence reste explicite. */
-export type DataMode = "demo" | "real";
+/** Contrats de présentation des données enregistrées. Une absence reste explicite. */
 export type SourceState =
   | "loading"
   | "success"
@@ -45,6 +44,12 @@ export interface Project {
   project: string;
   landscape?: "forest" | "valley" | "wetland" | "meadow" | "bocage";
   videoIds?: string[];
+  previewVideo?: {
+    id: string;
+    filename: string;
+    source: string;
+    poster?: string;
+  };
   dossierStatus?: string;
   recommendations?: Recommendation[];
 }

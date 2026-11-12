@@ -7,7 +7,7 @@ import SymIcon from "../components/symbiose/SymIcon.vue";
 import SearchField from "../components/symbiose/SearchField.vue";
 import FilterSelect from "../components/symbiose/FilterSelect.vue";
 import Pagination from "../components/symbiose/Pagination.vue";
-import DemoDialog from "../components/symbiose/DemoDialog.vue";
+import ActionDialog from "../components/symbiose/ActionDialog.vue";
 import {
   filterDemoVideos,
   videoStatusOptions,
@@ -81,9 +81,6 @@ const partlySelected = computed(
     !allSelected.value &&
     visible.value.some((video) => selected.value.has(video.id)),
 );
-const selection = computed(() =>
-  videos.value.filter((video) => selected.value.has(video.id)),
-);
 watch([query, species, status], () => {
   page.value = 1;
   feedback.value = "";
@@ -100,28 +97,22 @@ function togglePage() {
   });
 }
 function refresh() {
-  if (store.capabilities.value.readOnly) {
-    void store.refresh();
-    return;
-  }
   query.value = "";
   species.value = "";
   status.value = "";
   page.value = 1;
-  feedback.value = "Bibliothèque de démonstration actualisée.";
+  void store.refresh();
 }
-type DialogKind = "import" | "prepare" | "preview" | "details";
+type DialogKind = "import" | "preview" | "details";
 const dialog = ref<DialogKind | null>(null),
   currentVideo = ref<DemoVideo | null>(null),
   importNames = ref<string[]>([]);
 const dialogTitle = computed(() =>
   dialog.value === "import"
     ? "Importer des vidéos"
-    : dialog.value === "prepare"
-      ? "Préparer un dossier"
-      : dialog.value === "details"
-        ? "Informations de la vidéo"
-        : currentVideo.value?.filename || "Prévisualisation",
+    : dialog.value === "details"
+      ? "Informations de la vidéo"
+      : currentVideo.value?.filename || "Prévisualisation",
 );
 function open(kind: DialogKind, video?: DemoVideo) {
   dialog.value = kind;
@@ -132,14 +123,6 @@ function open(kind: DialogKind, video?: DemoVideo) {
 function chooseFiles(event: Event) {
   files.value = Array.from((event.target as HTMLInputElement).files || []);
   importNames.value = files.value.map((file) => file.name);
-}
-function finishDemo() {
-  if (!store.capabilities.value.simulate) return;
-  feedback.value =
-    dialog.value === "import"
-      ? `Simulation terminée : ${importNames.value.length} fichier(s) sélectionné(s). Aucun fichier n’a été envoyé.`
-      : `Démonstration terminée avec ${selected.value.size} vidéo(s) sélectionnée(s). Aucun dossier réel n’a été créé.`;
-  dialog.value = null;
 }
 </script>
 <template>
@@ -159,9 +142,7 @@ function finishDemo() {
       </div>
       <button
         class="sym-button sv-import"
-        :disabled="
-          !store.capabilities.value.simulate && !store.capabilities.value.write
-        "
+        :disabled="!store.capabilities.value.write"
         @click="open('import')"
       >
         <SymIcon name="plus" :size="27" />Importer des vidéos
@@ -172,7 +153,7 @@ function finishDemo() {
       empty-text="Aucune vidéo disponible."
       @retry="store.refresh"
     />
-    <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
+    <p class="sym-read-only">
       Importez vos vidéos, sélectionnez-les puis préparez votre dossier de
       parcelle.
     </p>
@@ -194,14 +175,13 @@ function finishDemo() {
         <button
           class="sym-button sv-prepare-button"
           :disabled="
-            (!store.capabilities.value.simulate &&
-              !store.capabilities.value.write) ||
+            !store.capabilities.value.write ||
             !selected.size ||
             creating ||
             imports.busy.value ||
             imports.pending.value
           "
-          @click="store.isReal.value ? createCorpus() : open('prepare')"
+          @click="createCorpus"
         >
           <SymIcon name="folder" :size="20" />Préparer un dossier ({{
             selected.size
@@ -295,21 +275,9 @@ function finishDemo() {
         </li>
       </ul>
     </section>
-    <DemoDialog
-      :notice="
-        store.capabilities.value.readOnly ? 'DONNÉES RÉELLES' : undefined
-      "
-      :open="!!dialog"
-      :title="dialogTitle"
-      @close="dialog = null"
-    >
+    <ActionDialog :open="!!dialog" :title="dialogTitle" @close="dialog = null">
       <template v-if="dialog === 'import'"
-        ><p v-if="store.isDemo.value">
-          Choisissez des fichiers pour essayer l’interface. Il s’agit d’une
-          simulation : aucun fichier n’est envoyé et aucune vidéo n’est ajoutée
-          à la bibliothèque.
-        </p>
-        <p v-else>
+        ><p>
           Les vidéos seront envoyées puis préparées en arrière-plan. Après
           l’import, elles seront sélectionnées pour votre dossier.
         </p>
@@ -327,30 +295,9 @@ function finishDemo() {
         <button
           class="sym-button"
           :disabled="!importNames.length || imports.busy.value"
-          @click="store.isReal.value ? uploadSelected() : finishDemo()"
+          @click="uploadSelected"
         >
-          {{
-            store.isReal.value
-              ? "Envoyer les vidéos"
-              : "Confirmer la simulation"
-          }}
-        </button></template
-      >
-      <template v-else-if="dialog === 'prepare'"
-        ><p>
-          {{ selected.size }} vidéo{{
-            selected.size > 1 ? "s" : ""
-          }}
-          sélectionnée{{ selected.size > 1 ? "s" : "" }}. Cet aperçu ne crée
-          aucun dossier réel.
-        </p>
-        <ul class="sv-demo-files">
-          <li v-for="video in selection" :key="video.id">
-            {{ video.filename }} · {{ video.parcel }}
-          </li>
-        </ul>
-        <button class="sym-button" @click="finishDemo">
-          Terminer la démonstration
+          Envoyer les vidéos
         </button></template
       >
       <template v-else-if="currentVideo"
@@ -373,19 +320,18 @@ function finishDemo() {
           :aria-label="currentVideo.species"
         />
         <p class="sv-demo-warning">
-          {{
-            store.capabilities.value.readOnly
-              ? "Informations enregistrées. Les champs absents sont indiqués par un tiret."
-              : dialog === "preview"
-                ? "Aperçu de démonstration : la lecture vidéo réelle n’est pas activée."
-                : "Les informations ci-dessous sont fictives."
-          }}
+          Informations enregistrées. Les champs absents sont indiqués par un
+          tiret.
         </p>
         <RouterLink
-          v-if="store.isReal.value"
           class="sym-button"
           :to="`/videos/${encodeURIComponent(currentVideo.id)}/dossier`"
           >Lire le dossier et les recommandations</RouterLink
+        >
+        <RouterLink
+          class="sym-button"
+          :to="{ path: '/analyses', query: { video: currentVideo.id } }"
+          >Analyser cette vidéo</RouterLink
         >
         <dl>
           <div>
@@ -427,7 +373,7 @@ function finishDemo() {
       <p v-if="dialog === 'import' && imports.error.value" role="alert">
         {{ imports.error.value }}
       </p>
-    </DemoDialog>
+    </ActionDialog>
     <p v-if="imports.busy.value" role="status">
       Transfert : {{ imports.progress.value }} %
       <button class="sv-button-quiet" @click="imports.cancel">

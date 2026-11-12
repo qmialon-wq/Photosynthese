@@ -4,7 +4,7 @@ import {
   DATA_MODE_KEY,
   type DataModeStore,
 } from "../../src/data/data-mode";
-import { createDemoSnapshot, summarize } from "../../src/data/demo-provider";
+import { summarize } from "../../src/data/summary";
 import { RealDataProvider, adaptVideo } from "../../src/data/real-provider";
 import {
   emptySnapshot,
@@ -63,47 +63,129 @@ function transport(overrides: Record<string, unknown> = {}) {
     ReturnType<typeof vi.fn>;
 }
 
-describe("scénario central de démonstration", () => {
-  it("lie les pages par identifiants et calcule leurs compteurs", () => {
-    const data = createDemoSnapshot();
-    expect(data.videos.data).toHaveLength(248);
-    expect(data.projects.data).toHaveLength(12);
-    expect(data.observations.data).toHaveLength(8);
-    expect(
-      data.projects.data.reduce((total, p) => total + (p.videos || 0), 0),
-    ).toBe(248);
-    for (const project of data.projects.data) {
-      const members = data.videos.data.filter(
-        (v) => v.projectId === project.id,
-      );
-      expect(project.videoIds).toEqual(members.map((v) => v.id));
-      expect(project.species).toBe(new Set(members.map((v) => v.species)).size);
-    }
-    for (const analysis of data.analyses.data) {
-      const related = data.videos.data.find((v) => v.id === analysis.videoId)!;
-      expect(analysis.filename).toBe(related.filename);
-      expect(analysis.duration).toBe(related.durationSeconds);
-    }
-    for (const observation of data.observations.data) {
-      expect(observation.filename).toBe(
-        data.videos.data.find((v) => v.id === observation.videoId)?.filename,
-      );
-    }
-    const home = summarize(data, true);
-    expect(home.overview.map((s) => s.value)).toEqual(["12", "8", "2", "4"]);
-    expect(home.videoOverview[2].value).toBe(home.overview[0].value);
+describe("contexte authentifié sans démonstration", () => {
+  it("ignore l'ancien mode démo enregistré et ne charge rien sans session", () => {
+    localStorage.setItem(DATA_MODE_KEY, "demo");
+    const load = vi.fn();
+    const store = createDataModeStore(localStorage, { id: "real:test", load });
+    stores.push(store);
+    store.setActive(true);
+    expect(localStorage.getItem(DATA_MODE_KEY)).toBe("real");
+    expect(store.capabilities.value.write).toBe(false);
+    expect(load).not.toHaveBeenCalled();
   });
-  it("produit un nouvel état sans modifier les fixtures lors d’une simulation", () => {
-    const first = createDemoSnapshot(),
-      second = createDemoSnapshot();
-    first.documents.data.splice(0, 1);
-    first.observations.data[0].status = "review";
-    expect(second.documents.data).toHaveLength(24);
-    expect(second.observations.data[0].status).toBe("validated");
+
+  it("active les écritures client et admin et efface les données à la déconnexion", () => {
+    const provider: DataProvider = {
+      id: "real:test",
+      async load(_, publish) {
+        publish("videos", resource([adaptVideo(video)]));
+      },
+    };
+    const store = createDataModeStore(undefined, provider);
+    stores.push(store);
+    store.setActive(true);
+    auth.user = session.user;
+    expect(store.capabilities.value.write).toBe(true);
+    expect(store.capabilities.value.readOnly).toBe(false);
+    expect(store.data.videos.data).toHaveLength(1);
+    auth.user = { ...session.user, role: "admin" };
+    expect(store.capabilities.value.write).toBe(true);
+    clearSession();
+    expect(store.data.videos.data).toEqual([]);
+    expect(store.capabilities.value.write).toBe(false);
+  });
+
+  it("annule le chargement précédent après un changement de compte", async () => {
+    auth.user = session.user;
+    const pending: {
+      signal: AbortSignal;
+      publish: Parameters<DataProvider["load"]>[1];
+      finish: () => void;
+    }[] = [];
+    const provider: DataProvider = {
+      id: "real:test",
+      load: (signal, publish) =>
+        new Promise<void>((finish) =>
+          pending.push({ signal, publish, finish }),
+        ),
+    };
+    const store = createDataModeStore(undefined, provider);
+    stores.push(store);
+    store.setActive(true);
+    auth.user = { ...session.user, id: "account-b" };
+    expect(pending[0].signal.aborted).toBe(true);
+    pending[0].publish("videos", resource([adaptVideo(video)]));
+    pending[0].finish();
+    await flushPromises();
+    expect(store.data.videos.data).toEqual([]);
+    expect(store.sourceId.value).toContain("account-b");
+    pending[1].publish(
+      "videos",
+      resource([{ ...adaptVideo(video), id: "account-b-video" }]),
+    );
+    pending[1].finish();
+    await flushPromises();
+    expect(store.data.videos.data[0].id).toBe("account-b-video");
   });
 });
 
-describe("source réelle en lecture seule", () => {
+describe("source réelle", () => {
+  it("choisit la première vidéo dans l'ordre du dossier, indépendamment de la vidéothèque", async () => {
+    const data = await read(
+      new RealDataProvider(
+        transport({
+          "/console/videos": [
+            { ...video, id: "second", metadata: { poster_url: "/second.jpg" } },
+            { ...video, id: "first", metadata: { poster_url: "/first.jpg" } },
+          ],
+          "/parcels/corpora": [{ id: "ordered" }, { id: "empty" }],
+          "/parcels/corpora/ordered": {
+            videos: [
+              { video_id: "first", filename: "premiere.mp4" },
+              { video_id: "second", filename: "seconde.mp4" },
+            ],
+            profile: null,
+            dossier: null,
+          },
+          "/parcels/corpora/empty": {
+            videos: [],
+            profile: null,
+            dossier: null,
+          },
+        }),
+      ),
+    );
+    expect(data.projects.data[0].previewVideo).toEqual({
+      id: "first",
+      filename: "premiere.mp4",
+      source: "/api/console/videos/first/file",
+      poster: "/first.jpg",
+    });
+    expect(data.projects.data[1].previewVideo).toBeUndefined();
+  });
+
+  it("conserve la première vidéo même lorsque les métadonnées de la vidéothèque sont indisponibles", async () => {
+    const data = await read(
+      new RealDataProvider(
+        transport({
+          "/console/videos": new ApiError("Indisponible", 503),
+          "/parcels/corpora": [{ id: "corpus" }],
+          "/parcels/corpora/corpus": {
+            videos: [{ video_id: "first", filename: "premiere.mp4" }],
+            profile: null,
+            dossier: null,
+          },
+        }),
+      ),
+    );
+    expect(data.projects.state).toBe("success");
+    expect(data.projects.data[0].previewVideo).toMatchObject({
+      id: "first",
+      source: "/api/console/videos/first/file",
+    });
+  });
+
   it("affiche uniquement les actions des dossiers terminés et conserve le lien vers leur parcelle", async () => {
     const action = {
       title: "Conserver la haie existante",
@@ -137,7 +219,7 @@ describe("source réelle en lecture seule", () => {
         }),
       ),
     );
-    const summary = summarize(data, false);
+    const summary = summarize(data);
     expect(summary.score).toBeNull();
     expect(summary.recommendations).toEqual([
       {
@@ -168,7 +250,7 @@ describe("source réelle en lecture seule", () => {
     );
     expect(data.videos.data[0].parcel).toBe("Lieu enregistré");
     expect(data.videos.data[0].projectId).toBe("corpus");
-    expect(summarize(data, false).videoOverview[1].value).toBe("6,8 s");
+    expect(summarize(data).videoOverview[1].value).toBe("6,8 s");
     expect(data.projects.data[0].species).toBe(0);
   });
   it("contrôle la session avant les données et ne transforme pas les absences en valeurs fictives", async () => {
@@ -184,9 +266,9 @@ describe("source réelle en lecture seule", () => {
     });
     expect(data.videos.data[0].thumbnail).toBeUndefined();
     expect(data.videos.data[0].durationSeconds).toBeUndefined();
-    expect(summarize(data, false).score).toBeNull();
-    expect(summarize(data, false).recommendations).toEqual([]);
-    expect(summarize(data, false).videoOverview[1].value).toBe("—");
+    expect(summarize(data).score).toBeNull();
+    expect(summarize(data).recommendations).toEqual([]);
+    expect(summarize(data).videoOverview[1].value).toBe("—");
   });
   it("ne charge aucune donnée métier si la session est absente", async () => {
     const request = transport({
@@ -207,7 +289,7 @@ describe("source réelle en lecture seule", () => {
     expect(data.videos.state).toBe("unconnected");
     expect(data.observations.state).toBe("error");
     expect(data.documents.state).toBe("empty");
-    expect(summarize(data, false).overview[1].value).toBe("—");
+    expect(summarize(data).overview[1].value).toBe("—");
     expect(
       Object.values(data).every((source) => source.data.length === 0),
     ).toBe(true);
@@ -238,93 +320,6 @@ describe("source réelle en lecture seule", () => {
     });
     const data = await read(new RealDataProvider(request));
     expect(data.videos.data).toHaveLength(201);
-    expect(summarize(data, false).videoOverview[0].value).toBe("201");
-  });
-});
-
-describe("contexte global et séparation des modes", () => {
-  it("démarre en démonstration, persiste le choix et tolère un stockage refusé", async () => {
-    const store = createDataModeStore();
-    stores.push(store);
-    expect(store.mode.value).toBe("demo");
-    store.setMode("real");
-    expect(localStorage.getItem(DATA_MODE_KEY)).toBe("real");
-    const restored = createDataModeStore();
-    stores.push(restored);
-    expect(restored.isReal.value).toBe(true);
-    const unavailable = createDataModeStore({
-      getItem() {
-        throw new Error();
-      },
-      setItem() {
-        throw new Error();
-      },
-    });
-    stores.push(unavailable);
-    expect(unavailable.isDemo.value).toBe(true);
-    expect(() => unavailable.setMode("real")).not.toThrow();
-  });
-  it("ignore une réponse tardive et refuse toute mutation simulée en réel", async () => {
-    let publish!: Parameters<DataProvider["load"]>[1];
-    let release!: () => void;
-    let signal!: AbortSignal;
-    const real: DataProvider = {
-      id: "real:test",
-      async load(current, callback) {
-        signal = current;
-        publish = callback;
-        await new Promise<void>((resolve) => {
-          release = resolve;
-        });
-      },
-    };
-    const demo: DataProvider = {
-      id: "demo:test",
-      async load(_, callback) {
-        callback(
-          "videos",
-          resource([{ ...adaptVideo(video), id: "demo-only" }]),
-        );
-      },
-    };
-    const store = createDataModeStore(undefined, { real, demo });
-    stores.push(store);
-    store.setActive(true);
-    store.setMode("real");
-    expect(store.data.videos.data).toEqual([]);
-    store.replace("videos", [{ ...adaptVideo(video), id: "forbidden" }]);
-    const action = vi.fn();
-    store.simulate(action);
-    expect(action).not.toHaveBeenCalled();
-    store.setMode("demo");
-    expect(signal.aborted).toBe(true);
-    publish("videos", resource([adaptVideo(video)]));
-    release();
-    await flushPromises();
-    expect(store.data.videos.data.map((v) => v.id)).toEqual(["demo-only"]);
-  });
-  it("ne lit rien sur Connexion et invalide les données lors d’un changement de compte", async () => {
-    auth.user = session.user;
-    let loads = 0;
-    const real: DataProvider = {
-      id: "real:test",
-      async load(_, publish) {
-        loads++;
-        publish("videos", resource([adaptVideo(video)]));
-      },
-    };
-    const store = createDataModeStore(undefined, { demo: real, real });
-    stores.push(store);
-    store.setMode("real");
-    expect(store.capabilities.value.write).toBe(true);
-    expect(loads).toBe(0);
-    store.setActive(true);
-    const revision = store.revision.value;
-    auth.user = { ...session.user, id: "account-b" };
-    expect(store.revision.value).toBeGreaterThan(revision);
-    expect(store.sourceId.value).toContain("account-b");
-    expect(loads).toBe(2);
-    clearSession();
-    expect(store.capabilities.value.write).toBe(false);
+    expect(summarize(data).videoOverview[0].value).toBe("201");
   });
 });

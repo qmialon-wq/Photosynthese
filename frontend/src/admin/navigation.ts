@@ -1,5 +1,5 @@
 import { ref } from "vue";
-export const lastObservationRoute = ref("/");
+export const lastObservationRoute = ref("/videos");
 export const adminSections = [
   { path: "/admin/utilisateurs", label: "Utilisateurs", icon: "user" },
   { path: "/admin", label: "Vue d’ensemble", icon: "grid" },

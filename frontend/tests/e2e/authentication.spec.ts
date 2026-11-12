@@ -64,7 +64,10 @@ test("inscription client, profil, navigation protégée et déconnexion", async 
   ).toEqual([]);
   await page.getByRole("button", { name: "Créer un compte client" }).click();
   await expect(
-    page.getByRole("heading", { name: "Accueil Symbiose" }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Vos observations, simplement.",
+    }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Administration", exact: true }),

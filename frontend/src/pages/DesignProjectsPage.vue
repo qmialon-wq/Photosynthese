@@ -6,8 +6,6 @@ import SymIcon from "../components/symbiose/SymIcon.vue";
 import SearchField from "../components/symbiose/SearchField.vue";
 import FilterSelect from "../components/symbiose/FilterSelect.vue";
 import Pagination from "../components/symbiose/Pagination.vue";
-import DemoDialog from "../components/symbiose/DemoDialog.vue";
-import StatusBadge from "../components/symbiose/StatusBadge.vue";
 import ProjectCard from "../components/symbiose/ProjectCard.vue";
 import {
   filterDemoProjects,
@@ -23,9 +21,7 @@ import SourceState from "../components/symbiose/SourceState.vue";
 const { items: projects, state: source, store } = useCollection("projects");
 const router = useRouter();
 function openProject(project: DemoProject) {
-  if (store.isReal.value) {
-    void router.push(`/parcelles/${encodeURIComponent(project.id)}`);
-  } else current.value = project;
+  void router.push(`/parcelles/${encodeURIComponent(project.id)}`);
 }
 const projectTypeOptions = computed(() => [
   { value: "", label: "Tous les projets" },
@@ -44,8 +40,7 @@ const query = ref(""),
   type = ref(""),
   status = ref(""),
   page = ref(1);
-const current = ref<DemoProject | null>(null),
-  feedback = ref("");
+const feedback = ref("");
 const filtered = computed(() =>
   filterDemoProjects(projects.value, query.value, type.value, status.value),
 );
@@ -57,22 +52,12 @@ watch([query, type, status], () => {
   feedback.value = "";
 });
 function refresh() {
-  if (store.capabilities.value.readOnly) {
-    void store.refresh();
-    return;
-  }
   query.value = "";
   type.value = "";
   status.value = "";
   page.value = 1;
-  feedback.value = "Dossiers de démonstration actualisés.";
+  void store.refresh();
 }
-const projectLabel = computed(
-  () =>
-    projectTypeOptions.value.find(
-      (option) => option.value === current.value?.project,
-    )?.label,
-);
 </script>
 <template>
   <GlassPanel
@@ -104,7 +89,7 @@ const projectLabel = computed(
       empty-text="Aucun dossier enregistré."
       @retry="store.refresh"
     />
-    <p v-if="store.capabilities.value.readOnly" class="sym-read-only">
+    <p class="sym-read-only">
       Ouvrez votre dossier pour compléter le projet, modifier la parcelle ou
       actualiser les recommandations.
     </p>
@@ -154,54 +139,5 @@ const projectLabel = computed(
       @change="page = $event"
     />
     <p v-if="feedback" class="sv-feedback" role="status">{{ feedback }}</p>
-    <DemoDialog
-      :notice="
-        store.capabilities.value.readOnly
-          ? 'DONNÉES RÉELLES · CONSULTATION'
-          : undefined
-      "
-      :open="!!current"
-      :title="current?.name || 'Dossier de démonstration'"
-      @close="current = null"
-    >
-      <template v-if="current"
-        ><div
-          class="sf-project-photo sf-demo-photo"
-          :class="
-            current.landscape
-              ? `sf-landscape-${current.landscape}`
-              : 'sym-thumbnail-empty'
-          "
-          role="img"
-          :aria-label="`Paysage du dossier ${current.name}`" />
-        <StatusBadge
-          class="sf-demo-status"
-          :status="current.status"
-          :label="current.status === 'validated' ? 'Validé' : undefined" />
-        <p>
-          {{
-            store.capabilities.value.readOnly
-              ? "Informations du dossier enregistré. Les champs absents sont indiqués par un tiret."
-              : "Ce dossier présente des données fictives. Aucun traitement, stockage ou résultat métier réel n’est disponible dans cet aperçu."
-          }}
-        </p>
-        <dl>
-          <div>
-            <dt>Projet</dt>
-            <dd>{{ projectLabel || current.project || "—" }}</dd>
-          </div>
-          <div>
-            <dt>Vidéos</dt>
-            <dd>{{ current.videos ?? "—" }} vidéos</dd>
-          </div>
-          <div>
-            <dt>Espèces</dt>
-            <dd>{{ current.species ?? "—" }} espèces</dd>
-          </div>
-        </dl>
-        <RouterLink class="sym-button sf-demo-action" to="/videos"
-          >Choisir des vidéos<SymIcon name="arrow" :size="20" /></RouterLink
-      ></template>
-    </DemoDialog>
   </GlassPanel>
 </template>

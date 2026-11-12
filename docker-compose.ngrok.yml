@@ -4,7 +4,6 @@ services:
   backend:
     environment:
       AUTH_COOKIE_SECURE: "true"
-      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-https://photosynthese.local,http://localhost:8080,http://127.0.0.1:8080,http://localhost:8000,http://127.0.0.1:8000},${NGROK_URL:?Définir NGROK_URL avec le domaine HTTPS attribué par ngrok}
 
   ngrok:
     image: ngrok/ngrok:3.39.13-alpine@sha256:a51a7637a70be573615b01852af0419c4ab9dc857601b3d61ea2a082be3ec0d3

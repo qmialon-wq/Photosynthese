@@ -4,9 +4,9 @@ import AxeBuilder from "@axe-core/playwright";
 
 test("accueil client simple et administration distincte", async ({ page }) => {
   await mockApi(page, (route) => route.fulfill({ json: [] }));
-  await page.goto("/");
+  await page.goto("/videos");
   await expect(
-    page.getByRole("heading", { name: "Vos observations, simplement." }),
+    page.getByRole("heading", { name: "Vidéothèque", exact: true }),
   ).toBeVisible();
   await expect(page.getByLabel("Nom de revue")).toHaveCount(0);
   const nav = page.getByRole("navigation", { name: "Navigation principale" });
@@ -20,12 +20,20 @@ test("accueil client simple et administration distincte", async ({ page }) => {
         .analyze()
     ).violations,
   ).toEqual([]);
-  await nav.getByRole("link", { name: "Administration", exact: true }).click();
+  await page.getByRole("button", { name: "Paramètres", exact: true }).click();
+  await page.getByRole("link", { name: "Administration", exact: true }).click();
+  const adminNav = page.getByRole("navigation", {
+    name: "Navigation administrative",
+    exact: true,
+  });
   await expect(
-    nav.getByRole("link", { name: "Entraînements", exact: true }),
+    adminNav.getByRole("link", { name: "Entraînements", exact: true }),
   ).toHaveAttribute("href", "/admin/training");
   await expect(
-    nav.getByRole("link", { name: "Espace observation", exact: true }),
+    adminNav.getByRole("link", {
+      name: "Retour à l’espace observation",
+      exact: true,
+    }),
   ).toBeVisible();
 });
 

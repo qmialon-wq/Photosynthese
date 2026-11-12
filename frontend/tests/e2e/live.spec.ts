@@ -12,8 +12,27 @@ test("vidéo réelle : transfert navigateur, inférence worker, MP4 lisible et r
   await loginLive(page);
   await page.goto("/videos");
   await page
-    .getByLabel("Importer une ou plusieurs vidéos", { exact: true })
+    .getByRole("button", { name: "Importer des vidéos", exact: true })
+    .click();
+  await page
+    .getByLabel("Sélectionner des fichiers vidéo", { exact: true })
     .setInputFiles(process.env.BIOSENTINELLE_LIVE_VIDEO!);
+  await page
+    .getByRole("button", { name: "Envoyer les vidéos", exact: true })
+    .click();
+  await expect(
+    page.getByText("Import terminé, vidéo sélectionnée", { exact: false }),
+  ).toBeVisible({ timeout: 60000 });
+  await page
+    .getByRole("button", { name: "Fermer la fenêtre", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Prévisualiser", exact: true })
+    .first()
+    .click();
+  await page
+    .getByRole("link", { name: "Analyser cette vidéo", exact: true })
+    .click();
   await expect(
     page.getByRole("heading", { name: "Configurer l’analyse" }),
   ).toBeVisible({ timeout: 60000 });

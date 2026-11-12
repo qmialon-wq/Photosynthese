@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
-import { dataModeKey } from "../data/data-mode";
-const dataMode = inject(dataModeKey, null);
+import { computed, ref } from "vue";
 import { apiUrl, date, message, post, useResource } from "../api";
 import type { Dataset, Operation, Sample } from "../types";
 const datasets = useResource<Dataset[]>(() => "/review/datasets", 5000);
@@ -189,7 +187,7 @@ async function rebuild() {
           </div>
           <div class="actions">
             <a
-              v-if="detail.data.value.archive_sha256 && !dataMode?.isDemo.value"
+              v-if="detail.data.value.archive_sha256"
               class="button-link"
               :href="apiUrl(`/review/datasets/${selected}/archive`)"
               download

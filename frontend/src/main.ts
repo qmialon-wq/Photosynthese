@@ -22,6 +22,7 @@ import "./styles/data-mode.css";
 import "./styles/admin.css";
 import "./styles/wallpaper.css";
 import "./styles/symbiose-themes.css";
+import "./styles/readability.css";
 import { installAdminServices } from "./admin/services";
 
 const app = createApp(App)

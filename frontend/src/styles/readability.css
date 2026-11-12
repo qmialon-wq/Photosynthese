@@ -1,0 +1,34 @@
+/* Textes secondaires et tertiaires : les fonds et la mise en page sont conservés. */
+:root {
+  --sym-text: #f5f8ef;
+  --sym-text-soft: #e9f1e6;
+  --sym-text-muted: #d7e4d1;
+}
+
+.symbiose-shell .muted {
+  color: var(--sym-text-soft);
+}
+
+.symbiose-shell .sym-demo-note {
+  color: var(--sym-text-muted);
+  opacity: 1;
+}
+
+.adm-mode-note,
+.adm-footer {
+  color: var(--sym-text-muted);
+}
+
+.adm-content th {
+  color: var(--sym-text-soft);
+}
+
+.app-wallpaper-shell .workspace main a:not(.button-link) {
+  color: color-mix(in srgb, var(--sym-profile-link) 85%, white);
+}
+
+.adm-content input::placeholder,
+.adm-content textarea::placeholder {
+  color: var(--sym-text-muted);
+  opacity: 1;
+}

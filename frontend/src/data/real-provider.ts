@@ -282,6 +282,7 @@ export class RealDataProvider implements DataProvider {
           await this.request("/parcels/corpora", { method: "GET", signal }),
         );
         const projects: Project[] = [];
+        const knownVideos = await videos.catch(() => [] as ApiVideo[]);
         // Lecture bornée et séquentielle des profils ; aucun dossier n’est créé.
         for (const row of list) {
           const detail = await this.request<CorpusDetail>(
@@ -290,6 +291,11 @@ export class RealDataProvider implements DataProvider {
           );
           if (!Array.isArray(detail.videos))
             throw new Error("Dossier invalide");
+          // L'API conserve l'ordre d'ajout au dossier (ordinal).
+          const firstVideo = detail.videos[0];
+          const original = knownVideos.find(
+            (video) => video.id === firstVideo?.video_id,
+          );
           const result =
             detail.dossier?.status === "completed"
               ? detail.dossier.result
@@ -318,6 +324,18 @@ export class RealDataProvider implements DataProvider {
             name: detail.profile?.profile.locality || `Dossier ${row.id}`,
             videos: detail.videos.length,
             videoIds: detail.videos.map((v) => v.video_id),
+            ...(firstVideo
+              ? {
+                  previewVideo: {
+                    id: firstVideo.video_id,
+                    filename: firstVideo.filename || original?.filename || "",
+                    source: apiUrl(
+                      `/console/videos/${encoded(firstVideo.video_id)}/file`,
+                    ),
+                    poster: original?.metadata?.poster_url,
+                  },
+                }
+              : {}),
             species: detail.dossier?.result?.confirmed_species?.length ?? null,
             status: "unknown",
             project: detail.profile?.profile.project_type || "",

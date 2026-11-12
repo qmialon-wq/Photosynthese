@@ -141,12 +141,19 @@ test("import, analyse asynchrone et téléchargement JSON", async ({ page }) => 
   });
   await page.goto("/videos");
   await page
-    .getByLabel("Importer une ou plusieurs vidéos", { exact: true })
+    .getByRole("button", { name: "Importer des vidéos", exact: true })
+    .click();
+  await page
+    .getByLabel("Sélectionner des fichiers vidéo", { exact: true })
     .setInputFiles({
       name: "terrain.mp4",
       mimeType: "video/mp4",
       buffer: Buffer.from("test"),
     });
+  await page
+    .getByRole("button", { name: "Envoyer les vidéos", exact: true })
+    .click();
+  await page.goto("/analyses?video=video");
   await expect(
     page.getByRole("heading", { name: "Configurer l’analyse" }),
   ).toBeVisible();
@@ -236,8 +243,10 @@ test("soumettre un entraînement, voir sa progression et demander son arrêt", a
   await page.goto("/training");
   await page.getByLabel("Dataset d’entraînement").selectOption("a".repeat(64));
   await page.getByRole("button", { name: "Démarrer l’entraînement" }).click();
+  await page.getByRole("button", { name: "Confirmer l’action réelle" }).click();
   await expect(page.getByText("1 / 6", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Demander l’arrêt" }).click();
+  await page.getByRole("button", { name: "Confirmer l’action réelle" }).click();
   await expect(
     page.getByText("Arrêt demandé, en attente d’un point d’interruption sûr."),
   ).toBeVisible();
@@ -281,12 +290,11 @@ test("métriques réelles du registre et navigation mobile", async ({ page }) =>
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.getByRole("button", { name: "Menu de navigation" }).click();
+  await page.getByRole("button", { name: "Navigation administrative" }).click();
   await page
-    .getByRole("link", { name: "Espace observation", exact: true })
+    .getByRole("link", { name: "Retour à l’espace observation", exact: true })
     .click();
-  await page.getByRole("button", { name: "Menu de navigation" }).click();
-  await page.getByRole("link", { name: "Vidéothèque", exact: true }).click();
+  await page.locator('.sym-wheel-link[data-section="/videos"]').click();
   await expect(
     page.getByRole("heading", { name: "Vidéothèque", exact: true }),
   ).toBeVisible();

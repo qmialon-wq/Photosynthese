@@ -3,7 +3,6 @@ import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { isNavigationFailure, useRoute, useRouter } from "vue-router";
 import { message, post, api } from "../api";
 import { auth, acceptSession, type Session } from "../auth-state";
-import { useDataMode } from "../data/data-mode";
 import symbioseLogo from "../assets/symbiose-logo.png";
 import { useLoginTransition } from "../composables/useLoginTransition";
 import { useWallpaper } from "../composables/useWallpaper";
@@ -11,7 +10,6 @@ const loginTransition = useLoginTransition();
 const wallpaper = useWallpaper();
 const route = useRoute(),
   router = useRouter();
-const dataMode = useDataMode();
 const mode = computed(() => route.path.slice(1));
 const title = computed(
   () =>
@@ -97,7 +95,6 @@ async function submit() {
             ? "setup"
             : "register";
       acceptSession(await post<Session>(`/auth/${endpoint}`, body));
-      dataMode.setMode("real");
       password.value = "";
       token.value = "";
       if (endpoint === "login") {
@@ -123,7 +120,7 @@ async function submit() {
 <template>
   <section class="auth-card" aria-labelledby="auth-title">
     <header class="auth-header">
-      <RouterLink to="/connexion" aria-label="Symbiose — connexion">
+      <RouterLink to="/" aria-label="Symbiose — accueil">
         <img
           :src="symbioseLogo"
           alt="Symbiose"

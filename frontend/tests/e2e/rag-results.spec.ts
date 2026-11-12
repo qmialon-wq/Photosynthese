@@ -255,19 +255,16 @@ test("ouvre les vrais dossiers et toutes les sorties RAG sans écrire", async ({
   expect(methods.every((method) => method === "GET")).toBe(true);
 });
 
-test("affiche le RAG réel sur l’accueil sans score inventé et ouvre les dossiers vidéo", async ({
+test("présente l'accueil sans score inventé et ouvre les dossiers vidéo réels", async ({
   page,
 }) => {
   await setup(page);
   await page.goto("/");
   await expect(page.locator(".sym-diagnostic")).toHaveCount(0);
-  await expect(page.locator(".sym-recommendation h3")).toHaveText(
-    "Maintenir la haie",
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Vos observations, simplement.",
   );
-  await page
-    .getByRole("link", { name: "Lire le dossier : Maintenir la haie" })
-    .click();
-  await expect(page).toHaveURL(new RegExp(`/parcelles/${id}$`));
+  await page.goto(`/parcelles/${id}`);
   await page.goto("/videos/camera/dossier");
   await expect(
     page.getByRole("heading", { name: "Votre dossier biodiversité" }),

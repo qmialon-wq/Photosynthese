@@ -8,13 +8,12 @@ import {
   type InjectionKey,
 } from "vue";
 import { auth } from "../auth-state";
-import { DemoDataProvider, summarize } from "./demo-provider";
+import { summarize } from "./summary";
 import { RealDataProvider } from "./real-provider";
 import {
   emptySnapshot,
   resource,
   type Collections,
-  type DataMode,
   type DataProvider,
   type Snapshot,
 } from "./contracts";
@@ -29,29 +28,22 @@ function browserStorage() {
 }
 export function createDataModeStore(
   storage: Pick<Storage, "getItem" | "setItem"> | undefined = browserStorage(),
-  providers: Record<DataMode, DataProvider> = {
-    demo: new DemoDataProvider(),
-    real: new RealDataProvider(),
-  },
+  provider: DataProvider = new RealDataProvider(),
 ) {
-  let initial: DataMode = "demo";
+  // Migration des navigateurs ayant conservé l'ancien choix de démonstration.
   try {
-    if (storage?.getItem(DATA_MODE_KEY) === "real") initial = "real";
+    storage?.setItem(DATA_MODE_KEY, "real");
   } catch {
     /* Navigation privée : le mode reste utilisable sans persistance. */
   }
-  const mode = ref<DataMode>(initial),
-    active = ref(false),
+  const active = ref(false),
     revision = ref(0);
   const data = reactive<Snapshot>(emptySnapshot());
   let controller: AbortController | undefined,
     reportController: AbortController | undefined,
     generation = 0;
-  const isDemo = computed(() => mode.value === "demo"),
-    isReal = computed(() => mode.value === "real");
   const sourceId = computed(
-    () =>
-      `${providers[mode.value].id}:${isReal.value ? auth.user?.id || "anonymous" : "local"}`,
+    () => `${provider.id}:${auth.user?.id || "anonymous"}`,
   );
   function cancel() {
     controller?.abort();
@@ -62,27 +54,17 @@ export function createDataModeStore(
     cancel();
     Object.assign(data, emptySnapshot());
     if (resetView) revision.value++;
-    if (!active.value) return;
+    if (!active.value || !auth.user) return;
     const current = new AbortController();
     controller = current;
     const run = generation;
-    await providers[mode.value].load(current.signal, (key, value) => {
+    await provider.load(current.signal, (key, value) => {
       if (generation === run && !current.signal.aborted && active.value)
         Object.assign(data, { [key]: value });
     });
   }
   const refresh = () => load(true);
   const refreshInPlace = () => load(false);
-  function setMode(value: DataMode) {
-    if (!["demo", "real"].includes(value) || value === mode.value) return;
-    mode.value = value;
-    try {
-      storage?.setItem(DATA_MODE_KEY, value);
-    } catch {
-      /* Même comportement sans stockage. */
-    }
-    void refresh();
-  }
   function setActive(value: boolean) {
     if (active.value === value) return;
     active.value = value;
@@ -94,37 +76,22 @@ export function createDataModeStore(
   }
   // Un changement de compte invalide immédiatement les données du compte précédent.
   const stopAuthWatch = watch(
-    () => auth.user?.id,
+    () => `${auth.user?.id || ""}:${auth.user?.role || ""}`,
     (id, previous) => {
-      if (isReal.value && active.value && id !== previous && previous)
-        void refresh();
+      if (active.value && id !== previous) void refresh();
     },
     { flush: "sync" },
   );
-  function replace<K extends keyof Collections>(
-    key: K,
-    values: Collections[K][],
-  ) {
-    if (!isDemo.value) return;
-    Object.assign(data, { [key]: resource(values) });
-  }
-  function simulate(action: () => void) {
-    if (isDemo.value && active.value) action();
-  }
   async function report(id: string) {
     reportController?.abort();
     const current = new AbortController();
     reportController = current;
     const run = generation;
-    const loader = providers[mode.value].report;
+    const loader = provider.report;
     if (!loader)
       return resource<import("./contracts").Detection>([], "unconnected");
     try {
-      const result = await loader.call(
-        providers[mode.value],
-        id,
-        current.signal,
-      );
+      const result = await loader.call(provider, id, current.signal);
       return generation === run && !current.signal.aborted
         ? resource(result)
         : null;
@@ -139,30 +106,23 @@ export function createDataModeStore(
     }
   }
   const capabilities = computed(() => ({
-    simulate: isDemo.value,
-    write: isReal.value && !!auth.user,
-    readOnly: isReal.value,
+    write: !!auth.user,
+    readOnly: !auth.user,
   }));
-  const summary = computed(() => summarize(data, isDemo.value));
+  const summary = computed(() => summarize(data));
   function dispose() {
     cancel();
     stopAuthWatch();
   }
   return {
-    mode: readonly(mode),
-    isDemo,
-    isReal,
     sourceId,
     revision: readonly(revision),
     data: readonly(data),
     capabilities,
     summary,
-    setMode,
     setActive,
     refresh,
     refreshInPlace,
-    replace,
-    simulate,
     report,
     dispose,
   };
@@ -177,10 +137,7 @@ export function useDataMode() {
 }
 export function useCollection<K extends keyof Collections>(key: K) {
   const store = useDataMode();
-  const items = computed<Collections[K][]>({
-    get: () => store.data[key].data as Collections[K][],
-    set: (value) => store.replace(key, value),
-  });
+  const items = computed(() => store.data[key].data as Collections[K][]);
   const state = computed(() => store.data[key]);
   return { store, items, state };
 }

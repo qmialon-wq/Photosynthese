@@ -85,19 +85,19 @@ it("enregistre uniquement les interventions, avec CSRF et révision", async () =
     "csrf-test",
   );
 });
-it("refuse l’édition d’un autre propriétaire et ne consulte rien en démonstration", async () => {
+it("refuse l’édition d’un autre propriétaire et ne consulte rien sans session", async () => {
   const fetch = vi.fn(async () => new Response(JSON.stringify(state())));
   vi.stubGlobal("fetch", fetch);
   const wrapper = render("other");
   await flushPromises();
   expect(wrapper.find('button[type="submit"]').exists()).toBe(false);
   wrapper.unmount();
-  store.setMode("demo");
+  clearSession();
   fetch.mockClear();
   const demo = render();
   await flushPromises();
   expect(fetch).not.toHaveBeenCalled();
-  expect(demo.text()).toContain("aucune consultation territoriale réelle");
+  expect(demo.text()).toContain("Connectez-vous");
 });
 it("présente le résultat DREAL et ses limites séparément des couches IGN", async () => {
   const dreal = {
@@ -220,7 +220,7 @@ it("invalide une réponse tardive après un changement de compte ou de mode", as
   const wrapper = render();
   await flushPromises();
   auth.user = { ...auth.user!, id: "another" };
-  store.setMode("demo");
+  clearSession();
   resolve(
     new Response(
       JSON.stringify({
@@ -231,5 +231,5 @@ it("invalide une réponse tardive après un changement de compte ou de mode", as
   );
   await flushPromises();
   expect(wrapper.text()).not.toContain("RÉPONSE PÉRIMÉE");
-  expect(wrapper.text()).toContain("Mode démonstration");
+  expect(wrapper.text()).toContain("Connectez-vous");
 });

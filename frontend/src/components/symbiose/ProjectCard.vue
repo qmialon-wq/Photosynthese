@@ -5,6 +5,8 @@ import type { Project } from "../../data/contracts";
 import GlassPanel from "./GlassPanel.vue";
 import SymIcon from "./SymIcon.vue";
 import StatusBadge from "./StatusBadge.vue";
+import VideoThumbnail from "../VideoThumbnail.vue";
+import defaultAnimal from "../../assets/video-boar.png";
 defineProps<{ project: Project }>();
 const emit = defineEmits<{ open: [project: Project] }>();
 const router = useRouter();
@@ -59,14 +61,23 @@ onBeforeUnmount(() => document.removeEventListener("pointerdown", outside));
       :aria-label="`Ouvrir le dossier ${project.name}`"
       @click="openProject(project)"
     >
-      <div
-        class="sf-project-photo"
-        :class="
-          project.landscape
-            ? `sf-landscape-${project.landscape}`
-            : 'sym-thumbnail-empty'
-        "
-      >
+      <div class="sf-project-photo">
+        <VideoThumbnail
+          v-if="project.previewVideo"
+          class="sf-project-thumbnail"
+          :source="project.previewVideo.source"
+          :poster="project.previewVideo.poster"
+          :label="`Miniature de la première vidéo : ${project.previewVideo.filename}`"
+        />
+        <img
+          v-else
+          class="sf-project-thumbnail sf-project-default"
+          :src="defaultAnimal"
+          alt="Illustration par défaut : sanglier"
+          loading="lazy"
+          width="1536"
+          height="1024"
+        />
         <StatusBadge
           :status="project.status"
           :label="project.status === 'validated' ? 'Validé' : undefined"

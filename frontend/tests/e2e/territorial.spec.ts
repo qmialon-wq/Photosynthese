@@ -2,7 +2,6 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 import { readFileSync } from "node:fs";
-import { openDisplaySettings } from "./display-settings";
 
 // Real deterministic engine output with synthetic project inputs and empty map fixtures.
 const designFixture = JSON.parse(
@@ -227,8 +226,7 @@ test("propriétaire : point, interventions, analyse, export et formulaire modifi
   });
   await page.reload();
   await expect(page.getByLabel("Clôture", { exact: true })).toBeChecked();
-  // Switching a private dossier back to demo navigates away and removes this panel.
-  await (await openDisplaySettings(page)).selectOption("demo");
+  await page.goto("/parcelles");
   await expect(
     page.getByRole("heading", { name: "Mes dossiers", exact: true }),
   ).toBeVisible();
@@ -237,14 +235,15 @@ test("propriétaire : point, interventions, analyse, export et formulaire modifi
   ).toHaveCount(0);
 });
 
-test("démonstration : aucune requête territoriale avec un identifiant fictif", async ({
+test("sans session : aucune requête territoriale avec un identifiant privé", async ({
   page,
 }) => {
   const calls = await fixture(page, "demo");
-  await page.goto("/parcelles/demo-corpus");
-  await expect(
-    page.getByText(/Aucune requête territoriale n’est envoyée/),
-  ).toBeVisible();
+  await page.route("**/api/auth/me", (route) =>
+    route.fulfill({ status: 401, json: { detail: "Connexion requise" } }),
+  );
+  await page.goto(`/parcelles/${corpus}`);
+  await expect(page).toHaveURL(/\/connexion$/);
   expect(calls.some((path) => path.startsWith("/parcels/"))).toBe(false);
 });
 

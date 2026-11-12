@@ -99,13 +99,20 @@ test("connexion rapide : galop articulé, Accueil en arrière-plan, révélation
     timeout: LOGIN_TRANSITION_MS + 600,
   });
   await expect(
-    page.getByRole("heading", { name: "Accueil Symbiose" }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Vos observations, simplement.",
+    }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Accueil Symbiose" }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Vos observations, simplement.",
+    }),
   ).toBeVisible();
   await expect(overlay(page)).toHaveCount(0);
+  await page.goto("/videos");
   await page.getByRole("button", { name: "Mon profil", exact: true }).click();
   await page
     .getByRole("button", { name: "Se déconnecter", exact: true })
@@ -153,6 +160,7 @@ test("réponse lente : aucune réussite avant le serveur ; Passer au clavier con
   await page.keyboard.press("Enter");
   await expect(overlay(page)).toHaveCount(0);
   await expect(page.locator("#main-content")).toBeFocused();
+  await page.goto("/videos");
   await page.getByRole("button", { name: "Mon profil", exact: true }).click();
   await expect(page.locator(".sym-action-panel")).toContainText("Camille");
 });
@@ -302,8 +310,7 @@ for (const [theme, expectedPrimary] of Object.entries({
     await page.getByRole("button", { name: "Passer" }).click();
     await expect(overlay(page)).toHaveCount(0);
     await page
-      .getByRole("navigation", { name: "Navigation principale" })
-      .getByRole("link", { name: "Vidéothèque", exact: true })
+      .getByRole("link", { name: "Importer une vidéo", exact: true })
       .click();
     await expect(page).toHaveURL(/\/videos$/);
     await expect(overlay(page)).toHaveCount(0);

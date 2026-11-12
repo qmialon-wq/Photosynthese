@@ -83,12 +83,7 @@ interface Corpus {
 const route = useRoute();
 const dataMode = useDataMode();
 const source = computed(() => dataMode.sourceId.value);
-const canLoad = computed(
-  () =>
-    !!auth.user &&
-    (dataMode.isReal.value ||
-      (auth.user.role === "admin" && route.path.startsWith("/admin/"))),
-);
+const canLoad = computed(() => !!auth.user);
 const id = computed(() => String(route.params.id || ""));
 const corpora = useResource<
   Array<{ id: string; video_count: number; created_at: string }>
@@ -244,9 +239,8 @@ const labels: Record<string, string> = {
       >
     </div>
     <p v-if="!canLoad" class="notice">
-      Mode démonstration : ouvrez un dossier en données réelles pour consulter
-      IGN. Aucune requête territoriale n’est envoyée avec un identifiant de
-      démonstration.
+      Connectez-vous pour ouvrir un dossier et consulter son contexte
+      territorial.
     </p>
     <template v-else-if="!id"
       ><LoadState

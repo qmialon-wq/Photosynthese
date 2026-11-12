@@ -34,7 +34,7 @@ const tasks = useResource<Task[]>(
       ><i class="pi pi-sparkles" aria-hidden="true" />
       <h2>Votre parcelle, votre projet</h2>
       <p>Indiquez la surface, le type de terrain et l’activité souhaitée.</p>
-      <span>Voir les analyses →</span></RouterLink
+      <span>Voir mes dossiers →</span></RouterLink
     >
     <RouterLink to="/parcelles" class="panel journey-card"
       ><span class="eyebrow">03 · RETROUVER VOS RÉSULTATS</span

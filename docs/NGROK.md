@@ -71,8 +71,10 @@ Les variables ngrok doivent rester renseignées pour ces commandes Compose.
 
 ## Authentification et vérification
 
-Le fichier optionnel ajoute `NGROK_URL` aux origines autorisées et impose
-`AUTH_COOKIE_SECURE=true` au backend. Les sessions et jetons CSRF de l'application
+Le fichier Compose de base ajoute automatiquement `NGROK_URL` aux origines
+autorisées lorsqu'elle est renseignée, même après un redémarrage sans le fichier
+optionnel. Celui-ci impose `AUTH_COOKIE_SECURE=true` au backend.
+Les sessions et jetons CSRF de l'application
 restent obligatoires. Aucun port d'inspection ngrok n'est publié, et l'inspection
 des requêtes par l'agent est désactivée.
 

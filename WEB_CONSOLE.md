@@ -40,14 +40,23 @@ Les permissions sont vérifiées par l’API et l’en-tête `X-Reviewer` n’at
 d’identité. Le guide [Authentification et données personnelles](docs/AUTHENTICATION.md)
 décrit les rôles, les sessions et les demandes d’effacement.
 
-L'accueil `/` donne accès à **Vidéothèque**, **Analyses** et **Validation humaine**.
+L'accueil `/` affiche la landing page uniquement hors connexion, avec accès à la
+connexion et à l'inscription. Pour un client ou un administrateur connecté, cette
+même adresse ouvre le module Accueil avec les raccourcis métier et les dernières
+analyses réelles. Le bouton Accueil et le logo conservent ce comportement après
+rechargement.
+Les pages **Vidéothèque**, **Analyses**, **Validation humaine**, **Mes dossiers**
+et **Documents scientifiques** exigent une session, restaurée après rechargement.
+Le mode démonstration et ses traitements simulés ont été retirés. Les anciens
+navigateurs ayant mémorisé ce mode utilisent désormais exclusivement l'API réelle.
 Le lien **Administration** ouvre `/admin` et ses pages de gestion ; le lien
 **Espace observation** permet de revenir. Les anciens liens `/training`, `/datasets`,
 `/models` et `/evaluation` redirigent vers `/admin/...`, en conservant leurs paramètres.
 
 ## Parcours disponibles
 
-1. **Accueil** : trois actions principales et les cinq dernières analyses réelles.
+1. **Accueil** : landing de présentation hors connexion ; raccourcis vers les
+   vidéos, les dossiers et les cinq dernières analyses réelles une fois connecté.
    **Vue d'ensemble administrative** (`/admin`) : compteurs réels des vidéos uniques par contenu, espèces validées,
    recadrages à revoir, tâches de la console et dernier entraînement SQL.
    Un état vide ou « Non mesuré » remplace toute mesure absente. Le nom du

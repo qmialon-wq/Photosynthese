@@ -3,10 +3,10 @@ import {
   pendingAdminAction,
   closeAdminConfirmation,
 } from "../../admin/confirmation";
-import DemoDialog from "../symbiose/DemoDialog.vue";
+import ActionDialog from "../symbiose/ActionDialog.vue";
 </script>
 <template>
-  <DemoDialog
+  <ActionDialog
     class="adm-confirmation"
     :open="!!pendingAdminAction"
     :title="pendingAdminAction?.title || 'Confirmation'"
@@ -27,5 +27,5 @@ import DemoDialog from "../symbiose/DemoDialog.vue";
         </button>
       </div>
     </template>
-  </DemoDialog>
+  </ActionDialog>
 </template>

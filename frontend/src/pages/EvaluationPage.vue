@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
-import { dataModeKey } from "../data/data-mode";
-const dataMode = inject(dataModeKey, null);
+import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { apiUrl, date, message, percent, post, useResource } from "../api";
 import type { Dataset, Metrics, Model, Operation, Task } from "../types";
@@ -175,7 +173,6 @@ function modelName(id: string) {
           </table>
         </div>
         <a
-          v-if="!dataMode?.isDemo.value"
           :href="apiUrl(`/classification/comparisons/${benchmark.id}`)"
           download="benchmark.json"
           >Rapport JSON complet</a

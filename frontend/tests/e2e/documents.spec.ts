@@ -117,7 +117,7 @@ test("collecte globale/ciblée, français, retrait multiple persistant par espè
   await page
     .getByRole("article")
     .first()
-    .getByRole("button", { name: "Lire le document", exact: true })
+    .getByRole("button", { name: /^Lire le document/ })
     .click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.locator("pre")).toHaveText("Texte traduit en français.");
@@ -199,9 +199,7 @@ test("PDF réel importé, traduit localement et retiré depuis le navigateur", a
     await expect(
       card.getByText("Traduit en français", { exact: true }),
     ).toBeVisible({ timeout: 35000 });
-    await card
-      .getByRole("button", { name: "Lire le document", exact: true })
-      .click();
+    await card.getByRole("button", { name: /^Lire le document/ }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.locator("pre")).toContainText(
       /publication scientifique/i,

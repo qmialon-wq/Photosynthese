@@ -12,6 +12,12 @@ const video = useResource<Video>(() =>
   videoId.value ? `/console/videos/${videoId.value}` : null,
 );
 const tasks = useResource<Task[]>(() => "/console/tasks?kind=analysis", 5000);
+const videos = useResource<Video[]>(() => "/console/videos?limit=200", 5000);
+function chooseVideo(event: Event) {
+  void router.replace({
+    query: { video: (event.target as HTMLSelectElement).value },
+  });
+}
 const completed = ref(false),
   busy = ref(false),
   error = ref("");
@@ -132,10 +138,39 @@ function prepared(task: Task) {
         Votre vidéo annotée et votre dossier biodiversité dans un même parcours.
       </p>
     </div>
-    <RouterLink class="button-link secondary" to="/admin/videos"
+    <RouterLink
+      class="button-link secondary"
+      :to="isAdmin ? '/admin/videos' : '/videos'"
       >Choisir une vidéo <i class="pi pi-arrow-up-right"
     /></RouterLink>
   </div>
+  <section class="panel" aria-label="Sélection de la vidéo">
+    <label
+      >Vidéo à analyser
+      <select :value="videoId" @change="chooseVideo" :disabled="busy">
+        <option value="">Choisir une vidéo</option>
+        <option
+          v-for="item in videos.data.value"
+          :key="item.id"
+          :value="item.id"
+        >
+          {{ item.filename }}
+        </option>
+      </select>
+    </label>
+    <LoadState
+      :loading="videos.loading.value && !videos.data.value"
+      :error="videos.error.value"
+      @retry="videos.refresh"
+    />
+    <p v-if="videos.data.value?.length === 0" class="notice">
+      Aucune vidéo disponible.
+      <RouterLink :to="isAdmin ? '/admin/videos' : '/videos'"
+        >Importer une vidéo</RouterLink
+      >
+      pour lancer une analyse.
+    </p>
+  </section>
   <p v-if="error" class="notice error" role="alert">{{ error }}</p>
   <div v-if="videoId" class="two-columns analysis-layout">
     <section class="panel">
@@ -145,16 +180,7 @@ function prepared(task: Task) {
         @retry="video.refresh"
         ><template v-if="video.data.value"
           ><h2>{{ video.data.value.filename }}</h2>
-          <template v-if="video.data.value.metadata.presentation_only"
-            ><img
-              v-if="video.data.value.metadata.poster_url"
-              class="sym-real-preview"
-              :src="video.data.value.metadata.poster_url"
-              :alt="video.data.value.filename"
-            />
-            <p>Image fixe · analyse et détections simulées.</p></template
-          ><video
-            v-else
+          <video
             class="video-player"
             controls
             preload="metadata"

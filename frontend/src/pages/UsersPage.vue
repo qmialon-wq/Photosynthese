@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
-import { dataModeKey } from "../data/data-mode";
-const dataMode = inject(dataModeKey, null);
+import { ref } from "vue";
 import { api, date, message, post, useResource } from "../api";
 import { auth, type User } from "../auth-state";
 const erasureStatus: Record<string, string> = {
@@ -69,9 +67,7 @@ function changeRole(row: User) {
       method: "PATCH",
       body: JSON.stringify({ role: row.role === "admin" ? "client" : "admin" }),
     });
-    notice.value = dataMode?.isDemo.value
-      ? "Rôle fictif modifié localement. Votre session reste inchangée."
-      : "Rôle modifié. Les sessions de ce compte ont été révoquées.";
+    notice.value = "Rôle modifié. Les sessions de ce compte ont été révoquées.";
   });
 }
 function remove() {
@@ -90,9 +86,8 @@ function reset(row: User) {
       `/admin/users/${row.id}/reset-link`,
     );
     link.value = location.origin + result.path;
-    notice.value = dataMode?.isDemo.value
-      ? "Lien fictif sans validité. Aucune réinitialisation réelle n’a été demandée."
-      : "Lien valable 30 minutes, utilisable une seule fois. Transmettez-le au titulaire par un canal approprié.";
+    notice.value =
+      "Lien valable 30 minutes, utilisable une seule fois. Transmettez-le au titulaire par un canal approprié.";
   });
 }
 function review(row: Erasure, status: string) {
@@ -222,10 +217,6 @@ function review(row: Erasure, status: string) {
   </section>
   <section class="panel">
     <h2>Créer un compte</h2>
-    <p v-if="dataMode?.isDemo.value" class="muted">
-      Utilisez une adresse fictive en @example.test. Ce compte reste dans la
-      démonstration.
-    </p>
     <form class="account-form" @submit.prevent="create">
       <label
         >Nom du profil<input

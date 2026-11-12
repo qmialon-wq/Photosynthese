@@ -169,7 +169,10 @@ test("import de plusieurs fichiers et suivi groupé sans une boucle de polling p
   });
   await page.goto("/videos");
   await page
-    .getByLabel("Importer une ou plusieurs vidéos", { exact: true })
+    .getByRole("button", { name: "Importer des vidéos", exact: true })
+    .click();
+  await page
+    .getByLabel("Sélectionner des fichiers vidéo", { exact: true })
     .setInputFiles(
       videos.map((v) => ({
         name: v.filename,
@@ -177,6 +180,9 @@ test("import de plusieurs fichiers et suivi groupé sans une boucle de polling p
         buffer: Buffer.from("test"),
       })),
     );
+  await page
+    .getByRole("button", { name: "Envoyer les vidéos", exact: true })
+    .click();
   await expect(
     page.getByRole("button", {
       name: "Préparer un dossier (2 vidéos)",

@@ -2,7 +2,6 @@
 import { computed, useId } from "vue";
 import { backgroundThemes } from "../../config/background-themes";
 import { useWallpaper } from "../../composables/useWallpaper";
-import ModeSelector from "./ModeSelector.vue";
 const wallpaper = useWallpaper();
 const id = useId();
 // Reflect the requested choice while loading; a failure restores the last image.
@@ -13,7 +12,6 @@ const choice = computed(
 <template>
   <h2>Paramètres d’affichage</h2>
   <div class="sym-display-settings-body">
-    <ModeSelector visible-label />
     <label class="sym-setting-toggle">
       <input
         type="checkbox"

@@ -11,8 +11,9 @@ withDefaults(
     documents: ScientificDocument[];
     selected: ReadonlySet<string>;
     actionLabel?: string;
+    selectable?: boolean;
   }>(),
-  { actionLabel: "Consulter" },
+  { actionLabel: "Consulter", selectable: true },
 );
 const emit = defineEmits<{
   toggle: [id: string];
@@ -30,6 +31,7 @@ const emit = defineEmits<{
       :data-document-id="document.id"
       :aria-labelledby="`${document.id}-title`"
       ><input
+        v-if="selectable"
         type="checkbox"
         :checked="selected.has(document.id)"
         :aria-label="`Sélectionner ${document.title}`"

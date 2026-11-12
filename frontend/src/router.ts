@@ -37,17 +37,20 @@ export const router = createRouter({
       path: section.path,
       component:
         section.path === "/"
-          ? () => import("./pages/DesignHomePage.vue")
+          ? () => import("./pages/HomePage.vue")
           : section.path === "/videos"
             ? () => import("./pages/DesignVideosPage.vue")
             : section.path === "/parcelles"
               ? () => import("./pages/DesignProjectsPage.vue")
               : section.path === "/analyses"
-                ? () => import("./pages/DesignAnalysisPage.vue")
+                ? () => import("./pages/AnalysisPage.vue")
                 : section.path === "/review"
-                  ? () => import("./pages/DesignValidationPage.vue")
-                  : () => import("./pages/DesignDocumentsPage.vue"),
-      meta: { designPreview: true, public: true },
+                  ? () => import("./pages/ReviewPage.vue")
+                  : () => import("./pages/DocumentsPage.vue"),
+      meta:
+        section.path === "/"
+          ? { public: true, home: true }
+          : { observation: true },
     })),
     ...["connexion", "inscription", "initialisation", "reinitialiser"].map(
       (page) => ({
@@ -60,7 +63,7 @@ export const router = createRouter({
     {
       path: "/videos/:id/dossier",
       component: () => import("./pages/VideoDossierPage.vue"),
-      meta: { designPreview: true },
+      meta: { observation: true },
     },
     {
       path: "/admin/utilisateurs",
@@ -78,7 +81,7 @@ export const router = createRouter({
     {
       path: "/parcelles/:id",
       component: () => import("./pages/ParcelCorpusPage.vue"),
-      meta: { designPreview: true },
+      meta: { observation: true },
     },
     {
       path: "/admin/documents",
@@ -118,7 +121,6 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  if (to.meta.designPreview && to.meta.public) return;
   if (!auth.loaded || to.path.startsWith("/admin")) {
     try {
       acceptSession(await api<Session>("/auth/me"));

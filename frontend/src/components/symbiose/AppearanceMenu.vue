@@ -28,7 +28,7 @@ watch(panel, async (value) => {
   await nextTick();
   content.value
     ?.querySelector<HTMLElement>(
-      value === "settings" ? "select" : ".sym-settings-menu button",
+      value === "settings" ? "input" : ".sym-settings-menu button",
     )
     ?.focus();
 });

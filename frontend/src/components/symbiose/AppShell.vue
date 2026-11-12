@@ -14,12 +14,12 @@ import SymIcon from "./SymIcon.vue";
 import DisplaySettings from "./DisplaySettings.vue";
 import WallpaperBackground from "./WallpaperBackground.vue";
 import { useWallpaper } from "../../composables/useWallpaper";
-import { useDataMode } from "../../data/data-mode";
-const dataMode = useDataMode();
 const route = useRoute();
 const router = useRouter();
 const scrolled = ref(false);
-const updateScroll = () => { scrolled.value = window.scrollY > 0; };
+const updateScroll = () => {
+  scrolled.value = window.scrollY > 0;
+};
 onMounted(() => {
   updateScroll();
   window.addEventListener("scroll", updateScroll, { passive: true });
@@ -83,9 +83,7 @@ function togglePanel(value: NonNullable<typeof panel.value>) {
 watch(panel, async (value) => {
   if (value !== "settings") return;
   await nextTick();
-  document
-    .querySelector<HTMLSelectElement>("#sym-action-panel select")
-    ?.focus();
+  document.querySelector<HTMLInputElement>("#sym-action-panel input")?.focus();
 });
 function closePanel() {
   const previous = panel.value;
@@ -113,7 +111,11 @@ function closePanel() {
             >NORMANDIE</span
           ></RouterLink
         >
-        <div class="sym-header-actions" :class="{ 'is-scrolled': scrolled }" aria-label="Actions du compte">
+        <div
+          class="sym-header-actions"
+          :class="{ 'is-scrolled': scrolled }"
+          aria-label="Actions du compte"
+        >
           <button
             v-for="(action, i) in actions"
             :key="action.key"
@@ -128,14 +130,7 @@ function closePanel() {
             aria-controls="sym-action-panel"
             @click="togglePanel(action.key)"
           >
-            <SymIcon :name="action.icon" :size="25" /><span
-              v-if="
-                action.key === 'notifications' &&
-                dataMode.capabilities.value.simulate
-              "
-              class="sym-notification-dot"
-              aria-hidden="true"
-            />
+            <SymIcon :name="action.icon" :size="25" />
           </button>
         </div>
       </header>
@@ -189,20 +184,12 @@ function closePanel() {
         <template v-else-if="panel === 'profile'"
           ><h2>Votre espace Symbiose</h2>
           <p>
-            {{
-              auth.user?.display_name ||
-              (dataMode.isDemo.value
-                ? "Profil de démonstration"
-                : "Session non connectée")
-            }}
+            {{ auth.user?.display_name || "Session non connectée" }}
           </p>
           <p v-if="!auth.user">
-            {{
-              dataMode.isDemo.value
-                ? "Données de démonstration locales, sans serveur."
-                : "Connectez-vous pour consulter les données enregistrées."
-            }}
+            Connectez-vous pour consulter les données enregistrées.
           </p>
+          <RouterLink to="/profil">Modifier mon profil</RouterLink>
           <button
             class="sym-profile-logout"
             :disabled="logoutBusy"
@@ -221,13 +208,9 @@ function closePanel() {
         >
       </aside>
       <main id="main-content" class="sym-main" tabindex="-1"><slot /></main>
-      <span class="sym-demo-note">{{
-        dataMode.isDemo.value
-          ? "Mode démonstration · données fictives"
-          : route.path.startsWith("/parcelles/")
-            ? "Données réelles · dossier territorial"
-            : "Données réelles · lecture seule"
-      }}</span>
+      <span class="sym-demo-note"
+        >Vos observations · Vos dossiers · Votre territoire</span
+      >
     </div>
   </div>
 </template>
