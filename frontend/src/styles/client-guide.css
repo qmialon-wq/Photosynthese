@@ -1,0 +1,331 @@
+.client-guide {
+  width: min(1080px, calc(100vw - 32px));
+  max-height: calc(100dvh - 40px);
+  padding: 0;
+  border: 1px solid #8da88b;
+  border-radius: 26px;
+  background: #122f24;
+  color: #f5f8ef;
+  box-shadow: 0 28px 100px #0009;
+  font: 15px/1.6 var(--sym-font, sans-serif);
+  overflow: auto;
+}
+.client-guide::backdrop {
+  background: rgb(4 17 12 / 72%);
+  backdrop-filter: blur(5px);
+}
+.client-guide[open] {
+  display: flex;
+  flex-direction: column;
+}
+.client-guide-header,
+.client-guide-footer {
+  flex-shrink: 0;
+}
+.client-guide-card,
+.client-guide-enlarged {
+  min-height: 0;
+  overflow: auto;
+  flex: 1 1 auto;
+}
+.client-guide button {
+  font: inherit;
+  cursor: pointer;
+}
+.client-guide button:focus-visible {
+  outline: 3px solid #c5ef96;
+  outline-offset: 4px;
+}
+.client-guide-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 26px;
+  border-bottom: 1px solid #44604a;
+  color: #d7e4d1;
+  font-size: 13px;
+}
+.client-guide-brand {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: #d2efb5;
+  font-weight: 650;
+  margin-right: auto;
+}
+.client-guide-close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 50%;
+}
+.client-guide-card {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 32px;
+  padding: 32px;
+  align-items: center;
+  animation: guide-card-in 180ms ease-out;
+}
+.client-guide h2 {
+  color: #f5f8ef;
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 1.2;
+  margin: 12px 0 20px;
+  letter-spacing: -0.025em;
+}
+.client-guide h2:focus {
+  outline: none;
+}
+.client-guide p {
+  margin: 0 0 16px;
+}
+.client-guide-eyebrow {
+  color: #c5e99d;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 650;
+}
+.client-guide-intro {
+  font-size: 16px;
+  color: #edf3e8;
+}
+.client-guide ul {
+  padding-left: 20px;
+  color: #dfe9d7;
+  margin: 20px 0 0;
+}
+.client-guide li {
+  margin: 10px 0;
+  padding-left: 4px;
+}
+.client-guide li::marker {
+  color: #b9ef84;
+}
+.client-guide-figure {
+  margin: 0;
+  min-width: 0;
+}
+.client-guide-image-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid #7b9973;
+  border-radius: 16px;
+  background: #0b2118;
+  color: #f5f8ef;
+  overflow: hidden;
+}
+.client-guide-image-button img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.client-guide-pin {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ddffab;
+  color: #173120;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px #000b;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  font-weight: 750;
+}
+.client-guide-zoom {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 30px;
+  background: #10291aeb;
+  font-size: 11px;
+}
+.client-guide figcaption {
+  margin-top: 15px;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: #e3eddb;
+}
+.client-guide figcaption > span {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.client-guide figcaption b {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background: #c8ed9f;
+  color: #1b3521;
+  border-radius: 50%;
+}
+.client-guide figcaption small {
+  margin-top: 4px;
+  color: #c8d7bc;
+  font-size: 11px;
+}
+.client-guide-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 26px;
+  border-top: 1px solid #44604a;
+}
+.client-guide-navigation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.client-guide-primary,
+.client-guide-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 99px;
+  padding: 10px 16px;
+  border: 1px solid #7d9975;
+}
+.client-guide-primary {
+  color: #15301c;
+  background: #c8ed9f;
+  font-weight: 650 !important;
+}
+.client-guide-secondary {
+  color: #e1ecd8;
+  background: transparent;
+}
+.client-guide button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.client-guide-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1px;
+}
+.client-guide-footer nav button {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.client-guide-footer nav span {
+  width: 7px;
+  height: 7px;
+  background: #9aae8a;
+  border-radius: 50%;
+}
+.client-guide-footer nav [aria-current] span {
+  width: 11px;
+  height: 11px;
+  background: #d3f5aa;
+}
+.client-guide-enlarged {
+  padding: 24px;
+}
+.client-guide-image-scroll {
+  max-width: 100%;
+  overflow: auto;
+  margin-top: 20px;
+  border-radius: 12px;
+}
+.client-guide-enlarged img {
+  display: block;
+  width: auto;
+  min-width: 100%;
+  max-width: none;
+  border-radius: 12px;
+}
+.client-guide-error {
+  color: #ffe2ab;
+  padding: 0 26px;
+}
+.client-help-button {
+  flex-shrink: 0;
+}
+.auth-help-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 40;
+}
+@keyframes guide-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@media (max-width: 760px) {
+  .client-guide {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+    border-radius: 20px;
+  }
+  .client-guide-header {
+    padding: 14px 18px;
+    gap: 10px;
+  }
+  .client-guide-brand {
+    font-size: 12px;
+  }
+  .client-guide-header > span:last-of-type {
+    font-size: 11px;
+  }
+  .client-guide-card {
+    grid-template-columns: 1fr;
+    padding: 24px;
+    gap: 24px;
+  }
+  .client-guide-figure {
+    max-width: 480px;
+    width: 100%;
+    margin: auto;
+  }
+  .client-guide-footer {
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 12px;
+  }
+  .client-guide-navigation {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .client-guide-footer nav {
+    margin-left: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .client-guide-card {
+    animation: none;
+  }
+}
+:root[data-reduced-motion="true"] .client-guide-card {
+  animation: none;
+}

@@ -23,6 +23,14 @@
   color: var(--sym-text-soft);
 }
 
+/* Ces cartes conservent leur fond clair ; leurs légendes doivent rester sombres. */
+.adm-content .crop-card :is(h3, p, small, .crop-select) {
+  color: #294333;
+}
+.adm-content .crop-select input:not(:checked) {
+  border-color: #58705b;
+}
+
 .app-wallpaper-shell .workspace main a:not(.button-link) {
   color: color-mix(in srgb, var(--sym-profile-link) 85%, white);
 }

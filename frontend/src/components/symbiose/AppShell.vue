@@ -14,6 +14,7 @@ import SymIcon from "./SymIcon.vue";
 import DisplaySettings from "./DisplaySettings.vue";
 import WallpaperBackground from "./WallpaperBackground.vue";
 import { useWallpaper } from "../../composables/useWallpaper";
+import HelpButton from "../HelpButton.vue";
 const route = useRoute();
 const router = useRouter();
 const scrolled = ref(false);
@@ -48,9 +49,7 @@ async function logout() {
     logoutBusy.value = false;
   }
 }
-const panel = ref<
-  "notifications" | "profile" | "settings" | "settings-menu" | null
->(null);
+const panel = ref<"profile" | "settings" | "settings-menu" | null>(null);
 const wallpaper = useWallpaper();
 const reduceMotion = wallpaper.reduceMotion;
 const actionButtons = ref<HTMLButtonElement[]>([]);
@@ -68,7 +67,6 @@ async function openSettingsMenu() {
   }
 }
 const actions = [
-  { key: "notifications", label: "Notifications", icon: "bell" },
   { key: "profile", label: "Mon profil", icon: "user" },
 ] as const;
 watch(
@@ -91,7 +89,7 @@ function closePanel() {
   panel.value = null;
   if (previous === "settings" || previous === "settings-menu")
     settingsButton.value?.focus();
-  else actionButtons.value[previous === "notifications" ? 0 : 1]?.focus();
+  else actionButtons.value[0]?.focus();
 }
 </script>
 <template>
@@ -116,6 +114,7 @@ function closePanel() {
           :class="{ 'is-scrolled': scrolled }"
           aria-label="Actions du compte"
         >
+          <HelpButton @click="panel = null" />
           <button
             v-for="(action, i) in actions"
             :key="action.key"
@@ -157,9 +156,7 @@ function closePanel() {
         :aria-label="
           panel === 'settings' || panel === 'settings-menu'
             ? 'Paramètres d’affichage'
-            : panel === 'profile'
-              ? 'Mon profil'
-              : 'Notifications'
+            : 'Mon profil'
         "
       >
         <button class="sym-close" aria-label="Fermer" @click="closePanel">
@@ -201,10 +198,6 @@ function closePanel() {
           <p v-if="logoutError" class="sym-logout-error" role="alert">
             {{ logoutError }}
           </p></template
-        >
-        <template v-else
-          ><h2>Notifications</h2>
-          <p>Notifications non connectées.</p></template
         >
       </aside>
       <main id="main-content" class="sym-main" tabindex="-1"><slot /></main>

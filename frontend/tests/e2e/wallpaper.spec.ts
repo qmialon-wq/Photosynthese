@@ -85,7 +85,7 @@ test("un échec de chargement conserve le fond précédent", async ({ page }) =>
   await settings(page);
   await page
     .getByRole("radio", { name: "Ciel et nuages", exact: true })
-    .check();
+    .click();
   await expect(page.locator(".sym-wallpaper-status")).toContainText(
     /n’a pas pu être chargé/,
   );

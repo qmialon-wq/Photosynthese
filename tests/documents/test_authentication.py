@@ -36,6 +36,13 @@ def clients(document_db, monkeypatch, tmp_path):
     with transaction() as c:
         monkeypatch.setattr(migration.op, "execute", c.execute)
         migration.upgrade()
+        guide_spec = importlib.util.spec_from_file_location(
+            "guide_migration", Path("backend/migrations/versions/0014_client_guide.py")
+        )
+        guide_migration = importlib.util.module_from_spec(guide_spec)
+        guide_spec.loader.exec_module(guide_migration)
+        monkeypatch.setattr(guide_migration.op, "execute", c.execute)
+        guide_migration.upgrade()
     monkeypatch.setenv("STORAGE_ROOT", str(tmp_path))
     monkeypatch.setenv("AUTH_COOKIE_SECURE", "false")
     with TestClient(app) as admin, TestClient(app) as alice, TestClient(app) as bob:
@@ -50,6 +57,30 @@ def signup(client, email="alice@example.test"):
     assert response.status_code == 201, response.text
     client.headers["X-CSRF-Token"] = response.json()["csrf_token"]
     return response.json()["user"]
+
+
+def test_client_guide_is_account_scoped_persistent_and_requires_csrf(clients):
+    admin, alice, bob = clients
+    assert alice.post("/auth/client-guide/seen").status_code == 401
+    initialize(admin)
+    first = signup(alice)
+    signup(bob, "bob@example.test")
+    assert first["client_guide_seen_at"] is None
+    assert (
+        alice.post("/auth/client-guide/seen", headers={"X-CSRF-Token": "incorrect"}).status_code
+        == 403
+    )
+    marked = alice.post("/auth/client-guide/seen")
+    assert marked.status_code == 200
+    timestamp = marked.json()["seen_at"]
+    assert timestamp
+    assert alice.post("/auth/client-guide/seen").json()["seen_at"] == timestamp
+    assert alice.get("/auth/me").json()["user"]["client_guide_seen_at"] == timestamp
+    assert bob.get("/auth/me").json()["user"]["client_guide_seen_at"] is None
+    alice.post("/auth/logout")
+    login = alice.post("/auth/login", json={"email": "alice@example.test", "password": PASSWORD})
+    assert login.status_code == 200
+    assert login.json()["user"]["client_guide_seen_at"] == timestamp
 
 
 def initialize(admin):

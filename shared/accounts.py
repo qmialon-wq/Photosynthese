@@ -16,7 +16,7 @@ from psycopg import Connection
 from shared.review.database import ReviewError, transaction
 
 COOKIE = "biosentinelle_session"
-PUBLIC_FIELDS = "id,email,display_name,role,created_at,deleted_at"
+PUBLIC_FIELDS = "id,email,display_name,role,created_at,deleted_at,client_guide_seen_at"
 LOCK = 641728120
 PASSWORD_SLOTS = BoundedSemaphore(2)
 

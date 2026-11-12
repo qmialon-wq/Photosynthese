@@ -4,6 +4,7 @@ import logo from "../assets/symbiose-logo.png";
 import forest from "../assets/home-forest.png";
 import SymIcon from "../components/symbiose/SymIcon.vue";
 import "../styles/landing.css";
+import HelpButton from "../components/HelpButton.vue";
 
 const steps = [
   {
@@ -36,6 +37,7 @@ const steps = [
         ><img :src="logo" alt="Symbiose Normandie" width="3634" height="1242"
       /></RouterLink>
       <nav aria-label="Navigation d’accueil">
+        <HelpButton />
         <a href="#parcours">Découvrir la plateforme</a>
         <RouterLink v-if="auth.user" class="landing-button" to="/videos"
           >Mon espace</RouterLink

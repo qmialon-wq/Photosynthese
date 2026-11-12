@@ -7,6 +7,7 @@ export interface User {
   role: "client" | "admin";
   created_at: string;
   deleted_at: string | null;
+  client_guide_seen_at?: string | null;
 }
 export interface Session {
   user: User;

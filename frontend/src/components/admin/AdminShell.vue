@@ -13,6 +13,7 @@ import { useWallpaper } from "../../composables/useWallpaper";
 const wallpaper = useWallpaper();
 import SymIcon from "../symbiose/SymIcon.vue";
 import logo from "../../assets/symbiose-logo.png";
+import HelpButton from "../HelpButton.vue";
 const route = useRoute(),
   router = useRouter();
 const open = ref(false),
@@ -101,10 +102,7 @@ async function logout() {
       >
         <SymIcon name="close" :size="18" />
       </button>
-      <RouterLink
-        to="/"
-        class="adm-brand"
-        aria-label="Symbiose — accueil"
+      <RouterLink to="/" class="adm-brand" aria-label="Symbiose — accueil"
         ><img :src="logo" alt="Symbiose" width="3634" height="1242" /><span
           >NORMANDIE</span
         ></RouterLink
@@ -146,6 +144,7 @@ async function logout() {
           ><SymIcon name="chevron" :size="14" /><strong>{{ title }}</strong>
         </div>
         <div class="adm-header-actions">
+          <HelpButton />
           <RouterLink
             class="sym-circle-button"
             to="/profil"

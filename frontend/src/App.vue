@@ -20,6 +20,8 @@ import { lastObservationRoute } from "./admin/navigation";
 import { useEnvironmentTheme } from "./composables/useEnvironmentTheme";
 import LoginTransition from "./components/symbiose/LoginTransition.vue";
 import LandingPage from "./pages/LandingPage.vue";
+import ClientGuide from "./components/ClientGuide.vue";
+import HelpButton from "./components/HelpButton.vue";
 useEnvironmentTheme();
 const dataMode = useDataMode();
 
@@ -84,6 +86,7 @@ const title = computed(
 </script>
 <template>
   <LoginTransition />
+  <ClientGuide />
   <a href="#main-content" class="skip-link">Aller au contenu</a>
   <LandingPage v-if="route.meta.home && !auth.user" />
   <AppShell v-else-if="observation && auth.user"
@@ -167,6 +170,7 @@ const title = computed(
     />
     <div class="workspace">
       <header class="topbar">
+        <HelpButton />
         <button
           class="menu-toggle"
           ref="menu"

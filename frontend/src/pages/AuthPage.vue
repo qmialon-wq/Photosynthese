@@ -4,6 +4,7 @@ import { isNavigationFailure, useRoute, useRouter } from "vue-router";
 import { message, post, api } from "../api";
 import { auth, acceptSession, type Session } from "../auth-state";
 import symbioseLogo from "../assets/symbiose-logo.png";
+import HelpButton from "../components/HelpButton.vue";
 import { useLoginTransition } from "../composables/useLoginTransition";
 import { useWallpaper } from "../composables/useWallpaper";
 const loginTransition = useLoginTransition();
@@ -118,6 +119,7 @@ async function submit() {
 }
 </script>
 <template>
+  <HelpButton class="auth-help-button" />
   <section class="auth-card" aria-labelledby="auth-title">
     <header class="auth-header">
       <RouterLink to="/" aria-label="Symbiose — accueil">

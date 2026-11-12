@@ -145,6 +145,20 @@ def me(request: Request):
     return {"user": user(request), "csrf_token": accounts.csrf(request.cookies[accounts.COOKIE])}
 
 
+@router.post("/auth/client-guide/seen")
+def client_guide_seen(request: Request):
+    with transaction() as c:
+        row = c.execute(
+            """UPDATE app_users
+            SET client_guide_seen_at=coalesce(client_guide_seen_at, now())
+            WHERE id=%s AND deleted_at IS NULL RETURNING client_guide_seen_at""",
+            (user(request)["id"],),
+        ).fetchone()
+    if not row:
+        raise ReviewError("Compte introuvable", 404)
+    return {"seen_at": row["client_guide_seen_at"]}
+
+
 @router.post("/auth/logout", status_code=204)
 def logout(request: Request, response: Response):
     with transaction() as c:

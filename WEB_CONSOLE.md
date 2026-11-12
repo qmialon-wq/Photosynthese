@@ -55,6 +55,29 @@ Le lien **Administration** ouvre `/admin` et ses pages de gestion ; le lien
 
 ## Parcours disponibles
 
+### Guide de première connexion
+
+Le guide client s'ouvre à la première visite authentifiée, après l'animation de
+connexion. Huit cartes prévues pour 2–3 minutes présentent l'import, l'analyse,
+la validation humaine, les dossiers et la bibliothèque scientifique. Les captures
+de l'interface sont annotées, agrandissables et utilisent des données d'exemple.
+Le défilement reste manuel, avec boutons, repères d'étapes et flèches du clavier.
+
+Le bouton **? Aide** remplace les notifications et reste accessible dans les
+espaces d'observation, d'administration, de profil et sur les pages publiques.
+Fermer le guide ou choisir « Plus tard » mémorise sa découverte dans le compte
+(`client_guide_seen_at`, migration `0014_client_guide`). Il ne revient donc pas à
+chaque connexion ou sur chaque appareil, mais Aide le relance à tout moment.
+Les comptes existants le découvrent lors de leur première visite après cette mise
+à jour. La consultation ne soumet aucune analyse et ne modifie aucune vidéo.
+
+Pour régénérer les six captures à partir de l'interface réelle et de fixtures de
+test : depuis `frontend`, définir `CLIENT_GUIDE_CAPTURE_DIR=src/assets/guide`, puis
+exécuter `npx playwright test tests/e2e/client-guide-captures.spec.ts`.
+Vérifier les repères dans `src/data/client-guide.ts` après toute évolution d'écran.
+
+### Fonctions de l'espace client et administrateur
+
 1. **Accueil** : landing de présentation hors connexion ; raccourcis vers les
    vidéos, les dossiers et les cinq dernières analyses réelles une fois connecté.
    **Vue d'ensemble administrative** (`/admin`) : compteurs réels des vidéos uniques par contenu, espèces validées,

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 withDefaults(defineProps<{ name: string; size?: number }>(), { size: 24 });
 const paths: Record<string, string[]> = {
+  help: [
+    "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z",
+    "M9.1 8a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4 M12 17h.01",
+  ],
   grid: ["M3 3h6v6H3z M15 3h6v6h-6z M3 15h6v6H3z M15 15h6v6h-6z"],
   video: [
     "M3 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z",
