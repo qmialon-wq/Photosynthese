@@ -1,0 +1,89 @@
+{
+  "scene": "sky",
+  "notice": "Spécifications de ressources absentes. Aucun fichier listé ci-dessous n’a été produit.",
+  "resources": [
+    {
+      "role": "background",
+      "status": "not-produced",
+      "expectedPath": "sky/background-clean-v1.png",
+      "sourceMaster": "sky/primary-v1.png",
+      "dimensions": {
+        "width": 4992,
+        "height": 2808,
+        "ratio": "16:9, 15% overscan on each edge around a 3840x2160 working image"
+      },
+      "lensMm": 32,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+      "entry": "Cimes correspondant au plan de sortie de la forêt.",
+      "exit": "Vallée et méandre placés vers le tiers droit.",
+      "prompt": "Edit the generated master sky/primary-v1.png as a camera-locked reference. Reconstruct the background hidden by the near layer (Extrémités de cimes feuillues, sans tronc opaque au centre.), removing only that near-layer and preserving the main scene (Révélation du bocage depuis la canopée.), lens, scale and directional lighting. Extend all four edges by 15 percent with consistent geometry, not mirrored textures. Bocage vallonné, ciel et cumulus en plans séparés. No new landmarks, wildlife, devices, text or invented features. Output an opaque clean plate without foreground silhouettes; manually inspect seams. This clean plate alone does not support a large camera move or reveal unseen surfaces."
+    },
+    {
+      "role": "depth",
+      "status": "not-produced",
+      "expectedPath": "sky/depth-v1.png",
+      "sourceMaster": "sky/primary-v1.png",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "target": "match actual master, no resampling without alignment review"
+      },
+      "lensMm": 32,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+      "entry": "Cimes correspondant au plan de sortie de la forêt.",
+      "exit": "Vallée et méandre placés vers le tiers droit.",
+      "prompt": "Prepare a genuinely calibrated, single-channel 16-bit depth map aligned to sky/primary-v1.png, using depth estimation as a starting point plus manual silhouette and scale correction. Cimes proches, haies médianes, collines brumeuses et nuages lointains. Deliver a documented near/far scale and correct thin-edge mattes. Do not deliver a visual grayscale illustration or claim monocular estimation is measured geometry. Validate reprojection against the main plate and foreground. No file can be marked ready until it is numerically checked and reviewed."
+    },
+    {
+      "role": "atmosphere",
+      "status": "not-produced",
+      "expectedPath": "sky/atmosphere-v1.png",
+      "sourceMaster": "sky/primary-v1.png",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "ratio": "16:9"
+      },
+      "lensMm": 32,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+      "entry": "Cimes correspondant au plan de sortie de la forêt.",
+      "exit": "Vallée et méandre placés vers le tiers droit.",
+      "prompt": "Generate a separate atmospheric pass for Ciel et nuages: Brume de vallée et lumière diffuse des cumulus, hautes lumières ivoire. Preserve this lighting continuity: soft early morning light from upper left, late-spring temperate Normandy. Full 16:9 canvas, true transparency with low-alpha scattering, no opaque landscape, no baked plants, animals, equipment or text, no hard cone of light. Composition follows the master; keep values and exposure restrained."
+    },
+    {
+      "role": "geometry",
+      "status": "not-produced",
+      "expectedPath": "sky/geometry/environment-v1.glb",
+      "sourceMaster": "sky/primary-v1.png",
+      "dimensions": null,
+      "lensMm": 32,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+      "entry": "Cimes correspondant au plan de sortie de la forêt.",
+      "exit": "Vallée et méandre placés vers le tiers droit.",
+      "prompt": "3D environment production brief for Ciel et nuages. Build a lightweight real-scale environment and occlusion geometry matching the master composition and these depth landmarks: Cimes proches, haies médianes, collines brumeuses et nuages lointains. Camera plan: Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm. Entry: Cimes correspondant au plan de sortie de la forêt. Exit: Vallée et méandre placés vers le tiers droit. Separate foreground occluders and background; align the master texture only where reprojection is valid. Supply a GLB with named anchors and metre units, UVs and optional KTX2 textures. Validate unseen surfaces and camera collisions.  This is an artist brief, not a claim that an image generator can export a valid GLB."
+    },
+    {
+      "role": "motion",
+      "status": "not-produced",
+      "expectedPath": "sky/motion/forward-v1.webm",
+      "sourceMaster": "sky/primary-v1.png",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "ratio": "16:9",
+        "fps": 25,
+        "durationSeconds": 6
+      },
+      "lensMm": 32,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+      "entry": "Cimes correspondant au plan de sortie de la forêt.",
+      "exit": "Vallée et méandre placés vers le tiers droit.",
+      "prompt": "Prepare an actual pre-rendered or generated sequence for Ciel et nuages, 6 seconds at 25 fps, 1920x1080 16:9 minimum, no text, interface, logos or detection boxes. Lock the appearance to sky/primary-v1.png, the 32 mm starting lens, natural materials and restrained grading. Motion: Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm. Animation: Dérive lente des nuages ; feuillage proche très discret. Entry composition: Cimes correspondant au plan de sortie de la forêt. Exit composition: Vallée et méandre placés vers le tiers droit. Light must remain upper left (soft morning daylight). Keep the environment topology, animal anatomy, device locations and lens stable; no invented species or changing arches. Supply a start-frame poster, approved start/end camera poses and a reverse-navigation strategy; reversing fluid or animal motion blindly is not sufficient. Cimes détourées, ciel prolongé et géométrie du terrain ; raccord vers une vallée à pré-rendre ultérieurement. This is an UNEXECUTED video/pre-render brief."
+    }
+  ]
+}

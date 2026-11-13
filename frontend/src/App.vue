@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  defineAsyncComponent,
   computed,
   nextTick,
   ref,
@@ -19,9 +20,9 @@ import AdminShell from "./components/admin/AdminShell.vue";
 import { lastObservationRoute } from "./admin/navigation";
 import { useEnvironmentTheme } from "./composables/useEnvironmentTheme";
 import LoginTransition from "./components/symbiose/LoginTransition.vue";
-import LandingPage from "./pages/LandingPage.vue";
 import ClientGuide from "./components/ClientGuide.vue";
 import HelpButton from "./components/HelpButton.vue";
+const LandingPage = defineAsyncComponent(() => import("./pages/LandingPage.vue"));
 useEnvironmentTheme();
 const dataMode = useDataMode();
 

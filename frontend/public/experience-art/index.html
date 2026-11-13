@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Symbiose — revue artistique des huit atmosphères normandes, images générées et inventaire des ressources."
+    />
+    <title>Symbiose — L’atelier du vivant</title>
+    <link rel="stylesheet" href="./gallery.css" />
+    <script type="module" src="./gallery.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Aller aux prévisualisations</a>
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="Symbiose — retour à l’accueil"
+        ><img
+          src="./shared/symbiose-logo.png"
+          alt="Symbiose"
+          width="3634"
+          height="1242"
+      /></a>
+      <p>LE VOYAGE DU VIVANT<span>Direction artistique · Normandie</span></p>
+      <a href="./manifest.json"
+        >Manifest JSON <span aria-hidden="true">↗</span></a
+      >
+    </header>
+    <main id="main" tabindex="-1">
+      <div class="intro">
+        <div>
+          <p class="eyebrow">ÉQUIPE ARQ · REVUE DE PRODUCTION</p>
+          <h1>L’atelier du <em>vivant.</em></h1>
+        </div>
+        <p>
+          Huit atmosphères, un même film.<br />Des images générées, jamais des
+          observations de terrain.
+        </p>
+      </div>
+      <p id="loading" role="status">Chargement de l’inventaire local…</p>
+      <div id="load-error" role="alert" hidden>
+        <p>
+          L’inventaire n’a pas pu être chargé. Vérifiez que cette page est
+          ouverte depuis le serveur local.
+        </p>
+        <button id="retry">Réessayer</button>
+      </div>
+      <div id="review" hidden>
+        <div class="review-toolbar">
+          <p id="scene-status" role="status" aria-live="polite"></p>
+          <div
+            class="representations"
+            role="group"
+            aria-label="Ressource affichée"
+          >
+            <button id="show-primary" aria-pressed="true">Plan principal</button
+            ><button id="show-foreground" aria-pressed="false">
+              Premier plan · alpha
+            </button>
+          </div>
+        </div>
+        <figure class="viewer" id="viewer" data-representation="primary">
+          <img
+            id="scene-image"
+            alt=""
+            width="1672"
+            height="941"
+            decoding="async"
+          />
+          <div class="image-failure" id="image-failure" role="alert" hidden>
+            La ressource déclarée n’est pas accessible. Elle n’a pas été
+            remplacée par une autre image.
+          </div>
+          <figcaption>
+            <span id="scene-index"></span>
+            <div>
+              <p id="scene-time"></p>
+              <h2 id="scene-title"></h2>
+            </div>
+            <a id="image-link" href="./forest/primary-v1.png" download
+              >Télécharger le plan <span aria-hidden="true">↗</span></a
+            >
+          </figcaption>
+        </figure>
+        <div class="disclosure">
+          <p id="disclosure"></p>
+          <p id="capability" hidden></p>
+        </div>
+        <div class="film-navigation">
+          <button id="previous" aria-label="Scène précédente">
+            ← Précédente
+          </button>
+          <p>Prévisualisations fixes · aucune transition en production</p>
+          <button id="next" aria-label="Scène suivante">Suivante →</button>
+        </div>
+        <nav
+          id="scene-rail"
+          class="scene-rail"
+          aria-label="Les huit atmosphères"
+        ></nav>
+        <div class="production-note">
+          <span class="note-dot" aria-hidden="true"></span>
+          <p>
+            <strong>La présence d’une image ne vaut pas validation.</strong> Les
+            compositions attendent votre revue. Les fonds reconstruits,
+            profondeurs, géométries et séquences manquants restent visibles dans
+            l’inventaire.
+          </p>
+          <span id="asset-count"></span>
+        </div>
+        <div class="workbench">
+          <section aria-labelledby="story-title">
+            <p class="eyebrow">DÉCOUPAGE DU PLAN</p>
+            <h2 id="story-title">Le regard, puis le mouvement.</h2>
+            <dl id="storyboard"></dl>
+            <div
+              id="palette"
+              class="palette"
+              aria-label="Palette de la scène"
+            ></div>
+          </section>
+          <section aria-labelledby="inventory-title">
+            <p class="eyebrow">RESSOURCES RÉELLES ET ABSENCES</p>
+            <h2 id="inventory-title">Ce qu’il reste à construire.</h2>
+            <ul id="inventory" class="inventory"></ul>
+            <p id="transition-needs" class="transition-needs"></p>
+            <div class="file-links">
+              <a id="scene-manifest-link" href="./forest/manifest.json"
+                >Manifest de la scène ↗</a
+              ><a id="prompt-link" href="./forest/prompts/primary.txt"
+                >Prompt exact ↗</a
+              ><a id="missing-link" href="./forest/prompts/missing.json"
+                >Prompts des ressources manquantes ↗</a
+              >
+            </div>
+          </section>
+        </div>
+        <details class="comparison">
+          <summary>Comparer les huit compositions</summary>
+          <div id="contact-sheet" class="contact-sheet"></div>
+        </details>
+        <details class="provenance">
+          <summary>Provenances, licences et limites</summary>
+          <p>
+            Masters et calques générés avec l’outil intégré OpenAI image_gen.
+            Aucune photographie documentaire authentique n’est revendiquée. Les
+            conditions du service et du compte s’appliquent ; aucune licence
+            Creative Commons ou exclusivité n’est attribuée. Les droits des
+            documents utilisateur et du logo ne sont pas précisés dans les
+            sources inspectées. Le logo est réutilisé à l’identique sur
+            instruction.
+          </p>
+          <p>
+            Références prioritaires : manifeste Symbiose et captures, planche
+            validée fournie à la racine, identité et couleurs existantes du
+            produit. La géographie d’Étretat reste à valider pour une
+            reconstruction métrique. Les anciens fonds photographiques de
+            l’application ne sont pas réétiquetés comme vues normandes.
+          </p>
+          <p>
+            Aucune vidéo, fond reconstruit, profondeur ou géométrie de
+            production n’est fournie. Le premier plan détouré doit être raccordé
+            à un fond propre avant toute parallaxe. Un calque déplacé sur le
+            master complet créerait des doublons.
+          </p>
+          <a href="./manifest.json"
+            >Consulter l’inventaire détaillé des sources et licences ↗</a
+          >
+        </details>
+      </div>
+      <noscript
+        ><p>
+          Activez JavaScript pour utiliser le sélecteur. Les fichiers restent
+          disponibles : <a href="./manifest.json">inventaire</a>,
+          <a href="./forest/primary-v1.png">forêt</a>,
+          <a href="./sky/primary-v1.png">ciel</a>,
+          <a href="./rivers/primary-v1.png">rivières</a>,
+          <a href="./underwater/primary-v1.png">sous-marin</a>,
+          <a href="./wetland/primary-v1.png">zone humide</a>,
+          <a href="./meadow/primary-v1.png">bocage</a>,
+          <a href="./coast/primary-v1.png">Étretat</a>,
+          <a href="./night-forest/primary-v1.png">nuit</a>.
+        </p></noscript
+      >
+    </main>
+    <footer class="footer">
+      <span>Symbiose · Datathon Normandie 2026</span
+      ><span>Observer. Comprendre. Préserver.</span
+      ><a href="/">Retour au prototype ↗</a>
+    </footer>
+  </body>
+</html>

@@ -47,7 +47,7 @@ for (const role of [null, "client", "admin"] as const) {
       await expect(page.getByRole("heading", { level: 1 })).toContainText(
         role
           ? "Vos observations, simplement."
-          : "La biodiversité de votre territoire",
+          : "Le vivant",
       );
       await expect(page.locator(".landing")).toHaveCount(role ? 0 : 1);
     }

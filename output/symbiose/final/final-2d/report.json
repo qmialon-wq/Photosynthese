@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-13T10:20:11.878Z",
+  "phase": "final",
+  "base": "http://127.0.0.1:8080",
+  "jury": false,
+  "fallback": true,
+  "browser": "156.0.8078.4",
+  "os": "Windows_NT 10.0.26200",
+  "cpu": "AMD Ryzen 7 4800H with Radeon Graphics         ",
+  "ramBytes": 16558182400,
+  "startupMs": 1120,
+  "scenes": [
+    {
+      "id": "forest",
+      "screenshot": "01-forest.png",
+      "state": null
+    },
+    {
+      "id": "sky",
+      "screenshot": "02-sky.png",
+      "state": null
+    },
+    {
+      "id": "rivers",
+      "screenshot": "03-rivers.png",
+      "state": null
+    },
+    {
+      "id": "underwater",
+      "screenshot": "04-underwater.png",
+      "state": null
+    },
+    {
+      "id": "wetland",
+      "screenshot": "05-wetland.png",
+      "state": null
+    },
+    {
+      "id": "meadow",
+      "screenshot": "06-meadow.png",
+      "state": null
+    },
+    {
+      "id": "coast",
+      "screenshot": "07-coast.png",
+      "state": null
+    },
+    {
+      "id": "night-forest",
+      "screenshot": "08-night-forest.png",
+      "state": null
+    }
+  ],
+  "measurements": [],
+  "idleRenderDelta": null,
+  "transfer": {
+    "requests": 21,
+    "bytes": 3244837,
+    "jsHeapBytes": 12700000
+  },
+  "errors": [],
+  "external": []
+}

@@ -1,0 +1,29 @@
+import type { TransitionId } from "./journey";
+import type { Vec3 } from "./config";
+export interface FrameReport {
+  progress: number;
+  transition: TransitionId;
+  local: number;
+  position: Vec3;
+  target: Vec3;
+  fov: number;
+  immersion: number;
+  night: number;
+  logo: number;
+  observation: number;
+  dataMorph: number;
+  bounds: { x: number; y: number; width: number; height: number };
+  drawCalls: number;
+  triangles: number;
+  renderCount: number;
+  quality: string;
+  pixelRatio: number;
+  renderer: string;
+  textureCount: number;
+  geometryCount: number;
+  residentImages: number;
+  estimatedImageBytes: number;
+  postProcessing: boolean;
+  cpuSubmitMs: number;
+  assetsPending: boolean;
+}

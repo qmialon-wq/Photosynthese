@@ -1,0 +1,89 @@
+{
+  "scene": "underwater",
+  "notice": "Spécifications de ressources absentes. Aucun fichier listé ci-dessous n’a été produit.",
+  "resources": [
+    {
+      "role": "background",
+      "status": "not-produced",
+      "expectedPath": "underwater/background-clean-v1.png",
+      "sourceMaster": "underwater/primary-v1.png",
+      "dimensions": {
+        "width": 4992,
+        "height": 2808,
+        "ratio": "16:9, 15% overscan on each edge around a 3840x2160 working image"
+      },
+      "lensMm": 24,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Franchissement de surface puis travelling immergé stable à 3 m, 24 mm.",
+      "entry": "Surface d’eau au-dessus du cadre, raccord lumineux upper-left.",
+      "exit": "Remontée vers des tiges rétroéclairées qui annoncent les roseaux.",
+      "prompt": "Edit the generated master underwater/primary-v1.png as a camera-locked reference. Reconstruct the background hidden by the near layer (Laminaires brun vert au bord inférieur, rocher discret.), removing only that near-layer and preserving the main scene (Colonne d’eau marine et silhouettes discrètes de faune tempérée.), lens, scale and directional lighting. Extend all four edges by 15 percent with consistent geometry, not mirrored textures. Eau vert gris et surface filtrant la lumière. No new landmarks, wildlife, devices, text or invented features. Output an opaque clean plate without foreground silhouettes; manually inspect seams. This clean plate alone does not support a large camera move or reveal unseen surfaces."
+    },
+    {
+      "role": "depth",
+      "status": "not-produced",
+      "expectedPath": "underwater/depth-v1.png",
+      "sourceMaster": "underwater/primary-v1.png",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "target": "match actual master, no resampling without alignment review"
+      },
+      "lensMm": 24,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Franchissement de surface puis travelling immergé stable à 3 m, 24 mm.",
+      "entry": "Surface d’eau au-dessus du cadre, raccord lumineux upper-left.",
+      "exit": "Remontée vers des tiges rétroéclairées qui annoncent les roseaux.",
+      "prompt": "Prepare a genuinely calibrated, single-channel 16-bit depth map aligned to underwater/primary-v1.png, using depth estimation as a starting point plus manual silhouette and scale correction. Frondes proches, capteurs sur la droite, poissons médians et silhouettes lointaines atténuées. Deliver a documented near/far scale and correct thin-edge mattes. Do not deliver a visual grayscale illustration or claim monocular estimation is measured geometry. Validate reprojection against the main plate and foreground. No file can be marked ready until it is numerically checked and reviewed."
+    },
+    {
+      "role": "atmosphere",
+      "status": "not-produced",
+      "expectedPath": "underwater/atmosphere-v1.png",
+      "sourceMaster": "underwater/primary-v1.png",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "ratio": "16:9"
+      },
+      "lensMm": 24,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Franchissement de surface puis travelling immergé stable à 3 m, 24 mm.",
+      "entry": "Surface d’eau au-dessus du cadre, raccord lumineux upper-left.",
+      "exit": "Remontée vers des tiges rétroéclairées qui annoncent les roseaux.",
+      "prompt": "Generate a separate atmospheric pass for Monde sous-marin: Absorption verte progressive, matières en suspension rares, visibilité modérée. Preserve this lighting continuity: soft early morning light from upper left, late-spring temperate Normandy. Full 16:9 canvas, true transparency with low-alpha scattering, no opaque landscape, no baked plants, animals, equipment or text, no hard cone of light. Composition follows the master; keep values and exposure restrained."
+    },
+    {
+      "role": "geometry",
+      "status": "not-produced",
+      "expectedPath": "underwater/geometry/environment-v1.glb",
+      "sourceMaster": "underwater/primary-v1.png",
+      "dimensions": null,
+      "lensMm": 24,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Franchissement de surface puis travelling immergé stable à 3 m, 24 mm.",
+      "entry": "Surface d’eau au-dessus du cadre, raccord lumineux upper-left.",
+      "exit": "Remontée vers des tiges rétroéclairées qui annoncent les roseaux.",
+      "prompt": "3D environment production brief for Monde sous-marin. Build a lightweight real-scale environment and occlusion geometry matching the master composition and these depth landmarks: Frondes proches, capteurs sur la droite, poissons médians et silhouettes lointaines atténuées. Camera plan: Franchissement de surface puis travelling immergé stable à 3 m, 24 mm. Entry: Surface d’eau au-dessus du cadre, raccord lumineux upper-left. Exit: Remontée vers des tiges rétroéclairées qui annoncent les roseaux. Separate foreground occluders and background; align the master texture only where reprojection is valid. Supply a GLB with named anchors and metre units, UVs and optional KTX2 textures. Validate unseen surfaces and camera collisions.  This is an artist brief, not a claim that an image generator can export a valid GLB."
+    },
+    {
+      "role": "motion",
+      "status": "not-produced",
+      "expectedPath": "underwater/motion/forward-v1.webm",
+      "sourceMaster": "underwater/primary-v1.png",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "ratio": "16:9",
+        "fps": 25,
+        "durationSeconds": 6
+      },
+      "lensMm": 24,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Franchissement de surface puis travelling immergé stable à 3 m, 24 mm.",
+      "entry": "Surface d’eau au-dessus du cadre, raccord lumineux upper-left.",
+      "exit": "Remontée vers des tiges rétroéclairées qui annoncent les roseaux.",
+      "prompt": "Prepare an actual pre-rendered or generated sequence for Monde sous-marin, 6 seconds at 25 fps, 1920x1080 16:9 minimum, no text, interface, logos or detection boxes. Lock the appearance to underwater/primary-v1.png, the 24 mm starting lens, natural materials and restrained grading. Motion: Franchissement de surface puis travelling immergé stable à 3 m, 24 mm. Animation: Frondes et caustiques lentes ; poissons en silhouette, sans comportement affirmé. Entry composition: Surface d’eau au-dessus du cadre, raccord lumineux upper-left. Exit composition: Remontée vers des tiges rétroéclairées qui annoncent les roseaux. Light must remain upper left (soft morning daylight). Keep the environment topology, animal anatomy, device locations and lens stable; no invented species or changing arches. Supply a start-frame poster, approved start/end camera poses and a reverse-navigation strategy; reversing fluid or animal motion blindly is not sufficient. Séquence de franchissement à pré-rendre, profondeur et occlusions de surface ; pas de prétendue continuité hydrographique rivière→Manche. This is an UNEXECUTED video/pre-render brief."
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "forest",
+  "index": 1,
+  "name": "Forêt",
+  "focus": "Fougères, sous-bois et caméra piège",
+  "time": {
+    "start": 0,
+    "end": 35,
+    "duration": 35
+  },
+  "palette": [
+    "#073322",
+    "#365934",
+    "#5b8539",
+    "#c8d58d",
+    "#f5f8ef"
+  ],
+  "planes": {
+    "main": "Passage forestier et tronc porteur de la caméra piège.",
+    "foreground": "Fougères humides et mousse proches, en bordure basse, détourées séparément.",
+    "background": "Hêtres et chênes moins contrastés ; trouée vers la canopée dans le tiers haut.",
+    "depth": "Troncs échelonnés à 2, 7 et 20 m ; conserver le couloir central libre."
+  },
+  "atmosphere": "Brume basse gris vert, rayons discontinus dans la trouée ; aucune particule lumineuse magique.",
+  "animated": "Micro-mouvement des frondes par vent faible ; poussières éclairées rares.",
+  "camera": {
+    "lensMm": 28,
+    "trajectory": "Travelling avant à 0,45 m, puis inclinaison progressive et élévation vers la trouée, 28→32 mm.",
+    "entry": "Fougères à hauteur du regard, axe de passage visible.",
+    "exit": "Trouée de canopée identifiée dans le tiers haut.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Canopée 3D et clean plates en continuité ; géométrie/occlusion, pas un zoom sur cette image.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "illustrative-not-a-mapped-site",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+  "capability": null,
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "forest/primary-v1.png",
+      "expectedPath": "forest/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Passage forestier et tronc porteur de la caméra piège.",
+      "bytes": 3186093,
+      "sha256": "77710300fb18580c469d99f362d50c1eddd506d9e4ebb440c29f081ba11e0625",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "forest/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "forest/foreground-v1.png",
+      "expectedPath": "forest/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Fougères humides et mousse proches, en bordure basse, détourées séparément.",
+      "bytes": 1133993,
+      "sha256": "fcb701680f7df1c022e3c6028498ce490dee8a3a7da46304b514090ea67c2a6e",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.7049
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "forest/primary-v1.png",
+        "promptPath": "forest/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "forest/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Hêtres et chênes moins contrastés ; trouée vers la canopée dans le tiers haut. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "forest/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Troncs échelonnés à 2, 7 et 20 m ; conserver le couloir central libre. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "forest/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Brume basse gris vert, rayons discontinus dans la trouée ; aucune particule lumineuse magique. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "forest/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "forest/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Micro-mouvement des frondes par vent faible ; poussières éclairées rares. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the forest/primary-v1.png generated master. Dewy Norman woodland fern fronds and moss along the bottom corners, center 60 percent and upper 80 percent empty, natural early morning sidelight from upper left, photorealistic, no soil backdrop. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "meadow",
+  "index": 6,
+  "name": "Prairie et bocage",
+  "focus": "Continuités de haies et entrée dans le produit",
+  "time": {
+    "start": 150,
+    "end": 240,
+    "duration": 90
+  },
+  "palette": [
+    "#173f35",
+    "#4c743c",
+    "#7c984c",
+    "#b9c78a",
+    "#f5f8ef"
+  ],
+  "planes": {
+    "main": "Mosaïque de prairies et réseau continu de haies.",
+    "foreground": "Haie proche, branches et herbes de prairie en bordure.",
+    "background": "Collines bocagères douces et brume de vallée.",
+    "depth": "Haie proche, parcelle médiane et lisières lointaines."
+  },
+  "atmosphere": "Lumière encore matinale, verts tempérés ; contraste décroissant avec la distance.",
+  "animated": "Herbes et feuillage léger ; survol stable ; vidéo réelle du produit à fournir.",
+  "camera": {
+    "lensMm": 35,
+    "trajectory": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+    "entry": "Haie commune au fond du marais.",
+    "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Vidéo produit 90 s + affiche + sous-titres + captures autorisées ; raccord à l’application réelle non développé.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "illustrative-not-a-mapped-site",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+  "capability": null,
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "meadow/primary-v1.png",
+      "expectedPath": "meadow/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Mosaïque de prairies et réseau continu de haies.",
+      "bytes": 2971977,
+      "sha256": "c15dc386e85e96e9f04d945a32c62ce346ce522bdd15be7a683bde6c5d2cbc0e",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "meadow/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "meadow/foreground-v1.png",
+      "expectedPath": "meadow/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Haie proche, branches et herbes de prairie en bordure.",
+      "bytes": 1035076,
+      "sha256": "e9d45119735d8266eda490fca8a6fa8ebc206a0353fcbe33dfa5336f84afe9f7",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.7803
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "meadow/primary-v1.png",
+        "promptPath": "meadow/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "meadow/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Collines bocagères douces et brume de vallée. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "meadow/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Haie proche, parcelle médiane et lisières lointaines. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "meadow/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Lumière encore matinale, verts tempérés ; contraste décroissant avec la distance. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "meadow/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "meadow/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Herbes et feuillage léger ; survol stable ; vidéo réelle du produit à fournir. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "product-video",
+      "kind": "video",
+      "path": null,
+      "expectedPath": "meadow/motion/product-demo-90s.mp4",
+      "status": "missing",
+      "required": true,
+      "description": "Démonstration réelle du produit, 90 s, avec autorisation des données montrées, affiche, transcription et sous-titres WebVTT.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the meadow/primary-v1.png generated master. Normandy meadow grasses and a few hawthorn hedge twigs with small leaves, framing bottom corners, no berries or flowers dominating, central and upper frame empty, morning light from upper left. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

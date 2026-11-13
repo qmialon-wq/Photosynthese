@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "rivers",
+  "index": 3,
+  "name": "Rivières",
+  "focus": "Courant et ripisylve",
+  "time": {
+    "start": 60,
+    "end": 95,
+    "duration": 35
+  },
+  "palette": [
+    "#153d32",
+    "#47714d",
+    "#5d8174",
+    "#a7b8a0",
+    "#e4e7d1"
+  ],
+  "planes": {
+    "main": "Lit de rivière et courant guidant l’axe de lecture.",
+    "foreground": "Feuilles d’aulne, rameaux de saule et berge humide en bordure.",
+    "background": "Ripisylve et prairie de vallée, sans montagne.",
+    "depth": "Feuilles à 0,8 m, reflets au milieu, courbe de berge à 30 m."
+  },
+  "atmosphere": "Vapeur très légère au ras de l’eau ; reflets non surexposés.",
+  "animated": "Reflets et rides à pré-rendre ; feuilles sous vent faible.",
+  "camera": {
+    "lensMm": 35,
+    "trajectory": "Travelling suivant le courant à 0,7 m puis descente vers un reflet, 35 mm.",
+    "entry": "Axe du méandre révélé au chapitre ciel.",
+    "exit": "Reflet de surface agrandi, sans coupe dans une berge.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Passe de surface, clean plate sous le reflet, séquence pré-rendue ; passage rivière→Manche à assumer comme ellipse de milieux.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "illustrative-not-a-mapped-site",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+  "capability": null,
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "rivers/primary-v1.png",
+      "expectedPath": "rivers/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Lit de rivière et courant guidant l’axe de lecture.",
+      "bytes": 3249236,
+      "sha256": "76604ac3f8f6da1fba78aef283da5c0a61dc0fbd3e0f80026ba5b342cb31c099",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "rivers/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "rivers/foreground-v1.png",
+      "expectedPath": "rivers/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Feuilles d’aulne, rameaux de saule et berge humide en bordure.",
+      "bytes": 1078840,
+      "sha256": "957398c011e456ce42f58067cded3a1e047d86bcf4a92fd816cfa1a8039839e6",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.7661
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "rivers/primary-v1.png",
+        "promptPath": "rivers/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "rivers/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Ripisylve et prairie de vallée, sans montagne. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "rivers/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Feuilles à 0,8 m, reflets au milieu, courbe de berge à 30 m. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "rivers/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Vapeur très légère au ras de l’eau ; reflets non surexposés. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "rivers/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "rivers/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Reflets et rides à pré-rendre ; feuilles sous vent faible. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the rivers/primary-v1.png generated master. A few wet alder and willow leaves and slender riparian branches in left and right bottom frame edges, unobstructed central water lane, cool green with warm upper-left morning sidelight. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

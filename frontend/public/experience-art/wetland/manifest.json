@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "wetland",
+  "index": 5,
+  "name": "Zone humide",
+  "focus": "Roseaux, brume et observation",
+  "time": {
+    "start": 115,
+    "end": 150,
+    "duration": 35
+  },
+  "palette": [
+    "#243f32",
+    "#6a7755",
+    "#9c9f78",
+    "#c2c4a5",
+    "#f0ead6"
+  ],
+  "planes": {
+    "main": "Chenal de marais, roseaux et héron dans les hauts-fonds.",
+    "foreground": "Roseaux avec bords fins et tiges détourables.",
+    "background": "Prairies inondables et saules dissous dans la brume.",
+    "depth": "Roseaux proches, plan d’eau médian, silhouettes de saules lointaines."
+  },
+  "atmosphere": "Brume matinale crème verte en trois nappes à faible contraste.",
+  "animated": "Roseaux souples, petites rides, oiseaux à distance ; acoustique illustrée seulement.",
+  "camera": {
+    "lensMm": 50,
+    "trajectory": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+    "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+    "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Roseaux détourés, matte de brume et clean plate de prairie ; séquence de remontée à prévoir.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "illustrative-not-a-mapped-site",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+  "capability": "Capteurs et observation acoustique illustrent une évolution envisagée, pas une fonction opérationnelle démontrée.",
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "wetland/primary-v1.png",
+      "expectedPath": "wetland/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Chenal de marais, roseaux et héron dans les hauts-fonds.",
+      "bytes": 2931298,
+      "sha256": "58c7ce4d618224460b338a9fff4f812eeea4932cf1cbb359d3ad264f0c68d47f",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "wetland/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "wetland/foreground-v1.png",
+      "expectedPath": "wetland/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Roseaux avec bords fins et tiges détourables.",
+      "bytes": 1190845,
+      "sha256": "6d455054667526252c66d7f384d3502b66e6cedbb2a0a426b24c6c35efbd65a5",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.7399
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "wetland/primary-v1.png",
+        "promptPath": "wetland/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "wetland/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Prairies inondables et saules dissous dans la brume. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "wetland/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Roseaux proches, plan d’eau médian, silhouettes de saules lointaines. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "wetland/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Brume matinale crème verte en trois nappes à faible contraste. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "wetland/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "wetland/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Roseaux souples, petites rides, oiseaux à distance ; acoustique illustrée seulement. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the wetland/primary-v1.png generated master. Fine reeds and rushes from a Normandy marsh bordering the bottom and left edges only, visible individual thin stems, desaturated green-gold, natural upper-left misty morning illumination. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

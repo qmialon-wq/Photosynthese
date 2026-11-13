@@ -1,0 +1,670 @@
+{
+  "date": "2026-11-13T09:21:11.086Z",
+  "phase": "baseline",
+  "base": "http://127.0.0.1:8080",
+  "jury": false,
+  "fallback": false,
+  "browser": "156.0.8078.4",
+  "os": "Windows_NT 10.0.26200",
+  "cpu": "AMD Ryzen 7 4800H with Radeon Graphics         ",
+  "ramBytes": 16558182400,
+  "startupMs": 1283,
+  "scenes": [
+    {
+      "id": "forest",
+      "screenshot": "01-forest.png",
+      "state": {
+        "progress": 0,
+        "transition": "ascent",
+        "local": 0,
+        "position": [
+          0,
+          0.7,
+          18
+        ],
+        "target": [
+          -2,
+          7,
+          -28
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5410740037560793,
+          "y": 0.6208235660371338,
+          "width": 0.0032524608981212705,
+          "height": 0.005283608324892594
+        },
+        "drawCalls": 57,
+        "triangles": 126516,
+        "renderCount": 2,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "sky",
+      "screenshot": "02-sky.png",
+      "state": {
+        "progress": 0.166666666666667,
+        "transition": "territory-dive",
+        "local": 2.842170943040401e-15,
+        "position": [
+          4.0000000000000115,
+          64.99999999999999,
+          -85.00000000000033
+        ],
+        "target": [
+          7.999999999999991,
+          2.9999999999999374,
+          -210.0000000000003
+        ],
+        "fov": 56.99999999999999,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.49524697746701324,
+          "y": 0.2183969019056548,
+          "width": 0.004175227422920521,
+          "height": 0.007801053840648886
+        },
+        "drawCalls": 49,
+        "triangles": 126490,
+        "renderCount": 22,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "rivers",
+      "screenshot": "03-rivers.png",
+      "state": {
+        "progress": 0.28571428571428603,
+        "transition": "immersion",
+        "local": 1.827109891954543e-15,
+        "position": [
+          5.999999999999984,
+          2.199999999999927,
+          -210.00000000000026
+        ],
+        "target": [
+          1.9999999999999734,
+          0.49999999999999734,
+          -255.00000000000014
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5674779923016314,
+          "y": 0.461142211202826,
+          "width": 0.006230066097014347,
+          "height": 0.010044426218737433
+        },
+        "drawCalls": 47,
+        "triangles": 120730,
+        "renderCount": 42,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "underwater",
+      "screenshot": "04-underwater.png",
+      "state": {
+        "progress": 0.452380952380952,
+        "transition": "immersion",
+        "local": 0.9999999999999976,
+        "position": [
+          -4.000000000000012,
+          -4.999999999999999,
+          -314.9999999999996
+        ],
+        "target": [
+          -4.060244204343429e-14,
+          -3.0000000000000204,
+          -364.99999999999966
+        ],
+        "fov": 59.00000000000001,
+        "immersion": 1,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.520766159650737,
+          "y": 0.4838449304271112,
+          "width": 0.010668857684362876,
+          "height": 0.01694464857116013
+        },
+        "drawCalls": 41,
+        "triangles": 136762,
+        "renderCount": 63,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "wetland",
+      "screenshot": "05-wetland.png",
+      "state": {
+        "progress": 0.547619047619048,
+        "transition": "observation-data",
+        "local": 2.4361465226060578e-15,
+        "position": [
+          6.000000000000027,
+          1.7000000000000186,
+          -430.0000000000003
+        ],
+        "target": [
+          14.000000000000039,
+          1.5999999999999974,
+          -458.0000000000001
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.476517450338632,
+          "y": 0.44343275938621524,
+          "width": 0.05864371705701603,
+          "height": 0.08814868897120007
+        },
+        "drawCalls": 36,
+        "triangles": 131518,
+        "renderCount": 84,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "meadow",
+      "screenshot": "06-meadow.png",
+      "state": {
+        "progress": 0.714285714285714,
+        "transition": "observation-data",
+        "local": 0.9999999999999983,
+        "position": [
+          -19.999999999999993,
+          54.999999999999865,
+          -549.9999999999998
+        ],
+        "target": [
+          2.9999999999999964,
+          0.9999999999999929,
+          -621.9999999999997
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": -0.6699973331221423,
+          "y": -2.1874222671240733,
+          "width": 0.6699973331221423,
+          "height": 2.1874222671240733
+        },
+        "drawCalls": 18,
+        "triangles": 99758,
+        "renderCount": 105,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "coast",
+      "screenshot": "07-coast.png",
+      "state": {
+        "progress": 0.857142857142857,
+        "transition": "territory-coast",
+        "local": 0.999999999999999,
+        "position": [
+          37.99999999999992,
+          48.00000000000004,
+          -679.9999999999999
+        ],
+        "target": [
+          -4.999999999999995,
+          20.999999999999982,
+          -745.9999999999999
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 1,
+          "y": -0.12910279570859196,
+          "width": 0.05471603257778446,
+          "height": 0.12910279570859196
+        },
+        "drawCalls": 22,
+        "triangles": 51923,
+        "renderCount": 122,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "night-forest",
+      "screenshot": "08-night-forest.png",
+      "state": {
+        "progress": 1,
+        "transition": "living-cycle",
+        "local": 1,
+        "position": [
+          0,
+          2.5,
+          -865
+        ],
+        "target": [
+          0,
+          5,
+          -912
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 1,
+        "logo": 1,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 0.4779468409274629,
+          "y": 0.5447717265878402,
+          "width": 0.0037383130304595134,
+          "height": 0.006071491523294517
+        },
+        "drawCalls": 12,
+        "triangles": 36570,
+        "renderCount": 143,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "transition": "forest → sky",
+      "raf": {
+        "samples": 169,
+        "fps": 60.003550505947096,
+        "p95Ms": 16.700000000000728,
+        "worstMs": 16.80000000000109
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60.00214293367621,
+        "p95Ms": 16.700000000000728,
+        "worstMs": 16.80000000000109
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.014639,
+        "transition": "ascent",
+        "local": 0.087834,
+        "position": [
+          0.2031212491728569,
+          2.6883582788559814,
+          13.834429506948002
+        ],
+        "target": [
+          -1.6701657028453722,
+          14.852927964590805,
+          -28.706803671083083
+        ],
+        "fov": 57.55905890072789,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5420674760951492,
+          "y": 0.7587174241230742,
+          "width": 0.003381807584721952,
+          "height": 0.005603296538213343
+        },
+        "drawCalls": 57,
+        "triangles": 126516,
+        "renderCount": 373,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "transition": "sky → rivers",
+      "raf": {
+        "samples": 169,
+        "fps": 60.00142015195625,
+        "p95Ms": 16.700000000000728,
+        "worstMs": 16.799999999999272
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60,
+        "p95Ms": 16.700000000000728,
+        "worstMs": 16.799999999999272
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.177101,
+        "transition": "territory-dive",
+        "local": 0.08764840000000021,
+        "position": [
+          4.520416988640223,
+          62.60863257710412,
+          -95.1382349356574
+        ],
+        "target": [
+          7.7406170096443025,
+          1.4707328352347495,
+          -218.17038170717103
+        ],
+        "fov": 56.878817071906596,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.49824512359588824,
+          "y": 0.214927966869151,
+          "width": 0.004302854660426308,
+          "height": 0.00804126739991573
+        },
+        "drawCalls": 50,
+        "triangles": 126490,
+        "renderCount": 604,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "transition": "rivers → underwater",
+      "raf": {
+        "samples": 169,
+        "fps": 60.003550505947096,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.799999999999272
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60.00214293367621,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.799999999999272
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.300333,
+        "transition": "immersion",
+        "local": 0.0877122857142859,
+        "position": [
+          5.177657700197787,
+          0.08793628235610203,
+          -221.2598534575885
+        ],
+        "target": [
+          0.5177719608412295,
+          0.2992270032759216,
+          -261.77047034911
+        ],
+        "fov": 57.18287221578161,
+        "immersion": 0.022673693551705083,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.585073199403272,
+          "y": 0.4920384927506757,
+          "width": 0.006547368681540877,
+          "height": 0.01053319966585699
+        },
+        "drawCalls": 48,
+        "triangles": 136730,
+        "renderCount": 835,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "transition": "underwater → wetland",
+      "raf": {
+        "samples": 169,
+        "fps": 60.003550505947096,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.799999999999272
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60.004286020430044,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.799999999999272
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.460805,
+        "transition": "emergence",
+        "local": 0.08845250000000035,
+        "position": [
+          -3.674393133134601,
+          -4.905670959115276,
+          -324.20273708661927
+        ],
+        "target": [
+          0.7870202815587286,
+          -2.425005285445809,
+          -373.0169915311461
+        ],
+        "fov": 58.88481254581968,
+        "immersion": 1,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.517630904757043,
+          "y": 0.49041132288017014,
+          "width": 0.011452052070851555,
+          "height": 0.018170745192707012
+        },
+        "drawCalls": 41,
+        "triangles": 136762,
+        "renderCount": 1066,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "transition": "wetland → meadow",
+      "raf": {
+        "samples": 169,
+        "fps": 60.003550505947096,
+        "p95Ms": 16.700000000000728,
+        "worstMs": 16.799999999999272
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60.00214293367617,
+        "p95Ms": 16.700000000000728,
+        "worstMs": 16.799999999999272
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.562339,
+        "transition": "observation-data",
+        "local": 0.08831971428571461,
+        "position": [
+          7.132846422634951,
+          1.5523513136433864,
+          -436.5853259460978
+        ],
+        "target": [
+          15.037727813428328,
+          1.5534034582230052,
+          -455.089149623503
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0.12209507154268782,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.41498075250125077,
+          "y": 0.4229702238182087,
+          "width": 0.0771954950465727,
+          "height": 0.11659975038278322
+        },
+        "drawCalls": 34,
+        "triangles": 131514,
+        "renderCount": 1297,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "transition": "meadow → coast",
+      "raf": {
+        "samples": 169,
+        "fps": 60.00142015195629,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.799999999999272
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.799999999999272
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.726854,
+        "transition": "territory-coast",
+        "local": 0.08797800000000014,
+        "position": [
+          -19.980067949593867,
+          62.599332612650244,
+          -561.7496748385483
+        ],
+        "target": [
+          3.1320801316039946,
+          1.378832557776481,
+          -639.1860376432224
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": -0.6025193271547971,
+          "y": -2.3571792918552235,
+          "width": 0.6025193271547971,
+          "height": 2.3571792918552235
+        },
+        "drawCalls": 23,
+        "triangles": 101067,
+        "renderCount": 1528,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "transition": "coast → night-forest",
+      "raf": {
+        "samples": 169,
+        "fps": 60.00142015195621,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.80000000000291
+      },
+      "rendered": {
+        "samples": 168,
+        "fps": 60.00214293367617,
+        "p95Ms": 16.799999999999272,
+        "worstMs": 16.80000000000291
+      },
+      "totalRenders": 169,
+      "samples": 169,
+      "finalState": {
+        "progress": 0.869628,
+        "transition": "living-cycle",
+        "local": 0.08739600000000015,
+        "position": [
+          44.435913300907345,
+          49.231886534743786,
+          -695.6600003447583
+        ],
+        "target": [
+          -4.611308557048003,
+          21.488519740726034,
+          -760.8332884154911
+        ],
+        "fov": 56.99999999999999,
+        "immersion": 0,
+        "night": 0.016973164309204567,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 1,
+          "y": -0.13772544416821098,
+          "width": 0.16231403535986832,
+          "height": 0.13772544416821098
+        },
+        "drawCalls": 22,
+        "triangles": 51923,
+        "renderCount": 1759,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "idleRenderDelta": 0,
+  "transfer": {
+    "requests": 20,
+    "bytes": 14099731,
+    "jsHeapBytes": 17100000
+  },
+  "errors": [],
+  "external": []
+}

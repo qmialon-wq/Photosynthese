@@ -1,0 +1,89 @@
+{
+  "scene": "wetland",
+  "notice": "Spécifications de ressources absentes. Aucun fichier listé ci-dessous n’a été produit.",
+  "resources": [
+    {
+      "role": "background",
+      "status": "not-produced",
+      "expectedPath": "wetland/background-clean-v1.png",
+      "sourceMaster": "wetland/primary-v1.png",
+      "dimensions": {
+        "width": 4992,
+        "height": 2808,
+        "ratio": "16:9, 15% overscan on each edge around a 3840x2160 working image"
+      },
+      "lensMm": 50,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+      "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+      "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+      "prompt": "Edit the generated master wetland/primary-v1.png as a camera-locked reference. Reconstruct the background hidden by the near layer (Roseaux avec bords fins et tiges détourables.), removing only that near-layer and preserving the main scene (Chenal de marais, roseaux et héron dans les hauts-fonds.), lens, scale and directional lighting. Extend all four edges by 15 percent with consistent geometry, not mirrored textures. Prairies inondables et saules dissous dans la brume. No new landmarks, wildlife, devices, text or invented features. Output an opaque clean plate without foreground silhouettes; manually inspect seams. This clean plate alone does not support a large camera move or reveal unseen surfaces."
+    },
+    {
+      "role": "depth",
+      "status": "not-produced",
+      "expectedPath": "wetland/depth-v1.png",
+      "sourceMaster": "wetland/primary-v1.png",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "target": "match actual master, no resampling without alignment review"
+      },
+      "lensMm": 50,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+      "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+      "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+      "prompt": "Prepare a genuinely calibrated, single-channel 16-bit depth map aligned to wetland/primary-v1.png, using depth estimation as a starting point plus manual silhouette and scale correction. Roseaux proches, plan d’eau médian, silhouettes de saules lointaines. Deliver a documented near/far scale and correct thin-edge mattes. Do not deliver a visual grayscale illustration or claim monocular estimation is measured geometry. Validate reprojection against the main plate and foreground. No file can be marked ready until it is numerically checked and reviewed."
+    },
+    {
+      "role": "atmosphere",
+      "status": "not-produced",
+      "expectedPath": "wetland/atmosphere-v1.png",
+      "sourceMaster": "wetland/primary-v1.png",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "ratio": "16:9"
+      },
+      "lensMm": 50,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+      "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+      "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+      "prompt": "Generate a separate atmospheric pass for Zone humide: Brume matinale crème verte en trois nappes à faible contraste. Preserve this lighting continuity: soft early morning light from upper left, late-spring temperate Normandy. Full 16:9 canvas, true transparency with low-alpha scattering, no opaque landscape, no baked plants, animals, equipment or text, no hard cone of light. Composition follows the master; keep values and exposure restrained."
+    },
+    {
+      "role": "geometry",
+      "status": "not-produced",
+      "expectedPath": "wetland/geometry/environment-v1.glb",
+      "sourceMaster": "wetland/primary-v1.png",
+      "dimensions": null,
+      "lensMm": 50,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+      "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+      "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+      "prompt": "3D environment production brief for Zone humide. Build a lightweight real-scale environment and occlusion geometry matching the master composition and these depth landmarks: Roseaux proches, plan d’eau médian, silhouettes de saules lointaines. Camera plan: Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm. Entry: Tiges rétroéclairées dans l’axe de la remontée d’eau. Exit: Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume. Separate foreground occluders and background; align the master texture only where reprojection is valid. Supply a GLB with named anchors and metre units, UVs and optional KTX2 textures. Validate unseen surfaces and camera collisions.  This is an artist brief, not a claim that an image generator can export a valid GLB."
+    },
+    {
+      "role": "motion",
+      "status": "not-produced",
+      "expectedPath": "wetland/motion/forward-v1.webm",
+      "sourceMaster": "wetland/primary-v1.png",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "ratio": "16:9",
+        "fps": 25,
+        "durationSeconds": 6
+      },
+      "lensMm": 50,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+      "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+      "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+      "prompt": "Prepare an actual pre-rendered or generated sequence for Zone humide, 6 seconds at 25 fps, 1920x1080 16:9 minimum, no text, interface, logos or detection boxes. Lock the appearance to wetland/primary-v1.png, the 50 mm starting lens, natural materials and restrained grading. Motion: Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm. Animation: Roseaux souples, petites rides, oiseaux à distance ; acoustique illustrée seulement. Entry composition: Tiges rétroéclairées dans l’axe de la remontée d’eau. Exit composition: Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume. Light must remain upper left (soft morning daylight). Keep the environment topology, animal anatomy, device locations and lens stable; no invented species or changing arches. Supply a start-frame poster, approved start/end camera poses and a reverse-navigation strategy; reversing fluid or animal motion blindly is not sufficient. Roseaux détourés, matte de brume et clean plate de prairie ; séquence de remontée à prévoir. This is an UNEXECUTED video/pre-render brief."
+    }
+  ]
+}

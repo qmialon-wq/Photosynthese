@@ -1,0 +1,775 @@
+{
+  "date": "2026-11-13T10:19:49.987Z",
+  "phase": "final",
+  "base": "http://127.0.0.1:8080",
+  "jury": false,
+  "fallback": false,
+  "browser": "156.0.8078.4",
+  "os": "Windows_NT 10.0.26200",
+  "cpu": "AMD Ryzen 7 4800H with Radeon Graphics         ",
+  "ramBytes": 16558182400,
+  "startupMs": 3074,
+  "scenes": [
+    {
+      "id": "forest",
+      "screenshot": "01-forest.png",
+      "state": {
+        "progress": 0,
+        "transition": "ascent",
+        "local": 0,
+        "position": [
+          0,
+          0.7,
+          18
+        ],
+        "target": [
+          -2,
+          7,
+          -28
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5410740037560793,
+          "y": 0.6208235660371338,
+          "width": 0.0032524608981212705,
+          "height": 0.005283608324892594
+        },
+        "drawCalls": 46,
+        "triangles": 76661,
+        "renderCount": 2,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 3,
+        "geometryCount": 41,
+        "residentImages": 2,
+        "estimatedImageBytes": 9830400,
+        "postProcessing": false,
+        "cpuSubmitMs": 8.300000000745058,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "sky",
+      "screenshot": "02-sky.png",
+      "state": {
+        "progress": 0.166666666666667,
+        "transition": "territory-dive",
+        "local": 2.842170943040401e-15,
+        "position": [
+          4.0000000000000115,
+          64.99999999999999,
+          -85.00000000000033
+        ],
+        "target": [
+          7.999999999999991,
+          44.999999999999936,
+          -210.0000000000003
+        ],
+        "fov": 56.99999999999999,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.49545464052408367,
+          "y": 0.5045102099991491,
+          "width": 0.003991487984236153,
+          "height": 0.0071513332553179276
+        },
+        "drawCalls": 40,
+        "triangles": 81359,
+        "renderCount": 9,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 4,
+        "geometryCount": 43,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 9.399999998509884,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "rivers",
+      "screenshot": "03-rivers.png",
+      "state": {
+        "progress": 0.28571428571428603,
+        "transition": "immersion",
+        "local": 1.827109891954543e-15,
+        "position": [
+          5.999999999999984,
+          2.199999999999927,
+          -210.00000000000026
+        ],
+        "target": [
+          1.9999999999999734,
+          0.49999999999999734,
+          -255.00000000000014
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5674779923016314,
+          "y": 0.461142211202826,
+          "width": 0.006230066097014347,
+          "height": 0.010044426218737433
+        },
+        "drawCalls": 39,
+        "triangles": 75423,
+        "renderCount": 17,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 4,
+        "geometryCount": 43,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 35.399999998509884,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "underwater",
+      "screenshot": "04-underwater.png",
+      "state": {
+        "progress": 0.452380952380952,
+        "transition": "immersion",
+        "local": 0.9999999999999976,
+        "position": [
+          -4.000000000000012,
+          -4.999999999999999,
+          -314.9999999999996
+        ],
+        "target": [
+          -4.060244204343429e-14,
+          -3.0000000000000204,
+          -364.99999999999966
+        ],
+        "fov": 59.00000000000001,
+        "immersion": 1,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.520766159650737,
+          "y": 0.4838449304271112,
+          "width": 0.010668857684362876,
+          "height": 0.01694464857116013
+        },
+        "drawCalls": 35,
+        "triangles": 75461,
+        "renderCount": 35,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 6,
+        "geometryCount": 47,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": true,
+        "cpuSubmitMs": 10.100000001490116,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "wetland",
+      "screenshot": "05-wetland.png",
+      "state": {
+        "progress": 0.547619047619048,
+        "transition": "observation-data",
+        "local": 2.4361465226060578e-15,
+        "position": [
+          6.000000000000027,
+          1.7000000000000186,
+          -430.0000000000003
+        ],
+        "target": [
+          14.000000000000039,
+          1.5999999999999974,
+          -458.0000000000001
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.476517450338632,
+          "y": 0.44343275938621524,
+          "width": 0.05864371705701603,
+          "height": 0.08814868897120007
+        },
+        "drawCalls": 35,
+        "triangles": 49684,
+        "renderCount": 41,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 5,
+        "geometryCount": 52,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 5.800000000745058,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "meadow",
+      "screenshot": "06-meadow.png",
+      "state": {
+        "progress": 0.714285714285714,
+        "transition": "observation-data",
+        "local": 0.9999999999999983,
+        "position": [
+          -19.999999999999993,
+          54.999999999999865,
+          -549.9999999999998
+        ],
+        "target": [
+          2.9999999999999964,
+          0.9999999999999929,
+          -621.9999999999997
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": -0.6699973331221423,
+          "y": -2.1874222671240733,
+          "width": 0.6699973331221423,
+          "height": 2.1874222671240733
+        },
+        "drawCalls": 24,
+        "triangles": 35148,
+        "renderCount": 49,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 5,
+        "geometryCount": 55,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 10.199999999254942,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "coast",
+      "screenshot": "07-coast.png",
+      "state": {
+        "progress": 0.857142857142857,
+        "transition": "territory-coast",
+        "local": 0.999999999999999,
+        "position": [
+          37.99999999999992,
+          48.00000000000004,
+          -679.9999999999999
+        ],
+        "target": [
+          -25.99999999999999,
+          18.999999999999982,
+          -752.9999999999999
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 1,
+          "y": -0.1251065356919746,
+          "width": 0.22888967296518847,
+          "height": 0.1251065356919746
+        },
+        "drawCalls": 22,
+        "triangles": 27228,
+        "renderCount": 55,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 5,
+        "geometryCount": 55,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 4.5,
+        "assetsPending": false
+      }
+    },
+    {
+      "id": "night-forest",
+      "screenshot": "08-night-forest.png",
+      "state": {
+        "progress": 1,
+        "transition": "living-cycle",
+        "local": 1,
+        "position": [
+          0,
+          2.5,
+          -865
+        ],
+        "target": [
+          0,
+          5,
+          -912
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 1,
+        "logo": 1,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 0.4779468409274629,
+          "y": 0.5447717265878402,
+          "width": 0.0037383130304595134,
+          "height": 0.006071491523294517
+        },
+        "drawCalls": 12,
+        "triangles": 17699,
+        "renderCount": 61,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 4,
+        "geometryCount": 55,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 15,
+        "assetsPending": false
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "transition": "forest → sky",
+      "raf": {
+        "samples": 14,
+        "fps": 4.800109716793529,
+        "p95Ms": 500,
+        "worstMs": 500
+      },
+      "rendered": {
+        "samples": 13,
+        "fps": 4.756329577052544,
+        "p95Ms": 500,
+        "worstMs": 500
+      },
+      "totalRenders": 14,
+      "samples": 14,
+      "finalState": {
+        "progress": 0.0706,
+        "transition": "ascent",
+        "local": 0.4236,
+        "position": [
+          1.6932975834274324,
+          14.907425534981371,
+          -7.113394940102829
+        ],
+        "target": [
+          2.03550276682847,
+          32.79055224721158,
+          -53.663028557960075
+        ],
+        "fov": 59.182606513833996,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5104817625666466,
+          "y": 0.864423364376717,
+          "width": 0.0034959551220991487,
+          "height": 0.006235800121794255
+        },
+        "drawCalls": 41,
+        "triangles": 76641,
+        "renderCount": 93,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 3,
+        "geometryCount": 55,
+        "residentImages": 2,
+        "estimatedImageBytes": 9830400,
+        "postProcessing": false,
+        "cpuSubmitMs": 84.89999999850988,
+        "assetsPending": true
+      }
+    },
+    {
+      "transition": "sky → rivers",
+      "raf": {
+        "samples": 21,
+        "fps": 6.774412077808958,
+        "p95Ms": 366.70000000000437,
+        "worstMs": 499.8999999999942
+      },
+      "rendered": {
+        "samples": 20,
+        "fps": 6.522093592043046,
+        "p95Ms": 499.8999999999942,
+        "worstMs": 499.8999999999942
+      },
+      "totalRenders": 21,
+      "samples": 21,
+      "finalState": {
+        "progress": 0.223104,
+        "transition": "territory-dive",
+        "local": 0.4740736000000001,
+        "position": [
+          7.8503538829190775,
+          31.189892514020574,
+          -142.262569083559
+        ],
+        "target": [
+          6.261986114328329,
+          2.6083607592330695,
+          -232.17525818832718
+        ],
+        "fov": 56.992604051342624,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.519831701928404,
+          "y": 0.2941722069694077,
+          "width": 0.004911347579854442,
+          "height": 0.008604315180537225
+        },
+        "drawCalls": 40,
+        "triangles": 76963,
+        "renderCount": 126,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 4,
+        "geometryCount": 55,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 4.199999999254942,
+        "assetsPending": true
+      }
+    },
+    {
+      "transition": "rivers → underwater",
+      "raf": {
+        "samples": 13,
+        "fps": 4.149112728201194,
+        "p95Ms": 600.0999999999985,
+        "worstMs": 600.0999999999985
+      },
+      "rendered": {
+        "samples": 12,
+        "fps": 4.73727843353992,
+        "p95Ms": 399.90000000000146,
+        "worstMs": 399.90000000000146
+      },
+      "totalRenders": 13,
+      "samples": 13,
+      "finalState": {
+        "progress": 0.346403,
+        "transition": "immersion",
+        "local": 0.36413228571428574,
+        "position": [
+          1.652094316890271,
+          0.28189809998785836,
+          -249.264073621198
+        ],
+        "target": [
+          -4.259549778730709,
+          -1.1619258895721276,
+          -287.2489084016682
+        ],
+        "fov": 58.067364407891795,
+        "immersion": 0.07484877474072216,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.6191144258891748,
+          "y": 0.4526800879319862,
+          "width": 0.007616293604124913,
+          "height": 0.01188387517105368
+        },
+        "drawCalls": 41,
+        "triangles": 75625,
+        "renderCount": 147,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 6,
+        "geometryCount": 56,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": true,
+        "cpuSubmitMs": 3,
+        "assetsPending": true
+      }
+    },
+    {
+      "transition": "underwater → wetland",
+      "raf": {
+        "samples": 23,
+        "fps": 7.5004076308495025,
+        "p95Ms": 266.59999999999854,
+        "worstMs": 266.59999999999854
+      },
+      "rendered": {
+        "samples": 22,
+        "fps": 7.857423479409975,
+        "p95Ms": 233.40000000000146,
+        "worstMs": 266.59999999999854
+      },
+      "totalRenders": 23,
+      "samples": 23,
+      "finalState": {
+        "progress": 0.467041,
+        "transition": "emergence",
+        "local": 0.1539304999999999,
+        "position": [
+          -3.343112613010529,
+          -4.70225841086284,
+          -332.41192173257906
+        ],
+        "target": [
+          1.3225948160204546,
+          -1.8462325919155682,
+          -379.52373354849914
+        ],
+        "fov": 58.76454077569869,
+        "immersion": 1,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5164269162984979,
+          "y": 0.49688820339994433,
+          "width": 0.012258713378507091,
+          "height": 0.019417468337712122
+        },
+        "drawCalls": 35,
+        "triangles": 75461,
+        "renderCount": 182,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 6,
+        "geometryCount": 55,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": true,
+        "cpuSubmitMs": 1.800000000745058,
+        "assetsPending": false
+      }
+    },
+    {
+      "transition": "wetland → meadow",
+      "raf": {
+        "samples": 21,
+        "fps": 6.92338124752737,
+        "p95Ms": 266.59999999999854,
+        "worstMs": 283.3000000000029
+      },
+      "rendered": {
+        "samples": 20,
+        "fps": 7.058906575371468,
+        "p95Ms": 283.3000000000029,
+        "worstMs": 283.3000000000029
+      },
+      "totalRenders": 21,
+      "samples": 21,
+      "finalState": {
+        "progress": 0.575986,
+        "transition": "observation-data",
+        "local": 0.17020171428571423,
+        "position": [
+          7.4003264312110915,
+          1.7449877211663112,
+          -441.17405721059987
+        ],
+        "target": [
+          14.648498662521513,
+          1.5791464123066046,
+          -454.1662053905943
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0.8876240300551066,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.3816501973358364,
+          "y": 0.40216196291870976,
+          "width": 0.09843020528306463,
+          "height": 0.1485882314942045
+        },
+        "drawCalls": 33,
+        "triangles": 49680,
+        "renderCount": 216,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 5,
+        "geometryCount": 55,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 2.7000000029802322,
+        "assetsPending": false
+      }
+    },
+    {
+      "transition": "meadow → coast",
+      "raf": {
+        "samples": 21,
+        "fps": 6.811105345095995,
+        "p95Ms": 216.70000000000437,
+        "worstMs": 266.59999999999854
+      },
+      "rendered": {
+        "samples": 20,
+        "fps": 6.780120686148207,
+        "p95Ms": 266.59999999999854,
+        "worstMs": 266.59999999999854
+      },
+      "totalRenders": 21,
+      "samples": 21,
+      "finalState": {
+        "progress": 0.732282,
+        "transition": "territory-coast",
+        "local": 0.1259740000000003,
+        "position": [
+          -19.74003775874424,
+          66.43433222946888,
+          -567.1773444290014
+        ],
+        "target": [
+          3.662254765731288,
+          1.6292215035765751,
+          -647.6994397319514
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": -0.5747789062464284,
+          "y": -2.4411152000465086,
+          "width": 0.5747789062464284,
+          "height": 2.4411152000465086
+        },
+        "drawCalls": 22,
+        "triangles": 35144,
+        "renderCount": 252,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 5,
+        "geometryCount": 55,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 4.399999998509884,
+        "assetsPending": false
+      }
+    },
+    {
+      "transition": "coast → night-forest",
+      "raf": {
+        "samples": 25,
+        "fps": 8.571918395336876,
+        "p95Ms": 200,
+        "worstMs": 200
+      },
+      "rendered": {
+        "samples": 24,
+        "fps": 8.834572627549147,
+        "p95Ms": 200,
+        "worstMs": 200
+      },
+      "totalRenders": 25,
+      "samples": 25,
+      "finalState": {
+        "progress": 0.87544,
+        "transition": "living-cycle",
+        "local": 0.12807999999999992,
+        "position": [
+          47.2345656233036,
+          51.959807692727495,
+          -704.1597354797786
+        ],
+        "target": [
+          -19.063830158297733,
+          19.84604342533524,
+          -775.4268938060469
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0.05000141756418867,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 1,
+          "y": -0.17971608911729564,
+          "width": 0.33578585370461966,
+          "height": 0.17971608911729564
+        },
+        "drawCalls": 18,
+        "triangles": 19668,
+        "renderCount": 291,
+        "quality": "eco",
+        "pixelRatio": 0.65,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "textureCount": 5,
+        "geometryCount": 55,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 1.199999999254942,
+        "assetsPending": false
+      }
+    }
+  ],
+  "idleRenderDelta": 0,
+  "transfer": {
+    "requests": 47,
+    "bytes": 6923478,
+    "jsHeapBytes": 16100000
+  },
+  "errors": [],
+  "external": []
+}

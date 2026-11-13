@@ -1,0 +1,385 @@
+{
+  "date": "2026-11-12T22:13:46.551Z",
+  "browser": "156.0.8078.4",
+  "baseURL": "http://127.0.0.1:8080",
+  "mode": "2d-spatial-masks",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "records": [
+    {
+      "id": "ascent",
+      "name": "1. Forêt → Ciel",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0
+          },
+          "screenshot": "ascent-000.png",
+          "sha256": "a6bfe0b148446d1b698bf59c9a3f124a5069023e645e8ebf0b2ba845f91487e0"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.041666666666666664
+          },
+          "screenshot": "ascent-025.png",
+          "sha256": "ccee4f7a78aed188e91774009ce3bf3a3598b10f2c49d2a2ceae95aac308c147"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.08333333333333333
+          },
+          "screenshot": "ascent-050.png",
+          "sha256": "6f8b2fcd7ca31af780b0d69a76d33ccc4de4f8c2f1748ba5f2899b5d26e88dc2"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.125
+          },
+          "screenshot": "ascent-075.png",
+          "sha256": "c046380cc52a0bb64dd209ef2f6cd38facb93e8562321d6243db4a56dadfe0f5"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.16666666666666666
+          },
+          "screenshot": "ascent-100.png",
+          "sha256": "ef6c6de97ec44342564486fb4c408d93b491165330a19ef89d58a2f954b863ad"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "territory-dive",
+      "name": "2. Ciel → Rivière",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.16666666666666666
+          },
+          "screenshot": "territory-dive-000.png",
+          "sha256": "ef6c6de97ec44342564486fb4c408d93b491165330a19ef89d58a2f954b863ad"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.19642857142857142
+          },
+          "screenshot": "territory-dive-025.png",
+          "sha256": "c1d127f56fc2619dd5501b09f2840fb0c5c509160a983ff6f92f2d9d8fbb60b5"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.2261904761904762
+          },
+          "screenshot": "territory-dive-050.png",
+          "sha256": "723ae2ee5eafe0b8d911ccb78d8b03d7102bc31498faf442e027c04d8a6c820e"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.25595238095238093
+          },
+          "screenshot": "territory-dive-075.png",
+          "sha256": "0d60124daf4b08191794d5939cf5dfb0813ad928508b305b9fd6c849ec1f6397"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.2857142857142857
+          },
+          "screenshot": "territory-dive-100.png",
+          "sha256": "5cdecbd1a39ba33029bc749fbbd5a965789bcc7992335d1a1b2bfc4f09431d39"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "immersion",
+      "name": "3. Rivière → Sous-marin",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.2857142857142857
+          },
+          "screenshot": "immersion-000.png",
+          "sha256": "5cdecbd1a39ba33029bc749fbbd5a965789bcc7992335d1a1b2bfc4f09431d39"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.3273809523809524
+          },
+          "screenshot": "immersion-025.png",
+          "sha256": "d843d91cf0c6e5956126c3171a3b7d5cdc76aeb48102a2fe36e0485224645020"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.36904761904761907
+          },
+          "screenshot": "immersion-050.png",
+          "sha256": "c4b5e27f833ff34c72dfcd1e9ffaea61248c665bc38aaf30bd390c6cf0afbffc"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.4107142857142857
+          },
+          "screenshot": "immersion-075.png",
+          "sha256": "fa78a0b0f99f71fed5f5d90794153f7f077a584645499fbbd6ed6c3b92f59c93"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.4523809523809524
+          },
+          "screenshot": "immersion-100.png",
+          "sha256": "2bf1e501ec6a52b587a699404427f6a40c2d4bc8a833c227c1d9c21d0d7c0023"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "emergence",
+      "name": "4. Sous-marin → Marais",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.4523809523809524
+          },
+          "screenshot": "emergence-000.png",
+          "sha256": "2bf1e501ec6a52b587a699404427f6a40c2d4bc8a833c227c1d9c21d0d7c0023"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.47619047619047616
+          },
+          "screenshot": "emergence-025.png",
+          "sha256": "e77bcd6988058bc62fd34077a5f6790dc6cd109dde8957e120487835e8cded8c"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.5
+          },
+          "screenshot": "emergence-050.png",
+          "sha256": "68074bbda73ec6717da46366134ec99d11e94e168dd800586c3a9fc3381bce33"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.5238095238095238
+          },
+          "screenshot": "emergence-075.png",
+          "sha256": "f17aa44fcb28f20476ecdc362bd45a240bc6ac82fc4b8f77e9fd4baaec619f0d"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.5476190476190477
+          },
+          "screenshot": "emergence-100.png",
+          "sha256": "0fcff2769d45567e6a94dd20ff4ed5ffaa57a755d5add5f1fa291bebed481d85"
+        }
+      ],
+      "replayPixelIdentical": false,
+      "replayComparison": {
+        "changedPixels": 7,
+        "maxChannelDelta": 1,
+        "fraction": 0.000005401234567901234,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "observation-data",
+      "name": "5. Marais → Bocage",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.5476190476190477
+          },
+          "screenshot": "observation-data-000.png",
+          "sha256": "0fcff2769d45567e6a94dd20ff4ed5ffaa57a755d5add5f1fa291bebed481d85"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.5892857142857143
+          },
+          "screenshot": "observation-data-025.png",
+          "sha256": "d912e53a5205fe3dcec65f7b3ba534db2b74a16fe1b20014b1955ff323aed203"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.6309523809523809
+          },
+          "screenshot": "observation-data-050.png",
+          "sha256": "d493c8863d9a7fe2edd7760c38de20c5cb4ca5b79e9386f73eca2b138ea8be7f"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.6726190476190477
+          },
+          "screenshot": "observation-data-075.png",
+          "sha256": "d139f52c960fb1c172d490601da770c18248cfca5ec93682bd94dc2856a5bec4"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.7142857142857143
+          },
+          "screenshot": "observation-data-100.png",
+          "sha256": "efcd67df52be22a81ca3578a42912139f3d7d140e3f6970cebc4596590b2d356"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "territory-coast",
+      "name": "6. Bocage → Littoral",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.7142857142857143
+          },
+          "screenshot": "territory-coast-000.png",
+          "sha256": "efcd67df52be22a81ca3578a42912139f3d7d140e3f6970cebc4596590b2d356"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.75
+          },
+          "screenshot": "territory-coast-025.png",
+          "sha256": "31ad3cea026f12b124502e833dc8b146fa60ccb60497683800e3ebd7260049b4"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.7857142857142857
+          },
+          "screenshot": "territory-coast-050.png",
+          "sha256": "c596376170bd7be9fc558b0638d21f5cd931f29b0d25adac3d03645cc3a34fe1"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.8214285714285714
+          },
+          "screenshot": "territory-coast-075.png",
+          "sha256": "3c251c0a7a6694bc3d9f024173e7822625af2552a6fb6aa4880b554284ad6d6f"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.8571428571428571
+          },
+          "screenshot": "territory-coast-100.png",
+          "sha256": "06493d7294455c5914acdf5c4d1696f3edb7733e8897c406fcbb4078810cd411"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "living-cycle",
+      "name": "7. Littoral → Forêt nocturne",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.8571428571428571
+          },
+          "screenshot": "living-cycle-000.png",
+          "sha256": "06493d7294455c5914acdf5c4d1696f3edb7733e8897c406fcbb4078810cd411"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.8928571428571429
+          },
+          "screenshot": "living-cycle-025.png",
+          "sha256": "d05ceb2dfe31e29b0415ce04837c48ce4aaa1e6cd48a09b46a990cc68d816165"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.9285714285714286
+          },
+          "screenshot": "living-cycle-050.png",
+          "sha256": "fb97aaf0ab0812155813e71eba771daf697bd9877275810d43c343f5a7b4687a"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.9642857142857143
+          },
+          "screenshot": "living-cycle-075.png",
+          "sha256": "9742e1ca8d66a2c82b4051ae343da21e4d238ed21c69dde066693fb5e1c8a9e5"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 1
+          },
+          "screenshot": "living-cycle-100.png",
+          "sha256": "a18a9d52b3d17619f032fa6ff8aeac5e11261c619668e40b2b582eef584a7e9e"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    }
+  ],
+  "performance": [],
+  "errors": []
+}

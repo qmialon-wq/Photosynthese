@@ -1,0 +1,1758 @@
+{
+  "date": "2026-11-13T10:24:56.515Z",
+  "browser": "156.0.8078.4",
+  "baseURL": "http://127.0.0.1:8080",
+  "mode": "hardware-requested",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "records": [
+    {
+      "id": "ascent",
+      "name": "1. Forêt → Ciel",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0,
+            "transition": "ascent",
+            "local": 0,
+            "position": [
+              0,
+              0.7,
+              18
+            ],
+            "target": [
+              -2,
+              7,
+              -28
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5410740037560793,
+              "y": 0.6208235660371338,
+              "width": 0.0032524608981212705,
+              "height": 0.005283608324892594
+            },
+            "drawCalls": 46,
+            "triangles": 134890,
+            "renderCount": 2,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 3,
+            "geometryCount": 41,
+            "residentImages": 2,
+            "estimatedImageBytes": 9830400,
+            "postProcessing": false,
+            "cpuSubmitMs": 9.400000002235174,
+            "assetsPending": false
+          },
+          "screenshot": "ascent-000.png",
+          "sha256": "f95a1367dde8264461b70b0e2d01397d295cf0cdd5966e25ba9acc13ea4c6923"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.041666666666666664,
+            "transition": "ascent",
+            "local": 0.25,
+            "position": [
+              0.5726473650110708,
+              6.318624627302233,
+              6.1897621339070055
+            ],
+            "target": [
+              -1.0800930643619164,
+              29.448500481204707,
+              -29.819751880787038
+            ],
+            "fov": 58.59607031879026,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5482677391065374,
+              "y": 1,
+              "width": 0.003973280837069007,
+              "height": 0.08731410930830064
+            },
+            "drawCalls": 25,
+            "triangles": 133638,
+            "renderCount": 18,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 3,
+            "geometryCount": 41,
+            "residentImages": 2,
+            "estimatedImageBytes": 9830400,
+            "postProcessing": false,
+            "cpuSubmitMs": 4.800000000745058,
+            "assetsPending": false
+          },
+          "screenshot": "ascent-025.png",
+          "sha256": "d2dea52f16d85bb9917a6db3c22b90d92b84a51401fab413fa0031833c4f656e"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.08333333333333333,
+            "transition": "ascent",
+            "local": 0.5,
+            "position": [
+              2.559782608695652,
+              20.702717391304347,
+              -15.02717391304348
+            ],
+            "target": [
+              4.679347826086956,
+              28.239130434782606,
+              -74.21739130434783
+            ],
+            "fov": 59.23913043478261,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.4931193275771972,
+              "y": 0.6470790245180437,
+              "width": 0.003298350530924777,
+              "height": 0.005604957056632831
+            },
+            "drawCalls": 43,
+            "triangles": 134874,
+            "renderCount": 39,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 42,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 5.199999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "ascent-050.png",
+          "sha256": "7cd1b2c7686af4d927559c60a92cf1d561f7fb2049ffe509875362d248bb43c1"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.125,
+            "transition": "ascent",
+            "local": 0.75,
+            "position": [
+              4.122696822161837,
+              43.87608019449476,
+              -46.655638115187195
+            ],
+            "target": [
+              9.497731890348229,
+              27.538592775010063,
+              -146.224381982186
+            ],
+            "fov": 58.54044604216988,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.48193764855442517,
+              "y": 0.44255334735801743,
+              "width": 0.003555936192652624,
+              "height": 0.0061693212471986905
+            },
+            "drawCalls": 42,
+            "triangles": 131514,
+            "renderCount": 54,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 42,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 7.199999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "ascent-075.png",
+          "sha256": "49a1ff6ae91f4189aeb64a678a7c7d7b51f827002088486b0eb2351808b6c0fd"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.16666666666666666,
+            "transition": "territory-dive",
+            "local": 0,
+            "position": [
+              4,
+              65,
+              -85
+            ],
+            "target": [
+              8,
+              45,
+              -210
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.49545464052408356,
+              "y": 0.5045102099991493,
+              "width": 0.003991487984236149,
+              "height": 0.007151333255317953
+            },
+            "drawCalls": 40,
+            "triangles": 147508,
+            "renderCount": 73,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 43,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 4.600000001490116,
+            "assetsPending": false
+          },
+          "screenshot": "ascent-100.png",
+          "sha256": "0a95482c42cb2075d58cc342d480b80a45582b5a254c8eae3a47c160f6b03dc5"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "territory-dive",
+      "name": "2. Ciel → Rivière",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.16666666666666666,
+            "transition": "territory-dive",
+            "local": 0,
+            "position": [
+              4,
+              65,
+              -85
+            ],
+            "target": [
+              8,
+              45,
+              -210
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.49545464052408356,
+              "y": 0.5045102099991493,
+              "width": 0.003991487984236149,
+              "height": 0.007151333255317953
+            },
+            "drawCalls": 40,
+            "triangles": 147508,
+            "renderCount": 370,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 43,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 1.800000000745058,
+            "assetsPending": false
+          },
+          "screenshot": "territory-dive-000.png",
+          "sha256": "0a95482c42cb2075d58cc342d480b80a45582b5a254c8eae3a47c160f6b03dc5"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.19642857142857142,
+            "transition": "territory-dive",
+            "local": 0.25,
+            "position": [
+              6.02945778334092,
+              51.08157430587164,
+              -114.5662622325899
+            ],
+            "target": [
+              7.229908682294036,
+              25.091769316112877,
+              -226.18331104915794
+            ],
+            "fov": 56.865199704142015,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5053852683631403,
+              "y": 0.415815533162897,
+              "width": 0.0043806999142796755,
+              "height": 0.0077646667715284
+            },
+            "drawCalls": 41,
+            "triangles": 147508,
+            "renderCount": 392,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 44,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 1.800000000745058,
+            "assetsPending": false
+          },
+          "screenshot": "territory-dive-025.png",
+          "sha256": "58f8df32dd97952beacd43700e5e3544547da5b1f12cf85df4eb8b6e0866b4be"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.2261904761904762,
+            "transition": "territory-dive",
+            "local": 0.5,
+            "position": [
+              7.9486800182066455,
+              29.316795630405096,
+              -145.50051206190258
+            ],
+            "target": [
+              6.117375967228037,
+              1.0011663632225758,
+              -233.14844105598544
+            ],
+            "fov": 56.99852071005917,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5216922214923575,
+              "y": 0.28479409764854857,
+              "width": 0.004981326381892578,
+              "height": 0.008713577821469365
+            },
+            "drawCalls": 40,
+            "triangles": 139512,
+            "renderCount": 413,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 43,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 4,
+            "assetsPending": false
+          },
+          "screenshot": "territory-dive-050.png",
+          "sha256": "102e78b5abfe1b0eb77d8f04603a5b1f785b680ea59bd48a9a6ddf8285d0c483"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.25595238095238093,
+            "transition": "territory-dive",
+            "local": 0.7499999999999997,
+            "position": [
+              7.545997902199075,
+              13.634863055193883,
+              -178.9431649667245
+            ],
+            "target": [
+              4.348497178819446,
+              -2.4822455512152817,
+              -243.60236273871527
+            ],
+            "fov": 56.940208152488424,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5404422754646803,
+              "y": 0.3063015430581594,
+              "width": 0.005638625305645503,
+              "height": 0.009475113357568316
+            },
+            "drawCalls": 39,
+            "triangles": 136712,
+            "renderCount": 430,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 43,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 3.5,
+            "assetsPending": false
+          },
+          "screenshot": "territory-dive-075.png",
+          "sha256": "e6482b75022da7f6bb238d9139711f8369792e130facc1054505467be4afe773"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.2857142857142857,
+            "transition": "immersion",
+            "local": 0,
+            "position": [
+              6,
+              2.2,
+              -210
+            ],
+            "target": [
+              2,
+              0.5,
+              -255
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5674779923016311,
+              "y": 0.46114221120282495,
+              "width": 0.006230066097014347,
+              "height": 0.010044426218737433
+            },
+            "drawCalls": 39,
+            "triangles": 136712,
+            "renderCount": 449,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 43,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 2.399999998509884,
+            "assetsPending": false
+          },
+          "screenshot": "territory-dive-100.png",
+          "sha256": "b603ff0f08952512a3b933df45ee836f43ff089c675cf482318e02b45e026473"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "immersion",
+      "name": "3. Rivière → Sous-marin",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.2857142857142857,
+            "transition": "immersion",
+            "local": 0,
+            "position": [
+              6,
+              2.2,
+              -210
+            ],
+            "target": [
+              2,
+              0.5,
+              -255
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5674779923016311,
+              "y": 0.46114221120282495,
+              "width": 0.006230066097014347,
+              "height": 0.010044426218737433
+            },
+            "drawCalls": 39,
+            "triangles": 136712,
+            "renderCount": 763,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 43,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 3.099999997764826,
+            "assetsPending": false
+          },
+          "screenshot": "immersion-000.png",
+          "sha256": "b603ff0f08952512a3b933df45ee836f43ff089c675cf482318e02b45e026473"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.3273809523809524,
+            "transition": "immersion",
+            "local": 0.25,
+            "position": [
+              3.312119832553342,
+              0.3969399567387523,
+              -237.7165961764669
+            ],
+            "target": [
+              -2.5844675454156594,
+              -0.4181800633428943,
+              -275.84546075351
+            ],
+            "fov": 57.69616345391757,
+            "immersion": 0.010855337824406843,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.6133034924098726,
+              "y": 0.4684743870470617,
+              "width": 0.007163247841975182,
+              "height": 0.011302448144630446
+            },
+            "drawCalls": 41,
+            "triangles": 136914,
+            "renderCount": 782,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 46,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": true,
+            "cpuSubmitMs": 2.199999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "immersion-025.png",
+          "sha256": "9ce8d40cb3a304028c8122924b89c5b2d67ede945cb9906f64f96172d3d03777"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.36904761904761907,
+            "transition": "immersion",
+            "local": 0.5,
+            "position": [
+              -1.2391304347826086,
+              -1.0921195652173914,
+              -263.61956521739125
+            ],
+            "target": [
+              -5.717391304347825,
+              -2.6494565217391304,
+              -303.2826086956522
+            ],
+            "fov": 58.559782608695656,
+            "immersion": 0.9977280521262002,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.6044695498621111,
+              "y": 0.44449358181465104,
+              "width": 0.008098621815550405,
+              "height": 0.012636414429088146
+            },
+            "drawCalls": 41,
+            "triangles": 136914,
+            "renderCount": 800,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 47,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 3.100000001490116,
+            "assetsPending": false
+          },
+          "screenshot": "immersion-050.png",
+          "sha256": "04c2493bb6871728b77d63a7076d0b1a87c4884f5e7f9db8fa7f8d1a44db7df2"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.4107142857142857,
+            "transition": "immersion",
+            "local": 0.75,
+            "position": [
+              -4.542463956823671,
+              -3.515022707830113,
+              -288.5776665974738
+            ],
+            "target": [
+              -4.923188091284219,
+              -4.122752019172705,
+              -333.8637121326489
+            ],
+            "fov": 59.10569205414654,
+            "immersion": 1,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5614127566734134,
+              "y": 0.45233250894677396,
+              "width": 0.009046867543074051,
+              "height": 0.014238752899904339
+            },
+            "drawCalls": 41,
+            "triangles": 136914,
+            "renderCount": 819,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 47,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 4.100000001490116,
+            "assetsPending": false
+          },
+          "screenshot": "immersion-075.png",
+          "sha256": "d5f1d64492e0dcbb94eadfbba00ad48b6bdcdab22eaacdaca261f67589c341ba"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.4523809523809524,
+            "transition": "emergence",
+            "local": 0,
+            "position": [
+              -4,
+              -5,
+              -315
+            ],
+            "target": [
+              0,
+              -3,
+              -365
+            ],
+            "fov": 59,
+            "immersion": 1,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5207661596507368,
+              "y": 0.48384493042711146,
+              "width": 0.0106688576843629,
+              "height": 0.01694464857116018
+            },
+            "drawCalls": 35,
+            "triangles": 136750,
+            "renderCount": 840,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 47,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 4.199999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "immersion-100.png",
+          "sha256": "e2e2b6a7b2d2eb89a10d8728d6a0119e032fc70c5c490c14b9e12e1610002b36"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "emergence",
+      "name": "4. Sous-marin → Marais",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.4523809523809524,
+            "transition": "emergence",
+            "local": 0,
+            "position": [
+              -4,
+              -5,
+              -315
+            ],
+            "target": [
+              0,
+              -3,
+              -365
+            ],
+            "fov": 59,
+            "immersion": 1,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5207661596507368,
+              "y": 0.48384493042711146,
+              "width": 0.0106688576843629,
+              "height": 0.01694464857116018
+            },
+            "drawCalls": 35,
+            "triangles": 136750,
+            "renderCount": 1155,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 47,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 2.699999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "emergence-000.png",
+          "sha256": "e2e2b6a7b2d2eb89a10d8728d6a0119e032fc70c5c490c14b9e12e1610002b36"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.47619047619047616,
+            "transition": "emergence",
+            "local": 0.25,
+            "position": [
+              -2.727219282774838,
+              -4.2493631197334905,
+              -345.69174995100923
+            ],
+            "target": [
+              2.0968058005095043,
+              -0.8737997256515775,
+              -389.7080148932001
+            ],
+            "fov": 58.546345287086034,
+            "immersion": 1,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5159918387189644,
+              "y": 0.5078977336552263,
+              "width": 0.013831561380563448,
+              "height": 0.021826485774024615
+            },
+            "drawCalls": 33,
+            "triangles": 136746,
+            "renderCount": 1175,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 47,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 3.100000001490116,
+            "assetsPending": false
+          },
+          "screenshot": "emergence-025.png",
+          "sha256": "7431bf2ff57922141256ca8089c5bca7d0641e4d17cf8dd0f9b38f8eca5bf9db"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.5,
+            "transition": "emergence",
+            "local": 0.5,
+            "position": [
+              -0.3658181818181818,
+              -2.5951636363636363,
+              -378.86462337662346
+            ],
+            "target": [
+              4.6362597402597405,
+              1.3238441558441558,
+              -418.12062337662337
+            ],
+            "fov": 57.81911688311689,
+            "immersion": 1,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5217912891039788,
+              "y": 0.5219246139780467,
+              "width": 0.020206137132795628,
+              "height": 0.03141275470452847
+            },
+            "drawCalls": 39,
+            "triangles": 138515,
+            "renderCount": 1181,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 52,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 6.300000000745058,
+            "assetsPending": false
+          },
+          "screenshot": "emergence-050.png",
+          "sha256": "9920886e88e567aca5d380554248f301e910cda7dcb54430b851b524aae1d56c"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.5238095238095238,
+            "transition": "emergence",
+            "local": 0.75,
+            "position": [
+              3.621406371406372,
+              -0.024472286972287007,
+              -405.35062160062165
+            ],
+            "target": [
+              9.01165501165501,
+              2.0125226625226627,
+              -446.8548951048951
+            ],
+            "fov": 56.936868686868685,
+            "immersion": 0.43426392623648746,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.5253404610551254,
+              "y": 0.4861646588795647,
+              "width": 0.031075416912324027,
+              "height": 0.047336932858724555
+            },
+            "drawCalls": 37,
+            "triangles": 133475,
+            "renderCount": 1200,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 6,
+            "geometryCount": 52,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": true,
+            "cpuSubmitMs": 3.199999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "emergence-075.png",
+          "sha256": "d525668c2fa3c0a51d2193904b6d47046d1784f4014369ee2d2b184e2e3493c6"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.5476190476190477,
+            "transition": "observation-data",
+            "local": 4.0602442043434295e-16,
+            "position": [
+              6.000000000000004,
+              1.700000000000003,
+              -430.00000000000006
+            ],
+            "target": [
+              14.000000000000007,
+              1.5999999999999996,
+              -458
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.4765174503386319,
+              "y": 0.44343275938621574,
+              "width": 0.05864371705701591,
+              "height": 0.0881486889711994
+            },
+            "drawCalls": 36,
+            "triangles": 133473,
+            "renderCount": 1217,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 52,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 2.699999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "emergence-100.png",
+          "sha256": "eb7db090d3a13afdc95e466fbba3b096417cde2e3d452efd9cfefd5f72bb5b30"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "observation-data",
+      "name": "5. Marais → Bocage",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.5476190476190477,
+            "transition": "observation-data",
+            "local": 4.0602442043434295e-16,
+            "position": [
+              6.000000000000004,
+              1.700000000000003,
+              -430.00000000000006
+            ],
+            "target": [
+              14.000000000000007,
+              1.5999999999999996,
+              -458
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.4765174503386319,
+              "y": 0.44343275938621574,
+              "width": 0.05864371705701591,
+              "height": 0.0881486889711994
+            },
+            "drawCalls": 36,
+            "triangles": 133473,
+            "renderCount": 1527,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 52,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 13.599999997764826,
+            "assetsPending": false
+          },
+          "screenshot": "observation-data-000.png",
+          "sha256": "eb7db090d3a13afdc95e466fbba3b096417cde2e3d452efd9cfefd5f72bb5b30"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.5892857142857143,
+            "transition": "observation-data",
+            "local": 0.25,
+            "position": [
+              5.791627209595959,
+              4.0030463467317805,
+              -450.08768795913676
+            ],
+            "target": [
+              12.179222167438851,
+              1.659666851886635,
+              -469.6081352001419
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 1,
+            "dataMorph": 0,
+            "bounds": {
+              "x": 0.7193631327883869,
+              "y": 0.45114100930196965,
+              "width": 0.20453196560852693,
+              "height": 0.2835256306251317
+            },
+            "drawCalls": 39,
+            "triangles": 146009,
+            "renderCount": 1547,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 1.7000000029802322,
+            "assetsPending": false
+          },
+          "screenshot": "observation-data-025.png",
+          "sha256": "ccb2455694467ff259c27ee0ef4f6c2b3fe36617e5bd9f8ffb26147cf71dc84a"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.6309523809523809,
+            "transition": "observation-data",
+            "local": 0.5,
+            "position": [
+              -3.50662878787879,
+              16.074849737039823,
+              -486.0807506887052
+            ],
+            "target": [
+              0.24625125219133193,
+              2.0078402829952418,
+              -549.8751095667418
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 1,
+            "dataMorph": 0.54681396484375,
+            "bounds": {
+              "x": -0.03429985449025941,
+              "y": -0.35768698438832647,
+              "width": 0.11018966070116865,
+              "height": 0.35768698438832647
+            },
+            "drawCalls": 29,
+            "triangles": 144941,
+            "renderCount": 1562,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 17.5,
+            "assetsPending": false
+          },
+          "screenshot": "observation-data-050.png",
+          "sha256": "bb35799b7dd51d2800ab8a15d261c9b1b7a0b808b9b0da4f2bb8c7a325ab8e10"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.6726190476190477,
+            "transition": "observation-data",
+            "local": 0.75,
+            "position": [
+              -13.497121396677183,
+              34.30922912187691,
+              -517.2775860519921
+            ],
+            "target": [
+              0.44641627601516376,
+              1.2176285333553838,
+              -587.3814621484138
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0.9157252186588921,
+            "dataMorph": 1,
+            "bounds": {
+              "x": -0.20034063847856964,
+              "y": -0.9682921370756574,
+              "width": 0.20034063847856964,
+              "height": 0.9682921370756574
+            },
+            "drawCalls": 29,
+            "triangles": 128941,
+            "renderCount": 1577,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 4,
+            "assetsPending": false
+          },
+          "screenshot": "observation-data-075.png",
+          "sha256": "6f1229dac19e7b5e545940dfa1be4bc7ae7e61533a87ae9f2238c0244a356335"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.7142857142857143,
+            "transition": "territory-coast",
+            "local": 0,
+            "position": [
+              -20,
+              55,
+              -550
+            ],
+            "target": [
+              3,
+              1,
+              -622
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": -0.6699973331221389,
+              "y": -2.1874222671240715,
+              "width": 0.6699973331221389,
+              "height": 2.1874222671240715
+            },
+            "drawCalls": 25,
+            "triangles": 114257,
+            "renderCount": 1596,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 6.299999997019768,
+            "assetsPending": false
+          },
+          "screenshot": "observation-data-100.png",
+          "sha256": "87500dfdd82adbe507acbb9b4b9ee0dc3711283ac962ab2ba7061f32bb47f535"
+        }
+      ],
+      "replayPixelIdentical": false,
+      "replayComparison": {
+        "changedPixels": 9,
+        "maxChannelDelta": 1,
+        "fraction": 0.000006944444444444445,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "territory-coast",
+      "name": "6. Bocage → Littoral",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.7142857142857143,
+            "transition": "territory-coast",
+            "local": 0,
+            "position": [
+              -20,
+              55,
+              -550
+            ],
+            "target": [
+              3,
+              1,
+              -622
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": -0.6699973331221389,
+              "y": -2.1874222671240715,
+              "width": 0.6699973331221389,
+              "height": 2.1874222671240715
+            },
+            "drawCalls": 25,
+            "triangles": 114257,
+            "renderCount": 1889,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 3,
+            "assetsPending": false
+          },
+          "screenshot": "territory-coast-000.png",
+          "sha256": "d24a39c09d0ebf692453c91512df983abc4eac7c6a9bb11e3092151a95f00d1f"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.75,
+            "transition": "territory-coast",
+            "local": 0.25,
+            "position": [
+              -17.859375,
+              79.44921875,
+              -585.7265625
+            ],
+            "target": [
+              4.4296875,
+              2.609375,
+              -678.18359375
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": -0.3867763838139533,
+              "y": -2.5541180929586496,
+              "width": 0.3867763838139533,
+              "height": 2.5541180929586496
+            },
+            "drawCalls": 23,
+            "triangles": 114253,
+            "renderCount": 1907,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 2.099999997764826,
+            "assetsPending": false
+          },
+          "screenshot": "territory-coast-025.png",
+          "sha256": "b4b10aa3b3711bef3a1ef0a5b8ba9038ee48577bffda7e92716607f41bfa2fad"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.7857142857142857,
+            "transition": "territory-coast",
+            "local": 0.5,
+            "position": [
+              -8,
+              94,
+              -622
+            ],
+            "target": [
+              2,
+              6,
+              -730
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 0.16286104696043663,
+              "y": -1.931914416037365,
+              "width": 0.03579296439356877,
+              "height": 1.931914416037365
+            },
+            "drawCalls": 23,
+            "triangles": 55937,
+            "renderCount": 1926,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 2.600000001490116,
+            "assetsPending": false
+          },
+          "screenshot": "territory-coast-050.png",
+          "sha256": "6ac21730c8dfb014e2ce6bad8ed6527a0bb91f641ba9d7d0a6acdc295e6524f6"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.8214285714285714,
+            "transition": "territory-coast",
+            "local": 0.75,
+            "position": [
+              14.125,
+              72.9625,
+              -649.6
+            ],
+            "target": [
+              -13.5875,
+              12.725,
+              -742.9375
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 0.7549089210850226,
+              "y": -0.7376831751882622,
+              "width": 0.01718127709669659,
+              "height": 0.7376831751882622
+            },
+            "drawCalls": 23,
+            "triangles": 55937,
+            "renderCount": 1944,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 2.199999999254942,
+            "assetsPending": false
+          },
+          "screenshot": "territory-coast-075.png",
+          "sha256": "182da73bfad0a79838bbfb69486a3398a63d2cb1e279dc2e277d799a7b0ff343"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 0.8571428571428571,
+            "transition": "living-cycle",
+            "local": 0,
+            "position": [
+              38,
+              48,
+              -680
+            ],
+            "target": [
+              -26,
+              19,
+              -753
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 1,
+              "y": -0.1251065356919736,
+              "width": 0.2288896729651897,
+              "height": 0.1251065356919736
+            },
+            "drawCalls": 22,
+            "triangles": 55937,
+            "renderCount": 1963,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 2.100000001490116,
+            "assetsPending": false
+          },
+          "screenshot": "territory-coast-100.png",
+          "sha256": "e880c3cdc97282dc2862421f564a4375f926bf5d5acd073e20529a19308f37e3"
+        }
+      ],
+      "replayPixelIdentical": true,
+      "replayComparison": {
+        "changedPixels": 0,
+        "maxChannelDelta": 0,
+        "fraction": 0,
+        "withinTolerance": true
+      }
+    },
+    {
+      "id": "living-cycle",
+      "name": "7. Littoral → Forêt nocturne",
+      "states": [
+        {
+          "p": 0,
+          "state": {
+            "progress": 0.8571428571428571,
+            "transition": "living-cycle",
+            "local": 0,
+            "position": [
+              38,
+              48,
+              -680
+            ],
+            "target": [
+              -26,
+              19,
+              -753
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 1,
+              "y": -0.1251065356919736,
+              "width": 0.2288896729651897,
+              "height": 0.1251065356919736
+            },
+            "drawCalls": 22,
+            "triangles": 55937,
+            "renderCount": 2260,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 55,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 1.800000000745058,
+            "assetsPending": false
+          },
+          "screenshot": "living-cycle-000.png",
+          "sha256": "e880c3cdc97282dc2862421f564a4375f926bf5d5acd073e20529a19308f37e3"
+        },
+        {
+          "p": 0.25,
+          "state": {
+            "progress": 0.8928571428571429,
+            "transition": "living-cycle",
+            "local": 0.25,
+            "position": [
+              52.67857142857143,
+              61.0875,
+              -731.3589285714286
+            ],
+            "target": [
+              -6.703571428571429,
+              19.117857142857144,
+              -803.6517857142857
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0.2281071158622179,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 1,
+              "y": -0.33544839513260727,
+              "width": 0.31167862451430084,
+              "height": 0.33544839513260727
+            },
+            "drawCalls": 19,
+            "triangles": 41897,
+            "renderCount": 2279,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 5,
+            "geometryCount": 56,
+            "residentImages": 4,
+            "estimatedImageBytes": 19660800,
+            "postProcessing": false,
+            "cpuSubmitMs": 2,
+            "assetsPending": false
+          },
+          "screenshot": "living-cycle-025.png",
+          "sha256": "3526675a2e34100f652aed97979669e2cbeb32a22d83ace8f65394b827925566"
+        },
+        {
+          "p": 0.5,
+          "state": {
+            "progress": 0.9285714285714286,
+            "transition": "living-cycle",
+            "local": 0.5,
+            "position": [
+              36.10110550606419,
+              45.560293012772355,
+              -781.39401094773
+            ],
+            "target": [
+              1.211817108511324,
+              13.706504239562092,
+              -842.1745196951808
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 0.7407407407407407,
+            "logo": 0,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 0.9500720578477239,
+              "y": -0.11989672835756648,
+              "width": 0.010758696511229238,
+              "height": 0.11989672835756648
+            },
+            "drawCalls": 14,
+            "triangles": 41300,
+            "renderCount": 2297,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 55,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 3.800000000745058,
+            "assetsPending": false
+          },
+          "screenshot": "living-cycle-050.png",
+          "sha256": "02d8b06edc036cb00556e8091b7f29ba82b86fb5e2a81e61f5b744ccb0af7172"
+        },
+        {
+          "p": 0.75,
+          "state": {
+            "progress": 0.9642857142857143,
+            "transition": "living-cycle",
+            "local": 0.75,
+            "position": [
+              8.680555555555555,
+              16.009837962962965,
+              -826.4351851851851
+            ],
+            "target": [
+              0.05208333333333333,
+              7.170138888888889,
+              -873.1342592592592
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 1,
+            "logo": 0.31640625,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 0.5975464365260561,
+              "y": 0.2878650613430628,
+              "width": 0.004414804687018506,
+              "height": 0.007328964444130365
+            },
+            "drawCalls": 12,
+            "triangles": 39928,
+            "renderCount": 2309,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 55,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 1.5,
+            "assetsPending": false
+          },
+          "screenshot": "living-cycle-075.png",
+          "sha256": "3cd81ca970fcf27cf834c0bf9b16a85d38035c87dc2b7c94260bcbe0d8965de9"
+        },
+        {
+          "p": 1,
+          "state": {
+            "progress": 1,
+            "transition": "living-cycle",
+            "local": 1,
+            "position": [
+              0,
+              2.5,
+              -865
+            ],
+            "target": [
+              0,
+              5,
+              -912
+            ],
+            "fov": 57,
+            "immersion": 0,
+            "night": 1,
+            "logo": 1,
+            "observation": 0,
+            "dataMorph": 1,
+            "bounds": {
+              "x": 0.4779468409274629,
+              "y": 0.5447717265878402,
+              "width": 0.0037383130304595134,
+              "height": 0.006071491523294517
+            },
+            "drawCalls": 12,
+            "triangles": 39928,
+            "renderCount": 2323,
+            "quality": "standard",
+            "pixelRatio": 1,
+            "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "textureCount": 4,
+            "geometryCount": 55,
+            "residentImages": 3,
+            "estimatedImageBytes": 14745600,
+            "postProcessing": false,
+            "cpuSubmitMs": 3.099999997764826,
+            "assetsPending": false
+          },
+          "screenshot": "living-cycle-100.png",
+          "sha256": "3632e4ed920e41ab9c9de6c33aafd0f7665462c66f44960b7bbaae4832dd7142"
+        }
+      ],
+      "replayPixelIdentical": false,
+      "replayComparison": {
+        "changedPixels": 101,
+        "maxChannelDelta": 1,
+        "fraction": 0.0000779320987654321,
+        "withinTolerance": true
+      }
+    }
+  ],
+  "performance": [
+    {
+      "id": "ascent",
+      "rafFps": 50,
+      "renderedFps": 50,
+      "p95FrameMs": 33.4,
+      "drawCalls": 46,
+      "triangles": 134890,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "id": "territory-dive",
+      "rafFps": 56,
+      "renderedFps": 56,
+      "p95FrameMs": 33.3,
+      "drawCalls": 41,
+      "triangles": 147508,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "id": "immersion",
+      "rafFps": 54,
+      "renderedFps": 53,
+      "p95FrameMs": 33.3,
+      "drawCalls": 41,
+      "triangles": 136914,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "id": "emergence",
+      "rafFps": 52,
+      "renderedFps": 51,
+      "p95FrameMs": 33.3,
+      "drawCalls": 35,
+      "triangles": 136750,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "id": "observation-data",
+      "rafFps": 50,
+      "renderedFps": 50,
+      "p95FrameMs": 33.4,
+      "drawCalls": 34,
+      "triangles": 133469,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "id": "territory-coast",
+      "rafFps": 50,
+      "renderedFps": 50,
+      "p95FrameMs": 33.4,
+      "drawCalls": 25,
+      "triangles": 114257,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "id": "living-cycle",
+      "rafFps": 47,
+      "renderedFps": 47,
+      "p95FrameMs": 33.4,
+      "drawCalls": 19,
+      "triangles": 45537,
+      "quality": "standard",
+      "pixelRatio": 1,
+      "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ],
+  "errors": []
+}

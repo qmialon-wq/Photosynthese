@@ -1,5 +1,10 @@
 # Symbiose Normandie
 
+La [présentation autonome du jury](frontend/README.md) dispose d'une entrée `/jury/`,
+d'une installation hors ligne et d'un [guide du présentateur](docs/PRESENTER_GUIDE.md).
+Le [bilan de finition](docs/FINAL_DELIVERY.md) distingue les vérifications exécutées
+des limites visuelles et du montage vidéo encore à fournir.
+
 Un [accès HTTPS via ngrok avec une URL stable](docs/NGROK.md) est disponible
 pour partager la plateforme exécutée sur le PC : configurer `NGROK_URL` et
 `NGROK_AUTHTOKEN` dans `.env`, puis lancer `make ngrok-up` après le démarrage local.

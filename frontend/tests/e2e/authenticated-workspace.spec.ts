@@ -114,13 +114,13 @@ test("landing publique sans données fictives, accessible et adaptée au mobile"
   const { reads } = await fixture(page, null);
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "biodiversité",
+    "Le vivant",
   );
   await expect(
-    page.getByRole("link", { name: "Commencer mes observations" }),
-  ).toHaveAttribute("href", "/inscription");
+    page.getByRole("link", { name: "Accéder à l’application" }),
+  ).toHaveAttribute("href", "/connexion");
   await expect(
-    page.getByText(/démonstration|données fictives|lecture seule/i),
+    page.getByText(/données fictives|lecture seule/i),
   ).toHaveCount(0);
   expect(reads).toEqual([]);
   expect(
