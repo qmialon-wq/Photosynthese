@@ -91,7 +91,7 @@ const seek = (event: Event) =>
     <div class="sx-scroll-cue">
       <span class="sx-scroll-line" aria-hidden="true" /><span>{{
         mode === "presentation"
-          ? "← → chapitres · Espace lecture/pause · arrêt à chaque scène"
+          ? "Lecture continue · 5 minutes · Espace lecture/pause"
           : "Défilez librement pour explorer"
       }}</span>
     </div>
@@ -99,13 +99,8 @@ const seek = (event: Event) =>
       <button
         v-if="mode === 'presentation' && !reducedMotion"
         class="sx-play"
-        :disabled="chapterIndex === 5"
         :aria-label="playing ? 'Mettre en pause' : 'Lire le récit'"
-        :title="
-          chapterIndex === 5
-            ? 'La vidéo se lance manuellement dans son lecteur'
-            : 'Lecture jusqu’au prochain chapitre'
-        "
+        title="Lecture continue jusqu’à 5:00"
         @click="playing ? emit('pause') : emit('play')"
       >
         {{ playing ? "Ⅱ" : "▶" }}

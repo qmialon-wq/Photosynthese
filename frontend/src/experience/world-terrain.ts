@@ -32,6 +32,9 @@ export function createTerrain(economy: boolean) {
   }
   geometry.setAttribute("color", new T.Float32BufferAttribute(colors, 3));
   geometry.computeVertexNormals();
+  const groundUv = geometry.attributes.uv;
+  for (let i = 0; i < positions.count; i++)
+    groundUv.setXY(i, positions.getX(i) * 0.18, positions.getZ(i) * 0.18);
   const oldIndex = geometry.getIndex()!,
     retained: number[] = [];
   for (let i = 0; i < oldIndex.count; i += 3) {
@@ -79,6 +82,17 @@ export function createTerrain(economy: boolean) {
     new T.Float32BufferAttribute(bankPositions, 3),
   );
   bankGeo.setAttribute("color", new T.Float32BufferAttribute(bankColors, 3));
+  bankGeo.setAttribute(
+    "uv",
+    new T.Float32BufferAttribute(
+      bankPositions.flatMap((_, i) =>
+        i % 3 === 0
+          ? [bankPositions[i] * 0.18, bankPositions[i + 2] * 0.18]
+          : [],
+      ),
+      2,
+    ),
+  );
   bankGeo.setIndex(bankIndices);
   bankGeo.computeVertexNormals();
   terrain.add(
@@ -89,12 +103,21 @@ export function createTerrain(economy: boolean) {
       }),
     ),
   );
+  terrain.traverse((o: any) => {
+    if (o.isMesh) o.receiveShadow = true;
+  });
   const water = new T.Group();
   water.name = "water";
   const waterUniforms = {
     phase: { value: 0 },
     night: { value: 0 },
     coast: { value: 0 },
+    sunDirection: { value: new T.Vector3(-0.42, 0.68, -0.6).normalize() },
+    reflectionMap: { value: null as T.Texture | null },
+    reflectionMatrix: { value: new T.Matrix4() },
+    reflectionEnabled: { value: 0 },
+    fogColor: { value: new T.Color("#bfcac8") },
+    fogDensity: { value: 0.0025 },
   };
   const material = new T.ShaderMaterial({
     uniforms: waterUniforms,
@@ -125,60 +148,13 @@ export function createTerrain(economy: boolean) {
   ribbon.setIndex(indices);
   ribbon.computeVertexNormals();
   water.add(new T.Mesh(ribbon, material));
-  const oceanGeometry = new T.PlaneGeometry(700, 195, 1, 1);
+  const oceanGeometry = new T.PlaneGeometry(1400, 900, 1, 1);
   oceanGeometry.rotateX(-Math.PI / 2);
-  oceanGeometry.translate(0, 0, -742.5);
+  oceanGeometry.translate(0, 0, -1095);
   water.add(new T.Mesh(oceanGeometry, material));
-  const cartography = new T.Group();
-  cartography.name = "cartography";
-  const mapPositions: number[] = [];
-  for (let row = 0; row < 13; row++)
-    for (let column = 0; column < 8; column++) {
-      const x = -155 + column * 40,
-        z = -100 - row * 42,
-        jitter = 4 * Math.sin(row * 3 + column),
-        corners = [
-          [x, z],
-          [x + 36, z + jitter],
-          [x + 37 + jitter, z - 36],
-          [x - 2, z - 37],
-          [x, z],
-        ];
-      for (let i = 0; i < 4; i++) {
-        const a = corners[i],
-          b = corners[i + 1];
-        for (let k = 0; k < 5; k++) {
-          const t = k / 5,
-            u = (k + 1) / 5;
-          for (const f of [t, u]) {
-            const px = a[0] + (b[0] - a[0]) * f,
-              pz = a[1] + (b[1] - a[1]) * f;
-            mapPositions.push(px, terrainY(px, pz) + 0.23, pz);
-          }
-        }
-      }
-    }
-  // A route is traced on the actual world-space river curve, not a fabricated geographic dataset.
-  for (let i = 0; i < 170; i++) {
-    const z = -150 - i * 1.8;
-    mapPositions.push(riverX(z), 0.25, z, riverX(z - 1.8), 0.25, z - 1.8);
-  }
-  const mapGeometry = new T.BufferGeometry();
-  mapGeometry.setAttribute(
-    "position",
-    new T.Float32BufferAttribute(mapPositions, 3),
-  );
-  const lines = new T.LineSegments(
-    mapGeometry,
-    new T.LineBasicMaterial({ color: "#c4ef99" }),
-  );
-  cartography.add(lines);
   return {
     terrain,
     water,
     waterUniforms,
-    cartography,
-    mapGeometry,
-    mapVertexCount: mapPositions.length / 3,
   };
 }

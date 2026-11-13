@@ -3,6 +3,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { clamp01 } from "./journey";
 import { ownsPresentationKey } from "./jury-state";
 import { narrativeDuration } from "./config";
+import { pitchDuration, pitchSeconds, progressAtSeconds } from "./pitch";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -206,7 +207,20 @@ export class NarrativeTimeline {
       onComplete: () => this.pause(),
     });
   }
-  /** One speaker-controlled segment; never crosses into an unrequested chapter. */
+  /** Advance one continuous five-minute clock, including the demonstration chapter. */
+  playPresentation() {
+    if (this.reduced) return;
+    this.pause();
+    const cursor = { seconds: pitchSeconds(this.trigger.progress) };
+    this.playback = gsap.to(cursor, {
+      seconds: pitchDuration,
+      duration: Math.max(.01, pitchDuration - cursor.seconds),
+      ease: "none",
+      onUpdate: () => this.scrollTo(progressAtSeconds(cursor.seconds)),
+      onComplete: () => { this.scrollTo(1); this.snap(1); this.pause(); },
+    });
+  }
+  /** Advance to a specified position. */
   playTo(progress: number, seconds: number) {
     if (this.reduced) return;
     this.pause();

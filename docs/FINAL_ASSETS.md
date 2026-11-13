@@ -1,5 +1,11 @@
 # Symbiose — inventaire des assets
 
+> Nouvelle livraison des decors : **31c94db9b955178c**. Voir [la reprise des decors et sa recette](SCENERY_REWORK.md). Les mesures et captures ci-dessous sont conservees comme historique de la version precedente.
+
+
+Cet inventaire porte sur les images. Les modèles 3D et matériaux ajoutés ensuite
+sont détaillés dans [Animaux et matières](SPATIAL_ASSETS.md) et leur inventaire JSON.
+
 Inventaire du 13 novembre 2026. Les masters fournis restent intacts.
 17 dérivés : **32837763 → 4222222 octets**, soit **87.14 % de réduction**.
 Ce total compare les mêmes images ; il ne mesure ni la mémoire GPU ni tout le dépôt.
@@ -36,12 +42,16 @@ Les tests vérifient ces empreintes et la copie incluse dans le bundle.
 - Aucune police, texture ou vidéo distante indispensable. Les liens de bibliographie restent consultables, sans appel nécessaire au pitch.
 - **Montage produit de 90 s et sous-titres absents.** Aucun film fictif ne les remplace. Codec, résolution, débit, cadrage et compression ne sont donc pas validés. À préparer avec l'équipe : lecture locale compatible Chromium, 1080p maximum si suffisant pour les détails de l'interface, débit ajusté visuellement et VTT français.
 
-## Pack
+## Pack initial avant les ajouts 3D
 
 Révision **3aeae4f97a928ea3** : 31 ressources, **5460554 octets** dans le cache du jury.
 Le manifeste "frontend/dist/jury/offline-manifest.json" liste chaque URL, poids et empreinte.
 Le pack portable copie cette liste et ajoute le service worker, son manifeste, le serveur Node et son README.
 Le total du cache ne comprend pas ces fichiers auxiliaires. Les PNG masters et la galerie de revue sont exclus.
+
+Le pack actuel intègre également les GLB et les matériaux : consulter
+[la livraison spatiale](SPATIAL_ASSETS.md) et le manifeste du build courant pour
+sa révision et son poids, supérieurs à ceux de cette première version.
 
 Nginx compresse les textes, JS, CSS, JSON, SVG et VTT en gzip. WebP conserve sa compression propre.
 Le serveur portable sert directement les fichiers et les requêtes Range, sans dépendance npm au lancement.

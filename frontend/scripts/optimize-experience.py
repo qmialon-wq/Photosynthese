@@ -1,4 +1,5 @@
 """Create bounded WebP delivery copies; preserve the supplied PNG masters."""
+
 from __future__ import annotations
 
 import hashlib
@@ -18,7 +19,10 @@ def convert(source: Path, target: Path, width: int, quality: int) -> dict:
         image.thumbnail((width, width), Image.Resampling.LANCZOS)
         image.save(target, "WEBP", quality=quality, method=6, exact=True)
         with Image.open(target) as decoded:
-            alpha_exact = "A" not in image.getbands() or decoded.getchannel("A").tobytes() == image.getchannel("A").tobytes()
+            alpha_exact = (
+                "A" not in image.getbands()
+                or decoded.getchannel("A").tobytes() == image.getchannel("A").tobytes()
+            )
         if not alpha_exact:
             raise ValueError(f"WebP alpha changed: {target}")
         return {
@@ -45,12 +49,28 @@ def main() -> None:
         }
     media = PUBLIC / "experience-media"
     poster = convert(media / "manifesto-review.png", media / "manifesto-review.webp", 1440, 90)
-    inventory = {"version": 1, "method": "Pillow WebP, original masters unchanged; alpha preserved at delivery resolution", "scenes": scenes, "poster": poster}
+    inventory = {
+        "version": 1,
+        "method": "Pillow WebP, original masters unchanged; alpha preserved at delivery resolution",
+        "scenes": scenes,
+        "poster": poster,
+    }
     encoded = json.dumps(inventory, ensure_ascii=False, indent=2) + "\n"
     (PUBLIC / "experience-art" / "runtime-assets.json").write_text(encoded, encoding="utf-8")
-    (FRONTEND / "src" / "experience" / "content" / "runtime-assets.json").write_text(encoded, encoding="utf-8")
+    (FRONTEND / "src" / "experience" / "content" / "runtime-assets.json").write_text(
+        encoded, encoding="utf-8"
+    )
     records = [resource for scene in scenes.values() for resource in scene.values()] + [poster]
-    print(json.dumps({"resources": len(records), "sourceBytes": sum(r["sourceBytes"] for r in records), "deliveryBytes": sum(r["bytes"] for r in records)}, indent=2))
+    print(
+        json.dumps(
+            {
+                "resources": len(records),
+                "sourceBytes": sum(r["sourceBytes"] for r in records),
+                "deliveryBytes": sum(r["bytes"] for r in records),
+            },
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

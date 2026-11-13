@@ -1,5 +1,4 @@
 import * as T from "three";
-import { chapterIds, type ChapterId } from "./config";
 import { sampleEffects, smoothstep, type JourneyLayers } from "./journey";
 import { createTerrain } from "./world-terrain";
 import { createVegetation } from "./world-vegetation";
@@ -7,31 +6,63 @@ import { createCoast } from "./world-coast";
 import { createObservation } from "./world-observation";
 import { seededRandom, disposeScene } from "./world-utils";
 import { skyVertex, skyFragment, fogVertex, fogFragment } from "./shaders";
+import { createFauna } from "./world-fauna";
+import { createNature } from "./world-nature";
+import { logoParticleTargets } from "./logo-particles";
+import { PlanarWaterReflection } from "./PlanarWaterReflection";
 
-export function createJourneyWorld(economy = false) {
+export function createJourneyWorld(
+  economy = false,
+  signal = new AbortController().signal,
+  changed = () => {},
+  issue = (_message: string) => {},
+) {
   const scene = new T.Scene();
   scene.background = new T.Color("#233c32");
-  const fog = new T.FogExp2("#92a58b", 0.007);
+  const fog = new T.FogExp2("#bfcac8", 0.0025);
   scene.fog = fog;
-  const ambient = new T.HemisphereLight("#dde6ed", "#1f291c", 2.6),
-    sun = new T.DirectionalLight("#ffe6b5", 3.2);
-  sun.position.set(-160, 210, 80);
-  scene.add(ambient, sun);
+  const ambient = new T.HemisphereLight("#c6dce7", "#44382a", 0.95),
+    sun = new T.DirectionalLight("#fff0d6", 3.1);
+  const sunDirection = new T.Vector3(-0.42, 0.68, -0.6).normalize();
+  const coastalSunDirection = new T.Vector3(0.25, 0.74, 0.62).normalize();
+  const lightDirection = sunDirection.clone();
+  sun.castShadow = !economy;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.left = sun.shadow.camera.bottom = -48;
+  sun.shadow.camera.right = sun.shadow.camera.top = 48;
+  sun.shadow.camera.near = 1;
+  sun.shadow.camera.far = 420;
+  sun.shadow.bias = -0.0002;
+  sun.shadow.normalBias = 0.045;
+  scene.add(ambient, sun, sun.target);
   const terrain = createTerrain(economy),
     vegetation = createVegetation(economy),
     coast = createCoast(),
     observation = createObservation();
+  const reflection = new PlanarWaterReflection(economy);
+  terrain.waterUniforms.reflectionMap.value = reflection.texture;
+  terrain.waterUniforms.reflectionMatrix.value = reflection.matrix;
+  let environment: T.WebGLRenderTarget | undefined,
+    shadowEnabled = !economy,
+    shadowUpdate = true;
+  const fauna = createFauna(signal, changed, issue),
+    nature = createNature(signal, changed, issue, economy);
+  observation.animal.visible = false;
+  scene.add(fauna.group, nature.group);
   scene.add(
     terrain.terrain,
     terrain.water,
-    terrain.cartography,
     vegetation.group,
     coast.group,
     observation.group,
   );
   const atmosphere = new T.Group();
   atmosphere.name = "atmosphere";
-  const skyUniforms = { night: { value: 0 }, coast: { value: 0 } };
+  const skyUniforms = {
+    night: { value: 0 },
+    coast: { value: 0 },
+    sunDirection: { value: lightDirection },
+  };
   const sky = new T.Mesh(
     new T.SphereGeometry(900, 24, 16),
     new T.ShaderMaterial({
@@ -130,7 +161,7 @@ export function createJourneyWorld(economy = false) {
     fish.setMatrixAt(i, dummy.matrix);
   }
   points.add(fish);
-  const dataCount = 320,
+  const dataCount = 7200,
     scatter: number[] = [],
     target: number[] = [],
     dataGeometry = new T.BufferGeometry();
@@ -147,8 +178,8 @@ export function createJourneyWorld(economy = false) {
     new T.Float32BufferAttribute(scatter, 3),
   );
   const dataMaterial = new T.PointsMaterial({
-    color: "#d5edb3",
-    size: 0.075,
+    color: "#f5f8ef",
+    size: 0.018,
     transparent: true,
     opacity: 0.8,
     depthWrite: false,
@@ -159,34 +190,33 @@ export function createJourneyWorld(economy = false) {
   points.add(data);
   scene.add(points);
   const globalTarget = new T.Vector3();
-  const dayFog = new T.Color("#92a58b"),
-    coastFog = new T.Color("#b8c9c8"),
+  const dayFog = new T.Color("#dce1d7"),
+    coastFog = new T.Color("#e1e4e4"),
     waterFog = new T.Color("#174641"),
     nightFog = new T.Color("#142f36");
-  const daySun = new T.Color("#ffe6b5"),
+  const daySun = new T.Color("#fff0d6"),
     nightSun = new T.Color("#a0c5d1");
+  let logoAspect = 2.926;
   function attachTextures(textures: Map<string, T.Texture>) {
-    for (const id of chapterIds) {
-      const texture = textures.get(id);
-      if (texture) vegetation.addTexture(id as ChapterId, texture);
-    }
     const logo = textures.get("logo");
     if (!logo?.image) return;
     const image = logo.image as ImageBitmap,
       canvas = document.createElement("canvas");
-    canvas.width = 240;
-    canvas.height = 82;
+    logoAspect = image.width / image.height;
+    canvas.width = 1200;
+    canvas.height = Math.round(1200 / logoAspect);
     const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(image, 0, 0, 240, 82);
-    const pixels = ctx.getImageData(0, 0, 240, 82).data,
-      candidates: number[] = [];
-    for (let y = 0; y < 82; y += 2)
-      for (let x = 0; x < 240; x += 2)
-        if (pixels[(y * 240 + x) * 4 + 3] > 180) candidates.push(x, y);
-    for (let i = 0; i < dataCount && candidates.length; i++) {
-      const p = Math.floor((random() * candidates.length) / 2) * 2;
-      target[i * 3] = candidates[p] / 240 - 0.5;
-      target[i * 3 + 1] = candidates[p + 1] / 82 - 0.5;
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const candidates = logoParticleTargets(
+      ctx.getImageData(0, 0, canvas.width, canvas.height).data,
+      canvas.width,
+      canvas.height,
+      dataCount,
+    );
+    dataGeometry.setDrawRange(0, candidates.length / 2);
+    for (let i = 0; i < candidates.length / 2; i++) {
+      target[i * 3] = candidates[i * 2];
+      target[i * 3 + 1] = candidates[i * 2 + 1];
     }
   }
   function apply(
@@ -210,25 +240,38 @@ export function createJourneyWorld(economy = false) {
     atmosphere.visible = layers.atmosphere;
     points.visible = layers.particles;
     bubbles.visible = layers.water && fx.immersion > 0;
-    fish.visible = layers.water && fx.immersion > 0;
+    fish.visible = false; // Replaced by the supplied textured GLB fish.
     (fish.material as T.MeshStandardMaterial).opacity = fx.immersion * 0.9;
-    data.visible = fx.time > 187;
-    dataMaterial.opacity = smoothstep(187, 198, fx.time) * 0.8;
-    terrain.cartography.visible = layers.cartography && fx.map > 0.001;
-    terrain.mapGeometry.setDrawRange(
-      0,
-      Math.floor((terrain.mapVertexCount * fx.map) / 2) * 2,
-    );
+    data.visible = fx.logo > 0;
+    dataMaterial.opacity = fx.logo * 0.8;
     sky.position.copy(camera.position);
     skyUniforms.night.value = fx.night;
     const coastWeight =
       smoothstep(150, 175, fx.time) * (1 - smoothstep(187, 201, fx.time));
     skyUniforms.coast.value = coastWeight;
+    terrain.terrain.traverse((o) => {
+      if (o instanceof T.Mesh)
+        [o.material]
+          .flat()
+          .forEach((m) => (m.userData.coastalHaze.value = coastWeight));
+    });
     clouds.visible = fx.night < 1;
     cloudMaterial.uniforms.night.value = fx.night;
     sun.color.copy(daySun).lerp(nightSun, fx.night);
-    sun.intensity = T.MathUtils.lerp(2.5, 0.38, fx.night);
-    ambient.intensity = T.MathUtils.lerp(1.65, 0.48, fx.night);
+    sun.intensity = T.MathUtils.lerp(3.1, 0.62, fx.night);
+    ambient.intensity = T.MathUtils.lerp(0.95, 0.36, fx.night);
+    sun.target.position.set(camera.position.x, 2, camera.position.z - 20);
+    lightDirection
+      .copy(sunDirection)
+      .lerp(coastalSunDirection, coastWeight)
+      .normalize();
+    terrain.waterUniforms.sunDirection.value.copy(lightDirection);
+    sun.position.copy(sun.target.position).addScaledVector(lightDirection, 200);
+    sun.target.updateMatrixWorld();
+    shadowUpdate =
+      shadowEnabled && fx.immersion < 0.1 && camera.position.y < 110;
+    sun.shadow.intensity = shadowUpdate ? 0.7 : 0;
+    scene.environmentIntensity = T.MathUtils.lerp(0.35, 0.09, fx.night);
     fog.color
       .copy(dayFog)
       .lerp(coastFog, coastWeight)
@@ -236,7 +279,11 @@ export function createJourneyWorld(economy = false) {
       .lerp(nightFog, fx.night);
     fog.density = layers.atmosphere
       ? T.MathUtils.lerp(
-          T.MathUtils.lerp(0.007, 0.0038, coastWeight),
+          T.MathUtils.lerp(
+            (z > -150 || z < -825) && camera.position.y < 25 ? 0.009 : 0.0025,
+            0.003,
+            coastWeight,
+          ),
           0.042,
           fx.immersion,
         )
@@ -245,16 +292,18 @@ export function createJourneyWorld(economy = false) {
     terrain.waterUniforms.night.value = fx.night;
     terrain.waterUniforms.coast.value = coastWeight;
     terrain.waterUniforms.phase.value = fx.time * 0.42;
+    terrain.waterUniforms.fogColor.value.copy(fog.color);
+    terrain.waterUniforms.fogDensity.value = fog.density;
     bubbleMaterial.uniforms.phase.value = fx.time;
     bubbleMaterial.uniforms.strength.value = layers.water ? fx.immersion : 0;
     const attributes = dataGeometry.attributes.position as T.BufferAttribute;
     const viewHeight = 2 * Math.tan((camera.fov * Math.PI) / 360) * 10,
       logoWidth = viewHeight * camera.aspect * 0.3;
-    for (let i = 0; fx.time > 187 && i < dataCount; i++) {
+    for (let i = 0; fx.logo > 0 && i < dataCount; i++) {
       globalTarget
         .set(
           target[i * 3] * logoWidth + viewHeight * camera.aspect * 0.27,
-          (target[i * 3 + 1] * logoWidth) / 2.926 + viewHeight * 0.16,
+          (target[i * 3 + 1] * logoWidth) / logoAspect + viewHeight * 0.16,
           -10,
         )
         .applyMatrix4(camera.matrixWorld);
@@ -265,15 +314,80 @@ export function createJourneyWorld(economy = false) {
         T.MathUtils.lerp(scatter[i * 3 + 2], globalTarget.z, fx.logo),
       );
     }
-    attributes.needsUpdate = fx.time > 187;
-    return { effects: fx, observationBounds: observation.screenBounds(camera) };
+    attributes.needsUpdate = fx.logo > 0;
+    nature.group.visible = layers.vegetation;
+    nature.apply(camera, fx.night);
+    const animals = fauna.apply(
+      fx.time,
+      camera,
+      layers.observation,
+      fx.immersion,
+    );
+    return {
+      effects: fx,
+      observationBounds: observation.screenBounds(camera),
+      animals,
+    };
   }
   return {
     scene,
     apply,
+    get needsShadowUpdate() {
+      return shadowUpdate;
+    },
+    setEconomy(value: boolean) {
+      reflection.setEconomy(value);
+      shadowEnabled = !value;
+      sun.castShadow = !value;
+      if (value) {
+        sun.shadow.map?.dispose();
+        sun.shadow.map = null;
+      }
+    },
+    prepareEnvironment(renderer: T.WebGLRenderer) {
+      const envScene = new T.Scene(),
+        geometry = new T.SphereGeometry(30, 24, 16),
+        material = (sky.material as T.ShaderMaterial).clone();
+      envScene.add(new T.Mesh(geometry, material));
+      const generator = new T.PMREMGenerator(renderer);
+      environment = generator.fromScene(envScene, 0.02, 0.1, 100, {
+        size: economy ? 64 : 128,
+      });
+      scene.environment = environment.texture;
+      scene.environmentIntensity = 0.35;
+      generator.dispose();
+      geometry.dispose();
+      material.dispose();
+    },
+    renderReflection(renderer: T.WebGLRenderer, camera: T.PerspectiveCamera) {
+      renderer.shadowMap.needsUpdate = shadowUpdate;
+      reflection.render(
+        renderer,
+        scene,
+        camera,
+        terrain.water,
+        terrain.water.visible,
+      );
+      terrain.waterUniforms.reflectionEnabled.value = reflection.active ? 1 : 0;
+    },
     attachTextures,
     releaseTexture: vegetation.removeTexture,
-    dispose: () => disposeScene(scene),
+    loadInitial: () =>
+      Promise.all([
+        fauna.ensure(0),
+        nature.load(terrain.terrain, vegetation.group, coast.group),
+      ]),
+    get pending() {
+      return fauna.pending || nature.pending;
+    },
+    dispose: () => {
+      fauna.dispose();
+      nature.dispose();
+      reflection.dispose();
+      environment?.dispose();
+      sun.shadow.map?.dispose();
+      disposeScene(scene);
+    },
   };
 }
 export type JourneyWorld = ReturnType<typeof createJourneyWorld>;

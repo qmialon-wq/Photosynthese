@@ -1,5 +1,8 @@
 # Symbiose — guide du présentateur
 
+> Decors actualises : revision **31c94db9b955178c**, pack `Symbiose-jury-2026.zip`. Apres un changement de version, recharger en ligne et actualiser l'installation hors ligne, puis refaire le test de rechargement hors connexion. Le mode `?render=2d` et le PDF restent les secours sans GPU.
+
+
 ## Avant la séance
 
 1. Construire la production et ouvrir `http://localhost:8080/jury/` dans le profil

@@ -45,7 +45,7 @@ test("continuous camera, native wheel reversal, resize and strictly local resour
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
   await ready(page);
-  await expect(canvas(page)).toHaveAttribute("data-camera-y", "0.700");
+  await expect(canvas(page)).toHaveAttribute("data-camera-y", "2.100");
   await page.mouse.wheel(0, 1600);
   await expect.poll(() => altitude(page)).toBeGreaterThan(10);
   const raised = await altitude(page);
@@ -73,7 +73,7 @@ test("continuous camera, native wheel reversal, resize and strictly local resour
   await seek(page, 0);
   await page.locator("#main-content").focus();
   await page.keyboard.press("PageDown");
-  await expect.poll(() => altitude(page)).toBeGreaterThan(0.8);
+  await expect.poll(() => altitude(page)).toBeGreaterThan(2.2);
   expect(errors).toEqual([]);
   expect(external).toEqual([]);
 });
@@ -86,7 +86,7 @@ test("presentation yields to input and leaving the landing disposes its engine",
   await ready(page);
   await page.getByRole("button", { name: "Mode exploration" }).click();
   await page.getByRole("button", { name: "Lire le récit" }).click();
-  await expect.poll(() => altitude(page)).toBeGreaterThan(0.71);
+  await expect.poll(() => altitude(page)).toBeGreaterThan(2.11);
   await page.getByRole("button", { name: "Mettre en pause" }).focus();
   await page.keyboard.press("Space");
   await expect(
@@ -116,12 +116,12 @@ test("reduced motion uses eight fixed viewpoints, responsive layout and accessib
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await ready(page);
-  await expect(canvas(page)).toHaveAttribute("data-camera-y", "0.700");
+  await expect(canvas(page)).toHaveAttribute("data-camera-y", "2.100");
   await expect(
     page.getByText("Mouvements réduits · points de vue fixes"),
   ).toBeVisible();
   await page.getByRole("slider").fill("5");
-  await expect(canvas(page)).toHaveAttribute("data-camera-y", "0.700");
+  await expect(canvas(page)).toHaveAttribute("data-camera-y", "2.100");
   await page.getByRole("slider").fill("20");
   await expect(canvas(page)).toHaveAttribute("data-camera-y", "65.000");
   await page.getByRole("button", { name: "Mode exploration" }).click();
@@ -152,7 +152,9 @@ test("reduced motion uses eight fixed viewpoints, responsive layout and accessib
     "data-reduced-motion",
     "true",
   );
-  await expect(page.getByRole("button", { name: "Pitch chronométré" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Pitch chronométré" }),
+  ).toBeVisible();
   expect(
     (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
       .violations,
@@ -207,22 +209,25 @@ test("DEBUG seeks seven reversible transitions and changes actual draw layers", 
   await slider.fill("0.5");
   await expect(page.getByText("Confiance : non calculée")).toBeVisible();
   const before = (await state()).drawCalls;
-  await page.getByLabel("Végétation / calques alpha").uncheck();
+  await page.getByLabel("Végétation / arbres et plantes").uncheck();
   await expect.poll(async () => (await state()).drawCalls).toBeLessThan(before);
   await page.getByLabel("Référence générée (fixe)").check();
   await expect(page.locator(".sx-debug-reference img")).toBeVisible();
 });
 
-test("failed asynchronous foreground is explicit and world remains usable", async ({
+test("failed asynchronous material is explicit and world remains usable", async ({
   page,
 }) => {
   await publicSession(page);
-  await page.route("**/forest/foreground-runtime.webp", (route) =>
-    route.fulfill({ status: 404, body: "Missing test fixture" }),
+  await page.route(
+    "**/experience-models/forest_ground_04-Diffuse.jpg",
+    (route) => route.fulfill({ status: 404, body: "Missing test fixture" }),
   );
   await page.goto("/?debug=transitions");
   await ready(page);
-  await expect(page.getByText(/Calques indisponibles :.*forest/)).toBeVisible();
+  await expect(
+    page.getByText(/Calques indisponibles :.*forest_ground_04/),
+  ).toBeVisible();
   await page.getByLabel("Progression de la transition").fill("0.5");
   await expect.poll(() => altitude(page)).toBeGreaterThan(12);
 });
@@ -286,6 +291,6 @@ test("context loss releases WebGL and resumes with a current 2D inspector", asyn
   await page.getByLabel("Transition à inspecter").selectOption("ascent");
   await page.getByLabel("Progression de la transition").fill("0");
   await expect(page.getByLabel("Caméra inspectée")).toContainText(
-    "0.00 / 0.70 / 18.00",
+    "0.00 / 2.10 / 18.00",
   );
 });

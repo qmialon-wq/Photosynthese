@@ -10,14 +10,5 @@ export function sceneAsset(
 }
 export const posterUrl = inventory.poster.url;
 export const runtimeInventory = inventory;
-/** The shared canopy and logo stay pinned; other textures follow the camera window. */
-export function textureWindow(index: number): string[] {
-  const ids = Object.keys(inventory.scenes);
-  return [
-    ...new Set([
-      "sky",
-      "logo",
-      ...ids.slice(Math.max(0, index - 1), Math.min(ids.length, index + 2)),
-    ]),
-  ];
-}
+/** 3D scenery uses PBR maps; landscape plates belong exclusively to the 2D fallback. */
+export function textureWindow(_index: number): string[] { return ["logo"]; }

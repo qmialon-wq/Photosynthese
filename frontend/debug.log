@@ -1,0 +1,13 @@
+[1113/141352.251:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/141555.449:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/141601.475:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:260] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
+[1113/141601.478:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:260] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
+[1113/141842.320:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/142150.796:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/154052.461:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/154309.048:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/154438.186:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/154653.400:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/154709.763:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/154841.163:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)
+[1113/155212.842:ERROR:ui\gl\direct_composition_support.cc:625] AMD VideoProcessorGetOutputExtension failed: Erreur non spécifiée (0x80004005)

@@ -12,7 +12,8 @@ const gpu = process.argv.includes("--gpu");
 const jury = process.argv.includes("--jury");
 const base = process.env.E2E_BASE_URL || "http://127.0.0.1:8080";
 const output = path.resolve(
-  `../output/symbiose/final/${phase}-${fallback ? "2d" : gpu ? "gpu" : "software"}`,
+  process.env.AUDIT_OUTPUT ||
+    `../output/symbiose/final/${phase}-${fallback ? "2d" : gpu ? "gpu" : "software"}`,
 );
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch(
@@ -40,6 +41,10 @@ try {
     viewport: { width: 1440, height: 900 },
   });
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().includes("401"))
+      errors.push(message.text());
+  });
   page.on("request", (request) => {
     const url = new URL(request.url());
     if (!["localhost", "127.0.0.1"].includes(url.hostname))

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
@@ -36,41 +37,9 @@ async function chapter(page: Page, name: string, id: string) {
     /.+/,
   );
 }
-async function fixtureVideo(page: Page) {
-  // An explicit test signal, never shipped or presented as the product demonstration.
-  return Buffer.from(
-    await page.evaluate(async () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 160;
-      canvas.height = 90;
-      const context = canvas.getContext("2d")!;
-      const stream = canvas.captureStream(12);
-      const recorder = new MediaRecorder(stream, {
-        mimeType: "video/webm;codecs=vp8",
-      });
-      const chunks: Blob[] = [];
-      recorder.ondataavailable = (e) => chunks.push(e.data);
-      const done = new Promise<void>((resolve) => {
-        recorder.onstop = () => resolve();
-      });
-      recorder.start();
-      for (let i = 0; i < 18; i++) {
-        context.fillStyle = i % 2 ? "#325535" : "#264225";
-        context.fillRect(0, 0, 160, 90);
-        context.fillStyle = "white";
-        context.fillText("TEST MEDIA", 20, 40);
-        await new Promise((resolve) => setTimeout(resolve, 90));
-      }
-      recorder.stop();
-      await done;
-      stream.getTracks().forEach((track) => track.stop());
-      return [
-        ...new Uint8Array(
-          await new Blob(chunks, { type: "video/webm" }).arrayBuffer(),
-        ),
-      ];
-    }),
-  );
+async function fixtureVideo(_page: Page) {
+  // Verified local VP8 test signal. Never bundled into the product presentation.
+  return readFileSync("tests/fixtures/media-signal.webm");
 }
 
 test("eight sourced scenes, archived observations, jury coverage and final application link", async ({

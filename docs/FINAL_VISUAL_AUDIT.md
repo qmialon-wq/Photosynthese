@@ -1,5 +1,16 @@
 # Symbiose — audit visuel final
 
+> Nouvelle livraison des decors : **31c94db9b955178c**. Voir [la reprise des decors et sa recette](SCENERY_REWORK.md). Les mesures et captures ci-dessous sont conservees comme historique de la version precedente.
+
+
+**Mise à jour après cette première revue :** les animaux primitifs ont été
+remplacés par les GLB fournis, leurs encadrés suivent les volumes réels et des
+matières/décors Poly Haven ont été ajoutés. Voir [la revue spatiale](SPATIAL_ASSETS.md)
+et les [captures courantes](../output/symbiose/spatial/release-gpu/index.html).
+Les réserves ci-dessous sur la forêt et les falaises restent pertinentes : le
+mélange de géométrie stylisée et de photogrammétrie n'est pas une finition
+photoréaliste homogène validée.
+
 Revue du 13 novembre 2026, Chromium Windows, captures de production en 1440 × 900.
 Les huit captures ont été ouvertes et examinées. Les galeries de raccords
 complètent cette revue, sans constituer une validation artistique humaine.

@@ -106,3 +106,21 @@ production et ses états de validation artistique.
 Voir le [guide du présentateur](../docs/PRESENTER_GUIDE.md), le
 [bilan de livraison](../docs/FINAL_DELIVERY.md) et le
 [pitch chronométré](../docs/PITCH_DATATHON_2026.md).
+
+Les [animaux et matériaux Poly Haven](../docs/SPATIAL_ASSETS.md) sont livrés dans
+`public/experience-models/`, avec un inventaire d'empreintes. Leur préparation
+utilise `python scripts/prepare-spatial-assets.py` ; les sources restent intactes.
+Ajouter `spatial.spec.ts` aux scénarios Playwright pour contrôler les encadrés,
+le retour arrière, la mémoire des squelettes et les GLB hors ligne.
+
+
+## Reprise des décors
+
+La nouvelle recette, les provenances, les limites et la régénération des arbres,
+du bocage, des sols, de l'eau et des falaises sont dans
+[SCENERY_REWORK.md](../docs/SCENERY_REWORK.md). La version servie par Nginx est
+`31c94db9b955178c`. Les captures et mesures actuelles sont dans
+`output/symbiose/scenery/` ; celles de `spatial/` documentent la version précédente.
+
+Le pack portable mis à jour est `output/symbiose/Symbiose-jury-2026.zip`.
+Le lancement et la procédure d'installation hors ligne sont identiques.

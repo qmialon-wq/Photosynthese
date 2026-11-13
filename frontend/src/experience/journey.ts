@@ -58,7 +58,6 @@ export interface JourneyLayers {
   vegetation: boolean;
   water: boolean;
   atmosphere: boolean;
-  cartography: boolean;
   observation: boolean;
   particles: boolean;
   reference: boolean;
@@ -68,7 +67,6 @@ export const defaultLayers: JourneyLayers = {
   vegetation: true,
   water: true,
   atmosphere: true,
-  cartography: true,
   observation: true,
   particles: true,
   reference: false,

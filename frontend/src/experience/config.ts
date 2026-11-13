@@ -1,4 +1,4 @@
-﻿export type Vec3 = readonly [number, number, number];
+export type Vec3 = readonly [number, number, number];
 import { pitchChapters } from "./pitch";
 import { sceneAsset } from "./runtime-assets";
 
@@ -50,7 +50,7 @@ export interface NarrativeChapter {
 export const narrativeDuration = 210;
 export const scrollScreens = 21;
 export const cameraKeys: readonly CameraKey[] = [
-  { time: 0, position: [0, 0.7, 18], target: [-2, 7, -28], fov: 57 },
+  { time: 0, position: [0, 2.1, 18], target: [-2, 6, -28], fov: 57 },
   { time: 12, position: [1, 10, 0], target: [0, 34, -38], fov: 59 },
   { time: 23, position: [4, 34, -34], target: [9, 22, -120], fov: 59 },
   { time: 35, position: [4, 65, -85], target: [8, 45, -210], fov: 57 },
@@ -66,9 +66,9 @@ export const cameraKeys: readonly CameraKey[] = [
   { time: 133, position: [-4, 17, -488], target: [0, 2, -553], fov: 57 },
   { time: 150, position: [-20, 55, -550], target: [3, 1, -622], fov: 57 },
   { time: 165, position: [-8, 94, -622], target: [2, 6, -730], fov: 57 },
-  { time: 180, position: [38, 48, -680], target: [-26, 19, -753], fov: 57 },
-  { time: 190, position: [52, 62, -749], target: [-1, 18, -820], fov: 57 },
-  { time: 201, position: [12, 20, -818], target: [0, 8, -866], fov: 57 },
+  { time: 180, position: [58, 55, -648], target: [-44, 18, -753], fov: 57 },
+  { time: 190, position: [43, 47, -723], target: [-1, 18, -820], fov: 57 },
+  { time: 201, position: [12, 20, -800], target: [0, 8, -866], fov: 57 },
   { time: 210, position: [0, 2.5, -865], target: [0, 5, -912], fov: 57 },
 ];
 export const chapterIds: readonly ChapterId[] = [

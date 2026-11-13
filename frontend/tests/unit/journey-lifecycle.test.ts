@@ -1,11 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AssetPreloader } from "../../src/experience/AssetPreloader";
 import { PerformanceMonitor } from "../../src/experience/PerformanceMonitor";
-import { terrainY, riverX } from "../../src/experience/world-utils";
+import { terrainY, riverX, riverWidth } from "../../src/experience/world-utils";
 import { disposeScene } from "../../src/experience/world-utils";
-import { createVegetation } from "../../src/experience/world-vegetation";
+import {
+  woodlandPlacements,
+  hedgerowPlacements,
+} from "../../src/experience/woodland-layout";
+import { PlanarWaterReflection } from "../../src/experience/PlanarWaterReflection";
 import { sampleCamera } from "../../src/experience/CameraController";
-import { Scene, InstancedMesh, Matrix4, Vector3 } from "three";
+import { Scene, InstancedMesh, Group } from "three";
 import { textureWindow } from "../../src/experience/runtime-assets";
 import { RefractionPass } from "../../src/experience/RefractionPass";
 import { PerspectiveCamera } from "three";
@@ -33,18 +37,21 @@ describe("journey resource lifecycle", () => {
       preloader.load(signal, textureWindow(0)),
       preloader.load(signal, textureWindow(0)),
     ]);
-    expect(fetcher).toHaveBeenCalledTimes(3);
-    expect(preloader.residentCount).toBe(3);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(preloader.residentCount).toBe(1);
     await preloader.load(signal, textureWindow(5));
-    preloader.releaseExcept(textureWindow(5));
-    expect(preloader.residentCount).toBe(5);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    // Explicit optional image windows still support eviction and re-entry.
+    await preloader.load(signal, ["logo", "forest", "sky"]);
+    preloader.releaseExcept(["logo", "sky"]);
+    expect(preloader.residentCount).toBe(2);
     expect(close).toHaveBeenCalledTimes(1);
-    await preloader.load(signal, textureWindow(0));
+    await preloader.load(signal, ["logo", "forest"]);
     preloader.releaseExcept(textureWindow(0));
-    expect(preloader.residentCount).toBe(3);
-    expect(preloader.estimatedImageBytes).toBe((3 * 1280 * 720 * 4 * 4) / 3);
+    expect(preloader.residentCount).toBe(1);
+    expect(preloader.estimatedImageBytes).toBe((1280 * 720 * 4 * 4) / 3);
     preloader.dispose();
-    expect(close).toHaveBeenCalledTimes(7);
+    expect(close).toHaveBeenCalledTimes(4);
   });
   it("uses one world pass on land and two passes only during immersion", () => {
     const renderer = { setRenderTarget: vi.fn(), render: vi.fn() },
@@ -113,48 +120,96 @@ describe("journey resource lifecycle", () => {
 
 describe("continuous movement monitoring", () => {
   it("ties aquatic appearances and night-cloud extinction to scroll-derived effects", () => {
-    const world = createWorld(true), camera = new CameraController();
+    const world = createWorld(true),
+      camera = new CameraController();
     const particles = world.scene.getObjectByName("particles")!;
     const fish = particles.children[1] as InstancedMesh;
-    camera.update(60/210);world.apply(60/210,camera.camera,defaultLayers);
+    camera.update(60 / 210);
+    world.apply(60 / 210, camera.camera, defaultLayers);
     expect(fish.visible).toBe(false);
-    camera.update(95/210);const submerged = world.apply(95/210,camera.camera,defaultLayers);
-    expect(fish.visible).toBe(true);
-    expect((fish.material as any).opacity).toBeCloseTo(submerged.effects.immersion*.9);
-    const clouds = world.scene.getObjectByName("atmosphere")!.children[1] as InstancedMesh;
-    for(const t of [190,200,205,210,200,190]) {
-      camera.update(t/210);const state=world.apply(t/210,camera.camera,defaultLayers);
-      expect((clouds.material as any).uniforms.night.value).toBe(state.effects.night);
-      expect(clouds.visible).toBe(state.effects.night<1);
+    camera.update(95 / 210);
+    const submerged = world.apply(95 / 210, camera.camera, defaultLayers);
+    expect(fish.visible).toBe(false); // Placeholder cones remain replaced by the real local GLB.
+    expect(
+      (particles.children[0] as any).material.uniforms.strength.value,
+    ).toBeCloseTo(submerged.effects.immersion);
+    const clouds = world.scene.getObjectByName("atmosphere")!
+      .children[1] as InstancedMesh;
+    for (const t of [190, 200, 205, 210, 200, 190]) {
+      camera.update(t / 210);
+      const state = world.apply(t / 210, camera.camera, defaultLayers);
+      expect((clouds.material as any).uniforms.night.value).toBe(
+        state.effects.night,
+      );
+      expect(clouds.visible).toBe(state.effects.night < 1);
     }
     world.dispose();
   });
-  it("keeps the entire camera path outside the actual instanced field hedges", () => {
-    const vegetation = createVegetation(true),
-      hedges = vegetation.hedges.getObjectByName(
-        "field-hedges",
-      ) as InstancedMesh;
-    const matrix = new Matrix4(),
-      center = new Vector3(),
-      scale = new Vector3(),
-      collisions: number[] = [];
-    for (let sample = 0; sample <= 800; sample++) {
-      const p = sample / 800,
-        pose = sampleCamera(p).position;
-      for (let i = 0; i < hedges.count; i++) {
-        hedges.getMatrixAt(i, matrix);
-        center.setFromMatrixPosition(matrix);
-        scale.setFromMatrixScale(matrix);
-        if (scale.x === 0) continue;
-        const distance =
-          ((pose[0] - center.x) / scale.x) ** 2 +
-          ((pose[1] - center.y) / scale.y) ** 2 +
-          ((pose[2] - center.z) / scale.z) ** 2;
-        if (distance < 1.1) collisions.push(p);
+  it("keeps woodland trunks away from the camera and river corridor", () => {
+    const locations = [-65, -935, -170, -270, -430, -555, -625].flatMap(
+      (center) =>
+        woodlandPlacements(
+          center,
+          60,
+          Math.abs(center) + 519,
+          center === -65 || center === -935,
+        ),
+    );
+    locations.push(
+      ...[-170, -270, -430, -555, -625].flatMap(hedgerowPlacements),
+    );
+    const poses = Array.from(
+      { length: 801 },
+      (_, i) => sampleCamera(i / 800).position,
+    );
+    let nearestTrunk = Infinity;
+    for (const p of locations) {
+      if (p.z < -165 && p.z > -525)
+        expect(Math.abs(p.x - riverX(p.z))).toBeGreaterThan(
+          riverWidth(p.z) + 10,
+        );
+      for (const pose of poses)
+        nearestTrunk = Math.min(
+          nearestTrunk,
+          Math.hypot(pose[0] - p.x, pose[2] - p.z),
+        );
+    }
+    expect(nearestTrunk).toBeGreaterThan(3);
+  });
+  it("does no reflection render on land, underwater or in economy mode", () => {
+    const renderer = { render: vi.fn() },
+      water = new Group(),
+      scene = new Scene(),
+      camera = new PerspectiveCamera();
+    const reflection = new PlanarWaterReflection(false);
+    for (const [y, z] of [
+      [2, 18],
+      [-4, -300],
+      [60, -580],
+    ]) {
+      camera.position.set(0, y, z);
+      reflection.render(renderer as any, scene, camera, water, true);
+      expect(reflection.active).toBe(false);
+      expect(water.visible).toBe(true);
+    }
+    reflection.setEconomy(true);
+    camera.position.set(0, 3, -240);
+    reflection.render(renderer as any, scene, camera, water, true);
+    expect(reflection.active).toBe(false);
+    expect(renderer.render).not.toHaveBeenCalled();
+    reflection.dispose();
+  });
+  it("joins both river banks continuously to the rolling ground", () => {
+    for (const z of [-230, -280, -315, -375, -400]) {
+      for (const side of [-1, 1]) {
+        const edge = riverX(z) + side * riverWidth(z);
+        expect(
+          Math.abs(
+            terrainY(edge - side * 0.001, z) - terrainY(edge + side * 0.001, z),
+          ),
+        ).toBeLessThan(0.02);
       }
     }
-    disposeScene(new Scene().add(vegetation.group));
-    expect(collisions).toEqual([]);
   });
   it("does not interpret screenshots or idle redraws as low performance", () => {
     vi.spyOn(document, "hidden", "get").mockReturnValue(false);
@@ -175,6 +230,17 @@ describe("continuous movement monitoring", () => {
       monitor = new PerformanceMonitor(() => {}, downgrade);
     for (let i = 1; i < 170; i++) monitor.frame(i * 40, true);
     expect(downgrade).toHaveBeenCalledTimes(1);
+  });
+  it("keeps the night clearing dry above a continuous irregular coast", () => {
+    expect(terrainY(0, -865)).toBeGreaterThan(0);
+    expect(terrainY(0, -830)).toBeLessThan(-8);
+    for (const x of [-70, -20, 0, 20, 70]) {
+      const edge = -850 + 8 * Math.sin(x * 0.03) + 3 * Math.sin(x * 0.073);
+      for (const z of [edge, edge - 16])
+        expect(
+          Math.abs(terrainY(x, z - 0.001) - terrainY(x, z + 0.001)),
+        ).toBeLessThan(0.02);
+    }
   });
   it("keeps the river bed below its surface and the observation island above it", () => {
     for (const z of [-230, -280, -315, -375, -400])

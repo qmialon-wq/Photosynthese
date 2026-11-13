@@ -1,5 +1,6 @@
 import type { TransitionId } from "./journey";
 import type { Vec3 } from "./config";
+import type { AnimalBox } from "./world-fauna";
 export interface FrameReport {
   progress: number;
   transition: TransitionId;
@@ -26,4 +27,5 @@ export interface FrameReport {
   postProcessing: boolean;
   cpuSubmitMs: number;
   assetsPending: boolean;
+  animals?: AnimalBox[];
 }

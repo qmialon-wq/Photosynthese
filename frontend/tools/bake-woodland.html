@@ -1,0 +1,6 @@
+<!doctype html><html><meta charset="utf-8"><title>Woodland LOD bake</title><script type="module">
+import * as T from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const renderer=new T.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});renderer.setSize(900,1100);renderer.setClearColor(0,0);renderer.toneMapping=T.ACESFilmicToneMapping;document.body.append(renderer.domElement);
+const model=await new GLTFLoader().loadAsync('/tools/tree-source.glb'),scene=new T.Scene();scene.add(model.scene);scene.add(new T.HemisphereLight('#e3edf1','#5f603b',2.2));const sun=new T.DirectionalLight('#fff2da',2.5);scene.add(sun);const bounds=new T.Box3().setFromObject(model.scene),center=bounds.getCenter(new T.Vector3()),size=bounds.getSize(new T.Vector3());model.scene.position.sub(center);const span=Math.max(size.y,Math.max(size.x,size.z)*1100/900)*1.08,camera=new T.OrthographicCamera(-span*900/1100/2,span*900/1100/2,span/2,-span/2,.01,100);window.baked=[];
+for(let i=0;i<4;i++){const angle=i*Math.PI/2;camera.position.set(Math.sin(angle)*12,0,Math.cos(angle)*12);camera.lookAt(0,0,0);sun.position.set(camera.position.x-5,8,camera.position.z+3);renderer.render(scene,camera);window.baked.push(renderer.domElement.toDataURL('image/png'));}window.done=true;
+</script></html>

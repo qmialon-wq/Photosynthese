@@ -49,8 +49,16 @@ export function juryBuild() {
           collect(dependency);
       }
       collect("jury/index.html");
+      const spatial = JSON.parse(
+        await readFile(
+          path.join(directory, "experience-models/inventory.json"),
+          "utf8",
+        ),
+      );
+      files.add("/experience-models/inventory.json");
+      for (const asset of Object.values(spatial.assets)) files.add(asset.url);
       for (const scene of Object.values(inventory.scenes))
-        for (const resource of Object.values(scene)) files.add(resource.url);
+        files.add(scene.primary.url);
       const media = await readdir(path.join(directory, "experience-media"));
       const demos = media
         .filter((name) => /^demo\.(mp4|webm)$/.test(name))

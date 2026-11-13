@@ -1,7 +1,7 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { gsap } from "gsap";
-import { ACESFilmicToneMapping, WebGLRenderer } from "three";
+import { ACESFilmicToneMapping, PCFSoftShadowMap, WebGLRenderer } from "three";
 import { CameraController } from "./CameraController";
 import { AtmosphereController } from "./AtmosphereController";
 import { AssetPreloader } from "./AssetPreloader";
@@ -117,6 +117,7 @@ onMounted(async () => {
       layers = props.layers ?? defaultLayers;
     const state = world.apply(progress, camera.camera, layers);
     atmosphere.update(renderer, state.effects.night);
+    world.renderReflection(renderer, camera.camera);
     pass!.render(
       renderer,
       world.scene,
@@ -150,7 +151,8 @@ onMounted(async () => {
       estimatedImageBytes: preloader.estimatedImageBytes,
       postProcessing: layers.water && state.effects.immersion > 0,
       cpuSubmitMs: performance.now() - began,
-      assetsPending,
+      assetsPending: assetsPending || world.pending,
+      animals: state.animals,
     };
     host.value.dataset.cameraY = pose.position[1].toFixed(3);
     host.value.dataset.progress = progress.toFixed(5);
@@ -251,11 +253,13 @@ onMounted(async () => {
       /SwiftShader|llvmpipe|software/i.test(device) ||
       window.matchMedia("(max-width: 600px)").matches;
     quality = economy ? "eco" : "standard";
+    renderer.shadowMap.enabled = !economy; renderer.shadowMap.type = PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
     renderer.setPixelRatio(economy ? 0.65 : Math.min(devicePixelRatio, 1.5));
     monitor = new PerformanceMonitor(
       (sample) => emit("performance", sample),
       () => {
         quality = "eco";
+        world?.setEconomy(true); renderer!.shadowMap.enabled = false;
         renderer!.setPixelRatio(
           Math.max(0.5, renderer!.getPixelRatio() * 0.72),
         );
@@ -266,11 +270,15 @@ onMounted(async () => {
     renderer.domElement.setAttribute("aria-hidden", "true");
     renderer.domElement.addEventListener("webglcontextlost", lost);
     host.value.append(renderer.domElement);
-    world = createWorld(economy);
+    world = createWorld(economy, abort.signal, invalidate, (message) =>
+      emit("assets", [message]),
+    );
     pass = new RefractionPass();
     camera.update(props.progress);
     resize();
     await selectAssets(pitchIndex(props.progress));
+    await world.loadInitial();
+    world.prepareEnvironment(renderer);
     if (abort.signal.aborted) return;
     if (
       !(await preloader.prepare(

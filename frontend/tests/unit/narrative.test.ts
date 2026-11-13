@@ -47,7 +47,7 @@ describe("continuous eight-environment journey", () => {
     const middle = sampleCamera(transitionProgress("ascent", 0.5));
     expect(middle.position[1]).toBeGreaterThan(12);
     expect(middle.position[1]).toBeLessThan(34);
-    expect(sampleCamera(0).position[1]).toBe(0.7);
+    expect(sampleCamera(0).position[1]).toBe(2.1);
     expect(sampleCamera(1).position[1]).toBe(2.5);
   });
   it("keeps velocity continuous at every camera key and never jumps over a frame", () => {

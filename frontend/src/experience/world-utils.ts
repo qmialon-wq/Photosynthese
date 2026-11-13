@@ -17,8 +17,20 @@ export function riverWidth(z: number) {
   return 8 + 14 * ease((-z - 245) / 45) + 4 * ease((-z - 385) / 35);
 }
 export function terrainY(x: number, z: number) {
-  const rolling = 0.65 + 0.55 * Math.sin(x * 0.035) * Math.cos(z * 0.023);
-  if (z < -660 && z > -820) return -9;
+  const rolling =
+    z > -130 || z < -825
+      ? 0.65 + 0.55 * Math.sin(x * 0.035) * Math.cos(z * 0.023)
+      : Math.max(
+          0.3,
+          2.4 +
+            2.1 * Math.sin(x * 0.025) * Math.cos(z * 0.02) +
+            Math.sin(z * 0.014),
+        );
+  if (z < -660 && z > -900) {
+    const shoreline = -850 + 8 * Math.sin(x * 0.03) + 3 * Math.sin(x * 0.073);
+    const t = Math.min(1, Math.max(0, (shoreline - z) / 16));
+    return -9 + (rolling + 9) * t * t * (3 - 2 * t);
+  }
   if (z < -175 && z > -510) {
     const distance = Math.abs(x - riverX(z)),
       width = riverWidth(z);
@@ -34,6 +46,9 @@ export function terrainY(x: number, z: number) {
       const island = 1 - ease((Math.hypot(x - 14, z + 458) - 2) / 5);
       return bed + (0.6 - bed) * island;
     }
+    // Ease the banks into the hills instead of a vertical step at the waterline.
+    const bankT = Math.min(1, Math.max(0, (distance - width) / 12));
+    return 0.2 + (rolling - 0.2) * bankT * bankT * (3 - 2 * bankT);
   }
   return rolling;
 }

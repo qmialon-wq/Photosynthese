@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "assets": {
+    "buse": {
+      "url": "/experience-models/buse.glb",
+      "bytes": 48724,
+      "sha256": "5f333e1832aaf40ede1f6b2806de13b2c45755584e93868888eb8e812feec90d",
+      "source": "3d assets/buse.glb",
+      "sourceBytes": 48708,
+      "license": "User supplied; original license not provided",
+      "role": "animal"
+    },
+    "chevreuil": {
+      "url": "/experience-models/chevreuil.glb",
+      "bytes": 1929592,
+      "sha256": "70848c02aaa5bd517d5e1c9b074b995f2c94a673c093db97ae99bdca48eb2a1f",
+      "source": "3d assets/chevreuil.glb",
+      "sourceBytes": 2076972,
+      "license": "User supplied; original license not provided",
+      "role": "animal"
+    },
+    "sanglier": {
+      "url": "/experience-models/sanglier.glb",
+      "bytes": 675052,
+      "sha256": "9ca7647084a4ecc5cc4ee71d404b7f140296b06eff5742f6838e5ae0c0def225",
+      "source": "3d assets/sanglier.glb",
+      "sourceBytes": 7759096,
+      "license": "User supplied; original license not provided",
+      "role": "animal"
+    },
+    "pigeon": {
+      "url": "/experience-models/pigeon.glb",
+      "bytes": 414308,
+      "sha256": "3b09debbea16ac036662c50a596c15edd4107a95eca07ebf58e4c089f6a00495",
+      "source": "3d assets/pigeon.glb",
+      "sourceBytes": 1474452,
+      "license": "User supplied; original license not provided",
+      "role": "animal"
+    },
+    "poisson": {
+      "url": "/experience-models/poisson.glb",
+      "bytes": 718348,
+      "sha256": "5d40fa9da0b2de1f8e7b1e0eb3726f8dc417109603a50f0462b1233fc2b33f8f",
+      "source": "3d assets/poisson.glb",
+      "sourceBytes": 8477504,
+      "license": "User supplied; original license not provided",
+      "role": "animal"
+    },
+    "fern_02": {
+      "url": "/experience-models/fern_02.glb",
+      "bytes": 448516,
+      "sha256": "7bd2ff28381ba05595254c5f370b4a2634b7fcbfdbc89d85477f551286c80bfb",
+      "source": "output/symbiose/nature-sources/fern_02/fern_02.gltf",
+      "sourceBytes": 6899,
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/fern_02",
+      "role": "nature"
+    },
+    "rock_moss_set_01": {
+      "url": "/experience-models/rock_moss_set_01.glb",
+      "bytes": 1927628,
+      "sha256": "093aaaadabf5b5f599591d8b42564eecab12207d3853a7417c84fc9f6838ba28",
+      "source": "output/symbiose/nature-sources/rock_moss_set_01/rock_moss_set_01.gltf",
+      "sourceBytes": 9987,
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/rock_moss_set_01",
+      "role": "nature"
+    },
+    "tree_stump_01": {
+      "url": "/experience-models/tree_stump_01.glb",
+      "bytes": 1899436,
+      "sha256": "743695807cef891ee032f146ea3a8dc5ced45b7e0512bbca71a4591c9984f5c0",
+      "source": "output/symbiose/nature-sources/tree_stump_01/tree_stump_01.gltf",
+      "sourceBytes": 2793,
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/tree_stump_01",
+      "role": "nature"
+    },
+    "forest_ground_04-Diffuse": {
+      "url": "/experience-models/forest_ground_04-Diffuse.jpg",
+      "bytes": 437158,
+      "sha256": "e5e3dbfb72bfaec0fa028144c60169ec6c05c6c73be5298a8673ceb3b4a8b46a",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/forest_ground_04",
+      "role": "material"
+    },
+    "forest_ground_04-nor_gl": {
+      "url": "/experience-models/forest_ground_04-nor_gl.jpg",
+      "bytes": 485188,
+      "sha256": "c478bb4ee1f54b4e36ba8cffd40a4e27018bc01f1d3b39847de18d774b128ea5",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/forest_ground_04",
+      "role": "material"
+    },
+    "forest_ground_04-Rough": {
+      "url": "/experience-models/forest_ground_04-Rough.jpg",
+      "bytes": 213315,
+      "sha256": "0343efddcbe2674e21a9803aaed69b57f306f8f9c4942b8f870351a8adb158b6",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/forest_ground_04",
+      "role": "material"
+    },
+    "bark_brown_01-Diffuse": {
+      "url": "/experience-models/bark_brown_01-Diffuse.jpg",
+      "bytes": 377508,
+      "sha256": "b9b6ddec2249cba1a541f0f42da577119c8e17576990371dd643d207000583aa",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/bark_brown_01",
+      "role": "material"
+    },
+    "bark_brown_01-nor_gl": {
+      "url": "/experience-models/bark_brown_01-nor_gl.jpg",
+      "bytes": 424514,
+      "sha256": "a30090dcb3ede182b11bfb7b11fd8931096a91b56506b30b1859ee149511433d",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/bark_brown_01",
+      "role": "material"
+    },
+    "bark_brown_01-Rough": {
+      "url": "/experience-models/bark_brown_01-Rough.jpg",
+      "bytes": 112555,
+      "sha256": "84c342e0f7ed7f7ba1d6b9f9170e6acce0cb45045c1e5d154752b4e810e865eb",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/bark_brown_01",
+      "role": "material"
+    },
+    "tree-near": {
+      "url": "/experience-models/tree-near.glb",
+      "bytes": 9662620,
+      "sha256": "108bba2e44822b37cb58ca26f8c5c845271698fe54e7990ed15413f44daae461",
+      "source": "output/symbiose/scenery-sources/tree_small_02/tree-near.gltf",
+      "sourceBytes": 5148,
+      "license": "CC0-1.0",
+      "role": "scenery",
+      "sourceUrl": "https://polyhaven.com/a/tree_small_02"
+    },
+    "grass-medium": {
+      "url": "/experience-models/grass-medium.glb",
+      "bytes": 1680960,
+      "sha256": "4c169f5ad73c22fd3e197e5607d139d725f40d8eb2664c5033ad027cff5d3a18",
+      "source": "output/symbiose/scenery-sources/grass_medium_01/grass_medium_01.gltf",
+      "sourceBytes": 27110,
+      "license": "CC0-1.0",
+      "role": "scenery",
+      "sourceUrl": "https://polyhaven.com/a/grass_medium_01"
+    },
+    "aerial_grass_rock-Diffuse": {
+      "url": "/experience-models/aerial_grass_rock-Diffuse.jpg",
+      "bytes": 277959,
+      "sha256": "03b4228081edc3ea89eb31d439fa983c973f470901177ccd272caa883f0c31b3",
+      "role": "material",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/aerial_grass_rock"
+    },
+    "rock_face_02-Diffuse": {
+      "url": "/experience-models/rock_face_02-Diffuse.jpg",
+      "bytes": 324376,
+      "sha256": "427d70b0ef22718523572df15daad222f395e785e3f8b4a0c2e4de56a437ae34",
+      "role": "material",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/rock_face_02"
+    },
+    "rock_face_02-nor_gl": {
+      "url": "/experience-models/rock_face_02-nor_gl.jpg",
+      "bytes": 365276,
+      "sha256": "d014a8f571e30247c93eaf92281e8a5af1ba83855974e3dbd42b63dd7852837a",
+      "role": "material",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/rock_face_02"
+    },
+    "rock_face_02-Rough": {
+      "url": "/experience-models/rock_face_02-Rough.jpg",
+      "bytes": 202562,
+      "sha256": "e7d54577a36f36637807d4c4023c21c2b60526edebdd17ee5f978f3d72b33e22",
+      "role": "material",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/rock_face_02"
+    },
+    "tree-atlas": {
+      "url": "/experience-models/tree-atlas.webp",
+      "bytes": 690296,
+      "sha256": "0406ead47b3b9dc86f80ae3c73247ce3dcc60f6df745ea641f0c31ec4ac2cb62",
+      "role": "scenery",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/tree_small_02"
+    },
+    "tree-atlas-metadata": {
+      "url": "/experience-models/tree-atlas-metadata.json",
+      "bytes": 44,
+      "sha256": "9049c57907c1de8b27c79b87bbfc81d126d060fe490e350d9997415190884d74",
+      "role": "scenery",
+      "license": "CC0-1.0",
+      "sourceUrl": "https://polyhaven.com/a/tree_small_02"
+    }
+  }
+}

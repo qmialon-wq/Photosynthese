@@ -1,5 +1,10 @@
 # Symbiose — performance et sobriété
 
+**Historique avant intégration des animaux et matériaux Poly Haven.** Les
+[mesures actuelles](../output/symbiose/spatial/release-gpu/report.json) et la
+[note d'intégration](SPATIAL_ASSETS.md) documentent cette évolution. Les FPS et
+compteurs de ce rapport initial ne doivent pas être attribués au nouveau décor.
+
 Mesures du 13 novembre 2026, **Chromium 156.0.8078.4**, Windows 11, **1440 × 900**.
 CPU : AMD Ryzen 7 4800H with Radeon Graphics ; RAM : 15.42 Gio.
 Renderer réel : "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)".

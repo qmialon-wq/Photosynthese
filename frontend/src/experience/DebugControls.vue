@@ -40,10 +40,9 @@ const current = computed(() => {
 const pose = computed(() => props.frame ?? sampleCamera(props.progress));
 const labels: Record<keyof JourneyLayers, string> = {
   terrain: "Relief / falaises",
-  vegetation: "Végétation / calques alpha",
+  vegetation: "Végétation / arbres et plantes",
   water: "Eau / réfraction",
   atmosphere: "Ciel / brume / lumière",
-  cartography: "Tracés illustratifs",
   observation: "Animal / capteurs / cadre",
   particles: "Bulles / données / logo",
   reference: "Référence générée (fixe)",

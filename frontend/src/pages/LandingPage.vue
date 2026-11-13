@@ -28,6 +28,7 @@ import "../experience/finishing.css";
 import symbioseLogo from "../assets/symbiose-logo.png";
 import FallbackScene from "../experience/FallbackScene.vue";
 import JourneyAnnotations from "../experience/JourneyAnnotations.vue";
+import FaunaAnnotations from "../experience/FaunaAnnotations.vue";
 import {
   defaultLayers,
   transitions,
@@ -159,17 +160,11 @@ function setMode(value: "exploration" | "presentation") {
   mode.value = value;
 }
 function play() {
-  const index = pitchIndex(progress.value);
-  if (!reducedMotion.value && index !== 5) {
+  if (!reducedMotion.value) {
     if (progress.value >= 0.999) {
       seek(0);
-      return;
     }
-    const end = pitchChapters[index].start + pitchChapters[index].duration;
-    timeline?.playTo(
-      progressAtSeconds(end),
-      end - pitchSeconds(progress.value),
-    );
+    timeline?.playPresentation();
     playing.value = true;
   }
 }
@@ -332,7 +327,6 @@ onBeforeUnmount(() => {
         :app-href="applicationHref"
         @begin="seek(chapterProgress(1))"
         @sources="openProject"
-        @video-playing="timeline?.pause()"
       />
       <h1 v-else class="sx-sr-only">Symbiose — Le vivant nous relie</h1>
       <JourneyAnnotations
@@ -340,6 +334,7 @@ onBeforeUnmount(() => {
         :frame="frame"
         :visible="layers.observation"
       />
+      <FaunaAnnotations v-if="frame?.animals?.length" :animals="frame.animals" />
       <div class="sx-location">
         <span class="sx-location-mark" aria-hidden="true">⌖</span> NORMANDIE,
         FRANCE<span class="sx-location-rule" aria-hidden="true" /><span>{{

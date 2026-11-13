@@ -6,12 +6,23 @@
   type WebGLRenderer,
 } from "three";
 import { activeChapters } from "./config";
+import spatialInventory from "./content/spatial-assets.json";
+const svgLogo = (spatialInventory.assets as Record<string, {url: string}>)["logo-svg"];
+async function decodeSvgLogo(blob: Blob) {
+  const url = URL.createObjectURL(blob);
+  try {
+    const image = new Image(); image.src = url; await image.decode();
+    const canvas = document.createElement("canvas"); canvas.width = 2048; canvas.height = Math.round(2048 * image.naturalHeight / image.naturalWidth);
+    canvas.getContext("2d")!.drawImage(image, 0, 0, canvas.width, canvas.height);
+    return await createImageBitmap(canvas);
+  } finally { URL.revokeObjectURL(url); }
+}
 export class AssetPreloader {
   readonly resources = [
     ...activeChapters.flatMap((chapter) =>
       chapter.assets.map((asset) => ({ id: chapter.id, url: asset.url })),
     ),
-    { id: "logo", url: "/experience-art/shared/symbiose-logo.png" },
+    { id: "logo", url: svgLogo?.url || "/experience-art/shared/symbiose-logo.png" },
   ];
   private textures = new Map<string, Texture>();
   private pending = new Map<string, Promise<void>>();
@@ -47,8 +58,9 @@ export class AssetPreloader {
                 signal: controller.signal,
               });
               if (!response.ok) throw new Error(String(response.status));
-              const bitmap = await createImageBitmap(await response.blob(), {
-                imageOrientation: "flipY",
+              const blob = await response.blob();
+              const bitmap = resource.url.endsWith(".svg") ? await decodeSvgLogo(blob) : await createImageBitmap(blob, {
+                imageOrientation: resource.id === "logo" ? "none" : "flipY",
                 premultiplyAlpha: "none",
               });
               if (signal.aborted || this.disposed) {
