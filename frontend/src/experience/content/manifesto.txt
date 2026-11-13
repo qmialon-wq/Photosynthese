@@ -1,0 +1,321 @@
+PAGE 1
+ 
+ 
+DATATHON NORMANDIE 
+ 
+1.​ Nom de la solution et des membres qui portent le projet 
+ 
+SYMBIOSE - “L’humain en symbiose avec la nature” 
+Équipe porteuse : ARQ 
+Membres de l'équipe: Arden, Romain, Quentin 
+Symbiose est un projet développé dans le cadre du Datathon Normandie 2026, avec l'ambition de 
+mettre l'intelligence artificielle et les données environnementales au service de la préservation de la 
+biodiversité et d'un aménagement plus respectueux du vivant. 
+2.​ Quelques mots-clés pour décrire la solution 
+Biodiversité ; Intelligence artificielle ; Vision par ordinateur ; Reconnaissance d'espèces ; Captation de 
+la faune ; Open Data ; Données géographiques ; Cartographie environnementale ; Analyse territoriale 
+; Aide à la décision ; Aménagement durable ; Préservation des écosystèmes ; Numérique 
+responsable. 
+3.​ Le problème auquel la solution répond 
+Les activités humaines transforment profondément les écosystèmes, mais les décisions 
+d'aménagement sont encore trop souvent prises sans disposer d'une vision suffisamment précise des 
+enjeux écologiques locaux. 
+Pourtant, de nombreuses données existent : observations naturalistes, vidéos de pièges 
+photographiques, inventaires d'espèces, zonages environnementaux et études scientifiques. 
+Cependant, ces informations sont dispersées, parfois longues à analyser et difficiles à traduire en 
+actions concrètes. 
+Les collectivités, agriculteurs et aménageurs manquent ainsi d'un outil accessible permettant de 
+comprendre les interactions entre leurs projets et la biodiversité locale. 
+Symbiose répond à ce manque de lien entre l'observation du vivant, la connaissance scientifique et la 
+prise de décision, afin d'anticiper les impacts potentiels des activités humaines et de favoriser des 
+aménagements mieux adaptés aux écosystèmes. 
+4.​ Les cibles identifiées  
+Symbiose s'adresse principalement aux acteurs qui interviennent dans la gestion, la transformation 
+et la préservation des territoires : 
+
+PAGE 2
+ 
+ 
+●​ Collectivités territoriales et établissements publics : intégrer les enjeux de biodiversité dans 
+les réflexions d'aménagement et les politiques territoriales. 
+●​ Agriculteurs et propriétaires fonciers : mieux comprendre les caractéristiques écologiques 
+de leurs parcelles et envisager des pratiques favorables au vivant. 
+●​ Aménageurs, bureaux d'études et porteurs de projets : identifier les enjeux 
+environnementaux en amont des travaux et étudier des adaptations de conception. 
+●​ Associations naturalistes, gestionnaires d'espaces naturels et scientifiques : faciliter 
+l'exploitation des observations faunistiques et leur mise en relation avec les données du 
+territoire. 
+À terme, la solution pourrait également contribuer à sensibiliser les citoyens aux enjeux de 
+biodiversité qui les entourent. 
+5.​ Les bénéfices et impacts attendus 
+Symbiose vise à transformer des données environnementales complexes en informations accessibles 
+et directement utiles à la réflexion sur les projets d'aménagement. 
+Les principaux bénéfices attendus sont : 
+●​ Gagner du temps dans l'observation de la biodiversité, grâce à la détection et à la 
+classification assistées par IA des animaux présents dans les vidéos de pièges 
+photographiques. 
+●​ Améliorer la compréhension des enjeux écologiques locaux, en croisant les observations 
+faunistiques avec les données publiques : cadastre, ZNIEFF, Natura 2000 et zones humides. 
+●​ Accompagner des décisions d'aménagement plus responsables, en proposant des 
+alternatives concrètes pour éviter ou réduire les impacts potentiels sur les habitats et les 
+espèces. 
+●​ Valoriser les données ouvertes normandes, en les rendant plus facilement compréhensibles 
+et exploitables par les acteurs du territoire. 
+●​ Favoriser la préservation des écosystèmes, en encourageant l'anticipation des enjeux 
+écologiques plutôt que la seule réparation des dommages. 
+Le prototype propose notamment 12 alternatives de conception concernant les clôtures, l'éclairage, 
+la végétation, le terrassement et l'imperméabilisation, accompagnées de justifications et de sources 
+consultables. 
+Les observations automatiques restent soumises à validation humaine et les recommandations 
+proposées nécessitent une vérification de leur applicabilité avant toute décision opérationnelle. 
+À plus long terme, Symbiose ambitionne d'intégrer d'autres méthodes d'observation afin de 
+contribuer à une compréhension plus globale de la biodiversité, terrestre, végétale, aquatique et 
+souterraine. 
+6.​ Les données mobilisées (nom du producteur, lien vers le jeu de données) 
+Données géographiques et environnementales : 
+❖​ Etalab / DINUM — API Géo, découpage administratif : identification de la commune à partir 
+de la localisation du terrain. https://geo.api.gouv.fr/ 
+❖​ IGN — API Carto Cadastre : identification des parcelles cadastrales et estimation de leur 
+superficie. https://apicarto.ign.fr/api/doc/cadastre 
+
+PAGE 3
+ 
+ 
+❖​ IGN — API Carto, Registre Parcellaire Graphique (RPG) : informations sur les parcelles et 
+leur occupation agricole. https://apicarto.ign.fr/api/doc/rpg 
+❖​ IGN / MNHN — API Carto Nature : consultation des zonages ZNIEFF de types I et II et des 
+sites Natura 2000 (Habitats et Oiseaux). https://apicarto.ign.fr/api/doc/nature 
+❖​ DREAL Normandie — Inventaire des zones humides : consultation des zones humides 
+inventoriées et de leurs caractéristiques, selon la couverture et la qualité des données 
+disponibles. https://www.data.gouv.fr/datasets/zones-humides-normandie 
+Observations et ressources scientifiques complémentaires : 
+●​ Vidéos issues de pièges photographiques : corpus vidéo du projet, exploité pour la 
+détection, la classification et la validation des observations animales. 
+●​ OpenAlex, Crossref et Europe PMC : ressources bibliographiques mobilisées pour la 
+recherche documentaire et l'enrichissement des dossiers environnementaux. 
+https://openalex.org/ 
+https://www.crossref.org/ 
+https://europepmc.org/ 
+Les données territoriales sont croisées avec les informations déclarées par l'utilisateur et les 
+observations animales confirmées pour produire des analyses contextualisées, des alternatives 
+d'aménagement argumentées et des résultats traçables. 
+7.​ Le lien vers la solution / des captures d’écran 
+ 
+ 
+Présentation générale de l'espace observation 
+L'espace observation de Symbiose centralise les différentes étapes de l'analyse de la biodiversité, 
+depuis l'importation de vidéos de pièges photographiques jusqu'à la constitution de dossiers 
+environnementaux. Il associe intelligence artificielle, validation humaine et connaissances 
+scientifiques pour faciliter l'identification des espèces et accompagner la réflexion sur les projets 
+d'aménagement. 
+ 
+
+PAGE 4
+ 
+ 
+Guide d'utilisation — Accompagner l'utilisateur dans la découverte de Symbiose
+ 
+Symbiose intègre un guide interactif destiné à accompagner les nouveaux utilisateurs dans leur prise 
+en main de la plateforme. Organisé en huit étapes illustrées, ce parcours présente les principales 
+fonctionnalités, de l'importation des vidéos à la consultation des dossiers de biodiversité. Accessible 
+dès la première connexion et consultable à tout moment depuis l'aide, il facilite l'apprentissage et 
+rend la solution accessible à tous, y compris aux utilisateurs peu familiers des outils numériques et 
+de l'intelligence artificielle. 
+ 
+Connexion — Un accès personnalisé à la plateforme 
+ 
+La page de connexion permet aux utilisateurs d'accéder à leur espace personnel sécurisé. Chaque 
+utilisateur peut ainsi retrouver ses vidéos, ses analyses et ses dossiers de biodiversité au sein d'une 
+interface dédiée. 
+ 
+
+PAGE 5
+ 
+ 
+Accueil — Une vision d'ensemble des observations
+ 
+Le tableau de bord centralise les principales fonctionnalités de Symbiose et guide l'utilisateur à 
+travers trois étapes : importer ses vidéos, décrire son terrain et son projet, puis consulter les 
+résultats. Il permet également de retrouver rapidement les dernières analyses réalisées. 
+ 
+Vidéothèque — Centraliser les observations du terrain 
+ 
+La vidéothèque permet d'importer, de visualiser et d'organiser les vidéos issues de capteurs 
+photographiques. Les utilisateurs peuvent rechercher leurs captures, filtrer les résultats et 
+sélectionner plusieurs vidéos provenant d'une même parcelle afin de constituer un dossier de 
+biodiversité commun. 
+ 
+ 
+
+PAGE 6
+ 
+ 
+Mes dossiers — Organiser les analyses par territoire
+ 
+Cet espace regroupe les observations et les analyses associées à chaque parcelle. L'utilisateur peut y 
+renseigner les caractéristiques de son terrain, décrire son projet d'aménagement et retrouver les 
+résultats environnementaux correspondants. Chaque dossier constitue un point d'entrée vers une 
+analyse contextualisée du territoire. 
+ 
+Analyse vidéo — Détecter et identifier automatiquement la faune 
+ 
+Grâce à la vision par ordinateur, Symbiose peut analyser des vidéos de pièges photographiques afin 
+de détecter les animaux et de proposer leur classification par espèce. L'interface permet de lancer 
+des traitements, de suivre les analyses et de consulter les vidéos annotées ainsi que les résultats 
+obtenus. 
+ 
+ 
+ 
+ 
+ 
+
+PAGE 7
+ 
+ 
+Validation humaine — Fiabiliser les observations 
+ 
+Afin de garantir la qualité des données, Symbiose intègre une étape de validation humaine. 
+L'utilisateur peut examiner les images détectées, corriger les zones de détection, confirmer l'espèce 
+identifiée ou rejeter une proposition incorrecte. Cette approche associe les capacités de l'intelligence 
+artificielle au contrôle humain pour produire des observations plus fiables. 
+ 
+Documents scientifiques — Mobiliser les connaissances sur le vivant 
+ 
+Cet espace rassemble des publications scientifiques relatives aux espèces étudiées et à leurs 
+interactions avec les activités humaines. Les documents peuvent être recherchés, importés, 
+consultés et organisés par espèce. Ils constituent une base documentaire destinée à enrichir les 
+analyses et à étayer les futures recommandations d'aménagement de Symbiose. 
+ 
+L'espace observation n'est que la première partie de Symbiose. Il prépare la matière première de la 
+solution : les observations faunistiques, leur validation et les connaissances scientifiques associées. 
+ 
+
+PAGE 8
+ 
+ 
+La seconde partie, consacrée à l'analyse territoriale et à l'adaptation des projets d'aménagement, est 
+celle qui montre comment Symbiose transforme ces connaissances en aide à la décision. 
+ 
+Présentation générale de l'espace administration 
+ 
+L'espace administration de Symbiose regroupe les outils techniques nécessaires au fonctionnement, 
+à la maintenance et à l'amélioration continue de la plateforme. Il permet de gérer les utilisateurs, les 
+vidéos et les jeux de données, de configurer les traitements d'intelligence artificielle, d'entraîner et 
+d'évaluer les modèles, ainsi que d'administrer les ressources scientifiques. 
+ 
+Vue d'ensemble — Superviser le fonctionnement de Symbiose 
+ 
+Le tableau de bord administratif offre une vision centralisée de l'activité de la plateforme. Il permet 
+de suivre en temps réel les traitements de vision par ordinateur et de recherche documentaire (RAG), 
+de consulter les journaux d'exécution et de visualiser les principaux indicateurs : vidéos enregistrées, 
+espèces validées, annotations à vérifier et tâches en cours. 
+ 
+
+PAGE 9
+ 
+ 
+Gestion des utilisateurs — Administrer les accès
+ 
+Cet espace permet de gérer les comptes et les droits d'accès à Symbiose. Les administrateurs 
+peuvent créer des utilisateurs, attribuer des rôles, réinitialiser les mots de passe et gérer les 
+suppressions de comptes. Cette organisation permet de distinguer les fonctionnalités accessibles aux 
+utilisateurs de celles réservées à l'administration. 
+ 
+Gestion des vidéos — Administrer les données d'observation 
+ 
+Cette interface centralise la gestion des vidéos utilisées par la plateforme. Elle permet d'importer et 
+d'indexer des captures, de rechercher et de filtrer les fichiers, ainsi que de regrouper plusieurs vidéos 
+provenant d'une même parcelle. Elle facilite ainsi l'organisation des données nécessaires aux 
+analyses faunistiques. 
+ 
+ 
+
+PAGE 10
+ 
+ 
+Réglages d'analyse — Configurer et suivre les traitements
+ 
+Cet espace permet de piloter les analyses vidéo réalisées par les modèles d'intelligence artificielle. Il 
+donne accès aux vidéos disponibles, aux analyses précédentes et à leur état d'exécution. Les 
+paramètres de détection et de classification peuvent être ajustés afin d'adapter les traitements aux 
+besoins et aux ressources disponibles. 
+ 
+Datasets — Constituer des jeux de données fiables 
+ 
+Cet espace permet de construire et de versionner les jeux de données destinés à l'entraînement et à 
+l'évaluation des modèles. Il intègre des critères de qualité permettant d'exclure les images floues, les 
+recadrages trop petits ou les quasi-doublons. La séparation des données et la conservation de 
+versions reproductibles contribuent à fiabiliser les expérimentations. 
+ 
+ 
+
+PAGE 11
+ 
+ 
+Entraînements — Améliorer les modèles de reconnaissance
+ 
+Cette interface permet de configurer et de lancer l'entraînement des modèles de classification 
+d'espèces animales. Les administrateurs peuvent sélectionner un jeu de données, choisir une 
+architecture de réseau neuronal et ajuster les paramètres d'apprentissage. Le suivi des 
+entraînements permet de contrôler leur déroulement et de conserver les résultats obtenus. 
+ 
+Modèles — Gérer les différentes versions de l'intelligence artificielle 
+ 
+Cet espace centralise les modèles de classification disponibles dans Symbiose. Il permet d'enregistrer 
+de nouvelles versions, de consulter leurs caractéristiques et leurs performances, puis de sélectionner 
+le modèle actif pour les prochaines analyses vidéo. Cette gestion facilite les comparaisons et 
+l'évolution progressive du système de reconnaissance. 
+ 
+ 
+
+PAGE 12
+ 
+ 
+Évaluation — Mesurer les performances de l'intelligence artificielle
+ 
+Cette interface permet de comparer les performances des différents modèles sur des jeux de 
+validation communs. Plusieurs indicateurs sont disponibles, notamment la précision globale 
+(accuracy), le score Macro-F1, la couverture des prédictions et le temps de traitement. Les 
+évaluations réalisées avec des étiquettes provisoires sont explicitement identifiées afin de ne pas les 
+confondre avec une validation scientifique définitive. 
+ 
+Documents scientifiques — Administrer les connaissances utilisées par le RAG 
+ 
+Cet espace permet de constituer et de gérer un corpus de publications scientifiques consacré à la 
+biodiversité et aux interactions entre les espèces et les activités humaines. Les documents peuvent 
+être recherchés, récupérés, importés et organisés par espèce. Ils alimentent le système de recherche 
+documentaire utilisé pour enrichir les dossiers environnementaux et étayer les propositions 
+d'aménagement. 
+ 
+L'espace administration constitue le socle technique de Symbiose. Il permet de maîtriser l'ensemble 
+de la chaîne de traitement, depuis la préparation des données jusqu'à l'évaluation des modèles 
+
+PAGE 13
+ 
+ 
+d'intelligence artificielle. Cette architecture modulaire et évolutive prépare le développement d'une 
+solution fiable, reproductible et adaptable à de nouveaux besoins d'observation de la biodiversité. 
+ 
+Accès à la solution Symbiose 
+ 
+Dépôt GitHub — Code source et documentation technique 
+ 
+https://github.com/qmialon-wq/Photosynthese 
+ 
+Le dépôt GitHub regroupe le code source de Symbiose, son architecture, les scripts de traitement, les 
+outils d'entraînement et d'évaluation des modèles d'intelligence artificielle, ainsi que la 
+documentation nécessaire à son installation et à son fonctionnement. 
+ 
+À noter : les données d'entraînement, les fichiers vidéo, les modèles entraînés et certains fichiers 
+volumineux ne sont pas inclus dans le dépôt GitHub. Ces ressources sont conservées séparément et 
+ne sont donc pas nécessaires à la consultation du code source. 
+ 
+Application Symbiose — Démonstration interactive 
+ 
+https://leaved-karey-decennially.ngrok-free.dev/ 
+ 
+Une version fonctionnelle de Symbiose est accessible en ligne grâce à un accès temporaire via ngrok. 
+Elle permet de découvrir l'interface et les principales fonctionnalités de la plateforme : gestion des 
+vidéos, analyse faunistique, constitution de dossiers de biodiversité, exploitation des données 
+environnementales et consultation des recommandations d'aménagement. 
+ 

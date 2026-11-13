@@ -1,0 +1,89 @@
+{
+  "scene": "night-forest",
+  "notice": "Spécifications de ressources absentes. Aucun fichier listé ci-dessous n’a été produit.",
+  "resources": [
+    {
+      "role": "background",
+      "status": "not-produced",
+      "expectedPath": "night-forest/background-clean-v1.png",
+      "sourceMaster": "night-forest/primary-v1.png",
+      "dimensions": {
+        "width": 4992,
+        "height": 2808,
+        "ratio": "16:9, 15% overscan on each edge around a 3840x2160 working image"
+      },
+      "lensMm": 35,
+      "lightContinuity": "Clair de lune venant du haut gauche ; ellipse temporelle assumée",
+      "movement": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+      "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+      "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+      "prompt": "Edit the generated master night-forest/primary-v1.png as a camera-locked reference. Reconstruct the background hidden by the near layer (Mêmes familles de fougères et de troncs que le début.), removing only that near-layer and preserving the main scene (Retour au passage forestier, présence animale distante et discrète.), lens, scale and directional lighting. Extend all four edges by 15 percent with consistent geometry, not mirrored textures. Feuillus nocturnes et trouée lunaire modeste. No new landmarks, wildlife, devices, text or invented features. Output an opaque clean plate without foreground silhouettes; manually inspect seams. This clean plate alone does not support a large camera move or reveal unseen surfaces."
+    },
+    {
+      "role": "depth",
+      "status": "not-produced",
+      "expectedPath": "night-forest/depth-v1.png",
+      "sourceMaster": "night-forest/primary-v1.png",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "target": "match actual master, no resampling without alignment review"
+      },
+      "lensMm": 35,
+      "lightContinuity": "Clair de lune venant du haut gauche ; ellipse temporelle assumée",
+      "movement": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+      "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+      "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+      "prompt": "Prepare a genuinely calibrated, single-channel 16-bit depth map aligned to night-forest/primary-v1.png, using depth estimation as a starting point plus manual silhouette and scale correction. Frondes, troncs médians et silhouette animale dans la brume, jamais plaquée sur le texte. Deliver a documented near/far scale and correct thin-edge mattes. Do not deliver a visual grayscale illustration or claim monocular estimation is measured geometry. Validate reprojection against the main plate and foreground. No file can be marked ready until it is numerically checked and reviewed."
+    },
+    {
+      "role": "atmosphere",
+      "status": "not-produced",
+      "expectedPath": "night-forest/atmosphere-v1.png",
+      "sourceMaster": "night-forest/primary-v1.png",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "ratio": "16:9"
+      },
+      "lensMm": 35,
+      "lightContinuity": "Clair de lune venant du haut gauche ; ellipse temporelle assumée",
+      "movement": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+      "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+      "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+      "prompt": "Generate a separate atmospheric pass for Forêt nocturne: Clair de lune sobre, bleu vert contenu, brume basse ; pas de lucioles inventées. Preserve this lighting continuity: soft moonlight from upper left, dark desaturated blue-green. Full 16:9 canvas, true transparency with low-alpha scattering, no opaque landscape, no baked plants, animals, equipment or text, no hard cone of light. Composition follows the master; keep values and exposure restrained."
+    },
+    {
+      "role": "geometry",
+      "status": "not-produced",
+      "expectedPath": "night-forest/geometry/environment-v1.glb",
+      "sourceMaster": "night-forest/primary-v1.png",
+      "dimensions": null,
+      "lensMm": 35,
+      "lightContinuity": "Clair de lune venant du haut gauche ; ellipse temporelle assumée",
+      "movement": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+      "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+      "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+      "prompt": "3D environment production brief for Forêt nocturne. Build a lightweight real-scale environment and occlusion geometry matching the master composition and these depth landmarks: Frondes, troncs médians et silhouette animale dans la brume, jamais plaquée sur le texte. Camera plan: Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm. Entry: Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée. Exit: Cadre immobile et ouverture lisible pour la conclusion Symbiose. Separate foreground occluders and background; align the master texture only where reprojection is valid. Supply a GLB with named anchors and metre units, UVs and optional KTX2 textures. Validate unseen surfaces and camera collisions.  This is an artist brief, not a claim that an image generator can export a valid GLB."
+    },
+    {
+      "role": "motion",
+      "status": "not-produced",
+      "expectedPath": "night-forest/motion/forward-v1.webm",
+      "sourceMaster": "night-forest/primary-v1.png",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "ratio": "16:9",
+        "fps": 25,
+        "durationSeconds": 6
+      },
+      "lensMm": 35,
+      "lightContinuity": "Clair de lune venant du haut gauche ; ellipse temporelle assumée",
+      "movement": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+      "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+      "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+      "prompt": "Prepare an actual pre-rendered or generated sequence for Forêt nocturne, 6 seconds at 25 fps, 1920x1080 16:9 minimum, no text, interface, logos or detection boxes. Lock the appearance to night-forest/primary-v1.png, the 35 mm starting lens, natural materials and restrained grading. Motion: Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm. Animation: Brume très lente et mouvements minimes ; silhouette sobre sans fausse observation. Entry composition: Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée. Exit composition: Cadre immobile et ouverture lisible pour la conclusion Symbiose. Light must remain upper left (moonlight, no artificial blue flood). Keep the environment topology, animal anatomy, device locations and lens stable; no invented species or changing arches. Supply a start-frame poster, approved start/end camera poses and a reverse-navigation strategy; reversing fluid or animal motion blindly is not sufficient. Fougères nocturnes et brume séparées, correspondance géométrique forêt initiale ; aucun raccord animé produit à ce stade. This is an UNEXECUTED video/pre-render brief."
+    }
+  ]
+}

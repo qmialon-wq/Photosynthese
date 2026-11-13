@@ -1,0 +1,241 @@
+{
+  "revision": "ac657de1abda1830",
+  "entry": "/jury/",
+  "totalBytes": 15705052,
+  "files": [
+    {
+      "url": "/assets/CameraController-7ikOnsvg.js",
+      "bytes": 629212,
+      "sha256": "871143de041861686ee7b748befc524c91674a6d4f38e757c80d64043d55f4c9"
+    },
+    {
+      "url": "/assets/DebugControls-BjOPpx0g.js",
+      "bytes": 3491,
+      "sha256": "1ee4122c8f97d5fd0f7e05481252803266c721a72d44a48e113302324c6533ee"
+    },
+    {
+      "url": "/assets/ExperienceCanvas-Dar4CtSY.js",
+      "bytes": 96155,
+      "sha256": "2c4dfa26f73e888ace42e15d6a18ec82948623d6b72d0e6c5f770fa6fd49ecfa"
+    },
+    {
+      "url": "/assets/LandingPage-Dx2GMp5i.css",
+      "bytes": 33482,
+      "sha256": "241e9547eb7a26cfcdd1aa3aa9521d65d77cdb56eee6b17653fea0cdb8fdaf8f"
+    },
+    {
+      "url": "/assets/LandingPage.vue_vue_type_script_setup_true_lang-BaCr2eoJ.js",
+      "bytes": 174262,
+      "sha256": "1183869d98c35fc5ebabb8dae10504b7f98cc8b62ed69623ccee816836197f29"
+    },
+    {
+      "url": "/assets/PitchSources-DQvGmtX3.js",
+      "bytes": 196663,
+      "sha256": "fc0cf1ec4689c1effbf52002a8baa7229a677842e2479d6c90b6c51739102895"
+    },
+    {
+      "url": "/assets/jury-CUo4wTC9.js",
+      "bytes": 3392,
+      "sha256": "ff3db0502eec6e6b11b6cb7f640295471aaab755f8d35af4c58de9ddb272933f"
+    },
+    {
+      "url": "/assets/jury-DfVSCK7Z.css",
+      "bytes": 1136,
+      "sha256": "0df458b328a02449859b8794217d9a201e2504667cf5e699ff842cfcf5aa37c1"
+    },
+    {
+      "url": "/assets/symbiose-logo-BTPSrkyB.png",
+      "bytes": 51947,
+      "sha256": "c8b17e9dff53593a74410001a984124df94cd0b409dddefe95e51ba30614f25e"
+    },
+    {
+      "url": "/assets/symbiose-logo-CX_rJBaj.js",
+      "bytes": 112415,
+      "sha256": "758169ab23a97517b7f4e76105e3aeef93e4ef0e21e49a65326be6f785bef7c2"
+    },
+    {
+      "url": "/experience-art/coast/foreground-runtime.webp",
+      "bytes": 122082,
+      "sha256": "6366243ed189e86945301d13eec95f3d6f7629c590f17367350c8c6174b5e567"
+    },
+    {
+      "url": "/experience-art/coast/primary-runtime.webp",
+      "bytes": 266048,
+      "sha256": "3ab0f1b89358254f66a360a37460de8a06e554fc01ec260d194bc0e67591747f"
+    },
+    {
+      "url": "/experience-art/forest/foreground-runtime.webp",
+      "bytes": 176958,
+      "sha256": "6f201c90ef1aaf40b9df81293ad82b19470c1ab44dc036a84a789c54893a00dd"
+    },
+    {
+      "url": "/experience-art/forest/primary-runtime.webp",
+      "bytes": 445902,
+      "sha256": "02bda1a0a46b505cb5e4c3c92d1138a914f43e22f760d1b5badfe1bfc6047b60"
+    },
+    {
+      "url": "/experience-art/meadow/foreground-runtime.webp",
+      "bytes": 190994,
+      "sha256": "e4b98587507e3f8afc44c14d78ed94ce41f4e7b14cd4c059d7e12ac53b6fa166"
+    },
+    {
+      "url": "/experience-art/meadow/primary-runtime.webp",
+      "bytes": 401264,
+      "sha256": "76cd6ec1fc6116eb915d64b109c9151cb58240982ef716fa484098c11d56ee0e"
+    },
+    {
+      "url": "/experience-art/night-forest/foreground-runtime.webp",
+      "bytes": 119068,
+      "sha256": "852483181aba8af8d5ff6616b53ad6a762c73f5b8abebfa799c16ed0070f7e66"
+    },
+    {
+      "url": "/experience-art/night-forest/primary-runtime.webp",
+      "bytes": 279996,
+      "sha256": "08b0d9bfad133c76742e4b9023e914edff1028205c18245f26a71157d5ec05b2"
+    },
+    {
+      "url": "/experience-art/rivers/foreground-runtime.webp",
+      "bytes": 218668,
+      "sha256": "1a86e4aa17e725cbba9d621023e51779487414b7ebbca8ea12c377647475b22d"
+    },
+    {
+      "url": "/experience-art/rivers/primary-runtime.webp",
+      "bytes": 469552,
+      "sha256": "55beb9544154cacedd6dc7a6fd9a63fdbe581b1f00a090045693d9f6d9660b0e"
+    },
+    {
+      "url": "/experience-art/runtime-assets.json",
+      "bytes": 8236,
+      "sha256": "3ce0a90efba11caed9db8d41d83df9852d3860d11302a47327c6d5df76516cd4"
+    },
+    {
+      "url": "/experience-art/shared/symbiose-logo.png",
+      "bytes": 51947,
+      "sha256": "c8b17e9dff53593a74410001a984124df94cd0b409dddefe95e51ba30614f25e"
+    },
+    {
+      "url": "/experience-art/sky/foreground-runtime.webp",
+      "bytes": 223004,
+      "sha256": "45a6ab1b64e02af8760f8e5469d93f21ab3c8e37f353f259c1c4f34c7653a151"
+    },
+    {
+      "url": "/experience-art/sky/primary-runtime.webp",
+      "bytes": 271386,
+      "sha256": "f852a401d6b85417ba1f12bad6bde7a8402e9439d9a3f63da0a06bd3f95e17b3"
+    },
+    {
+      "url": "/experience-art/underwater/foreground-runtime.webp",
+      "bytes": 220118,
+      "sha256": "6fc12477bb3ea723404b3878dc1bbe41dc25942683e5c09c49239e41345fa300"
+    },
+    {
+      "url": "/experience-art/underwater/primary-runtime.webp",
+      "bytes": 171046,
+      "sha256": "f4a9ce3df3e9daa8ec4649f841f0f5213a91d71626bd8f136c6c670f862e11ad"
+    },
+    {
+      "url": "/experience-art/wetland/foreground-runtime.webp",
+      "bytes": 210098,
+      "sha256": "3b76d64b98a08417d37086fae8fdd930c6ed03cc65cf11c0b24ebea7c593d5cf"
+    },
+    {
+      "url": "/experience-art/wetland/primary-runtime.webp",
+      "bytes": 359804,
+      "sha256": "9b3723f9913d601e9c2b20d84a6e1144b398d18edb96b510f10c66182fc4777d"
+    },
+    {
+      "url": "/experience-media/manifesto-review.webp",
+      "bytes": 76234,
+      "sha256": "cfe107920d99b93daafa87276279457f0cb5bf3b9ecee9ca45061274d202e5c1"
+    },
+    {
+      "url": "/experience-models/bark_brown_01-Diffuse.jpg",
+      "bytes": 377508,
+      "sha256": "b9b6ddec2249cba1a541f0f42da577119c8e17576990371dd643d207000583aa"
+    },
+    {
+      "url": "/experience-models/bark_brown_01-Rough.jpg",
+      "bytes": 112555,
+      "sha256": "84c342e0f7ed7f7ba1d6b9f9170e6acce0cb45045c1e5d154752b4e810e865eb"
+    },
+    {
+      "url": "/experience-models/bark_brown_01-nor_gl.jpg",
+      "bytes": 424514,
+      "sha256": "a30090dcb3ede182b11bfb7b11fd8931096a91b56506b30b1859ee149511433d"
+    },
+    {
+      "url": "/experience-models/buse.glb",
+      "bytes": 48724,
+      "sha256": "5f333e1832aaf40ede1f6b2806de13b2c45755584e93868888eb8e812feec90d"
+    },
+    {
+      "url": "/experience-models/chevreuil.glb",
+      "bytes": 1929592,
+      "sha256": "70848c02aaa5bd517d5e1c9b074b995f2c94a673c093db97ae99bdca48eb2a1f"
+    },
+    {
+      "url": "/experience-models/fern_02.glb",
+      "bytes": 448516,
+      "sha256": "7bd2ff28381ba05595254c5f370b4a2634b7fcbfdbc89d85477f551286c80bfb"
+    },
+    {
+      "url": "/experience-models/forest_ground_04-Diffuse.jpg",
+      "bytes": 437158,
+      "sha256": "e5e3dbfb72bfaec0fa028144c60169ec6c05c6c73be5298a8673ceb3b4a8b46a"
+    },
+    {
+      "url": "/experience-models/forest_ground_04-Rough.jpg",
+      "bytes": 213315,
+      "sha256": "0343efddcbe2674e21a9803aaed69b57f306f8f9c4942b8f870351a8adb158b6"
+    },
+    {
+      "url": "/experience-models/forest_ground_04-nor_gl.jpg",
+      "bytes": 485188,
+      "sha256": "c478bb4ee1f54b4e36ba8cffd40a4e27018bc01f1d3b39847de18d774b128ea5"
+    },
+    {
+      "url": "/experience-models/inventory.json",
+      "bytes": 4994,
+      "sha256": "04b2ba86f51c627f2fca39beda0ca482e43c2837185fcfb8f1d82110234210b2"
+    },
+    {
+      "url": "/experience-models/pigeon.glb",
+      "bytes": 414308,
+      "sha256": "3b09debbea16ac036662c50a596c15edd4107a95eca07ebf58e4c089f6a00495"
+    },
+    {
+      "url": "/experience-models/poisson.glb",
+      "bytes": 718348,
+      "sha256": "5d40fa9da0b2de1f8e7b1e0eb3726f8dc417109603a50f0462b1233fc2b33f8f"
+    },
+    {
+      "url": "/experience-models/rock_moss_set_01.glb",
+      "bytes": 1927628,
+      "sha256": "093aaaadabf5b5f599591d8b42564eecab12207d3853a7417c84fc9f6838ba28"
+    },
+    {
+      "url": "/experience-models/sanglier.glb",
+      "bytes": 675052,
+      "sha256": "9ca7647084a4ecc5cc4ee71d404b7f140296b06eff5742f6838e5ae0c0def225"
+    },
+    {
+      "url": "/experience-models/tree_stump_01.glb",
+      "bytes": 1899436,
+      "sha256": "743695807cef891ee032f146ea3a8dc5ced45b7e0512bbca71a4591c9984f5c0"
+    },
+    {
+      "url": "/favicon.ico",
+      "bytes": 2724,
+      "sha256": "956800c711bb1e56f92b3e90fd9f54aeccaa3e05268c0bac17f3f240bd4de3a4"
+    },
+    {
+      "url": "/jury/index.html",
+      "bytes": 932,
+      "sha256": "daacfdb1143b8b730fa5e468707d683a9f3f52b582b5d7b4add42807a8a47f32"
+    }
+  ],
+  "demo": {
+    "available": false,
+    "files": []
+  }
+}

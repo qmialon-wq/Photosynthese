@@ -1,0 +1,815 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "narrative.spec.ts",
+      "pitch.spec.ts",
+      "jury.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Users/fatty/Desktop/Symbiose/Symbiose/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/fatty/Desktop/Symbiose/Symbiose/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/fatty/Desktop/Symbiose/Symbiose/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e",
+        "snapshotDir": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "launchOptions": {
+            "args": [
+              "--use-angle=d3d11",
+              "--ignore-gpu-blocklist"
+            ]
+          },
+          "baseURL": "http://127.0.0.1:8080",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "jury.spec.ts",
+      "file": "jury.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "software renderer automatically releases WebGL and keeps the complete jury",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4803,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:35:42.479Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-b8e2931608626629957b",
+          "file": "jury.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "standalone jury starts without any authentication or business API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4219,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:35:47.457Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-53ecc2d6bbebdf929cb6",
+          "file": "jury.spec.ts",
+          "line": 34,
+          "column": 1
+        },
+        {
+          "title": "jury recovers a saved chapter and supports immediate skip, restart and 2D rescue",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6962,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:35:52.029Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-016e003e5c8458b5e508",
+          "file": "jury.spec.ts",
+          "line": 61,
+          "column": 1
+        },
+        {
+          "title": "forced 2D never creates a WebGL context and keeps the sources and application CTA",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4813,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:35:59.061Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-58db82ebe4bf67d8ad0c",
+          "file": "jury.spec.ts",
+          "line": 106,
+          "column": 1
+        },
+        {
+          "title": "installed production jury reloads all eight chapters and sources with the network offline",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7627,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:36:03.950Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-3f601465927868221244",
+          "file": "jury.spec.ts",
+          "line": 140,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "narrative.spec.ts",
+      "file": "narrative.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "continuous camera, native wheel reversal, resize and strictly local resources",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6533,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m10\u001b[39m\nReceived:   \u001b[31m0.7\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m10\u001b[39m\nReceived:   \u001b[31m0.7\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\narrative.spec.ts:50:43",
+                    "location": {
+                      "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\narrative.spec.ts",
+                      "column": 43,
+                      "line": 50
+                    },
+                    "snippet": "  48 |   await expect(canvas(page)).toHaveAttribute(\"data-camera-y\", \"0.700\");\n  49 |   await page.mouse.wheel(0, 1600);\n> 50 |   await expect.poll(() => altitude(page)).toBeGreaterThan(10);\n     |                                           ^\n  51 |   const raised = await altitude(page);\n  52 |   await page.mouse.wheel(0, -800);\n  53 |   await expect.poll(() => altitude(page)).toBeLessThan(raised - 1);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\narrative.spec.ts",
+                        "column": 43,
+                        "line": 50
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m10\u001b[39m\nReceived:   \u001b[31m0.7\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  48 |   await expect(canvas(page)).toHaveAttribute(\"data-camera-y\", \"0.700\");\n  49 |   await page.mouse.wheel(0, 1600);\n> 50 |   await expect.poll(() => altitude(page)).toBeGreaterThan(10);\n     |                                           ^\n  51 |   const raised = await altitude(page);\n  52 |   await page.mouse.wheel(0, -800);\n  53 |   await expect.poll(() => altitude(page)).toBeLessThan(raised - 1);\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\narrative.spec.ts:50:43"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:36:11.694Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\narrative-continuous-camer-43c9d-nd-strictly-local-resources\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\narrative-continuous-camer-43c9d-nd-strictly-local-resources\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\narrative-continuous-camer-43c9d-nd-strictly-local-resources\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\narrative.spec.ts",
+                    "column": 43,
+                    "line": 50
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-bf2b58766c9ce8de1585",
+          "file": "narrative.spec.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "presentation yields to input and leaving the landing disposes its engine",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6380,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:36:21.672Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-241859badb688b9f6f18",
+          "file": "narrative.spec.ts",
+          "line": 81,
+          "column": 1
+        },
+        {
+          "title": "reduced motion uses eight fixed viewpoints, responsive layout and accessible dialog",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6220,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:36:28.450Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-90b57d09944ff4232145",
+          "file": "narrative.spec.ts",
+          "line": 111,
+          "column": 1
+        },
+        {
+          "title": "DEBUG seeks seven reversible transitions and changes actual draw layers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26182,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:36:34.728Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-0bc26c6b2f8ece141e0f",
+          "file": "narrative.spec.ts",
+          "line": 164,
+          "column": 1
+        },
+        {
+          "title": "failed asynchronous foreground is explicit and world remains usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2578,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:00.969Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-d9e9aa25717a118252a0",
+          "file": "narrative.spec.ts",
+          "line": 216,
+          "column": 1
+        },
+        {
+          "title": "WebGL failure uses reversible spatial masks and real application links",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3256,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:03.622Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-a6f69a3e4aab9f29727b",
+          "file": "narrative.spec.ts",
+          "line": 230,
+          "column": 1
+        },
+        {
+          "title": "context loss releases WebGL and resumes with a current 2D inspector",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3788,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:06.937Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-44802cbd46d077dd5e84",
+          "file": "narrative.spec.ts",
+          "line": 271,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pitch.spec.ts",
+      "file": "pitch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "eight sourced scenes, archived observations, jury coverage and final application link",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11183,
+                  "error": {
+                    "message": "Error: browserContext.close: ENOENT: no such file or directory, open 'C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\.playwright-artifacts-1\\traces\\6f50b88c3c0147682ee6-6a90bd3a72fc9839d680-recording12.trace'",
+                    "stack": "Error: browserContext.close: ENOENT: no such file or directory, open 'C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\.playwright-artifacts-1\\traces\\6f50b88c3c0147682ee6-6a90bd3a72fc9839d680-recording12.trace'"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserContext.close: ENOENT: no such file or directory, open 'C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\.playwright-artifacts-1\\traces\\6f50b88c3c0147682ee6-6a90bd3a72fc9839d680-recording12.trace'"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:10.851Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\pitch-eight-sourced-scenes-9f56b--and-final-application-link\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\pitch-eight-sourced-scenes-9f56b--and-final-application-link\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\pitch-eight-sourced-scenes-9f56b--and-final-application-link\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-6a90bd3a72fc9839d680",
+          "file": "pitch.spec.ts",
+          "line": 76,
+          "column": 1
+        },
+        {
+          "title": "presentation keyboard, narrative stops, reverse navigation and reduced motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6472,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:24.723Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-e6f1bf50180bdc95e1d7",
+          "file": "pitch.spec.ts",
+          "line": 171,
+          "column": 1
+        },
+        {
+          "title": "a real local media file stays manual, pauses for sources and releases on chapter departure",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 11364,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('video')\nExpected: not have attribute\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"not toHaveAttribute\" locator('video') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('video')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('video')\nExpected: not have attribute\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"not toHaveAttribute\" locator('video') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('video')\u001b[22m\n\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\pitch.spec.ts:252:27",
+                    "location": {
+                      "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\pitch.spec.ts",
+                      "column": 27,
+                      "line": 252
+                    },
+                    "snippet": "  250 |   const video = page.locator(\"video\");\n  251 |   await expect(video).toHaveAttribute(\"controls\", \"\");\n> 252 |   await expect(video).not.toHaveAttribute(\"autoplay\");\n      |                           ^\n  253 |   expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);\n  254 |   await page\n  255 |     .getByRole(\"button\", { name: \"Lancer la vidéo\", exact: true })"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\pitch.spec.ts",
+                        "column": 27,
+                        "line": 252
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('video')\nExpected: not have attribute\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"not toHaveAttribute\" locator('video') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('video')\u001b[22m\n\n\n  250 |   const video = page.locator(\"video\");\n  251 |   await expect(video).toHaveAttribute(\"controls\", \"\");\n> 252 |   await expect(video).not.toHaveAttribute(\"autoplay\");\n      |                           ^\n  253 |   expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);\n  254 |   await page\n  255 |     .getByRole(\"button\", { name: \"Lancer la vidéo\", exact: true })\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\pitch.spec.ts:252:27"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:31.520Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\pitch-a-real-local-media-f-1f54b-leases-on-chapter-departure\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\pitch-a-real-local-media-f-1f54b-leases-on-chapter-departure\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\test-results\\pitch-a-real-local-media-f-1f54b-leases-on-chapter-departure\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\pitch.spec.ts",
+                    "column": 27,
+                    "line": 252
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-d12582e3415a6aada925",
+          "file": "pitch.spec.ts",
+          "line": 233,
+          "column": 1
+        },
+        {
+          "title": "mobile scenes and source book remain readable and accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10047,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:48.718Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-8a4acbefe0d5723faec8",
+          "file": "pitch.spec.ts",
+          "line": 305,
+          "column": 1
+        },
+        {
+          "title": "unreadable local media and unavailable fullscreen have explicit fallbacks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2943,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T10:37:59.217Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-d6c9fc21831e3fe30b90",
+          "file": "pitch.spec.ts",
+          "line": 349,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-13T10:35:38.902Z",
+    "duration": 143960.478,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "night-forest",
+  "index": 8,
+  "name": "Forêt nocturne",
+  "focus": "Retour au sous-bois et conclusion",
+  "time": {
+    "start": 265,
+    "end": 300,
+    "duration": 35
+  },
+  "palette": [
+    "#071e21",
+    "#163b38",
+    "#31544a",
+    "#879d8c",
+    "#dfdfcf"
+  ],
+  "planes": {
+    "main": "Retour au passage forestier, présence animale distante et discrète.",
+    "foreground": "Mêmes familles de fougères et de troncs que le début.",
+    "background": "Feuillus nocturnes et trouée lunaire modeste.",
+    "depth": "Frondes, troncs médians et silhouette animale dans la brume, jamais plaquée sur le texte."
+  },
+  "atmosphere": "Clair de lune sobre, bleu vert contenu, brume basse ; pas de lucioles inventées.",
+  "animated": "Brume très lente et mouvements minimes ; silhouette sobre sans fausse observation.",
+  "camera": {
+    "lensMm": 35,
+    "trajectory": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+    "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+    "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Fougères nocturnes et brume séparées, correspondance géométrique forêt initiale ; aucun raccord animé produit à ce stade.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "illustrative-not-a-mapped-site",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+  "capability": null,
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "night-forest/primary-v1.png",
+      "expectedPath": "night-forest/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Retour au passage forestier, présence animale distante et discrète.",
+      "bytes": 2600703,
+      "sha256": "f0622d7089bd80d0ac60a8cbdf38ce432bf27806934d85d179c1d6119512b17f",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "night-forest/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "night-forest/foreground-v1.png",
+      "expectedPath": "night-forest/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Mêmes familles de fougères et de troncs que le début.",
+      "bytes": 742407,
+      "sha256": "6cfeeb8bdaa38ee4a64bf495b58046e97e35d7eefbd47f8907e6934d84f3191b",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.818
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "night-forest/primary-v1.png",
+        "promptPath": "night-forest/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "night-forest/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Feuillus nocturnes et trouée lunaire modeste. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "night-forest/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Frondes, troncs médians et silhouette animale dans la brume, jamais plaquée sur le texte. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "night-forest/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Clair de lune sobre, bleu vert contenu, brume basse ; pas de lucioles inventées. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "night-forest/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "night-forest/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Brume très lente et mouvements minimes ; silhouette sobre sans fausse observation. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the night-forest/primary-v1.png generated master. Low fern fronds and one partial beech trunk at the extreme right edge of a temperate Norman woodland at night, soft desaturated blue-green and moonlight from upper left, center 65 percent empty, no glowing vegetation. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

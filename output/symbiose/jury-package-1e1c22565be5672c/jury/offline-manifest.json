@@ -1,0 +1,166 @@
+{
+  "revision": "1e1c22565be5672c",
+  "entry": "/jury/",
+  "totalBytes": 5460017,
+  "files": [
+    {
+      "url": "/assets/CameraController-CiqjxK2o.js",
+      "bytes": 568495,
+      "sha256": "9b046c8de7f4f7a85a8e4fa404017dd15ca81b1cfa3251a23fd1f16c8ab7391b"
+    },
+    {
+      "url": "/assets/DebugControls-WTOad2El.js",
+      "bytes": 3490,
+      "sha256": "426859bb69e2b03cd192e66629d62d1a3aeaf55c977affa25253f1ac4e770baa"
+    },
+    {
+      "url": "/assets/ExperienceCanvas-B_lm8qxf.js",
+      "bytes": 31750,
+      "sha256": "c9454f480ab28a7b3e17237cd24174647d8689f32643ef25665f89130b44a767"
+    },
+    {
+      "url": "/assets/LandingPage-BUKgLDZz.css",
+      "bytes": 32565,
+      "sha256": "7825c4b35da03ad2b56bd6f1dbdbc25f15e26d6bb0af1a934ef678ba4f497253"
+    },
+    {
+      "url": "/assets/LandingPage.vue_vue_type_script_setup_true_lang-PSfsfMxr.js",
+      "bytes": 172103,
+      "sha256": "ca5dcaf4b606153c2c19b0acb6d17335dd54bafb0d8777a527a420f3bff51e12"
+    },
+    {
+      "url": "/assets/PitchSources-BJ2Zslvw.js",
+      "bytes": 196663,
+      "sha256": "64b92352cca5b3c4b4fdd2471f882f30e0c2f8a69504465620eeb9cd68a252e4"
+    },
+    {
+      "url": "/assets/jury-DfVSCK7Z.css",
+      "bytes": 1136,
+      "sha256": "0df458b328a02449859b8794217d9a201e2504667cf5e699ff842cfcf5aa37c1"
+    },
+    {
+      "url": "/assets/jury-DwGKGeps.js",
+      "bytes": 3392,
+      "sha256": "d5088c483068c5ae4cc84b4042335f5aaf976e6b700a41b8d3d4c9bdcf759f06"
+    },
+    {
+      "url": "/assets/symbiose-logo-BTPSrkyB.png",
+      "bytes": 51947,
+      "sha256": "c8b17e9dff53593a74410001a984124df94cd0b409dddefe95e51ba30614f25e"
+    },
+    {
+      "url": "/assets/symbiose-logo-CX_rJBaj.js",
+      "bytes": 112415,
+      "sha256": "758169ab23a97517b7f4e76105e3aeef93e4ef0e21e49a65326be6f785bef7c2"
+    },
+    {
+      "url": "/experience-art/coast/foreground-runtime.webp",
+      "bytes": 122082,
+      "sha256": "6366243ed189e86945301d13eec95f3d6f7629c590f17367350c8c6174b5e567"
+    },
+    {
+      "url": "/experience-art/coast/primary-runtime.webp",
+      "bytes": 266048,
+      "sha256": "3ab0f1b89358254f66a360a37460de8a06e554fc01ec260d194bc0e67591747f"
+    },
+    {
+      "url": "/experience-art/forest/foreground-runtime.webp",
+      "bytes": 176958,
+      "sha256": "6f201c90ef1aaf40b9df81293ad82b19470c1ab44dc036a84a789c54893a00dd"
+    },
+    {
+      "url": "/experience-art/forest/primary-runtime.webp",
+      "bytes": 445902,
+      "sha256": "02bda1a0a46b505cb5e4c3c92d1138a914f43e22f760d1b5badfe1bfc6047b60"
+    },
+    {
+      "url": "/experience-art/meadow/foreground-runtime.webp",
+      "bytes": 190994,
+      "sha256": "e4b98587507e3f8afc44c14d78ed94ce41f4e7b14cd4c059d7e12ac53b6fa166"
+    },
+    {
+      "url": "/experience-art/meadow/primary-runtime.webp",
+      "bytes": 401264,
+      "sha256": "76cd6ec1fc6116eb915d64b109c9151cb58240982ef716fa484098c11d56ee0e"
+    },
+    {
+      "url": "/experience-art/night-forest/foreground-runtime.webp",
+      "bytes": 119068,
+      "sha256": "852483181aba8af8d5ff6616b53ad6a762c73f5b8abebfa799c16ed0070f7e66"
+    },
+    {
+      "url": "/experience-art/night-forest/primary-runtime.webp",
+      "bytes": 279996,
+      "sha256": "08b0d9bfad133c76742e4b9023e914edff1028205c18245f26a71157d5ec05b2"
+    },
+    {
+      "url": "/experience-art/rivers/foreground-runtime.webp",
+      "bytes": 218668,
+      "sha256": "1a86e4aa17e725cbba9d621023e51779487414b7ebbca8ea12c377647475b22d"
+    },
+    {
+      "url": "/experience-art/rivers/primary-runtime.webp",
+      "bytes": 469552,
+      "sha256": "55beb9544154cacedd6dc7a6fd9a63fdbe581b1f00a090045693d9f6d9660b0e"
+    },
+    {
+      "url": "/experience-art/runtime-assets.json",
+      "bytes": 8236,
+      "sha256": "3ce0a90efba11caed9db8d41d83df9852d3860d11302a47327c6d5df76516cd4"
+    },
+    {
+      "url": "/experience-art/shared/symbiose-logo.png",
+      "bytes": 51947,
+      "sha256": "c8b17e9dff53593a74410001a984124df94cd0b409dddefe95e51ba30614f25e"
+    },
+    {
+      "url": "/experience-art/sky/foreground-runtime.webp",
+      "bytes": 223004,
+      "sha256": "45a6ab1b64e02af8760f8e5469d93f21ab3c8e37f353f259c1c4f34c7653a151"
+    },
+    {
+      "url": "/experience-art/sky/primary-runtime.webp",
+      "bytes": 271386,
+      "sha256": "f852a401d6b85417ba1f12bad6bde7a8402e9439d9a3f63da0a06bd3f95e17b3"
+    },
+    {
+      "url": "/experience-art/underwater/foreground-runtime.webp",
+      "bytes": 220118,
+      "sha256": "6fc12477bb3ea723404b3878dc1bbe41dc25942683e5c09c49239e41345fa300"
+    },
+    {
+      "url": "/experience-art/underwater/primary-runtime.webp",
+      "bytes": 171046,
+      "sha256": "f4a9ce3df3e9daa8ec4649f841f0f5213a91d71626bd8f136c6c670f862e11ad"
+    },
+    {
+      "url": "/experience-art/wetland/foreground-runtime.webp",
+      "bytes": 210098,
+      "sha256": "3b76d64b98a08417d37086fae8fdd930c6ed03cc65cf11c0b24ebea7c593d5cf"
+    },
+    {
+      "url": "/experience-art/wetland/primary-runtime.webp",
+      "bytes": 359804,
+      "sha256": "9b3723f9913d601e9c2b20d84a6e1144b398d18edb96b510f10c66182fc4777d"
+    },
+    {
+      "url": "/experience-media/manifesto-review.webp",
+      "bytes": 76234,
+      "sha256": "cfe107920d99b93daafa87276279457f0cb5bf3b9ecee9ca45061274d202e5c1"
+    },
+    {
+      "url": "/favicon.ico",
+      "bytes": 2724,
+      "sha256": "956800c711bb1e56f92b3e90fd9f54aeccaa3e05268c0bac17f3f240bd4de3a4"
+    },
+    {
+      "url": "/jury/index.html",
+      "bytes": 932,
+      "sha256": "2541c1bdfd6693e7525e0b1225938a9d4aa1d7a1ee182b737fb129737bc2fad9"
+    }
+  ],
+  "demo": {
+    "available": false,
+    "files": []
+  }
+}

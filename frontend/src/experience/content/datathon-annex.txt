@@ -1,0 +1,232 @@
+PAGE 1
+1 
+ 
+Annexe : Règlement du Datathon Normandie 2026 
+ 
+  
+ 
+Règlement Datathon Normandie 2026 
+1. Organisation du Datathon Normandie 2026 
+À travers sa Stratégie Numérique, la Région porte l’ambition de faire de la Normandie un territoire de 
+la confiance numérique, pour un développement durable et sécurisé de son économie, pour un usage 
+souverain des nouvelles technologies numériques et du potentiel des données, pour un numérique 
+innovant et responsable au service des grandes transitions territoriales de la Normandie.   
+Organisé par la Région Normandie avec le soutien du DataLab Normandie, le Datathon Normandie 
+2026 vise à :    
+• 
+Créer une dynamique et fédérer les acteurs normands autour de projets qui croisent et 
+valorisent des données dans la perspective d’apporter des solutions digitales innovantes au 
+service du territoire normand et de ses habitants ; 
+• 
+Permettre aux acteurs de monter en compétences sur les sujets liés à la donnée ; 
+• 
+Faire connaitre les producteurs de données des territoires aux participants ; 
+• 
+Valoriser et faire connaitre les actions de la Région et plus largement de ses partenaires en 
+matière de données.  
+Cet évènement est ouvert à tout type de participant (étudiants, professionnels exerçant un métier 
+basé sur la data, soignants, chercheurs, autodidactes, etc.).  
+Les équipes seront tutorées par des mentors bénévoles, choisis parmi les acteurs de l’écosystème 
+régional de la donnée et de l’environnement en Normandie.  
+Il se déroulera en distanciel pour une durée de 4 semaines environ à compter du 12 octobre 2026 (à 
+l’exception de l’événement de clôture qui se déroulera en présentiel).  
+Le Datathon Normandie 2026 fait l’objet d’une dotation sous forme de prix remis aux 3 premières 
+équipes, après évaluation des projets présentés par les participants au jury lors de la clôture de 
+l’événement.  
+Le présent règlement s’applique au Datathon Normandie 2026 et a pour objet de définir les droits et 
+obligations de la Région Normandie et des participants.  
+ 
+2. Éligibilité à la participation  
+Le Datathon Normandie 2026 est ouvert à toute personne remplissant les conditions suivantes :  
+• 
+L’inscription se fait en ligne sur le site 
+https://www.datanormandie.fr/actualites/inscriptions-au-datathon-normandie-2026 ;  
+
+PAGE 2
+2 
+ 
+• 
+La jauge maximale est fixée à 10 équipes de 2 personnes minimum à 5 personnes maximum ;  
+• 
+Lors du lancement, les participants devront désigner un nom pour leur équipe ainsi qu’un 
+membre référent en charge des relations avec la Région. Il est recommandé de mélanger 
+compétences techniques et créatives ;  
+• 
+Les participants pourront compléter des équipes déjà formées dans la limite de 5 participants 
+par équipe ;  
+• 
+Chaque participant utilisera son propre matériel, en particulier informatique ;  
+• 
+La participation au Datathon Normandie 2026 est gratuite ;  
+• 
+Les projets éligibles devront s’inscrire dans les thématiques du Datathon Normandie 2026 et 
+viser le territoire normand.   
+La Région Normandie se réserve également le droit de refuser la participation de toute personne 
+pour des raisons de sécurité ou de non-respect du présent règlement.  
+ 
+3. Thématiques  
+Le Datathon Normandie 2026 porte sur les liens entre l’emploi, la formation professionnelle, les 
+territoires et les normands. Les participants devront exploiter des données thématiques publiques et 
+ouvertes1 et créer une solution digitale innovante les valorisant. 
+Le challenge s’inscrit en cohérence avec les actions de la Région Normandie en matière de données 
+permettant de :  
+• 
+Favoriser l’appropriation du numérique par les acteurs et les territoires dans toutes ses 
+dimensions (cybersécurité, sobriété, évolution des compétences et des métiers, …) ;  
+• 
+Impulser une culture de l’innovation par le numérique, en soutenant et accompagnant des 
+projets emblématiques en la matière, quel que soit le secteur ou l’activité ;   
+• 
+Œuvrer à développer des écosystèmes innovants où le numérique joue un rôle clé et les 
+promouvoir (expérimentation, émergence de projets, croisement technologique, valorisation 
+des dispositifs de recherche de premier rang, …) au niveau national et international ;  
+• 
+Renforcer et promouvoir l’écosystème de la donnée et de l’intelligence artificielle en 
+s’appuyant sur le DataLab Normandie ;   
+• 
+Accélérer la dynamique d’ouverture des données (Open Data) pour développer la relation 
+citoyenne et les services numériques des collectivités (développer une culture de la donnée 
+au sein des collectivités, ouverture et valorisation des données des collectivités, territoire 
+intelligent, nouveaux services …) ;  
+• 
+Développer et promouvoir les usages de la donnée géographique auprès des acteurs et des 
+territoires, notamment par la Coordination Régionale de l’Information Géographique (CRIGE) 
+en Normandie.   
+• 
+Valoriser les données ouvertes disponibles grâce à des outils accessibles et mutualisés. Dans 
+ce cadre, la plateforme DataNormandie joue un rôle stratégique en facilitant la découverte, 
+l’exploitation et la réutilisation des données régionales. 
+ 
+4. Déroulé  
+ 
+1 Seront mises à disposition des participants la base de données des formations disponibles, les données de la 
+biodiversité sur le territoire, sur les habitats, la faune et la flore. 
+
+PAGE 3
+3 
+ 
+Le Datathon Normandie 2026 se déroulera pour une durée de 4 semaines environ à compter du 12 
+octobre 2026. Les participants s’engagent à faire tout leur possible pour être présents lors de 
+l’évènement de clôture qui se déroulera à Rouen et dont la date exacte leur sera communiquée après 
+le lancement du challenge. 
+Pendant toute la durée du Datathon Normandie 2026, les équipes bénéficieront d’échanges avec des 
+experts bénévoles pour répondre à leurs questions et les aider à avancer dans leurs projets.  
+Les équipes remettront leur support de présentation au plus tard deux jours avant l’évènement de 
+clôture. Le support remis comprendra tous les éléments constitutifs du projet présenté (y compris les 
+codes sources et les données utilisées) ainsi que, le cas échéant, la documentation associée.  
+Chaque équipe présentera son projet au jury lors de la clôture.   
+ 
+5. Sélection des gagnants.  
+Le jury se réunira lors de l’évènement de clôture en fin d’après-midi pour écouter les différentes 
+présentations et désigner l’équipe lauréate. Ce jury sera composé à la fois d’élus régionaux ou de leur 
+représentant et d’experts thématiques issus de l’écosystème régional de la donnée et de l’emploi-
+formation.  
+Les critères d’évaluation du projet lauréat seront notamment :  
+• 
+La pertinence du projet avec les thématiques du Datathon Normandie 2026 ; 
+• 
+L’originalité du projet (méthodes de traitement et de valorisation des données) ;  
+• 
+Le caractère innovant de la solution ; 
+• 
+La prise en compte de la sobriété numérique ; 
+• 
+La faisabilité du projet ; 
+• 
+La qualité de la présentation orale.  
+Le cas échéant, les projets pourront également faire l’objet d’un accompagnement à l’issue du 
+Datathon Normandie 2026 par des acteurs de l’écosystème numérique et de l’innovation en 
+Normandie.  
+Les décisions du jury sont souveraines et les participants acceptent lors de leur inscription de s’y 
+plier.  
+ 
+6. Prix et récompenses  
+Un prix d’une valeur totale de 2500 € sera attribué à l’équipe lauréate. Les équipes classées en 2ème et 
+3ème position recevront également une récompense, avec des prix respectifs de 1500€ et 1000€. 
+L’ensemble des participants recevront des goodies pour sa participation à l’événement.   
+ 
+7. Propriété intellectuelle et utilisation de données  
+Le participant se rend attentif au fait que la Région Normandie promeut un événement dont les 
+solutions sont libres de droit.  
+
+PAGE 4
+4 
+ 
+ 
+En aucun cas la Région Normandie ne pourra voir sa responsabilité engagée par un participant ou tout 
+autre tiers concernant une question relative à la propriété intellectuelle de solutions issues du 
+Datathon Normandie 2026. Les risques relatifs à la propriété intellectuelle et assimilés sont assumés 
+exclusivement par chaque participant et au sein de son équipe.  
+ 
+8. Respect des droits antérieurs  
+Toutes les créations originales, bases de données, dénominations, marques ou autres signes distinctifs 
+ne peuvent être utilisés, reproduits et représentés par un participant que :  
+• 
+S’il détient les droits sur ces éléments ;  
+• 
+Si ces éléments sont libres de droit ;  
+• 
+S’il y est autorisé par celui qui détient les droits sur ces éléments.  
+Toutes les créations originales, bases de données, dénominations, marques ou autres signes 
+distinctifs présents sur les pages du site dédié au Datathon Normandie 2026 demeurent la propriété 
+exclusive de leur auteur ou de leur déposant.  
+Cependant la reproduction et la représentation de tout ou partie de ces éléments sont autorisées au 
+participant à titre gracieux dans le strict cadre de sa participation au Datathon Normandie 2026.  
+Le participant accepte de la même manière la reproduction et la représentation à titre gracieux de 
+tout ou partie de ses créations, dénominations, marques ou autres signes distinctifs, par la Région 
+Normandie dans le cadre strict du Datathon Normandie 2026. Le participant garantit la Région 
+Normandie contre toute revendication de tiers sur ces éléments.  
+ 
+9. Respect des données traitées  
+Le participant s’engage à ne pas exploiter et/ou utiliser des données à caractère personnel dans le 
+cadre du Datathon Normandie 2026. 
+En particulier, aucune donnée relative à des personnes identifiées ou identifiables ne sera utilisée, et, 
+à tout le moins, sans le consentement exprès, libre et éclairé des personnes concernées. En cas 
+d’anonymisation de données, les méthodes utilisées devront être conformes aux recommandations 
+de la CNIL pour parvenir à une irréversibilité de la donnée identifiante.  
+ 
+10.  Exploitation des résultats  
+En tout état de cause, la Région Normandie attire l’attention sur l’importance pour chaque participant 
+d’établir un accord avec son équipe sur les droits de propriété intellectuelle relatifs au projet.  
+La Région Normandie n’a aucun droit de préférence sur une éventuelle collaboration ou exploitation 
+commerciale ou non commerciale des projets. Chaque participant fait son affaire de l’exploitation 
+future de son projet, en accord avec tout autre personne, participant ou tiers, ayant des droits sur le 
+projet.  
+
+PAGE 5
+5 
+ 
+La Région Normandie ne peut revendiquer la propriété intellectuelle des projets présentés, de 
+quelque façon que ce soit ou à quelque titre que ce soit.  
+La Région Normandie dispose toutefois d’un droit d’utilisation des projets uniquement à des fins de 
+communication sur ses outils institutionnels.  
+ 
+11.  Protection des données à caractère personnel des participants  
+Le participant est informé que les informations recueillies lors de son inscription par la Région 
+Normandie pourront être diffusées sous forme d’annuaire sur le site pour la bonne organisation du 
+Datathon Normandie 2026 : [nom, prénom, mail, profession…].  
+Conformément à la loi informatique et libertés du 6 janvier 1978 modifiée, le participant bénéficie d'un 
+droit d'accès, de rectification, de limitation, de portabilité et d’opposition aux informations le 
+concernant. Pour exercer ces droits, il convient de s’adresser au Délégué à la protection des données 
+de la Région Normandie - Abbaye-aux-Dames Place Reine Mathilde CS 50523 – 14035 Caen Cedex 1 - 
+dpo@normandie.fr.  
+Plus d’informations sur les conditions du traitement des données à caractère personnel par la Région 
+sur https://www.normandie.fr/protection-des-donnees-caractere-personnel   
+ 
+12.  Droit à l’image  
+À des fins de promotion, des prises de vue lors du Datathon Normandie 2026 pourront être effectuées.  
+Ainsi, le participant accorde à la Région Normandie le droit d’utiliser à titre gratuit son image et sa 
+voix, dans une finalité de promotion du Datathon Normandie 2026 et des activités de la Région 
+Normandie. Cette autorisation est valable pour tout support (vidéo, photo, audio…), pour le monde 
+entier et pour toute la durée d'exploitation des supports.  
+Si le participant estime qu’une captation d’image relative à son projet ou à lui-même peut lui causer 
+un trouble anormal, il lui appartient de le signaler à la Région Normandie.  
+ 
+13.  Responsabilité & Règlement des différends  
+La seule langue de référence pour le présent règlement est le français. Le présent règlement est soumis 
+au droit français.  
+La participation au Datathon Normandie 2026 implique l’acceptation entière et sans réserve du 
+présent règlement.  
+Le présent règlement définit les règles juridiques applicables au Datathon Normandie 2026.   
+La Région Normandie et le participant s’engagent à soumettre leur conflit à une conciliation amiable 
+avant toute procédure judiciaire. Le cas échéant, les tribunaux compétents seront saisis.  

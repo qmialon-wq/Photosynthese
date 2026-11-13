@@ -1,0 +1,497 @@
+{
+  "date": "2026-11-13T13:22:15.404Z",
+  "phase": "review",
+  "base": "http://127.0.0.1:4173",
+  "jury": false,
+  "fallback": false,
+  "browser": "156.0.8078.4",
+  "os": "Windows_NT 10.0.26200",
+  "cpu": "AMD Ryzen 7 4800H with Radeon Graphics         ",
+  "ramBytes": 16558182400,
+  "startupMs": 6276,
+  "scenes": [
+    {
+      "id": "forest",
+      "screenshot": "01-forest.png",
+      "state": {
+        "progress": 0,
+        "transition": "ascent",
+        "local": 0,
+        "position": [
+          0,
+          0.7,
+          18
+        ],
+        "target": [
+          -2,
+          7,
+          -28
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5410740037560793,
+          "y": 0.6208235660371338,
+          "width": 0.0032524608981212705,
+          "height": 0.005283608324892594
+        },
+        "drawCalls": 54,
+        "triangles": 410009,
+        "renderCount": 2,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 30,
+        "geometryCount": 49,
+        "residentImages": 2,
+        "estimatedImageBytes": 9830400,
+        "postProcessing": false,
+        "cpuSubmitMs": 42.20000000298023,
+        "assetsPending": false,
+        "animals": [
+          {
+            "id": "roe-forest",
+            "label": "Chevreuil",
+            "x": 0.6227244527475362,
+            "y": 0.5303422586035481,
+            "width": 0.06256743552748034,
+            "height": 0.09386612625504394,
+            "opacity": 1
+          },
+          {
+            "id": "boar-forest",
+            "label": "Sanglier",
+            "x": 0.7644242171485055,
+            "y": 0.5799936235600729,
+            "width": 0.04898645353024261,
+            "height": 0.04043522278412136,
+            "opacity": 1
+          },
+          {
+            "id": "pigeon-forest",
+            "label": "Pigeon",
+            "x": 0.8443728399398965,
+            "y": 0.5695282406302927,
+            "width": 0.041890040783704785,
+            "height": 0.0496970485048418,
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "sky",
+      "screenshot": "02-sky.png",
+      "state": {
+        "progress": 0.166666666666667,
+        "transition": "territory-dive",
+        "local": 2.842170943040401e-15,
+        "position": [
+          4.0000000000000115,
+          64.99999999999999,
+          -85.00000000000033
+        ],
+        "target": [
+          7.999999999999991,
+          44.999999999999936,
+          -210.0000000000003
+        ],
+        "fov": 56.99999999999999,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.49545464052408367,
+          "y": 0.5045102099991491,
+          "width": 0.003991487984236153,
+          "height": 0.0071513332553179276
+        },
+        "drawCalls": 34,
+        "triangles": 149182,
+        "renderCount": 10,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 30,
+        "geometryCount": 53,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 6.600000001490116,
+        "assetsPending": false,
+        "animals": [
+          {
+            "id": "buzzard-a",
+            "label": "Buse",
+            "x": 0.6964925582568107,
+            "y": 0.5507625271040675,
+            "width": 0.08198304024390993,
+            "height": 0.044492480889883584,
+            "opacity": 1
+          },
+          {
+            "id": "buzzard-b",
+            "label": "Buse",
+            "x": 0.7062642804769355,
+            "y": 0.2869430359298908,
+            "width": 0.03978078228431839,
+            "height": 0.01901700830453651,
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "rivers",
+      "screenshot": "03-rivers.png",
+      "state": {
+        "progress": 0.28571428571428603,
+        "transition": "immersion",
+        "local": 1.827109891954543e-15,
+        "position": [
+          5.999999999999984,
+          2.199999999999927,
+          -210.00000000000026
+        ],
+        "target": [
+          1.9999999999999734,
+          0.49999999999999734,
+          -255.00000000000014
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.5674779923016314,
+          "y": 0.461142211202826,
+          "width": 0.006230066097014347,
+          "height": 0.010044426218737433
+        },
+        "drawCalls": 27,
+        "triangles": 135640,
+        "renderCount": 18,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 19,
+        "geometryCount": 45,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 4.5,
+        "assetsPending": false,
+        "animals": []
+      }
+    },
+    {
+      "id": "underwater",
+      "screenshot": "04-underwater.png",
+      "state": {
+        "progress": 0.452380952380952,
+        "transition": "immersion",
+        "local": 0.9999999999999976,
+        "position": [
+          -4.000000000000012,
+          -4.999999999999999,
+          -314.9999999999996
+        ],
+        "target": [
+          -4.060244204343429e-14,
+          -3.0000000000000204,
+          -364.99999999999966
+        ],
+        "fov": 59.00000000000001,
+        "immersion": 1,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.520766159650737,
+          "y": 0.4838449304271112,
+          "width": 0.010668857684362876,
+          "height": 0.01694464857116013
+        },
+        "drawCalls": 25,
+        "triangles": 146386,
+        "renderCount": 27,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 24,
+        "geometryCount": 46,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": true,
+        "cpuSubmitMs": 8.899999998509884,
+        "assetsPending": false,
+        "animals": [
+          {
+            "id": "fish-a",
+            "label": "Poisson · espèce à confirmer",
+            "x": 0.6185374938622964,
+            "y": 0.46404483434029226,
+            "width": 0.068704087411319,
+            "height": 0.042567457327072525,
+            "opacity": 1
+          },
+          {
+            "id": "fish-b",
+            "label": "Poisson · espèce à confirmer",
+            "x": 0.6606560324571956,
+            "y": 0.46483618184714165,
+            "width": 0.03384012469533684,
+            "height": 0.021283792949233143,
+            "opacity": 1
+          },
+          {
+            "id": "fish-c",
+            "label": "Poisson · espèce à confirmer",
+            "x": 0.47852160633693436,
+            "y": 0.5004113316184619,
+            "width": 0.040262052586738095,
+            "height": 0.0257612003626453,
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "wetland",
+      "screenshot": "05-wetland.png",
+      "state": {
+        "progress": 0.547619047619048,
+        "transition": "observation-data",
+        "local": 2.4361465226060578e-15,
+        "position": [
+          6.000000000000027,
+          1.7000000000000186,
+          -430.0000000000003
+        ],
+        "target": [
+          14.000000000000039,
+          1.5999999999999974,
+          -458.0000000000001
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 0,
+        "bounds": {
+          "x": 0.476517450338632,
+          "y": 0.44343275938621524,
+          "width": 0.05864371705701603,
+          "height": 0.08814868897120007
+        },
+        "drawCalls": 31,
+        "triangles": 134499,
+        "renderCount": 35,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 30,
+        "geometryCount": 58,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 16.100000001490116,
+        "assetsPending": false,
+        "animals": [
+          {
+            "id": "roe-wetland",
+            "label": "Chevreuil",
+            "x": 0.4791082634049029,
+            "y": 0.44642004380321143,
+            "width": 0.043839081349758155,
+            "height": 0.06666688573432131,
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "meadow",
+      "screenshot": "06-meadow.png",
+      "state": {
+        "progress": 0.714285714285714,
+        "transition": "observation-data",
+        "local": 0.9999999999999983,
+        "position": [
+          -19.999999999999993,
+          54.999999999999865,
+          -549.9999999999998
+        ],
+        "target": [
+          2.9999999999999964,
+          0.9999999999999929,
+          -621.9999999999997
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": -0.6699973331221423,
+          "y": -2.1874222671240733,
+          "width": 0.6699973331221423,
+          "height": 2.1874222671240733
+        },
+        "drawCalls": 27,
+        "triangles": 138741,
+        "renderCount": 44,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 28,
+        "geometryCount": 61,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 10.099999994039536,
+        "assetsPending": false,
+        "animals": [
+          {
+            "id": "pigeon-meadow-a",
+            "label": "Pigeon",
+            "x": 0.713439090208675,
+            "y": 0.7925648953736741,
+            "width": 0.014599645041554699,
+            "height": 0.02277060070616793,
+            "opacity": 1
+          },
+          {
+            "id": "pigeon-meadow-b",
+            "label": "Pigeon",
+            "x": 0.7211627442623563,
+            "y": 0.7496219587145727,
+            "width": 0.01286095035366322,
+            "height": 0.019741574717042132,
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "coast",
+      "screenshot": "07-coast.png",
+      "state": {
+        "progress": 0.857142857142857,
+        "transition": "territory-coast",
+        "local": 0.999999999999999,
+        "position": [
+          37.99999999999992,
+          48.00000000000004,
+          -679.9999999999999
+        ],
+        "target": [
+          -25.99999999999999,
+          18.999999999999982,
+          -752.9999999999999
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 0,
+        "logo": 0,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 1,
+          "y": -0.1251065356919746,
+          "width": 0.22888967296518847,
+          "height": 0.1251065356919746
+        },
+        "drawCalls": 22,
+        "triangles": 55937,
+        "renderCount": 57,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 21,
+        "geometryCount": 54,
+        "residentImages": 4,
+        "estimatedImageBytes": 19660800,
+        "postProcessing": false,
+        "cpuSubmitMs": 6.899999998509884,
+        "assetsPending": false,
+        "animals": []
+      }
+    },
+    {
+      "id": "night-forest",
+      "screenshot": "08-night-forest.png",
+      "state": {
+        "progress": 1,
+        "transition": "living-cycle",
+        "local": 1,
+        "position": [
+          0,
+          2.5,
+          -865
+        ],
+        "target": [
+          0,
+          5,
+          -912
+        ],
+        "fov": 57,
+        "immersion": 0,
+        "night": 1,
+        "logo": 1,
+        "observation": 0,
+        "dataMorph": 1,
+        "bounds": {
+          "x": 0.4779468409274629,
+          "y": 0.5447717265878402,
+          "width": 0.0037383130304595134,
+          "height": 0.006071491523294517
+        },
+        "drawCalls": 31,
+        "triangles": 303877,
+        "renderCount": 67,
+        "quality": "standard",
+        "pixelRatio": 1,
+        "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001636) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "textureCount": 30,
+        "geometryCount": 61,
+        "residentImages": 3,
+        "estimatedImageBytes": 14745600,
+        "postProcessing": false,
+        "cpuSubmitMs": 69.20000000298023,
+        "assetsPending": false,
+        "animals": [
+          {
+            "id": "roe-night",
+            "label": "Chevreuil",
+            "x": 0.6873580521134007,
+            "y": 0.5379230006480187,
+            "width": 0.060704110386873456,
+            "height": 0.08458590847668207,
+            "opacity": 1
+          }
+        ]
+      }
+    }
+  ],
+  "measurements": [],
+  "idleRenderDelta": 0,
+  "transfer": {
+    "requests": 190,
+    "bytes": 28816573,
+    "jsHeapBytes": 56800000
+  },
+  "errors": [],
+  "external": []
+}

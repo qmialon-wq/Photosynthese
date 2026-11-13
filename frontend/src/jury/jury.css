@@ -1,0 +1,86 @@
+html,
+body,
+#app {
+  margin: 0;
+  min-height: 100%;
+  background: #10251c;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+.jury-skip {
+  position: fixed;
+  z-index: 30;
+  left: 20px;
+  top: -100px;
+  padding: 12px;
+  color: #10251c;
+  background: #f5f8ef;
+}
+.jury-skip:focus {
+  top: 15px;
+}
+.jury-installation {
+  position: fixed;
+  z-index: 12;
+  right: 35px;
+  top: 88px;
+  color: #e9efdd;
+  background: #0c251cf5;
+  border: 1px solid #a3bd8c66;
+  max-width: min(390px, calc(100vw - 32px));
+  font-size: 11px;
+  box-shadow: 0 10px 40px #0004;
+}
+.jury-installation > summary {
+  cursor: pointer;
+  padding: 9px 14px;
+}
+.jury-installation > summary span {
+  color: #c4e6a3;
+  margin-left: 12px;
+}
+.jury-installation[open] {
+  padding: 0 18px 18px;
+}
+.jury-installation[open] > summary {
+  margin: 0 -18px;
+  padding: 12px 18px;
+}
+.jury-installation p {
+  line-height: 1.8;
+}
+.jury-installation button {
+  font: inherit;
+  color: #10251c;
+  background: #d0edb1;
+  padding: 10px 14px;
+  border: 0;
+}
+.jury-installation a {
+  display: block;
+  margin-top: 16px;
+  color: #e6edda;
+}
+.jury-installation :focus-visible {
+  outline: 2px solid #b9ef84;
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  .jury-installation {
+    top: auto;
+    bottom: 82px;
+    right: 18px;
+  }
+}

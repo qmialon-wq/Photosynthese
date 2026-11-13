@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "coast",
+  "index": 7,
+  "name": "Littoral — Étretat",
+  "focus": "Porte d’Aval et Aiguille distinctes",
+  "time": {
+    "start": 240,
+    "end": 265,
+    "duration": 25
+  },
+  "palette": [
+    "#183c3a",
+    "#496967",
+    "#6b8278",
+    "#d0d4bf",
+    "#f3efdc"
+  ],
+  "planes": {
+    "main": "Porte d’Aval et Aiguille distinctes dans un paysage de côte d’Albâtre.",
+    "foreground": "Pelouse littorale et détails de craie au bord bas, sans masquer les repères.",
+    "background": "Manche gris vert, falaise stratifiée et horizon marin voilé.",
+    "depth": "Herbes proches, surface marine médiane, arche et aiguille séparées, côte lointaine."
+  },
+  "atmosphere": "Lumière naturelle ivoire, craie non brûlée, brume marine discrète.",
+  "animated": "Houle basse, eau et herbes ; aucun effet touristique ou drone visible.",
+  "camera": {
+    "lensMm": 50,
+    "trajectory": "Travelling latéral de côte gardant arche et aiguille dans le cadre, 50 mm.",
+    "entry": "Horizon de prairie devenant plateau de craie.",
+    "exit": "Bord ombré du plateau ou silhouette de falaise, raccord de valeur vers la nuit.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Géométrie ou reconstruction multi-vues validée d’Étretat, eau et clean plates ; pas de déformation de l’arche pour créer de la parallaxe.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "recognizable-evocation-needs-geographic-review",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Évocation générée d’Étretat — arche et Aiguille ; ni photo documentaire ni relevé géométrique.",
+  "capability": null,
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "coast/primary-v1.png",
+      "expectedPath": "coast/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Porte d’Aval et Aiguille distinctes dans un paysage de côte d’Albâtre.",
+      "bytes": 2606590,
+      "sha256": "16da1103d814f5423b15f07422161932e1e9f26c1f9aef859d99089179b478bb",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "coast/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "coast/foreground-v1.png",
+      "expectedPath": "coast/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Pelouse littorale et détails de craie au bord bas, sans masquer les repères.",
+      "bytes": 942203,
+      "sha256": "441488323a4162297f4f74c96116f86b5fc59e3927437a8c0f042324824ce731",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.7944
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "coast/primary-v1.png",
+        "promptPath": "coast/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "coast/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Manche gris vert, falaise stratifiée et horizon marin voilé. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "coast/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Herbes proches, surface marine médiane, arche et aiguille séparées, côte lointaine. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "coast/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Lumière naturelle ivoire, craie non brûlée, brume marine discrète. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "coast/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "coast/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Houle basse, eau et herbes ; aucun effet touristique ou drone visible. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the coast/primary-v1.png generated master. Short coastal grasses and a few small rough pale chalk fragments from the Normandy Alabaster Coast, only in lower left and lower right corners, no sea or cliff background, muted upper-left natural morning illumination. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

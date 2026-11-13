@@ -1,0 +1,1400 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "narrative.spec.ts",
+      "pitch.spec.ts",
+      "jury.spec.ts",
+      "spatial.spec.ts",
+      "logo-navigation.spec.ts",
+      "authenticated-workspace.spec.ts",
+      "--timeout",
+      "60000",
+      "--reporter=line,json",
+      "--output",
+      "../output/symbiose/spatial/playwright-results"
+    ],
+    "configFile": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Users/fatty/Desktop/Symbiose/Symbiose/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/fatty/Desktop/Symbiose/Symbiose/output/symbiose/spatial/playwright-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/fatty/Desktop/Symbiose/Symbiose/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e",
+        "snapshotDir": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "launchOptions": {
+            "args": [
+              "--use-angle=d3d11",
+              "--ignore-gpu-blocklist"
+            ]
+          },
+          "baseURL": "http://127.0.0.1:8080",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "authenticated-workspace.spec.ts",
+      "file": "authenticated-workspace.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "landing publique sans données fictives, accessible et adaptée au mobile",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12465,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:30:26.835Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-edb83c695abc1be84616",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 111,
+          "column": 1
+        },
+        {
+          "title": "les pages de travail exigent une session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12471,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:30:40.019Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-57511c6a103197de007d",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 146,
+          "column": 1
+        },
+        {
+          "title": "client : Accueil ouvre le module connecté, la landing revient après déconnexion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12751,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:30:52.686Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-437e33ecf252eb9415e0",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 164,
+          "column": 3
+        },
+        {
+          "title": "client : restauration de session et accès aux pages métier",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23864,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:31:05.741Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-c4c0f89cf979b7f4bee4",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 239,
+          "column": 3
+        },
+        {
+          "title": "client : l'analyse soumet une vraie requête avec CSRF et permet de préparer les recadrages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9063,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:31:29.739Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-0bcd3b659e0bff7cfa03",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 285,
+          "column": 3
+        },
+        {
+          "title": "client : validation humaine et permissions documentaires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5705,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:31:38.923Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-2e72326a5d3ea80687ea",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 324,
+          "column": 3
+        },
+        {
+          "title": "admin : Accueil ouvre le module connecté, la landing revient après déconnexion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8871,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:31:44.776Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-68e2a0d15f12771982c7",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 164,
+          "column": 3
+        },
+        {
+          "title": "admin : restauration de session et accès aux pages métier",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23751,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:31:53.784Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-0178ff413b6b8c53a509",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 239,
+          "column": 3
+        },
+        {
+          "title": "admin : l'analyse soumet une vraie requête avec CSRF et permet de préparer les recadrages",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7096,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:17.641Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-7bd71f845ed3c48e5152",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 285,
+          "column": 3
+        },
+        {
+          "title": "admin : validation humaine et permissions documentaires",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4870,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:24.848Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-a0c977c6ff201e674be6",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 324,
+          "column": 3
+        },
+        {
+          "title": "un client ne peut pas entrer dans l'administration",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2181,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:29.817Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-74e2a117bf9a6de8d97f",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 357,
+          "column": 1
+        },
+        {
+          "title": "les pages administrateur consultent les services et restent accessibles",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12007,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:32.103Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "373a65a76395098fbd43-6c291c97df44bb8dda30",
+          "file": "authenticated-workspace.spec.ts",
+          "line": 364,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "jury.spec.ts",
+      "file": "jury.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "software renderer automatically releases WebGL and keeps the complete jury",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4993,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:44.309Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-b8e2931608626629957b",
+          "file": "jury.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "standalone jury starts without any authentication or business API",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6218,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:49.427Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-53ecc2d6bbebdf929cb6",
+          "file": "jury.spec.ts",
+          "line": 34,
+          "column": 1
+        },
+        {
+          "title": "jury recovers a saved chapter and supports immediate skip, restart and 2D rescue",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9887,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:32:55.751Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-016e003e5c8458b5e508",
+          "file": "jury.spec.ts",
+          "line": 61,
+          "column": 1
+        },
+        {
+          "title": "forced 2D never creates a WebGL context and keeps the sources and application CTA",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4914,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:33:05.755Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-58db82ebe4bf67d8ad0c",
+          "file": "jury.spec.ts",
+          "line": 106,
+          "column": 1
+        },
+        {
+          "title": "installed production jury reloads all eight chapters and sources with the network offline",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11002,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:33:10.744Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bd087a8a24a4fcfc5ab5-3f601465927868221244",
+          "file": "jury.spec.ts",
+          "line": 140,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "logo-navigation.spec.ts",
+      "file": "logo-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "le logo ouvre / depuis chaque espace, session absente",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10601,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:33:21.880Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "de6ba9609f6ce30d4d88-4a59c8506cffa5996a4a",
+          "file": "logo-navigation.spec.ts",
+          "line": 4,
+          "column": 3
+        },
+        {
+          "title": "le logo ouvre / depuis chaque espace, session client",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12767,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:33:32.646Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "de6ba9609f6ce30d4d88-bd2430fec26746d51d60",
+          "file": "logo-navigation.spec.ts",
+          "line": 4,
+          "column": 3
+        },
+        {
+          "title": "le logo ouvre / depuis chaque espace, session admin",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15144,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:33:45.525Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "de6ba9609f6ce30d4d88-dd6fc8793fa162e389fe",
+          "file": "logo-navigation.spec.ts",
+          "line": 4,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "narrative.spec.ts",
+      "file": "narrative.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "continuous camera, native wheel reversal, resize and strictly local resources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13377,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:34:00.874Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-bf2b58766c9ce8de1585",
+          "file": "narrative.spec.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "presentation yields to input and leaving the landing disposes its engine",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11791,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:34:14.346Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-241859badb688b9f6f18",
+          "file": "narrative.spec.ts",
+          "line": 81,
+          "column": 1
+        },
+        {
+          "title": "reduced motion uses eight fixed viewpoints, responsive layout and accessible dialog",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12102,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:34:26.250Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-90b57d09944ff4232145",
+          "file": "narrative.spec.ts",
+          "line": 111,
+          "column": 1
+        },
+        {
+          "title": "DEBUG seeks seven reversible transitions and changes actual draw layers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 38641,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:34:38.460Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-0bc26c6b2f8ece141e0f",
+          "file": "narrative.spec.ts",
+          "line": 164,
+          "column": 1
+        },
+        {
+          "title": "failed asynchronous foreground is explicit and world remains usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5781,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:35:17.186Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-d9e9aa25717a118252a0",
+          "file": "narrative.spec.ts",
+          "line": 216,
+          "column": 1
+        },
+        {
+          "title": "WebGL failure uses reversible spatial masks and real application links",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4179,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:35:23.079Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-a6f69a3e4aab9f29727b",
+          "file": "narrative.spec.ts",
+          "line": 230,
+          "column": 1
+        },
+        {
+          "title": "context loss releases WebGL and resumes with a current 2D inspector",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7239,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:35:27.367Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9d7ef50e5f2c347dc465-44802cbd46d077dd5e84",
+          "file": "narrative.spec.ts",
+          "line": 271,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pitch.spec.ts",
+      "file": "pitch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "eight sourced scenes, archived observations, jury coverage and final application link",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16186,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:35:34.846Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-6a90bd3a72fc9839d680",
+          "file": "pitch.spec.ts",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "presentation keyboard, narrative stops, reverse navigation and reduced motion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6643,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:35:51.111Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-e6f1bf50180bdc95e1d7",
+          "file": "pitch.spec.ts",
+          "line": 140,
+          "column": 1
+        },
+        {
+          "title": "a real local media file stays manual, pauses for sources and releases on chapter departure",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7703,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:35:57.816Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-d12582e3415a6aada925",
+          "file": "pitch.spec.ts",
+          "line": 202,
+          "column": 1
+        },
+        {
+          "title": "mobile scenes and source book remain readable and accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14059,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:36:05.590Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-8a4acbefe0d5723faec8",
+          "file": "pitch.spec.ts",
+          "line": 274,
+          "column": 1
+        },
+        {
+          "title": "unreadable local media and unavailable fullscreen have explicit fallbacks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3486,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:36:19.732Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6f50b88c3c0147682ee6-d6c9fc21831e3fe30b90",
+          "file": "pitch.spec.ts",
+          "line": 318,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "spatial.spec.ts",
+      "file": "spatial.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "supplied animals track their projected volumes, reverse deterministically and release skeletal GPU textures",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7182,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m2\u001b[39m\nReceived length: \u001b[31m0\u001b[39m\nReceived array:  \u001b[31m[]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m2\u001b[39m\nReceived length: \u001b[31m0\u001b[39m\nReceived array:  \u001b[31m[]\u001b[39m\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts:20:78",
+                    "location": {
+                      "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts",
+                      "column": 78,
+                      "line": 20
+                    },
+                    "snippet": "  18 |   expect(first.animals.map((a: any) => a.label)).toEqual(expect.arrayContaining([\"Chevreuil\", \"Sanglier\", \"Pigeon\"]));\n  19 |   await seek(page, 1, \"sky\");\n> 20 |   expect((await state(page)).animals.filter((a: any) => a.label === \"Buse\")).toHaveLength(2);\n     |                                                                              ^\n  21 |   await seek(page, 3, \"underwater\");\n  22 |   const submerged = await state(page);\n  23 |   expect(submerged.animals).toHaveLength(3);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts",
+                        "column": 78,
+                        "line": 20
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoHaveLength\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected length: \u001b[32m2\u001b[39m\nReceived length: \u001b[31m0\u001b[39m\nReceived array:  \u001b[31m[]\u001b[39m\n\n  18 |   expect(first.animals.map((a: any) => a.label)).toEqual(expect.arrayContaining([\"Chevreuil\", \"Sanglier\", \"Pigeon\"]));\n  19 |   await seek(page, 1, \"sky\");\n> 20 |   expect((await state(page)).animals.filter((a: any) => a.label === \"Buse\")).toHaveLength(2);\n     |                                                                              ^\n  21 |   await seek(page, 3, \"underwater\");\n  22 |   const submerged = await state(page);\n  23 |   expect(submerged.animals).toHaveLength(3);\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts:20:78"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:36:23.369Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results\\spatial-supplied-animals-t-5293e-lease-skeletal-GPU-textures\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results\\spatial-supplied-animals-t-5293e-lease-skeletal-GPU-textures\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results\\spatial-supplied-animals-t-5293e-lease-skeletal-GPU-textures\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts",
+                    "column": 78,
+                    "line": 20
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "eb8a6728e228379df245-ded99ce65536bb1f719e",
+          "file": "spatial.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "production offline installation includes the GLB models and PBR textures",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18510,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.sx-animal-label').filter({ hasText: 'Buse' })\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.sx-animal-label').filter({ hasText: 'Buse' }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.sx-animal-label').filter({ hasText: 'Buse' })\u001b[22m\n\u001b[2m    13 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.sx-animal-label').filter({ hasText: 'Buse' })\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.sx-animal-label').filter({ hasText: 'Buse' }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.sx-animal-label').filter({ hasText: 'Buse' })\u001b[22m\n\u001b[2m    13 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts:53:78",
+                    "location": {
+                      "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts",
+                      "column": 78,
+                      "line": 53
+                    },
+                    "snippet": "  51 |   await expect(page.locator(\".sx-stage\")).toHaveClass(/sx-stage--ready/, { timeout: 45000 });\n  52 |   await seek(page, 1, \"sky\");\n> 53 |   await expect(page.locator('.sx-animal-label').filter({ hasText: \"Buse\" })).toHaveCount(2);\n     |                                                                              ^\n  54 |   await seek(page, 3, \"underwater\");\n  55 |   await expect(page.locator('.sx-animal-label').filter({ hasText: \"Poisson\" })).toHaveCount(3);\n  56 |   expect(failed).toEqual([]);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts",
+                        "column": 78,
+                        "line": 53
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.sx-animal-label').filter({ hasText: 'Buse' })\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('.sx-animal-label').filter({ hasText: 'Buse' }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.sx-animal-label').filter({ hasText: 'Buse' })\u001b[22m\n\u001b[2m    13 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n\n\n  51 |   await expect(page.locator(\".sx-stage\")).toHaveClass(/sx-stage--ready/, { timeout: 45000 });\n  52 |   await seek(page, 1, \"sky\");\n> 53 |   await expect(page.locator('.sx-animal-label').filter({ hasText: \"Buse\" })).toHaveCount(2);\n     |                                                                              ^\n  54 |   await seek(page, 3, \"underwater\");\n  55 |   await expect(page.locator('.sx-animal-label').filter({ hasText: \"Poisson\" })).toHaveCount(3);\n  56 |   expect(failed).toEqual([]);\n    at C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts:53:78"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-13T13:36:44.363Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results\\spatial-production-offline-6f118-GLB-models-and-PBR-textures\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results\\spatial-production-offline-6f118-GLB-models-and-PBR-textures\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\output\\symbiose\\spatial\\playwright-results\\spatial-production-offline-6f118-GLB-models-and-PBR-textures\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\fatty\\Desktop\\Symbiose\\Symbiose\\frontend\\tests\\e2e\\spatial.spec.ts",
+                    "column": 78,
+                    "line": 53
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "eb8a6728e228379df245-9699dc699e5ad338f43c",
+          "file": "spatial.spec.ts",
+          "line": 38,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-13T13:30:23.524Z",
+    "duration": 403019.976,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "id": "sky",
+  "index": 2,
+  "name": "Ciel et nuages",
+  "focus": "Canopée ouverte sur le bocage",
+  "time": {
+    "start": 35,
+    "end": 60,
+    "duration": 25
+  },
+  "palette": [
+    "#173f35",
+    "#678447",
+    "#8fa3a5",
+    "#d3d9c5",
+    "#f5f8ef"
+  ],
+  "planes": {
+    "main": "Révélation du bocage depuis la canopée.",
+    "foreground": "Extrémités de cimes feuillues, sans tronc opaque au centre.",
+    "background": "Bocage vallonné, ciel et cumulus en plans séparés.",
+    "depth": "Cimes proches, haies médianes, collines brumeuses et nuages lointains."
+  },
+  "atmosphere": "Brume de vallée et lumière diffuse des cumulus, hautes lumières ivoire.",
+  "animated": "Dérive lente des nuages ; feuillage proche très discret.",
+  "camera": {
+    "lensMm": 32,
+    "trajectory": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+    "entry": "Cimes correspondant au plan de sortie de la forêt.",
+    "exit": "Vallée et méandre placés vers le tiers droit.",
+    "implementation": "planned-only"
+  },
+  "transitionNeeds": "Cimes détourées, ciel prolongé et géométrie du terrain ; raccord vers une vallée à pré-rendre ultérieurement.",
+  "approval": {
+    "art": "pending-user-review",
+    "geography": "illustrative-not-a-mapped-site",
+    "ecology": "not-a-scientific-observation",
+    "motion": "blocked"
+  },
+  "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+  "capability": null,
+  "resources": [
+    {
+      "role": "primary",
+      "kind": "image",
+      "path": "sky/primary-v1.png",
+      "expectedPath": "sky/primary-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Révélation du bocage depuis la canopée.",
+      "bytes": 2478758,
+      "sha256": "07a09d46a54ad5eb68f384140349d9d320c8bc3cd20d067c3b91d5aeccebeb5c",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 2
+      },
+      "alpha": null,
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "text-prompt",
+        "promptPath": "sky/prompts/primary.txt"
+      }
+    },
+    {
+      "role": "foreground",
+      "kind": "image-alpha",
+      "path": "sky/foreground-v1.png",
+      "expectedPath": "sky/foreground-v1.png",
+      "status": "present-review-required",
+      "required": true,
+      "description": "Extrémités de cimes feuillues, sans tronc opaque au centre.",
+      "bytes": 1348666,
+      "sha256": "4817bfc6d5d5dbd5050ba339972c1851b4511e302ec1a9a4bb6974cd26c16db5",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "bitDepth": 8,
+        "colorType": 6
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparentPixelFraction": 0.6771
+      },
+      "licenseId": "generated-openai",
+      "generation": {
+        "tool": "built-in-image_gen",
+        "date": "2026-11-12",
+        "model": "not-exposed-by-tool",
+        "source": "sky/primary-v1.png",
+        "promptPath": "sky/prompts/foreground.txt"
+      },
+      "qualityNotes": [
+        "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+      ]
+    },
+    {
+      "role": "background",
+      "kind": "image",
+      "path": null,
+      "expectedPath": "sky/background-clean-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Bocage vallonné, ciel et cumulus en plans séparés. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "depth",
+      "kind": "depth-map-16bit",
+      "path": null,
+      "expectedPath": "sky/depth-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Cimes proches, haies médianes, collines brumeuses et nuages lointains. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "atmosphere",
+      "kind": "image-alpha",
+      "path": null,
+      "expectedPath": "sky/atmosphere-v1.png",
+      "status": "missing",
+      "required": true,
+      "description": "Brume de vallée et lumière diffuse des cumulus, hautes lumières ivoire. Passe sans lumière ou paysage opaque incrusté.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "geometry",
+      "kind": "model",
+      "path": null,
+      "expectedPath": "sky/geometry/environment-v1.glb",
+      "status": "missing",
+      "required": true,
+      "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    },
+    {
+      "role": "motion",
+      "kind": "video-pre-render",
+      "path": null,
+      "expectedPath": "sky/motion/forward-v1.webm",
+      "status": "missing",
+      "required": true,
+      "description": "Dérive lente des nuages ; feuillage proche très discret. Aucun clip ou séquence d’images généré dans cette livraison.",
+      "bytes": null,
+      "sha256": null,
+      "dimensions": null,
+      "alpha": null,
+      "licenseId": "not-acquired",
+      "generation": null
+    }
+  ],
+  "promptDrafts": {
+    "foreground": "Use case: background-extraction. Edit target: the sky/primary-v1.png generated master. Top branches of a European beech and oak canopy seen from just above, foliage confined to bottom left and bottom right corners, open center and transparent upper field, natural upper-left morning sidelight. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "scene": "meadow",
+  "notice": "Spécifications de ressources absentes. Aucun fichier listé ci-dessous n’a été produit.",
+  "resources": [
+    {
+      "role": "background",
+      "status": "not-produced",
+      "expectedPath": "meadow/background-clean-v1.png",
+      "sourceMaster": "meadow/primary-v1.png",
+      "dimensions": {
+        "width": 4992,
+        "height": 2808,
+        "ratio": "16:9, 15% overscan on each edge around a 3840x2160 working image"
+      },
+      "lensMm": 35,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+      "entry": "Haie commune au fond du marais.",
+      "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+      "prompt": "Edit the generated master meadow/primary-v1.png as a camera-locked reference. Reconstruct the background hidden by the near layer (Haie proche, branches et herbes de prairie en bordure.), removing only that near-layer and preserving the main scene (Mosaïque de prairies et réseau continu de haies.), lens, scale and directional lighting. Extend all four edges by 15 percent with consistent geometry, not mirrored textures. Collines bocagères douces et brume de vallée. No new landmarks, wildlife, devices, text or invented features. Output an opaque clean plate without foreground silhouettes; manually inspect seams. This clean plate alone does not support a large camera move or reveal unseen surfaces."
+    },
+    {
+      "role": "depth",
+      "status": "not-produced",
+      "expectedPath": "meadow/depth-v1.png",
+      "sourceMaster": "meadow/primary-v1.png",
+      "dimensions": {
+        "width": 1672,
+        "height": 941,
+        "target": "match actual master, no resampling without alignment review"
+      },
+      "lensMm": 35,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+      "entry": "Haie commune au fond du marais.",
+      "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+      "prompt": "Prepare a genuinely calibrated, single-channel 16-bit depth map aligned to meadow/primary-v1.png, using depth estimation as a starting point plus manual silhouette and scale correction. Haie proche, parcelle médiane et lisières lointaines. Deliver a documented near/far scale and correct thin-edge mattes. Do not deliver a visual grayscale illustration or claim monocular estimation is measured geometry. Validate reprojection against the main plate and foreground. No file can be marked ready until it is numerically checked and reviewed."
+    },
+    {
+      "role": "atmosphere",
+      "status": "not-produced",
+      "expectedPath": "meadow/atmosphere-v1.png",
+      "sourceMaster": "meadow/primary-v1.png",
+      "dimensions": {
+        "width": 3840,
+        "height": 2160,
+        "ratio": "16:9"
+      },
+      "lensMm": 35,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+      "entry": "Haie commune au fond du marais.",
+      "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+      "prompt": "Generate a separate atmospheric pass for Prairie et bocage: Lumière encore matinale, verts tempérés ; contraste décroissant avec la distance. Preserve this lighting continuity: soft early morning light from upper left, late-spring temperate Normandy. Full 16:9 canvas, true transparency with low-alpha scattering, no opaque landscape, no baked plants, animals, equipment or text, no hard cone of light. Composition follows the master; keep values and exposure restrained."
+    },
+    {
+      "role": "geometry",
+      "status": "not-produced",
+      "expectedPath": "meadow/geometry/environment-v1.glb",
+      "sourceMaster": "meadow/primary-v1.png",
+      "dimensions": null,
+      "lensMm": 35,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+      "entry": "Haie commune au fond du marais.",
+      "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+      "prompt": "3D environment production brief for Prairie et bocage. Build a lightweight real-scale environment and occlusion geometry matching the master composition and these depth landmarks: Haie proche, parcelle médiane et lisières lointaines. Camera plan: Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm. Entry: Haie commune au fond du marais. Exit: Vue stable servant de raccord d’intention vers la démo réelle. Separate foreground occluders and background; align the master texture only where reprojection is valid. Supply a GLB with named anchors and metre units, UVs and optional KTX2 textures. Validate unseen surfaces and camera collisions.  This is an artist brief, not a claim that an image generator can export a valid GLB."
+    },
+    {
+      "role": "motion",
+      "status": "not-produced",
+      "expectedPath": "meadow/motion/forward-v1.webm",
+      "sourceMaster": "meadow/primary-v1.png",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "ratio": "16:9",
+        "fps": 25,
+        "durationSeconds": 6
+      },
+      "lensMm": 35,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+      "entry": "Haie commune au fond du marais.",
+      "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+      "prompt": "Prepare an actual pre-rendered or generated sequence for Prairie et bocage, 6 seconds at 25 fps, 1920x1080 16:9 minimum, no text, interface, logos or detection boxes. Lock the appearance to meadow/primary-v1.png, the 35 mm starting lens, natural materials and restrained grading. Motion: Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm. Animation: Herbes et feuillage léger ; survol stable ; vidéo réelle du produit à fournir. Entry composition: Haie commune au fond du marais. Exit composition: Vue stable servant de raccord d’intention vers la démo réelle. Light must remain upper left (soft morning daylight). Keep the environment topology, animal anatomy, device locations and lens stable; no invented species or changing arches. Supply a start-frame poster, approved start/end camera poses and a reverse-navigation strategy; reversing fluid or animal motion blindly is not sufficient. Vidéo produit 90 s + affiche + sous-titres + captures autorisées ; raccord à l’application réelle non développé. This is an UNEXECUTED video/pre-render brief."
+    },
+    {
+      "role": "product-video",
+      "status": "not-produced",
+      "expectedPath": "meadow/motion/product-demo-90s.mp4",
+      "sourceMaster": "meadow/primary-v1.png",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080,
+        "ratio": "16:9",
+        "fps": 25,
+        "durationSeconds": 90
+      },
+      "lensMm": 35,
+      "lightContinuity": "Matin de fin de printemps, soleil doux venant du haut gauche",
+      "movement": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+      "entry": "Haie commune au fond du marais.",
+      "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+      "prompt": "Record 90 real seconds in the actual Symbiose application, from field video organisation to human review and the territorial dossier, with data approved for public presentation. 1920x1080, 25 fps, legible cursor and stable UI scale. No generated interface, fake detections, made-up scores or confidential personal data. Supply MP4 H.264 + poster + WebVTT subtitles + transcript. Keep the official product logo and green glass interface unchanged. The generator is a screen capture workflow, not an AI image generator."
+    }
+  ]
+}

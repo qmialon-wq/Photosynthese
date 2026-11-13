@@ -1,0 +1,1598 @@
+{
+  "schemaVersion": 1,
+  "project": "Symbiose",
+  "phase": "look-development",
+  "date": "2026-11-12",
+  "language": "fr",
+  "title": "Le voyage du vivant",
+  "disclosure": "Images générées par IA : évocations artistiques, pas des photographies documentaires ni des observations de terrain.",
+  "scope": "Huit compositions et calques candidats pour revue artistique ; aucun nouveau chapitre ni transition activé dans le moteur.",
+  "approval": {
+    "userArtDirection": "pending",
+    "mainPlatesApproved": false,
+    "layeredScenesReady": false,
+    "transitionWorkAllowed": false
+  },
+  "timing": {
+    "source": "Planche validée fournie à la racine",
+    "totalSeconds": 300,
+    "productVideoSeconds": 90,
+    "runtimePrototypeChanged": false
+  },
+  "visualSystem": {
+    "forest": "#073322",
+    "vegetal": "#5b8539",
+    "lime": "#b9ef84",
+    "limeBright": "#a8f251",
+    "ivory": "#f5f8ef",
+    "glass": "rgba(7,51,34,0.78)",
+    "light": "Diurne : haut gauche, matin doux après la pluie ; nuit : ellipse lunaire explicitement assumée",
+    "season": "Fin de printemps, végétation feuillue tempérée",
+    "lensLanguage": "24–50 mm équivalent plein format, distorsion contenue, profondeur graduée",
+    "forbidden": [
+      "Nature fluorescente",
+      "Flore tropicale",
+      "Lucioles ou bioluminescence inventées",
+      "Fausses détections ou scores",
+      "Photos génériques présentées comme normandes",
+      "Logo redessiné"
+    ]
+  },
+  "sources": [
+    {
+      "id": "manifesto",
+      "path": "Manifeste - Symbiose - Equipe ARQ.pdf",
+      "type": "user-provided-document",
+      "license": "Droits non précisés ; document projet fourni par l’utilisateur",
+      "use": "Priorité éditoriale ; pages 1–3 et captures pages 3–12",
+      "sha256": "e24d6ab95ba1932633eaea57e0e70b655aa25214863073d344deadc637f3fded",
+      "bytes": 25380742
+    },
+    {
+      "id": "approved-board",
+      "path": "Symbiose _ Voyage immersif du vivant normand.png",
+      "type": "user-approved-direction",
+      "license": "Droits non précisés ; référence fournie et déclarée validée par l’utilisateur",
+      "use": "Ordre, atmosphères, chronologie et lumière ; le logo officiel du produit prévaut sur celui de la planche",
+      "sha256": "82c1684c26eec04ed05e5c62be592d1cf62c343209c5e2fcee071d222e71fae4",
+      "bytes": 2751030
+    },
+    {
+      "id": "product-logo",
+      "path": "frontend/src/assets/symbiose-logo.png",
+      "type": "existing-project-identity",
+      "license": "Identité projet existante, droits non précisés, réutilisation demandée",
+      "use": "Copie inchangée pour la galerie et import direct sur la landing",
+      "sha256": "c8b17e9dff53593a74410001a984124df94cd0b409dddefe95e51ba30614f25e",
+      "bytes": 51947
+    },
+    {
+      "id": "product-design",
+      "path": "frontend/src/styles/symbiose.css",
+      "type": "existing-project-design",
+      "license": "Code du dépôt, aucune nouvelle licence attribuée",
+      "use": "Valeurs de la palette, interface sombre translucide et couleur d’accent",
+      "sha256": "5b9bdb4cae7df099f8a636ea5615c97ab5ad130d0fadc6b427aa224f29a062c0",
+      "bytes": 31022
+    },
+    {
+      "id": "etretat-geography",
+      "url": "https://www.lehavre-etretat-tourisme.com/decouvrir/les-incontournables/decouvrir-etretat/les-falaises-detretat/",
+      "type": "geographic-reference-only",
+      "license": "Consultation informative ; aucune photographie téléchargée ou redistribuée",
+      "use": "Identification Porte d’Aval / Aiguille, pas une licence de reproduction"
+    }
+  ],
+  "licenses": [
+    {
+      "id": "project-existing",
+      "label": "Ressource existante du projet",
+      "terms": "Droits et titulaire non précisés dans les fichiers consultés ; réutilisation de la marque explicitement demandée."
+    },
+    {
+      "id": "generated-openai",
+      "label": "Généré avec l’outil intégré OpenAI image_gen",
+      "terms": "Conditions du compte et du service applicables. Aucune licence Creative Commons, exclusivité, autorisation naturaliste ou exactitude géographique revendiquée."
+    },
+    {
+      "id": "not-acquired",
+      "label": "Ressource absente",
+      "terms": "Aucun fichier ni droit de diffusion acquis ou supposé."
+    }
+  ],
+  "brand": {
+    "path": "shared/symbiose-logo.png",
+    "sourcePath": "frontend/src/assets/symbiose-logo.png",
+    "licenseId": "project-existing",
+    "modification": "none",
+    "sha256": "c8b17e9dff53593a74410001a984124df94cd0b409dddefe95e51ba30614f25e"
+  },
+  "exclusions": [
+    {
+      "path": "frontend/src/assets/backgrounds/underwater.webp",
+      "reason": "Source historique localisée en Californie : non employée comme vue de la Manche."
+    },
+    {
+      "path": "frontend/src/assets/backgrounds/wetland.webp",
+      "reason": "Source historique localisée en Suisse : non employée comme marais normand."
+    },
+    {
+      "path": "frontend/src/assets/backgrounds/night-forest.webp",
+      "reason": "Source historique au mont Rainier : non employée comme forêt normande."
+    },
+    {
+      "path": "frontend/src/assets/backgrounds/coast.webp",
+      "reason": "Source normande déjà présente, licence documentée historiquement ; non recyclée en faux calques 3D. Consultation facultative, non incorporée à la nouvelle galerie."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "forest",
+      "index": 1,
+      "name": "Forêt",
+      "focus": "Fougères, sous-bois et caméra piège",
+      "time": {
+        "start": 0,
+        "end": 35,
+        "duration": 35
+      },
+      "palette": [
+        "#073322",
+        "#365934",
+        "#5b8539",
+        "#c8d58d",
+        "#f5f8ef"
+      ],
+      "planes": {
+        "main": "Passage forestier et tronc porteur de la caméra piège.",
+        "foreground": "Fougères humides et mousse proches, en bordure basse, détourées séparément.",
+        "background": "Hêtres et chênes moins contrastés ; trouée vers la canopée dans le tiers haut.",
+        "depth": "Troncs échelonnés à 2, 7 et 20 m ; conserver le couloir central libre."
+      },
+      "atmosphere": "Brume basse gris vert, rayons discontinus dans la trouée ; aucune particule lumineuse magique.",
+      "animated": "Micro-mouvement des frondes par vent faible ; poussières éclairées rares.",
+      "camera": {
+        "lensMm": 28,
+        "trajectory": "Travelling avant à 0,45 m, puis inclinaison progressive et élévation vers la trouée, 28→32 mm.",
+        "entry": "Fougères à hauteur du regard, axe de passage visible.",
+        "exit": "Trouée de canopée identifiée dans le tiers haut.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Canopée 3D et clean plates en continuité ; géométrie/occlusion, pas un zoom sur cette image.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": null,
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "forest/primary-v1.png",
+          "expectedPath": "forest/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Passage forestier et tronc porteur de la caméra piège.",
+          "bytes": 3186093,
+          "sha256": "77710300fb18580c469d99f362d50c1eddd506d9e4ebb440c29f081ba11e0625",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "forest/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "forest/foreground-v1.png",
+          "expectedPath": "forest/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Fougères humides et mousse proches, en bordure basse, détourées séparément.",
+          "bytes": 1133993,
+          "sha256": "fcb701680f7df1c022e3c6028498ce490dee8a3a7da46304b514090ea67c2a6e",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.7049
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "forest/primary-v1.png",
+            "promptPath": "forest/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "forest/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Hêtres et chênes moins contrastés ; trouée vers la canopée dans le tiers haut. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "forest/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Troncs échelonnés à 2, 7 et 20 m ; conserver le couloir central libre. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "forest/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Brume basse gris vert, rayons discontinus dans la trouée ; aucune particule lumineuse magique. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "forest/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "forest/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Micro-mouvement des frondes par vent faible ; poussières éclairées rares. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the forest/primary-v1.png generated master. Dewy Norman woodland fern fronds and moss along the bottom corners, center 60 percent and upper 80 percent empty, natural early morning sidelight from upper left, photorealistic, no soil backdrop. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "sky",
+      "index": 2,
+      "name": "Ciel et nuages",
+      "focus": "Canopée ouverte sur le bocage",
+      "time": {
+        "start": 35,
+        "end": 60,
+        "duration": 25
+      },
+      "palette": [
+        "#173f35",
+        "#678447",
+        "#8fa3a5",
+        "#d3d9c5",
+        "#f5f8ef"
+      ],
+      "planes": {
+        "main": "Révélation du bocage depuis la canopée.",
+        "foreground": "Extrémités de cimes feuillues, sans tronc opaque au centre.",
+        "background": "Bocage vallonné, ciel et cumulus en plans séparés.",
+        "depth": "Cimes proches, haies médianes, collines brumeuses et nuages lointains."
+      },
+      "atmosphere": "Brume de vallée et lumière diffuse des cumulus, hautes lumières ivoire.",
+      "animated": "Dérive lente des nuages ; feuillage proche très discret.",
+      "camera": {
+        "lensMm": 32,
+        "trajectory": "Sortie à 45 m, léger recul et inclinaison vers une vallée ; 32 mm.",
+        "entry": "Cimes correspondant au plan de sortie de la forêt.",
+        "exit": "Vallée et méandre placés vers le tiers droit.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Cimes détourées, ciel prolongé et géométrie du terrain ; raccord vers une vallée à pré-rendre ultérieurement.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": null,
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "sky/primary-v1.png",
+          "expectedPath": "sky/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Révélation du bocage depuis la canopée.",
+          "bytes": 2478758,
+          "sha256": "07a09d46a54ad5eb68f384140349d9d320c8bc3cd20d067c3b91d5aeccebeb5c",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "sky/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "sky/foreground-v1.png",
+          "expectedPath": "sky/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Extrémités de cimes feuillues, sans tronc opaque au centre.",
+          "bytes": 1348666,
+          "sha256": "4817bfc6d5d5dbd5050ba339972c1851b4511e302ec1a9a4bb6974cd26c16db5",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.6771
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "sky/primary-v1.png",
+            "promptPath": "sky/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "sky/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Bocage vallonné, ciel et cumulus en plans séparés. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "sky/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Cimes proches, haies médianes, collines brumeuses et nuages lointains. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "sky/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Brume de vallée et lumière diffuse des cumulus, hautes lumières ivoire. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "sky/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "sky/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Dérive lente des nuages ; feuillage proche très discret. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the sky/primary-v1.png generated master. Top branches of a European beech and oak canopy seen from just above, foliage confined to bottom left and bottom right corners, open center and transparent upper field, natural upper-left morning sidelight. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "rivers",
+      "index": 3,
+      "name": "Rivières",
+      "focus": "Courant et ripisylve",
+      "time": {
+        "start": 60,
+        "end": 95,
+        "duration": 35
+      },
+      "palette": [
+        "#153d32",
+        "#47714d",
+        "#5d8174",
+        "#a7b8a0",
+        "#e4e7d1"
+      ],
+      "planes": {
+        "main": "Lit de rivière et courant guidant l’axe de lecture.",
+        "foreground": "Feuilles d’aulne, rameaux de saule et berge humide en bordure.",
+        "background": "Ripisylve et prairie de vallée, sans montagne.",
+        "depth": "Feuilles à 0,8 m, reflets au milieu, courbe de berge à 30 m."
+      },
+      "atmosphere": "Vapeur très légère au ras de l’eau ; reflets non surexposés.",
+      "animated": "Reflets et rides à pré-rendre ; feuilles sous vent faible.",
+      "camera": {
+        "lensMm": 35,
+        "trajectory": "Travelling suivant le courant à 0,7 m puis descente vers un reflet, 35 mm.",
+        "entry": "Axe du méandre révélé au chapitre ciel.",
+        "exit": "Reflet de surface agrandi, sans coupe dans une berge.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Passe de surface, clean plate sous le reflet, séquence pré-rendue ; passage rivière→Manche à assumer comme ellipse de milieux.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": null,
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "rivers/primary-v1.png",
+          "expectedPath": "rivers/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Lit de rivière et courant guidant l’axe de lecture.",
+          "bytes": 3249236,
+          "sha256": "76604ac3f8f6da1fba78aef283da5c0a61dc0fbd3e0f80026ba5b342cb31c099",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "rivers/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "rivers/foreground-v1.png",
+          "expectedPath": "rivers/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Feuilles d’aulne, rameaux de saule et berge humide en bordure.",
+          "bytes": 1078840,
+          "sha256": "957398c011e456ce42f58067cded3a1e047d86bcf4a92fd816cfa1a8039839e6",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.7661
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "rivers/primary-v1.png",
+            "promptPath": "rivers/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "rivers/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Ripisylve et prairie de vallée, sans montagne. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "rivers/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Feuilles à 0,8 m, reflets au milieu, courbe de berge à 30 m. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "rivers/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Vapeur très légère au ras de l’eau ; reflets non surexposés. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "rivers/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "rivers/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Reflets et rides à pré-rendre ; feuilles sous vent faible. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the rivers/primary-v1.png generated master. A few wet alder and willow leaves and slender riparian branches in left and right bottom frame edges, unobstructed central water lane, cool green with warm upper-left morning sidelight. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "underwater",
+      "index": 4,
+      "name": "Monde sous-marin",
+      "focus": "Manche, laminaires et capteurs envisagés",
+      "time": {
+        "start": 95,
+        "end": 115,
+        "duration": 20
+      },
+      "palette": [
+        "#0a3038",
+        "#24534f",
+        "#56796b",
+        "#9fb9a4",
+        "#d9e5d3"
+      ],
+      "planes": {
+        "main": "Colonne d’eau marine et silhouettes discrètes de faune tempérée.",
+        "foreground": "Laminaires brun vert au bord inférieur, rocher discret.",
+        "background": "Eau vert gris et surface filtrant la lumière.",
+        "depth": "Frondes proches, capteurs sur la droite, poissons médians et silhouettes lointaines atténuées."
+      },
+      "atmosphere": "Absorption verte progressive, matières en suspension rares, visibilité modérée.",
+      "animated": "Frondes et caustiques lentes ; poissons en silhouette, sans comportement affirmé.",
+      "camera": {
+        "lensMm": 24,
+        "trajectory": "Franchissement de surface puis travelling immergé stable à 3 m, 24 mm.",
+        "entry": "Surface d’eau au-dessus du cadre, raccord lumineux upper-left.",
+        "exit": "Remontée vers des tiges rétroéclairées qui annoncent les roseaux.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Séquence de franchissement à pré-rendre, profondeur et occlusions de surface ; pas de prétendue continuité hydrographique rivière→Manche.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": "Capteurs et observation acoustique illustrent une évolution envisagée, pas une fonction opérationnelle démontrée.",
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "underwater/primary-v1.png",
+          "expectedPath": "underwater/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Colonne d’eau marine et silhouettes discrètes de faune tempérée.",
+          "bytes": 2161047,
+          "sha256": "de05798aedee3ae3d4123691694ef1b798a352b7b7275e719bd523b74a265397",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "underwater/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "underwater/foreground-v1.png",
+          "expectedPath": "underwater/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Laminaires brun vert au bord inférieur, rocher discret.",
+          "bytes": 1345816,
+          "sha256": "b10a66f7f28bec1d737cfb5249914f6da942de52c1b448d3d5fbbc6ac4563ee8",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.6177
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "underwater/primary-v1.png",
+            "promptPath": "underwater/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "underwater/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Eau vert gris et surface filtrant la lumière. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "underwater/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Frondes proches, capteurs sur la droite, poissons médians et silhouettes lointaines atténuées. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "underwater/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Absorption verte progressive, matières en suspension rares, visibilité modérée. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "underwater/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "underwater/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Frondes et caustiques lentes ; poissons en silhouette, sans comportement affirmé. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the underwater/primary-v1.png generated master. Cold English Channel brown-green kelp fronds and a small wet dark rock, confined to bottom corners with center open, muted underwater green filtered light from upper left, no tropical plants or animals. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "wetland",
+      "index": 5,
+      "name": "Zone humide",
+      "focus": "Roseaux, brume et observation",
+      "time": {
+        "start": 115,
+        "end": 150,
+        "duration": 35
+      },
+      "palette": [
+        "#243f32",
+        "#6a7755",
+        "#9c9f78",
+        "#c2c4a5",
+        "#f0ead6"
+      ],
+      "planes": {
+        "main": "Chenal de marais, roseaux et héron dans les hauts-fonds.",
+        "foreground": "Roseaux avec bords fins et tiges détourables.",
+        "background": "Prairies inondables et saules dissous dans la brume.",
+        "depth": "Roseaux proches, plan d’eau médian, silhouettes de saules lointaines."
+      },
+      "atmosphere": "Brume matinale crème verte en trois nappes à faible contraste.",
+      "animated": "Roseaux souples, petites rides, oiseaux à distance ; acoustique illustrée seulement.",
+      "camera": {
+        "lensMm": 50,
+        "trajectory": "Travelling latéral très lent à 1,2 m, regard puis élévation vers la prairie, 50→35 mm.",
+        "entry": "Tiges rétroéclairées dans l’axe de la remontée d’eau.",
+        "exit": "Haie lisible derrière les roseaux, ligne de prairie au-dessus de la brume.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Roseaux détourés, matte de brume et clean plate de prairie ; séquence de remontée à prévoir.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": "Capteurs et observation acoustique illustrent une évolution envisagée, pas une fonction opérationnelle démontrée.",
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "wetland/primary-v1.png",
+          "expectedPath": "wetland/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Chenal de marais, roseaux et héron dans les hauts-fonds.",
+          "bytes": 2931298,
+          "sha256": "58c7ce4d618224460b338a9fff4f812eeea4932cf1cbb359d3ad264f0c68d47f",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "wetland/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "wetland/foreground-v1.png",
+          "expectedPath": "wetland/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Roseaux avec bords fins et tiges détourables.",
+          "bytes": 1190845,
+          "sha256": "6d455054667526252c66d7f384d3502b66e6cedbb2a0a426b24c6c35efbd65a5",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.7399
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "wetland/primary-v1.png",
+            "promptPath": "wetland/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "wetland/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Prairies inondables et saules dissous dans la brume. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "wetland/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Roseaux proches, plan d’eau médian, silhouettes de saules lointaines. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "wetland/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Brume matinale crème verte en trois nappes à faible contraste. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "wetland/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "wetland/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Roseaux souples, petites rides, oiseaux à distance ; acoustique illustrée seulement. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the wetland/primary-v1.png generated master. Fine reeds and rushes from a Normandy marsh bordering the bottom and left edges only, visible individual thin stems, desaturated green-gold, natural upper-left misty morning illumination. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "meadow",
+      "index": 6,
+      "name": "Prairie et bocage",
+      "focus": "Continuités de haies et entrée dans le produit",
+      "time": {
+        "start": 150,
+        "end": 240,
+        "duration": 90
+      },
+      "palette": [
+        "#173f35",
+        "#4c743c",
+        "#7c984c",
+        "#b9c78a",
+        "#f5f8ef"
+      ],
+      "planes": {
+        "main": "Mosaïque de prairies et réseau continu de haies.",
+        "foreground": "Haie proche, branches et herbes de prairie en bordure.",
+        "background": "Collines bocagères douces et brume de vallée.",
+        "depth": "Haie proche, parcelle médiane et lisières lointaines."
+      },
+      "atmosphere": "Lumière encore matinale, verts tempérés ; contraste décroissant avec la distance.",
+      "animated": "Herbes et feuillage léger ; survol stable ; vidéo réelle du produit à fournir.",
+      "camera": {
+        "lensMm": 35,
+        "trajectory": "Survol progressif à 25→45 m, stabilisation sur une prairie ; 35 mm.",
+        "entry": "Haie commune au fond du marais.",
+        "exit": "Vue stable servant de raccord d’intention vers la démo réelle.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Vidéo produit 90 s + affiche + sous-titres + captures autorisées ; raccord à l’application réelle non développé.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": null,
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "meadow/primary-v1.png",
+          "expectedPath": "meadow/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Mosaïque de prairies et réseau continu de haies.",
+          "bytes": 2971977,
+          "sha256": "c15dc386e85e96e9f04d945a32c62ce346ce522bdd15be7a683bde6c5d2cbc0e",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "meadow/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "meadow/foreground-v1.png",
+          "expectedPath": "meadow/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Haie proche, branches et herbes de prairie en bordure.",
+          "bytes": 1035076,
+          "sha256": "e9d45119735d8266eda490fca8a6fa8ebc206a0353fcbe33dfa5336f84afe9f7",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.7803
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "meadow/primary-v1.png",
+            "promptPath": "meadow/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "meadow/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Collines bocagères douces et brume de vallée. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "meadow/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Haie proche, parcelle médiane et lisières lointaines. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "meadow/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Lumière encore matinale, verts tempérés ; contraste décroissant avec la distance. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "meadow/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "meadow/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Herbes et feuillage léger ; survol stable ; vidéo réelle du produit à fournir. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "product-video",
+          "kind": "video",
+          "path": null,
+          "expectedPath": "meadow/motion/product-demo-90s.mp4",
+          "status": "missing",
+          "required": true,
+          "description": "Démonstration réelle du produit, 90 s, avec autorisation des données montrées, affiche, transcription et sous-titres WebVTT.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the meadow/primary-v1.png generated master. Normandy meadow grasses and a few hawthorn hedge twigs with small leaves, framing bottom corners, no berries or flowers dominating, central and upper frame empty, morning light from upper left. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "coast",
+      "index": 7,
+      "name": "Littoral — Étretat",
+      "focus": "Porte d’Aval et Aiguille distinctes",
+      "time": {
+        "start": 240,
+        "end": 265,
+        "duration": 25
+      },
+      "palette": [
+        "#183c3a",
+        "#496967",
+        "#6b8278",
+        "#d0d4bf",
+        "#f3efdc"
+      ],
+      "planes": {
+        "main": "Porte d’Aval et Aiguille distinctes dans un paysage de côte d’Albâtre.",
+        "foreground": "Pelouse littorale et détails de craie au bord bas, sans masquer les repères.",
+        "background": "Manche gris vert, falaise stratifiée et horizon marin voilé.",
+        "depth": "Herbes proches, surface marine médiane, arche et aiguille séparées, côte lointaine."
+      },
+      "atmosphere": "Lumière naturelle ivoire, craie non brûlée, brume marine discrète.",
+      "animated": "Houle basse, eau et herbes ; aucun effet touristique ou drone visible.",
+      "camera": {
+        "lensMm": 50,
+        "trajectory": "Travelling latéral de côte gardant arche et aiguille dans le cadre, 50 mm.",
+        "entry": "Horizon de prairie devenant plateau de craie.",
+        "exit": "Bord ombré du plateau ou silhouette de falaise, raccord de valeur vers la nuit.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Géométrie ou reconstruction multi-vues validée d’Étretat, eau et clean plates ; pas de déformation de l’arche pour créer de la parallaxe.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "recognizable-evocation-needs-geographic-review",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Évocation générée d’Étretat — arche et Aiguille ; ni photo documentaire ni relevé géométrique.",
+      "capability": null,
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "coast/primary-v1.png",
+          "expectedPath": "coast/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Porte d’Aval et Aiguille distinctes dans un paysage de côte d’Albâtre.",
+          "bytes": 2606590,
+          "sha256": "16da1103d814f5423b15f07422161932e1e9f26c1f9aef859d99089179b478bb",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "coast/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "coast/foreground-v1.png",
+          "expectedPath": "coast/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Pelouse littorale et détails de craie au bord bas, sans masquer les repères.",
+          "bytes": 942203,
+          "sha256": "441488323a4162297f4f74c96116f86b5fc59e3927437a8c0f042324824ce731",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.7944
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "coast/primary-v1.png",
+            "promptPath": "coast/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "coast/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Manche gris vert, falaise stratifiée et horizon marin voilé. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "coast/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Herbes proches, surface marine médiane, arche et aiguille séparées, côte lointaine. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "coast/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Lumière naturelle ivoire, craie non brûlée, brume marine discrète. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "coast/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "coast/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Houle basse, eau et herbes ; aucun effet touristique ou drone visible. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the coast/primary-v1.png generated master. Short coastal grasses and a few small rough pale chalk fragments from the Normandy Alabaster Coast, only in lower left and lower right corners, no sea or cliff background, muted upper-left natural morning illumination. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    },
+    {
+      "id": "night-forest",
+      "index": 8,
+      "name": "Forêt nocturne",
+      "focus": "Retour au sous-bois et conclusion",
+      "time": {
+        "start": 265,
+        "end": 300,
+        "duration": 35
+      },
+      "palette": [
+        "#071e21",
+        "#163b38",
+        "#31544a",
+        "#879d8c",
+        "#dfdfcf"
+      ],
+      "planes": {
+        "main": "Retour au passage forestier, présence animale distante et discrète.",
+        "foreground": "Mêmes familles de fougères et de troncs que le début.",
+        "background": "Feuillus nocturnes et trouée lunaire modeste.",
+        "depth": "Frondes, troncs médians et silhouette animale dans la brume, jamais plaquée sur le texte."
+      },
+      "atmosphere": "Clair de lune sobre, bleu vert contenu, brume basse ; pas de lucioles inventées.",
+      "animated": "Brume très lente et mouvements minimes ; silhouette sobre sans fausse observation.",
+      "camera": {
+        "lensMm": 35,
+        "trajectory": "Travelling ralenti à 1 m puis arrêt sur l’espace de conclusion, 35 mm.",
+        "entry": "Raccord de valeur depuis l’ombre du littoral ; ellipse temporelle assumée.",
+        "exit": "Cadre immobile et ouverture lisible pour la conclusion Symbiose.",
+        "implementation": "planned-only"
+      },
+      "transitionNeeds": "Fougères nocturnes et brume séparées, correspondance géométrique forêt initiale ; aucun raccord animé produit à ce stade.",
+      "approval": {
+        "art": "pending-user-review",
+        "geography": "illustrative-not-a-mapped-site",
+        "ecology": "not-a-scientific-observation",
+        "motion": "blocked"
+      },
+      "disclosure": "Image générée par IA — évocation d’un milieu normand, sans observation ou localisation authentifiée.",
+      "capability": null,
+      "resources": [
+        {
+          "role": "primary",
+          "kind": "image",
+          "path": "night-forest/primary-v1.png",
+          "expectedPath": "night-forest/primary-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Retour au passage forestier, présence animale distante et discrète.",
+          "bytes": 2600703,
+          "sha256": "f0622d7089bd80d0ac60a8cbdf38ce432bf27806934d85d179c1d6119512b17f",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 2
+          },
+          "alpha": null,
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "text-prompt",
+            "promptPath": "night-forest/prompts/primary.txt"
+          }
+        },
+        {
+          "role": "foreground",
+          "kind": "image-alpha",
+          "path": "night-forest/foreground-v1.png",
+          "expectedPath": "night-forest/foreground-v1.png",
+          "status": "present-review-required",
+          "required": true,
+          "description": "Mêmes familles de fougères et de troncs que le début.",
+          "bytes": 742407,
+          "sha256": "6cfeeb8bdaa38ee4a64bf495b58046e97e35d7eefbd47f8907e6934d84f3191b",
+          "dimensions": {
+            "width": 1672,
+            "height": 941,
+            "bitDepth": 8,
+            "colorType": 6
+          },
+          "alpha": {
+            "min": 0,
+            "max": 255,
+            "transparentPixelFraction": 0.818
+          },
+          "licenseId": "generated-openai",
+          "generation": {
+            "tool": "built-in-image_gen",
+            "date": "2026-11-12",
+            "model": "not-exposed-by-tool",
+            "source": "night-forest/primary-v1.png",
+            "promptPath": "night-forest/prompts/foreground.txt"
+          },
+          "qualityNotes": [
+            "Détourage génératif candidat : vérifier les franges sur fonds clair et sombre et l’alignement au fond reconstruit avant intégration."
+          ]
+        },
+        {
+          "role": "background",
+          "kind": "image",
+          "path": null,
+          "expectedPath": "night-forest/background-clean-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Feuillus nocturnes et trouée lunaire modeste. Fond reconstruit sans les objets du premier plan et avec marge d’overscan.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "depth",
+          "kind": "depth-map-16bit",
+          "path": null,
+          "expectedPath": "night-forest/depth-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Frondes, troncs médians et silhouette animale dans la brume, jamais plaquée sur le texte. Profondeur 16 bits calibrée avec les silhouettes ; aucune profondeur monoculaire n’est fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "atmosphere",
+          "kind": "image-alpha",
+          "path": null,
+          "expectedPath": "night-forest/atmosphere-v1.png",
+          "status": "missing",
+          "required": true,
+          "description": "Clair de lune sobre, bleu vert contenu, brume basse ; pas de lucioles inventées. Passe sans lumière ou paysage opaque incrusté.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "geometry",
+          "kind": "model",
+          "path": null,
+          "expectedPath": "night-forest/geometry/environment-v1.glb",
+          "status": "missing",
+          "required": true,
+          "description": "Géométrie légère, plans d’occlusion et points d’ancrage validés avec les poses de caméra ; aucune géométrie de production fournie.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        },
+        {
+          "role": "motion",
+          "kind": "video-pre-render",
+          "path": null,
+          "expectedPath": "night-forest/motion/forward-v1.webm",
+          "status": "missing",
+          "required": true,
+          "description": "Brume très lente et mouvements minimes ; silhouette sobre sans fausse observation. Aucun clip ou séquence d’images généré dans cette livraison.",
+          "bytes": null,
+          "sha256": null,
+          "dimensions": null,
+          "alpha": null,
+          "licenseId": "not-acquired",
+          "generation": null
+        }
+      ],
+      "promptDrafts": {
+        "foreground": "Use case: background-extraction. Edit target: the night-forest/primary-v1.png generated master. Low fern fronds and one partial beech trunk at the extreme right edge of a temperate Norman woodland at night, soft desaturated blue-green and moonlight from upper left, center 65 percent empty, no glowing vegetation. Full same-size landscape canvas, preserve lens, perspective and light. Remove every background pixel with actual alpha, no solid fill or painted checkerboard. Preserve delicate edges. No new species, devices or text. Candidate for a matching clean plate, not ready for parallax over the unmodified master."
+      }
+    }
+  ],
+  "inventory": {
+    "produced": 16,
+    "missing": 41,
+    "totalBytes": 31003548
+  }
+}

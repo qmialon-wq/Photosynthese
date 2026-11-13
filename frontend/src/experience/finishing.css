@@ -1,0 +1,166 @@
+/* Ambient movement is sampled from scroll, never an endless clock. */
+.sx-experience .sx-river-links {
+  animation: none;
+  stroke-dashoffset: var(--sx-flow, 0);
+}
+.sx-experience .sx-canvas {
+  transition: none;
+}
+.sx-experience .sx-vignette {
+  background:
+    linear-gradient(90deg, #081b17e8, #081b1794 43%, #081b1712 82%),
+    linear-gradient(270deg, #081b1780, transparent 160px),
+    linear-gradient(
+      0deg,
+      #081714d9,
+      transparent 22%,
+      transparent 78%,
+      #0817149c
+    );
+}
+.sx-experience .sx-pitch-scene h2 {
+  font-size: clamp(42px, 5.4vw, 88px);
+  letter-spacing: -0.047em;
+}
+.sx-experience .sx-pitch-message {
+  text-wrap: pretty;
+  text-shadow: 0 1px 12px #081b17bb;
+}
+.sx-experience .sx-evidence-status {
+  font-size: 11px;
+}
+.sx-experience .sx-pitch-points li,
+.sx-experience .sx-pipeline-detail {
+  font-size: 13px;
+}
+.sx-experience .sx-chapter-nav {
+  background: none;
+  padding: 14px 10px;
+  text-shadow: 0 1px 7px #07180e;
+}
+.sx-experience .sx-impact-proof small {
+  color: #e3eacb;
+}
+.sx-experience .sx-chapter-nav button {
+  min-height: 30px;
+}
+.sx-experience .sx-pitch-scene--final h2 {
+  font-size: clamp(32px, 3.8vw, 62px);
+}
+.sx-experience .sx-pitch-scene--demo h2 {
+  font-size: clamp(28px, 3vw, 46px);
+}
+.sx-experience .sx-demo-screen :is(img, video) {
+  height: auto;
+}
+.sx-experience .sx-demo-guide > summary {
+  color: #e1e8d5;
+}
+.sx-experience .sx-pitch-content[data-chapter="meadow"] {
+  align-items: flex-start;
+}
+.sx-experience .sx-pitch-scene--demo .sx-demo {
+  width: min(
+    100%,
+    880px,
+    max(320px, calc((100svh - var(--sx-demo-reserve, 590px)) * 2.13))
+  );
+}
+.sx-experience .sx-stage--fallback {
+  --sx-demo-reserve: 638px;
+}
+.sx-experience .sx-pitch-scene--demo .sx-pitch-source {
+  display: none;
+}
+.sx-experience .sx-recovery-tools {
+  position: relative;
+}
+.sx-experience .sx-recovery-tools > summary {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #c6dca366;
+  color: #e7edd7;
+}
+.sx-experience .sx-recovery-tools > div {
+  position: absolute;
+  top: 38px;
+  left: -12px;
+  min-width: 225px;
+  padding: 12px;
+  background: #0c251cf7;
+  border: 1px solid #b9d49766;
+  box-shadow: 0 12px 36px #0006;
+  display: grid;
+  gap: 6px;
+}
+.sx-experience .sx-recovery-tools button {
+  text-align: left;
+  padding: 8px 4px !important;
+  border: 0 !important;
+  min-height: 36px;
+}
+.sx-experience .sx-recovery-tools button:hover {
+  color: #c6eaa3;
+}
+.sx-experience .sx-recovery-tools button:last-child {
+  color: #d4e5c5;
+}
+.sx-experience .sx-presentation-tools > button:nth-last-child(2) {
+  color: inherit;
+}
+.sx-experience .sx-presentation-tools > button:nth-child(3) {
+  color: var(--sx-lime);
+}
+.sx-experience .sx-chapter-enter-active,
+.sx-experience .sx-chapter-leave-active {
+  transition: none;
+}
+@media (max-width: 600px) {
+  .sx-experience .sx-pitch-scene--demo .sx-demo {
+    width: 100%;
+  }
+  .sx-experience .sx-pitch-scene h2 {
+    font-size: clamp(35px, 9.2vw, 50px);
+  }
+  .sx-experience .sx-pitch-scene--final h2 {
+    font-size: 27px;
+  }
+  .sx-experience .sx-pitch-scene--demo h2 {
+    font-size: 29px;
+  }
+  .sx-experience .sx-evidence-status {
+    font-size: 9px;
+  }
+  .sx-experience .sx-pitch-points li,
+  .sx-experience .sx-pipeline-detail {
+    font-size: 11px;
+  }
+  .sx-experience .sx-chapter-nav {
+    right: 8px;
+    padding: 8px 4px;
+  }
+  .sx-experience .sx-presentation-tools {
+    gap: 3px 14px;
+  }
+  .sx-experience .sx-presentation-tools > button {
+    min-height: 28px;
+  }
+  .sx-experience .sx-recovery-tools > summary {
+    min-height: 28px;
+  }
+  .sx-experience .sx-recovery-tools > div {
+    left: auto;
+    right: 0;
+  }
+}
+@media (max-height: 780px) and (min-width: 601px) {
+  .sx-experience
+    .sx-pitch-scene--demo
+    :is(.sx-pitch-message, .sx-evidence-status, .sx-demo-guide) {
+    display: none;
+  }
+  .sx-experience .sx-pitch-scene--demo h2 {
+    font-size: 32px;
+  }
+}

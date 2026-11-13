@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "method": "Pillow WebP, original masters unchanged; alpha preserved at delivery resolution",
+  "scenes": {
+    "forest": {
+      "foreground": {
+        "url": "/experience-art/forest/foreground-runtime.webp",
+        "source": "/experience-art/forest/foreground-v1.png",
+        "sourceBytes": 1133993,
+        "bytes": 176958,
+        "sha256": "6f201c90ef1aaf40b9df81293ad82b19470c1ab44dc036a84a789c54893a00dd",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/forest/primary-runtime.webp",
+        "source": "/experience-art/forest/primary-v1.png",
+        "sourceBytes": 3186093,
+        "bytes": 445902,
+        "sha256": "02bda1a0a46b505cb5e4c3c92d1138a914f43e22f760d1b5badfe1bfc6047b60",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "sky": {
+      "foreground": {
+        "url": "/experience-art/sky/foreground-runtime.webp",
+        "source": "/experience-art/sky/foreground-v1.png",
+        "sourceBytes": 1348666,
+        "bytes": 223004,
+        "sha256": "45a6ab1b64e02af8760f8e5469d93f21ab3c8e37f353f259c1c4f34c7653a151",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/sky/primary-runtime.webp",
+        "source": "/experience-art/sky/primary-v1.png",
+        "sourceBytes": 2478758,
+        "bytes": 271386,
+        "sha256": "f852a401d6b85417ba1f12bad6bde7a8402e9439d9a3f63da0a06bd3f95e17b3",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "rivers": {
+      "foreground": {
+        "url": "/experience-art/rivers/foreground-runtime.webp",
+        "source": "/experience-art/rivers/foreground-v1.png",
+        "sourceBytes": 1078840,
+        "bytes": 218668,
+        "sha256": "1a86e4aa17e725cbba9d621023e51779487414b7ebbca8ea12c377647475b22d",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/rivers/primary-runtime.webp",
+        "source": "/experience-art/rivers/primary-v1.png",
+        "sourceBytes": 3249236,
+        "bytes": 469552,
+        "sha256": "55beb9544154cacedd6dc7a6fd9a63fdbe581b1f00a090045693d9f6d9660b0e",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "underwater": {
+      "foreground": {
+        "url": "/experience-art/underwater/foreground-runtime.webp",
+        "source": "/experience-art/underwater/foreground-v1.png",
+        "sourceBytes": 1345816,
+        "bytes": 220118,
+        "sha256": "6fc12477bb3ea723404b3878dc1bbe41dc25942683e5c09c49239e41345fa300",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/underwater/primary-runtime.webp",
+        "source": "/experience-art/underwater/primary-v1.png",
+        "sourceBytes": 2161047,
+        "bytes": 171046,
+        "sha256": "f4a9ce3df3e9daa8ec4649f841f0f5213a91d71626bd8f136c6c670f862e11ad",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "wetland": {
+      "foreground": {
+        "url": "/experience-art/wetland/foreground-runtime.webp",
+        "source": "/experience-art/wetland/foreground-v1.png",
+        "sourceBytes": 1190845,
+        "bytes": 210098,
+        "sha256": "3b76d64b98a08417d37086fae8fdd930c6ed03cc65cf11c0b24ebea7c593d5cf",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/wetland/primary-runtime.webp",
+        "source": "/experience-art/wetland/primary-v1.png",
+        "sourceBytes": 2931298,
+        "bytes": 359804,
+        "sha256": "9b3723f9913d601e9c2b20d84a6e1144b398d18edb96b510f10c66182fc4777d",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "meadow": {
+      "foreground": {
+        "url": "/experience-art/meadow/foreground-runtime.webp",
+        "source": "/experience-art/meadow/foreground-v1.png",
+        "sourceBytes": 1035076,
+        "bytes": 190994,
+        "sha256": "e4b98587507e3f8afc44c14d78ed94ce41f4e7b14cd4c059d7e12ac53b6fa166",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/meadow/primary-runtime.webp",
+        "source": "/experience-art/meadow/primary-v1.png",
+        "sourceBytes": 2971977,
+        "bytes": 401264,
+        "sha256": "76cd6ec1fc6116eb915d64b109c9151cb58240982ef716fa484098c11d56ee0e",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "coast": {
+      "foreground": {
+        "url": "/experience-art/coast/foreground-runtime.webp",
+        "source": "/experience-art/coast/foreground-v1.png",
+        "sourceBytes": 942203,
+        "bytes": 122082,
+        "sha256": "6366243ed189e86945301d13eec95f3d6f7629c590f17367350c8c6174b5e567",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/coast/primary-runtime.webp",
+        "source": "/experience-art/coast/primary-v1.png",
+        "sourceBytes": 2606590,
+        "bytes": 266048,
+        "sha256": "3ab0f1b89358254f66a360a37460de8a06e554fc01ec260d194bc0e67591747f",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    },
+    "night-forest": {
+      "foreground": {
+        "url": "/experience-art/night-forest/foreground-runtime.webp",
+        "source": "/experience-art/night-forest/foreground-v1.png",
+        "sourceBytes": 742407,
+        "bytes": 119068,
+        "sha256": "852483181aba8af8d5ff6616b53ad6a762c73f5b8abebfa799c16ed0070f7e66",
+        "width": 1280,
+        "height": 720,
+        "estimatedRgbaMipBytes": 4915200,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      },
+      "primary": {
+        "url": "/experience-art/night-forest/primary-runtime.webp",
+        "source": "/experience-art/night-forest/primary-v1.png",
+        "sourceBytes": 2600703,
+        "bytes": 279996,
+        "sha256": "08b0d9bfad133c76742e4b9023e914edff1028205c18245f26a71157d5ec05b2",
+        "width": 1672,
+        "height": 941,
+        "estimatedRgbaMipBytes": 8391211,
+        "alphaExactAtDeliveryResolution": true,
+        "quality": 88
+      }
+    }
+  },
+  "poster": {
+    "url": "/experience-media/manifesto-review.webp",
+    "source": "/experience-media/manifesto-review.png",
+    "sourceBytes": 1834215,
+    "bytes": 76234,
+    "sha256": "cfe107920d99b93daafa87276279457f0cb5bf3b9ecee9ca45061274d202e5c1",
+    "width": 1440,
+    "height": 676,
+    "estimatedRgbaMipBytes": 5191680,
+    "alphaExactAtDeliveryResolution": true,
+    "quality": 90
+  }
+}

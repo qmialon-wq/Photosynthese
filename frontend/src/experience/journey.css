@@ -1,0 +1,220 @@
+.sx-experience .sx-debug-panel {
+  position: absolute;
+  z-index: 8;
+  left: 20px;
+  top: 116px;
+  width: 300px;
+  max-height: calc(100svh - 215px);
+  overflow: auto;
+  background: #0b211cee;
+  color: #f5f8ef;
+  border: 1px solid #97be7a66;
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+}
+.sx-experience .sx-debug-panel summary {
+  padding: 12px 15px;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  color: #b9ef84;
+}
+.sx-experience .sx-debug-body {
+  padding: 0 15px 14px;
+  display: grid;
+  gap: 12px;
+}
+.sx-experience .sx-debug-body label {
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sx-experience .sx-debug-body :is(select, input) {
+  font-size: 11px;
+  color: #f5f8ef;
+  background: #16372b;
+  border-color: #66815c;
+}
+.sx-experience .sx-debug-body input[type="range"] {
+  padding: 0;
+  width: 100%;
+  accent-color: #b9ef84;
+}
+.sx-experience .sx-debug-body fieldset {
+  margin: 0;
+  padding: 10px;
+  border-color: #78936966;
+}
+.sx-experience .sx-debug-body fieldset label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+  margin: 5px 0;
+}
+.sx-experience .sx-debug-body input[type="checkbox"] {
+  accent-color: #b9ef84;
+}
+.sx-experience .sx-debug-body output {
+  font:
+    10px/1.7 ui-monospace,
+    monospace;
+  white-space: normal;
+}
+.sx-experience .sx-debug-stops {
+  display: flex;
+  gap: 5px;
+}
+.sx-experience .sx-debug-stops button {
+  padding: 5px;
+  border: 1px solid #6d895b;
+  flex: 1;
+  font-size: 10px;
+}
+.sx-experience .sx-debug-notice {
+  font-size: 9px;
+  line-height: 1.5;
+  color: #cbd8c0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.sx-experience .sx-debug-reference {
+  position: absolute;
+  z-index: 7;
+  right: 30px;
+  top: 120px;
+  width: 320px;
+  margin: 0;
+  background: #0b211c;
+  border: 1px solid #a0bc86;
+}
+.sx-experience .sx-debug-reference img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sx-experience .sx-debug-reference figcaption {
+  padding: 9px;
+  font-size: 10px;
+}
+.sx-experience .sx-detection {
+  position: absolute;
+  z-index: 3;
+  border: 1px solid #b9ef84;
+  box-shadow: 0 0 0 1px #071f1250;
+  background: #0b231938;
+  padding: 10px;
+  pointer-events: none;
+  min-width: 135px;
+}
+.sx-experience .sx-detection p {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #c8e99e;
+  margin: 0 0 6px;
+}
+.sx-experience .sx-detection strong,
+.sx-experience .sx-detection span {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+}
+.sx-experience .sx-detection span {
+  font-size: 9px;
+  margin-top: 6px;
+  color: #ecdfbe;
+}
+.sx-experience .sx-detection ol {
+  font-size: 10px;
+  padding-left: 16px;
+  margin: 15px 0 0;
+}
+.sx-experience .sx-logo-conclusion {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 60vw;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 4;
+  pointer-events: none;
+}
+.sx-experience .sx-logo-conclusion img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sx-experience .sx-logo-conclusion p {
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 20px;
+}
+.sx-experience .sx-logo-conclusion a {
+  pointer-events: auto;
+  margin-top: 12px;
+}
+.sx-experience .sx-fallback-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.sx-experience .sx-fallback-scene img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.sx-experience .sx-fallback-scene > p {
+  position: absolute;
+  top: 110px;
+  right: 30px;
+  max-width: 40%;
+  background: #10291dcc;
+  font-size: 9px;
+  padding: 8px;
+}
+.sx-experience .sx-fallback-scene > span {
+  position: absolute;
+  top: 150px;
+  right: 30px;
+  font-size: 10px;
+  background: #10291ddd;
+  padding: 8px;
+}
+@media (max-width: 600px) {
+  .sx-experience .sx-chapter-nav {
+    gap: 3px;
+  }
+  .sx-experience .sx-chapter-nav button {
+    min-height: 26px;
+  }
+  .sx-experience .sx-debug-panel {
+    left: 12px;
+    top: 100px;
+    width: min(285px, calc(100vw - 50px));
+  }
+  .sx-experience .sx-debug-reference {
+    width: 180px;
+    right: 10px;
+    bottom: 100px;
+    top: auto;
+  }
+  .sx-experience .sx-detection {
+    padding: 7px;
+  }
+  .sx-experience .sx-detection strong {
+    font-size: 9px;
+  }
+  .sx-experience .sx-detection ol {
+    font-size: 8px;
+  }
+  .sx-experience .sx-logo-conclusion p {
+    font-size: 10px;
+  }
+  .sx-experience .sx-logo-conclusion a {
+    font-size: 10px;
+    padding: 10px;
+  }
+}

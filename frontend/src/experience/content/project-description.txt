@@ -1,0 +1,26 @@
+
+Nom de la solution et des membres qui portent le projet
+
+
+
+Quelques mots-clés pour décrire la solution
+
+
+
+Le problème auquel la solution répond
+
+
+
+Les cibles identifiées 
+
+
+
+Les bénéfices et impacts attendus
+
+
+
+Les données mobilisées (nom du producteur, lien vers le jeu de données)
+
+
+
+Le lien vers la solution / des captures d’écran
